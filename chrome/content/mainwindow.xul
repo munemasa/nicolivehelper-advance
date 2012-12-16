@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nicolivehelperadvance/content/mainwindow.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://nicolivehelperadvance/locale/nicolivehelper.dtd">
+
+<window id="requestwindow"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	persist="screenX screenY width height sizemode"
+	width="640"
+	height="480"
+	windowtype="NicoLiveHelperAdvanceMainWindow"
+	title="NicoLive Helper Advance">
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="string-bundle" src="chrome://nicolivehelper/locale/nicolivehelper.properties"/>
+  </stringbundleset>
+
+</window>

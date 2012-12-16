@@ -1,0 +1,256 @@
+@charset "UTF-8";
+
+iframe {
+    -moz-transition: height 0.25s, opacity 0.25s;
+}
+
+textbox#textbox-comment {
+    -moz-transition: width 0.25s;
+}
+
+#mainwindow-tab{
+}
+
+tabpanels {
+    padding: 2px;
+}
+
+.tabpanel{
+/*    background-color: #f0f0f0;*/
+}
+
+table{
+    border-collapse: collapse;
+}
+table.requestview{
+/*    cursor: default; */
+/*    margin: 3px; */
+}
+
+/* リクエスト、ストックの枠線 */
+table.requestview tr {
+    border-bottom: 1px solid black;
+}
+
+table.requestview tr{
+/*    margin: 4px; */
+/*    border-radius: 8px;
+    box-shadow: 1px 1px 1px 1px #ccc;*/
+    /* display: block; */
+}
+table.requestview td {
+/*    padding-top: 4px; */
+}
+
+/* テキスト範囲選択できるクラス */
+.selection {
+    cursor: text ! important;
+    -moz-user-focus: normal;
+    -moz-user-select: text;
+}
+
+/* ストックの詳細部分(非表示にしていいもの) */
+.detail {
+/*    display:none; */
+}
+
+.video-thumbnail {
+    width: 65px;
+    height: 50px;
+    -moz-transition: width 0.25s, height 0.25s;
+}
+/*
+.video-thumbnail:hover {
+    width: 130px;
+    height: 100px;
+}
+*/
+
+/* リク・ストックビュー内の水平線<hr/> */
+.requestview hr {
+    padding: 0;
+    margin: 0;
+    border-width: 1px 0px 0px 0px;
+    border-style: dashed;
+/*    border: 1px solid gray; */
+}
+
+/* ちょっと使いづらいかな */
+/*
+hbox.btn_command{
+    display: none;
+}
+vbox:hover + hbox.btn_command, hbox.btn_command:hover {
+    display: inline;
+}
+*/
+
+
+/* リク、ストックなどのコマンドボタン */
+button.commandbtn {
+/*    font-size: 8pt; */
+/*    min-width: 70px; min-widthはMacのみで */
+}
+
+.select-setlist menuitem{
+    min-width: 3em;
+}
+
+tr {
+    -moz-transition: background-color 0.25s, color 0.25s;
+}
+
+/* 奇数行 */
+tr.table_oddrow{
+    background-color: #ffffee;
+}
+
+/* 偶数行 */
+tr.table_evenrow{
+    background-color: #eeeeff;
+}
+
+/* 自貼り */
+tr.table_selfreq {
+    background-color: #eeffee;
+    border-left: 10px solid rgb(0,200,0);
+}
+
+tr.table_selfreq div:first-child:before{
+    content: "[自貼り]";
+    color: red;
+    font-weight: bold;
+}
+
+/* コントロールパネルのメイン・サブステート用 */
+.soundonly-toggle[checked="true"]:after {
+    content: "ON";
+}
+.soundonly-toggle:after {
+    content: "OFF";
+}
+.video-title[value='']{
+    display:none;
+}
+.video-title{
+    display:block;
+}
+
+/* co154で最近再生されたもの */
+tr.table_recently_play{
+    background-color: #ffcc99;
+}
+
+table#database-table tr:hover{
+/*    background-color: #888888; */
+/*    color: white; */
+    border: 1px solid #888;
+    box-shadow: inset 1px 1px 1px 1px #ccc;
+}
+
+.db-description{
+    display:none;
+}
+
+
+/* コメントの枠線 */
+#comment_table tr{
+    border-bottom: 1px solid #cccccc;
+    -moz-transition: height 0.25s, opacity 0.25s;
+}
+
+tr.no_live_play:hover{
+    background-image: url("http://res.nimg.jp/img/common/tilebtn/delete.png");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+}
+
+tr.color1{
+    background-color: #f2eef8;
+}
+tr.color2{
+    background-color: #eef0ff;
+}
+tr.color3{
+    background-color: #eef8ff;
+}
+tr.color4{
+    background-color: #eeffff;
+}
+tr.color5{
+    background-color: #eefff8;
+}
+
+/* 緑(自貼りカラー) */
+tr.color6{
+    background-color: #eeffee;
+}
+tr.color7{
+    background-color: #f8ffee;
+}
+tr.color8{
+    background-color: #ffffee;
+}
+
+tr.white{
+    background-color: white;
+}
+
+tr.no_live_play{
+}
+
+
+.Miku {
+    background-color: #7fffbf;
+}
+.RinLen {
+    background-color: yellow;
+}
+.Luka {
+    background-color: #ffb2d3;
+}
+.Other {
+    background-color: #ffeeee;
+}
+.NG {
+    background-color: #888888;
+}
+.undefined {
+}
+
+/* 主用の色 */
+tr.table_casterselection{
+    background-color: #ffeeee;
+}
+
+/* 再生済み */
+tr.table_played{
+    background-color: #cccccc;
+}
+
+.red {
+    color: red;
+}
+.black{
+    color: black;
+}
+
+a {
+    color:blue;
+    text-decoration:underline;
+    cursor:pointer;
+}
+
+toolbox{
+/*    display: inline; */
+}
+
+toolbarbutton{
+    vertical-align: text-top;
+    margin-right: 2px;
+}
+
+#folder-listbox listitem:-moz-drag-over {
+    border: 1px solid black;
+    font-weight: bold;
+}

@@ -1,0 +1,12 @@
+content	nicolivehelperadvance	chrome/content/
+
+locale nicolivehelperadvance ja-JP chrome/locale/ja-JP/
+
+style chrome://nicolivehelperadvance/content/mainwindow.xul chrome://nicolivehelperadvance/content/mainwindow-mac.css os=Darwin
+
+overlay chrome://browser/content/browser.xul chrome://nicolivehelperadvance/content/overlaymenu.xul
+
+resource nicolivehelperadvancemodules modules/
+
+# component {6224daa1-71a2-4d1a-ad90-01ca1c08e323} components/simpleautocomplete.js
+# contract @mozilla.org/autocomplete/search;1?name=simple-autocomplete {6224daa1-71a2-4d1a-ad90-01ca1c08e323}

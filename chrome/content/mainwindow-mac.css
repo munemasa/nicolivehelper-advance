@@ -1,0 +1,62 @@
+#tabpanels {
+    padding: 4px;
+}
+
+.tabpanel {
+/*    border: 1px solid black; */
+}
+
+/* リク、ストックなどのコマンドボタン */
+button.commandbtn {
+    font-size: 8pt;
+    min-width: 70px;
+}
+
+.select-setlist {
+    width: 4em;
+}
+
+
+
+toolbar {
+    -moz-appearance: -moz-mac-unified-toolbar !important;
+    padding-bottom: 1px !important;
+}
+
+toolbarbutton {
+    border: 1px solid transparent !important;
+    padding: 3px !important;
+}
+
+.toolbarbutton-icon[label]:not([label=""]),
+.toolbarbutton-icon[type="menu"] {
+    -moz-margin-end: 5px !important;
+}
+
+.toolbarbutton-text {
+    margin: 0 !important;
+}
+
+toolbarbutton:hover,
+toolbarbutton[buttonover="true"] {
+    border: 1px solid gray !important;
+}
+
+toolbarbutton:hover:active,
+toolbarbutton[open="true"]:hover,
+toolbarbutton[open="true"] {
+    padding-top: 4px !important;
+    padding-bottom: 2px !important;
+    -moz-padding-start: 4px !important;
+    -moz-padding-end: 2px !important;
+}
+
+toolbarbutton[checked="true"]{
+    padding-top: 4px !important;
+    padding-bottom: 2px !important;
+    -moz-padding-start: 4px !important;
+    -moz-padding-end: 2px !important;
+
+    background-color: #dddddd !important;
+    border: 1px inset gray !important;
+}
