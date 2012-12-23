@@ -6,6 +6,12 @@
 <!ENTITY general.property "プロパティ">
 <!ENTITY general.bitrate "ビットレート">
 <!ENTITY general.update "更新">
+<!ENTITY general.main_screen "メイン画面">
+<!ENTITY general.sub_screen "サブ画面">
+<!ENTITY general.camera "カメラ映像">
+<!ENTITY general.stop_play "再生停止">
+<!ENTITY general.sound_only "サウンドオンリー">
+<!ENTITY general.mylist_manager "マイリストマネージャ">
 
 <!ENTITY playstyle.manual_sequential "手動(順次)">
 <!ENTITY playstyle.manual_random "手動(ランダム)">
@@ -19,7 +25,7 @@
 <!ENTITY allow_request "リクエスト許可">
 <!ENTITY disallow_request "リクエスト不可">
 
-<!ENTITY play.next "次曲">
+<!ENTITY play.next "再生">
 <!ENTITY play.tooltip_next "次の動画を再生します。">
 <!ENTITY play.pause "一時停止">
 <!ENTITY play.tooltip_pause "一時停止のチェックボタンが押されている間、自動で次の動画の再生を行わなくなります。">
@@ -71,9 +77,10 @@
 
 <!ENTITY tab.request "リクエスト">
 <!ENTITY tab.stock "ストック">
-<!ENTITY tab.error "リク・再生エラー">
+<!ENTITY tab.reject "リジェクト">
 <!ENTITY tab.playlist "再生履歴">
 <!ENTITY tab.comment "コメント">
+<!ENTITY tab.talk "読み上げ">
 <!ENTITY tab.database "動画DB">
 <!ENTITY tab.controlpanel "コントロールパネル">
 <!ENTITY tab.debug "デバッグ">
@@ -128,7 +135,7 @@
 <!ENTITY browser.open "開く">
 <!ENTITY browser.close "閉じる">
 
-<!ENTITY live.watcher "来 0">
+<!ENTITY live.watcher "来 999">
 
 <!ENTITY statusbar.add_db "動画DBに追加">
 

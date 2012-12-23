@@ -49,9 +49,9 @@ table.requestview td {
     -moz-user-select: text;
 }
 
-/* ストックの詳細部分(非表示にしていいもの) */
+/* 動画情報の詳細部分 */
 .detail {
-/*    display:none; */
+    display:none;
 }
 
 .video-thumbnail {
@@ -59,12 +59,19 @@ table.requestview td {
     height: 50px;
     -moz-transition: width 0.25s, height 0.25s;
 }
-/*
 .video-thumbnail:hover {
     width: 130px;
     height: 100px;
 }
-*/
+
+.videotag {
+    overflow: hidden;
+    width: 100%;
+}
+.videotag:hover{
+    overflow: visible;
+}
+
 
 /* リク・ストックビュー内の水平線<hr/> */
 .requestview hr {
@@ -85,11 +92,22 @@ vbox:hover + hbox.btn_command, hbox.btn_command:hover {
 }
 */
 
+#player-current-status button {
+    margin: 0;
+}
+
+tabpanels button {
+    margin: 0;
+}
 
 /* リク、ストックなどのコマンドボタン */
-button.commandbtn {
-/*    font-size: 8pt; */
-/*    min-width: 70px; min-widthはMacのみで */
+hbox.command-buttons {
+    border: 1px outset gray;
+}
+
+.command-buttons .command-button {
+    padding-left: 0.75em;
+    padding-right: 0.75em;
 }
 
 .select-setlist menuitem{

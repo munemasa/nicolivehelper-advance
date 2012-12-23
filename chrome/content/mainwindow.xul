@@ -4,14 +4,402 @@
 
 <!DOCTYPE window SYSTEM "chrome://nicolivehelperadvance/locale/nicolivehelper.dtd">
 
-<window id="requestwindow"
+<window id="mainwindow"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml"
-	persist="screenX screenY width height sizemode"
+	_persist="screenX screenY width height sizemode"
+	persist="screenX screenY sizemode"
 	width="640"
 	height="480"
 	windowtype="NicoLiveHelperAdvanceMainWindow"
 	title="NicoLive Helper Advance">
+
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/prefutils.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/csvparser.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/oauth.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/sha1.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/cookiemonster.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/tcplib.js" />
+
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoapi.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
+
+  <keyset>
+    <!-- CTRL+W: Close this window -->
+    <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
+  </keyset>
+
+  <toolbox id="global-toolbox">
+    <toolbar id="global-menu">
+      <arrowscrollbox orient="horizontal" flex="1">
+	<!-- auto/manual sequential/random playstyle -->
+	<toolbarbutton label="&playstyle.manual_sequential;" type="menu" id="toolbar-playstyle">
+	  <menupopup id="toolbar-popup-playstyle">
+	    <menuitem label="&playstyle.manual_sequential;" playstyle="0"/>
+	    <menuitem label="&playstyle.auto_sequential;" playstyle="1"/>
+	    <menuseparator/>
+	    <menuitem label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;"/>
+	    <menuitem label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;"/>
+	    <menuseparator/>
+	    <menuitem label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;"/>
+	    <menuitem label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;"/>
+	  </menupopup>
+	</toolbarbutton>
+	<!-- allow/disallow request -->
+	<toolbarbutton label="&allow_request;" type="menu" id="toolbar-allowrequest">
+	  <menupopup>
+	    <menuitem label="&allow_request;" allowrequest="true"/>
+	    <menuitem label="&disallow_request;" allowrequest="false"/>
+	  </menupopup>
+	</toolbarbutton>
+	<!-- play next -->
+	<toolbarbutton label="&play.next;" tooltiptext="&play.tooltip_next;"
+		       image="chrome://nicolivehelper/content/data/play.png"/>
+	<!-- pause to play -->
+	<toolbarbutton persist="checked" type="checkbox" autoCheck="true" id="do-pauseplay"
+		       label="&play.pause;" tooltiptext="&play.tooltip_pause;"
+		       image="chrome://nicolivehelper/content/data/pause.png"/>
+	<!-- play in subscreen -->
+	<toolbarbutton persist="checked" label="&play.subdisplay;"
+		       id="do-subdisplay" autoCheck="true" type="checkbox" tooltiptext="&play.tooltip_subdisplay;"/>
+
+	<toolbarbutton label="&toolbar.command;" type="menu">
+	  <menupopup>
+<!--	    <menuitem label="test" oncommand="test();"/> -->
+	    
+	    <menuitem label="&toolbar.connect;"
+		      oncommand="NicoLiveWindow.connectToBroadcasting();"/>
+	    <menuitem label="放送開始する" tooltiptext="&toolbar.tooltip_beginbroadcasting;"
+		      oncommand="NicoLiveHelper.startBroadcasting();"/>
+	    <menuseparator/>
+	    <menu label="&toolbar.backuprestore;" tooltiptext="&toolbar.backuprestore.help;"><!-- バックアップと復元 -->
+	      <menupopup>
+		<menuitem label="&toolbar.backup;" oncommand="NicoLiveWindow.inputBackupName();"/>
+		<menu label="&toolbar.restore;">
+		  <menupopup id="toolbar-restore">
+		  </menupopup>
+		</menu>
+		<menu label="&toolbar.deletebackup;">
+		  <menupopup id="toolbar-deletebackup">
+		  </menupopup>
+		</menu>
+	      </menupopup>
+	    </menu>
+	    <menuseparator/>
+	    <!-- 連続コメント -->
+	    <menuitem label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
+	    <menuseparator/>
+	    <!-- アンケート関係 -->
+	    <menuitem label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
+		      oncommand="OpenVoteDialog();"/>
+	    <menuitem label="&toolbar.voteshowresult;" tooltiptext="&toolbar.tooltip_voteshowresult;"
+		      oncommand="NicoLiveHelper.postCasterComment('/vote showresult','');"/>
+	    <menuitem label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
+		      oncommand="NicoLiveHelper.postCasterComment('/vote stop','');"/>
+	  </menupopup>
+	</toolbarbutton>
+	<toolbarbutton label="&toolbar.open_preference;" oncommand="OpenSettingsDialog();"/>
+	<toolbarspacer flex="1"/>
+	<toolbarbutton image="chrome://nicolivehelper/content/data/window-list.png" label="" type="menu">
+	  <menupopup id="popup-windowlist" onpopupshowing="">
+	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
+	    <menuseparator/>
+	  </menupopup>
+	</toolbarbutton>
+      </arrowscrollbox>
+    </toolbar>
+  </toolbox>
+
+  <hbox id="player-current-status" align="center">
+    <groupbox flex="1" style="padding:1px;">
+      <caption id="cp-mainscreen-label" label="&general.main_screen;"/>
+      <hbox>
+	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand=""/>
+	<button label="&general.camera;" tooltiptext="/play" oncommand="NicoLiveHelper.postCasterComment('/play');"/>
+<!--	<button label="&general.stop_play;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/> -->
+	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/>
+      </hbox>
+      <label id="main-video-title" class="video-title" crop="end" value="【LONG ver.】初音ミクにオリジナルソング「SING＆SMILE」を歌わせてみた。"/>
+    </groupbox>
+    <vbox>
+      <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
+    </vbox>
+    <groupbox flex="1" style="padding:0;">
+      <caption id="cp-subscreen-label" label="&general.sub_screen;"/>
+      <hbox>
+	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand="NicoLiveHelper.playSoundOnly(1,this.checked);"/>
+	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop sub');" tooltiptext="/stop sub"/>
+      </hbox>
+      <label id="sub-video-title" class="video-title" crop="end" value="【LONG ver.】初音ミクにオリジナルソング「SING＆SMILE」を歌わせてみた。"/>
+    </groupbox>
+  </hbox>
+
+  <tabbox id="mainwindow-tab" flex="1" persist="selectedIndex">
+    <tabs id="maintabs" style="display:inline-block;">
+      <tab id="tabs-request" label="&tab.request;" linkedpanel="tab-request"/>
+      <tab id="tabs-stock" label="&tab.stock;" linkedpanel="tab-stock"/>
+      <tab id="tabs-reject" label="&tab.reject;" linkedpanel="tab-reject"/>
+      <tab id="tabs-playlist" label="&tab.playlist;" linkedpanel="tab-playlist"/>
+      <tab id="tabs-comment" label="&tab.comment;" linkedpanel="tab-comment"/>
+      <tab id="tabs-talk" label="&tab.talk;" linkedpanel="tab-talk"/>
+      <tab id="tabs-db" label="&tab.database;" linkedpanel="tab-database"/>
+      <tab id="tabs-controlpanel" label="&tab.controlpanel;" linkedpanel="tab-controlpanel"/>
+      <tab id="tabs-debug" label="&tab.debug;" linkedpanel="tab-debug"/>
+    </tabs>
+
+    <tabpanels flex="1">
+
+      <!-- request tab -->
+      <vbox id="tab-request">
+	<hbox align="center">
+	  <menulist id="request-set-no" persist="value">
+	    <menupopup>
+	      <menuitem label="0" value="0"/>
+	      <menuitem label="1" value="1"/>
+	      <menuitem label="2" value="2"/>
+	      <menuitem label="3" value="3"/>
+	      <menuitem label="4" value="4"/>
+	      <menuitem label="5" value="5"/>
+	      <menuitem label="6" value="6"/>
+	      <menuitem label="7" value="7"/>
+	      <menuitem label="8" value="8"/>
+	      <menuitem label="9" value="9"/>
+	    </menupopup>
+	  </menulist>
+	  <button label="&button.shuffle;"/>
+	  <button type="menu" label="リク受付方法">
+	    <menupopup>
+	      <menuitem label="アンカー指定" oncommand="OpenAnchorWindow();"/>
+	    </menupopup>
+	  </button>
+	  <textbox id="input-request" emptytext="&request.emptytext_add_from_mylist;"
+		   flex="1" type="search" searchbutton="true" oncommand="NicoLiveRequest.addRequest(this.value);"/>
+	  <button type="menu" label="消去" style="min-width:1em;">
+	    <menupopup id="menupopup-delete-stock">
+	      <menuitem label="&button.clearall;"
+			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearRequest();"/>
+	      <menuitem label="再生済みのみ消去"
+			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayedRequest();"/>
+	    </menupopup>
+	  </button>
+	  <label id="total-playtime" value="999分99秒/999件"/>
+	</hbox>
+	<!-- request list -->
+	<vbox flex="1" style="overflow:auto">
+	  <html:table id="request-table" class="requestview">
+	  </html:table>
+	</vbox>
+	<stack id="request-progress" style="">
+	  <progressmeter mode="undetermined" value="0" flex="1"/>
+	  <label id="request-progress-label" value="sm1340413" crop="end" flex="1"/>
+	</stack>
+      </vbox>
+
+      <!-- stock tab -->
+      <vbox id="tab-stock">
+	<hbox align="center">
+	  <menulist class="select-setlist" id="stock-set-no" sizetopopup="none" persist="value"
+		    onclick="NicoLiveRequest.changeSetName(this,event);"
+		    onpopupshowing="NicoLiveRequest.showSetListMenu(this);"
+		    onpopuphiding="NicoLiveRequest.hideSetListMenu(this);"
+		    oncommand="NicoLiveRequest.changeStockSet(this.value);">
+	    <menupopup>
+	      <menuitem label="0" value="0"/>
+	      <menuitem label="1" value="1"/>
+	      <menuitem label="2" value="2"/>
+	      <menuitem label="3" value="3"/>
+	      <menuitem label="4" value="4"/>
+	      <menuitem label="5" value="5"/>
+	      <menuitem label="6" value="6"/>
+	      <menuitem label="7" value="7"/>
+	      <menuitem label="8" value="8"/>
+	      <menuitem label="9" value="9"/>
+	    </menupopup>
+	  </menulist>
+	  <menulist id="stock-playstyle" persist="value" tooltiptext="&stock.playstyle.tooltiptext;">
+	    <menupopup>
+	      <menuitem label="&stock.playstyle.none;" value="0"/>
+	      <menuitem label="&stock.playstyle.sequential;" value="1"/>
+	      <menuitem label="&stock.playstyle.random;" value="2"/>
+	    </menupopup>
+	  </menulist>
+	  
+	  <button label="&button.shuffle;" oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.shuffleStock();"/>
+	  <button type="menu" label="&button.load_mylist;" style="min-width:1em;">
+	    <menupopup id="menupopup-from-mylist">
+	      <menuitem label="&toriaezu_mylist;"/>
+	    </menupopup>
+	  </button>
+
+	  <textbox id="input-stock" emptytext="&stock.emptytext_add_from_mylist;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveRequest.addStock(this.value);"/>
+	  <button type="menu" label="消去" style="min-width:1em;">
+	    <menupopup id="menupopup-delete-stock">
+	      <menuitem label="&button.clearall;"
+			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearStock();"/>
+	      <menuitem label="再生済みのみ消去"
+			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayedStock();"/>
+	    </menupopup>
+	  </button>
+	  <label id="stock-playtime" value="999分99秒/999件"/>
+	</hbox>
+	<label value="Stock"/>
+      </vbox>
+      
+      <!-- reject tab -->
+      <vbox id="tab-reject">
+	<label value="Request Error"/>
+      </vbox>
+
+      <!-- playlist tab -->
+      <vbox id="tab-playlist">
+	<label value="Playlist"/>
+      </vbox>
+
+      <!-- comment tab -->
+      <vbox id="tab-comment">
+	<hbox id="box-caster-comment">
+<!--
+	  <menulist id="textbox-comment-target">
+	    <menupopup>
+	      <menuitem label="運営" value=""/>
+	      <menuitem label="下" value=""/>
+	      <menuitem label="BSP" value=""/>
+	    </menupopup>
+	  </menulist>
+-->
+	  <menulist id="textbox-mail" label="" editable="true" value="">
+	    <menupopup>
+	      <menuitem label="" value=""/>
+	      <menuitem label="&comment.command_caster;" value=""/>
+	      <menuitem label="se1" value="se1"/>
+	      <menuitem label="se2" value="se2"/>
+	      <menuitem label="hidden" value="hidden"/>
+	      <menuitem label="&comment.command_listener;" value=""/>
+	      <menuitem label="cyan big" value="cyan big"/>
+	      <menuitem label="shita" value="shita"/>
+	      <menuitem label="green shita small" value="green shita small"/>
+	      <menuitem label="orange" value="orange"/>
+	      <menuitem label="&comment.command_premium;" value=""/>
+	      <menuitem label="marineblue" value="marineblue"/>
+	      <menuitem label="passionorange" value="passionorange"/>
+	      <menuitem label="elementalgreen ue" value="elementalgreen ue"/>
+	      <menuitem label="truered shita small" value="truered shita small"/>
+	      <menuitem label="niconicowhite big" value="niconicowhite big"/>
+	    </menupopup>
+	  </menulist>	  
+	  <textbox id="textbox-comment"
+		   style="padding:2px; margin-left:0;"
+		   flex="1"
+		   maxlength="1024"
+		   type="autocomplete"
+		   autocompletesearch="simple-autocomplete"
+		   enablehistory="true"
+		   showcommentcolumn="true" 
+		   emptytext="&comment.emptytext_input;"
+		   onkeypress=""
+		   ontextreverted="this.select();"
+		   />
+	  <button label="送信" style="min-width:0;" oncommand=""/>
+	  <checkbox persist="checked" id="overwrite-hidden-perm" label="&comment.write_upperarea;" tooltiptext="&comment.tooltip_write_upperarea;"/>
+	</hbox>
+	<label value="Comment"/>
+	<scrollbox id="comment-box" orient="vertical" flex="1" style="overflow:auto;">
+	  <html:table id="comment_table" style="width:100%"></html:table>
+	</scrollbox>
+	<splitter collapse="after" state="collapsed"/>
+	<vbox flex="1" style="overflow:auto;">
+	  <hbox style="display: inline-block;" flex="1">
+	    <grid>
+	      <columns>
+		<column/>
+		<column/>
+		<column/>
+	      </columns>
+	      <rows>
+		<row>
+		  <hbox align="center"><label value="&comment.comment_no;"/></hbox>
+		  <textbox id="comment_no_to_add_reflection"/>
+		  <button label="&comment.register_reflection;" oncommand=""/>
+		</row>
+		<row>
+		  <hbox align="center"><label value="&comment.user_id;"/></hbox>
+		  <hbox><textbox id="comment-user-id"/></hbox>
+		  <button type="menu" label="&general.command;">
+		    <menupopup id="menupopup-comment-command">
+		      <menuitem label="&comment.menu_setname;" oncommand=""/>
+		      <menuitem label="&comment.menu_reflection;" oncommand=""/>
+		      <menuitem label="&comment.del_nguser;" oncommand=""/>
+		    </menupopup>
+		  </button>
+		</row>
+	      </rows>
+	    </grid>
+	    <spacer flex="1"/>
+	    <button label="Open As Textbox" oncommand=""/>
+	  </hbox>
+	  <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="">
+	    <listcols>
+	      <listcol flex="1" />
+	      <listcol flex="1" />
+	    </listcols>
+	    <listhead>
+	      <listheader label="&comment.user_id;" />
+	      <listheader label="&comment.kotehan;" />
+	    </listhead>
+	  </listbox>
+	</vbox>
+	<arrowscrollbox orient="horizontal">
+	  <hbox align="center" flex="1">
+	    <checkbox persist="checked" id="auto-kotehan" label="自動コテハン登録" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
+	    <checkbox persist="checked" id="nlhaddon-allowoverwrite" label="上書き登録" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
+	    <checkbox persist="checked" id="nlhaddon-ref-userprof" label="プロフィール参照登録" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
+	    <spacer flex="1"/>
+	    <label id="comment-font-scale-value" value="11pt"/>
+	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveCommentProcessor.changeFontScale(this.value);"/>
+	  </hbox>
+	</arrowscrollbox>
+
+      </vbox>
+      
+      <vbox id="tab-talk">
+	<label value="Speech"/>
+      </vbox>
+
+      <vbox id="tab-database">
+	<label value="Database"/>
+      </vbox>
+
+      <vbox id="tab-controlpanel">
+	<label value="Control panel"/>
+      </vbox>
+
+      <vbox id="tab-debug">
+	<textbox id="debug-textbox" emptytext="for debugging." multiline="true" flex="1" />
+      </vbox>
+
+    </tabpanels>
+
+    <notificationbox id="noticewin">
+    </notificationbox>
+  </tabbox>
+
+  <!-- statusbar -->
+  <statusbar id="statusbar">
+    <stack id="statusbar-currentmusic" context="popup-add-mylist" onclick="">
+      <progressmeter id="statusbar-music-progressmeter" mode="determined" value="0" flex="1" />
+      <statusbarpanel id="statusbar-music-name" label="" flex="1" crop="start"/>
+    </stack>
+    <spacer flex="1"/>
+    <statusbarpanel id="statusbar-n-of-listeners" label="&live.watcher;"/>
+    <statusbarpanel id="statusbar-live-progress" label="999:99" onclick=""/>
+    <statusbarpanel id="statusbar-autonext" context="popup-nicolive-alert"
+		    class="statusbarpanel-iconic" src="data/next-mono.png"
+		    onclick=""/>
+    <statusbarpanel id="status-bar-browser"
+		    class="statusbarpanel-iconic" src="data/safari.png"/>
+  </statusbar>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="string-bundle" src="chrome://nicolivehelper/locale/nicolivehelper.properties"/>
