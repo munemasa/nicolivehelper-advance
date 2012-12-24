@@ -120,6 +120,45 @@ var NicoLiveRequest = {
 	return vbox;
     },
 
+    /**
+     * table内に表示する動画情報を作成する.
+     * @return 作成したvboxを返す
+     */
+    createSeigaInformation: function(item){
+	let vbox = CreateElement('vbox');
+	let tooltip="";
+	let i;
+
+	vbox.setAttribute('nicovideo_id',item.video_id);
+
+	let div = CreateHTMLElement('div');
+	// 横幅指定がないと表示文字数が少ない行がウィンドウ一杯に使わないことがあるので対策として指定
+	div.setAttribute('style','width:1920px;');
+
+	div.className ="selection";
+	let a = CreateHTMLElement('a');
+	a.className = "";
+	a.setAttribute("onclick","NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/"+item.video_id+"');");
+
+	let img = CreateHTMLElement('img');
+	img.src = item.thumbnail_url;
+	img.style.cssFloat = 'left';
+	img.style.marginRight = '0.5em';
+	img.className = "video-thumbnail";
+
+	// マウスオーバーのサムネ表示
+	a.setAttribute("onmouseover","NicoLiveComment.showThumbnail(event,'"+item.video_id+"');");
+	a.setAttribute("onmouseout","NicoLiveComment.hideThumbnail();");
+	a.appendChild(img);
+
+	let label;
+	// 動画ID+タイトル.
+	div.appendChild(a); // thumbnail
+	let text = document.createTextNode(item.video_id+' '+item.title);
+	div.appendChild(text);
+	vbox.appendChild(div);
+	return vbox;
+    },
 
     /**
      * リクエストリストに一個追加する
@@ -140,7 +179,7 @@ var NicoLiveRequest = {
 	td.appendChild(document.createTextNode("#"+table.rows.length));
 	if( item.comment_no ){
 	    td.appendChild(CreateHTMLElement('br'));
-	    td.appendChild(document.createTextNode("C#"+item.cno));
+	    td.appendChild(document.createTextNode("C#"+item.comment_no));
 	}
 
 	// 先頭から何分後にあるかの表示
@@ -150,14 +189,21 @@ var NicoLiveRequest = {
 	td.appendChild(document.createTextNode("+"+t));
 	//this._summation_time += NicoLivePreference.nextplay_interval + item.length_ms/1000;
 
-	let n = table.rows.length;
-	tr.setAttribute("request-index",n); // 1,2,3,...
-	tr.setAttribute('style','width:100%;');
+	let n = table.rows.length-1;
+	tr.setAttribute("request-index",n); // 0,1,2,3,...
 
 	td = tr.insertCell(tr.cells.length);
 
-	let vbox = this.createVideoInformation(item);
+	let vbox;
+	if( item.video_id.indexOf("im")==0 ){
+	    // ニコニコ静画
+	    vbox = this.createSeigaInformation(item);
+	}else{
+	    vbox = this.createVideoInformation(item);
+	}
+
 	vbox.setAttribute('class','vinfo');
+	// TODO ポップアップメニュー
 	vbox.setAttribute('context','popup-copyrequest');
 
 	let hbox = CreateElement('hbox');
@@ -174,6 +220,7 @@ var NicoLiveRequest = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveHelper.playRequest("+n+");");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
@@ -269,11 +316,30 @@ var NicoLiveRequest = {
 
     addRequest: function(text){
 	if(text.length<3) return;
-	let l = text.match(/(sm|nm|so)\d+|\d{10}/g);
+	let l = text.match(/(sm|nm|so|im)\d+|\d{10}/g);
 	for(let i=0,id;id=l[i];i++){
 	    NicoLiveHelper.addRequest(id,0,"0",false);
 	}
 	$('input-request').value="";
+    },
+
+    /**
+     * リクエストの表示を全更新する.
+     */
+    updateView: function( requestqueue ){
+	let table = $('request-table');
+	if(!table){ return; }
+
+	clearTable(table);
+	for(let i=0,item;item=requestqueue[i];i++){
+	    this._addRequestView( table, item );
+	}
+	// TODO 累積時間の更新
+	/*
+	if(requestqueue.length==0){
+	    this.setTotalPlayTime({min:0,sec:0});
+	}
+	 */
     },
 
     init:function(){

@@ -23,8 +23,11 @@
 
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoapi.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/datastruct.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
 
   <keyset>
     <!-- CTRL+W: Close this window -->
@@ -61,6 +64,10 @@
 	<toolbarbutton persist="checked" type="checkbox" autoCheck="true" id="do-pauseplay"
 		       label="&play.pause;" tooltiptext="&play.tooltip_pause;"
 		       image="chrome://nicolivehelper/content/data/pause.png"/>
+	<!-- play soundonly -->
+	<toolbarbutton persist="checked" id="menuid-soundonly" type="checkbox" autoCheck="true" label=""
+		       tooltiptext="&play.tooltip_soundonly;" image="data/soundonly.png"
+		       style="padding-left:5px; padding-right:5px;"/>
 	<!-- play in subscreen -->
 	<toolbarbutton persist="checked" label="&play.subdisplay;"
 		       id="do-subdisplay" autoCheck="true" type="checkbox" tooltiptext="&play.tooltip_subdisplay;"/>
@@ -112,27 +119,26 @@
     </toolbar>
   </toolbox>
 
-  <hbox id="player-current-status" align="center">
-    <groupbox flex="1" style="padding:1px;">
+  <hbox id="player-current-status">
+    <groupbox flex="1">
       <caption id="cp-mainscreen-label" label="&general.main_screen;"/>
       <hbox>
 	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand=""/>
 	<button label="&general.camera;" tooltiptext="/play" oncommand="NicoLiveHelper.postCasterComment('/play');"/>
-<!--	<button label="&general.stop_play;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/> -->
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/>
       </hbox>
-      <label id="main-video-title" class="video-title" crop="end" value="【LONG ver.】初音ミクにオリジナルソング「SING＆SMILE」を歌わせてみた。"/>
+      <label id="main-video-title" class="video-title" crop="end" value="初音ミクオリジナ曲　「魔法少女ラジカルペイント（LONG VERSION）」"/>
     </groupbox>
-    <vbox>
+    <hbox align="center">
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
-    </vbox>
-    <groupbox flex="1" style="padding:0;">
+    </hbox>
+    <groupbox flex="1">
       <caption id="cp-subscreen-label" label="&general.sub_screen;"/>
       <hbox>
 	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand="NicoLiveHelper.playSoundOnly(1,this.checked);"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop sub');" tooltiptext="/stop sub"/>
       </hbox>
-      <label id="sub-video-title" class="video-title" crop="end" value="【LONG ver.】初音ミクにオリジナルソング「SING＆SMILE」を歌わせてみた。"/>
+      <label id="sub-video-title" class="video-title" crop="end" value="初音ミクオリジナ曲　「魔法少女ラジカルペイント（LONG VERSION）」"/>
     </groupbox>
   </hbox>
 
@@ -191,7 +197,7 @@
 	  <html:table id="request-table" class="requestview">
 	  </html:table>
 	</vbox>
-	<stack id="request-progress" style="">
+	<stack id="request-progress" style="display:none;">
 	  <progressmeter mode="undetermined" value="0" flex="1"/>
 	  <label id="request-progress-label" value="sm1340413" crop="end" flex="1"/>
 	</stack>
@@ -233,7 +239,7 @@
 	    </menupopup>
 	  </button>
 
-	  <textbox id="input-stock" emptytext="&stock.emptytext_add_from_mylist;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveRequest.addStock(this.value);"/>
+	  <textbox id="input-stock" emptytext="&stock.emptytext_add_from_mylist;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveStock.addStock(this.value);"/>
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
@@ -244,7 +250,11 @@
 	  </button>
 	  <label id="stock-playtime" value="999分99秒/999件"/>
 	</hbox>
-	<label value="Stock"/>
+	<!-- stock list -->
+	<vbox flex="1" style="overflow:auto">
+	  <html:table id="stock-table" class="requestview">
+	  </html:table>
+	</vbox>
       </vbox>
       
       <!-- reject tab -->
@@ -260,15 +270,6 @@
       <!-- comment tab -->
       <vbox id="tab-comment">
 	<hbox id="box-caster-comment">
-<!--
-	  <menulist id="textbox-comment-target">
-	    <menupopup>
-	      <menuitem label="運営" value=""/>
-	      <menuitem label="下" value=""/>
-	      <menuitem label="BSP" value=""/>
-	    </menupopup>
-	  </menulist>
--->
 	  <menulist id="textbox-mail" label="" editable="true" value="">
 	    <menupopup>
 	      <menuitem label="" value=""/>
@@ -290,7 +291,7 @@
 	    </menupopup>
 	  </menulist>	  
 	  <textbox id="textbox-comment"
-		   style="padding:2px; margin-left:0;"
+		   style="padding: 2px;"
 		   flex="1"
 		   maxlength="1024"
 		   type="autocomplete"
@@ -298,15 +299,14 @@
 		   enablehistory="true"
 		   showcommentcolumn="true" 
 		   emptytext="&comment.emptytext_input;"
-		   onkeypress=""
+		   onkeypress="NicoLiveComment.postComment(this,event);"
 		   ontextreverted="this.select();"
 		   />
-	  <button label="送信" style="min-width:0;" oncommand=""/>
+	  <button label="送信" style="min-width:0;" oncommand="NicoLiveComment.postComment($('textbox-comment'),null);"/>
 	  <checkbox persist="checked" id="overwrite-hidden-perm" label="&comment.write_upperarea;" tooltiptext="&comment.tooltip_write_upperarea;"/>
 	</hbox>
-	<label value="Comment"/>
 	<scrollbox id="comment-box" orient="vertical" flex="1" style="overflow:auto;">
-	  <html:table id="comment_table" style="width:100%"></html:table>
+	  <html:table id="comment-table" style="width:100%"></html:table>
 	</scrollbox>
 	<splitter collapse="after" state="collapsed"/>
 	<vbox flex="1" style="overflow:auto;">
