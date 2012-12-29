@@ -15,6 +15,9 @@ const Ci = Components.interfaces;
 const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 const HTML_NS= "http://www.w3.org/1999/xhtml";
 
+const MAIN = 0;
+const SUB = 1;
+
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前
 const COMMENT_STATE_MOVIEINFO_BEGIN = 1;   // 動画情報を送信中
 const COMMENT_STATE_MOVIEINFO_DONE = 2;    // 動画情報の送信が終わった

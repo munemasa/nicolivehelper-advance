@@ -182,15 +182,12 @@ var NicoLiveRequest = {
 	    td.appendChild(document.createTextNode("C#"+item.comment_no));
 	}
 
-	// 先頭から何分後にあるかの表示
+	// TODO 先頭から何分後にあるかの表示
 	let t;
 	t = GetTimeString( 0 );
 	td.appendChild(CreateHTMLElement('br'));
 	td.appendChild(document.createTextNode("+"+t));
 	//this._summation_time += NicoLivePreference.nextplay_interval + item.length_ms/1000;
-
-	let n = table.rows.length-1;
-	tr.setAttribute("request-index",n); // 0,1,2,3,...
 
 	td = tr.insertCell(tr.cells.length);
 
@@ -220,31 +217,31 @@ var NicoLiveRequest = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
-	button.setAttribute("oncommand","NicoLiveHelper.playRequest("+n+");");
+	button.setAttribute("oncommand","NicoLiveRequest.playRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-top.png');
-	//button.setAttribute('label','↑');
 	button.setAttribute('class','command-button');
+	button.setAttribute('oncommand',"NicoLiveRequest.goTopRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_up.png');
-	//button.setAttribute('label','↑');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveRequest.moveUpRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_down.png');
-	//button.setAttribute('label','↓');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveRequest.moveDownRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-bottom.png');
-	//button.setAttribute('label','↓');
 	button.setAttribute('class','command-button');
+	button.setAttribute('oncommand',"NicoLiveRequest.goBottomRequest(event);");
 	hbox.appendChild(button);
 
 	let spacer = CreateElement('spacer');
@@ -254,53 +251,10 @@ var NicoLiveRequest = {
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/remove.png');
 	button.setAttribute('label','削除');
+	button.setAttribute("oncommand","NicoLiveRequest.removeRequest(event);");
 	button.setAttribute('class','command-button');
 	hbox.appendChild(button);
 
-	/*
-	let button = CreateElement('button');
-	button.setAttribute("label",'再生');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.playVideo("+n+");");
-	hbox.appendChild(button);
-
-	button = CreateElement('button');
-	button.setAttribute("label",'削除');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.removeRequest("+n+");");
-	hbox.appendChild(button);
-
-	button = CreateElement('button');
-	button.setAttribute("label",'↑↑');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.topToRequest("+n+");");
-	hbox.appendChild(button);
-
-	button = CreateElement('button');
-	button.setAttribute("label",'↑');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.floatRequest("+n+");");
-	hbox.appendChild(button);
-
-	button = CreateElement('button');
-	button.setAttribute("label",'↓');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.sinkRequest("+n+");");
-	hbox.appendChild(button);
-
-	button = CreateElement('button');
-	button.setAttribute("label",'↓↓');
-	button.className = 'commandbtn';
-	button.setAttribute("oncommand","NicoLiveHelper.bottomToRequest("+n+");");
-	hbox.appendChild(button);
-
-	if( item.product_code ){
-	    let text = CreateElement('label');
-	    text.setAttribute("context","popup-search-product-code");
-	    text.appendChild( document.createTextNode("作品コード:"+item.product_code) );
-	    hbox.appendChild( text );
-	}
-	 */
 	vbox.appendChild(hbox);
 	td.appendChild(vbox);
     },
@@ -322,6 +276,126 @@ var NicoLiveRequest = {
 	}
 	$('input-request').value="";
     },
+
+    getIndex: function(event){
+	let tr = FindParentElement(event.target,'html:tr');
+	let n = tr.sectionRowIndex;
+	return n;
+    },
+
+    /**
+     * リクエストを再生する
+     * @param event 再生ボタンのoncommandイベント
+     */
+    playRequest: function(event){
+	let n = this.getIndex(event);
+	debugprint("Play Request: #"+n);
+	NicoLiveHelper.playRequest(n);
+
+	let tr = FindParentElement(event.target,'html:tr');
+	RemoveElement( tr );
+	this.resetRequestIndex();
+    },
+
+    /**
+     * リクエストを削除する
+     * @param event 削除ボタンのoncommandのイベント
+     */
+    removeRequest: function(event){
+	let n = this.getIndex(event);
+	debugprint("Remove Request: #"+n);
+	NicoLiveHelper.removeRequest(n);
+
+	let tr = FindParentElement(event.target,'html:tr');
+	RemoveElement( tr );
+	this.resetRequestIndex();
+    },
+
+    swapRequest: function( n1, n2 ){
+	let rows = evaluateXPath( document, "//html:table[@id='request-table']//html:tr//*[@class='vinfo']");
+	
+	let parent1, parent2;
+	parent1 = rows[n1].parentNode;
+	parent2 = rows[n2].parentNode;
+
+	let tmp1, tmp2;
+	tmp1 = rows[n1].cloneNode(true);
+	tmp2 = rows[n2].cloneNode(true);
+
+	parent1.replaceChild( tmp2, rows[n1] );
+	parent2.replaceChild( tmp1, rows[n2] );
+    },
+
+    moveUpRequest: function(event){
+	let n = this.getIndex(event);
+	if( n>=1 ){
+	    this.swapRequest( n, n-1 );
+	    NicoLiveHelper.swapRequest( n, n-1 );
+	    this.resetRequestIndex();
+	}
+    },
+    moveDownRequest: function(event){
+	let n = this.getIndex(event);
+	if( n<NicoLiveHelper.request_list.length-1 ){
+	    this.swapRequest( n, n+1 );
+	    NicoLiveHelper.swapRequest( n, n+1 );
+	    this.resetRequestIndex();
+	}
+    },
+
+    goTopRequest: function(event){
+	let n = this.getIndex(event);
+	if( n>0 ){
+	    let rows = evaluateXPath( document, "//html:table[@id='request-table']//html:tr");
+	    let tmp = rows[n].cloneNode(true);
+	    RemoveElement( rows[n] );
+	    rows[0].parentNode.insertBefore( tmp, rows[0] );
+	    NicoLiveHelper.goTopRequest(n);
+	    this.resetRequestIndex();
+	}
+    },
+    goBottomRequest: function(event){
+	let n = this.getIndex(event);
+	if( n<NicoLiveHelper.request_list.length-1 ){
+	    let rows = evaluateXPath( document, "//html:table[@id='request-table']//html:tr");
+	    let tmp = rows[n].cloneNode(true);
+	    let parentNode = rows[0].parentNode;
+	    RemoveElement( rows[n] );
+	    parentNode.appendChild( tmp );
+	    NicoLiveHelper.goBottomRequest(n);
+	    this.resetRequestIndex();
+	}
+    },
+
+
+    /**
+     * リクエストの番号表記と背景色を1から付け直す。
+     */
+    resetRequestIndex:function(){
+	let tr = $('request-table').getElementsByTagName('html:tr');	
+	for(let i=0,row;row=tr[i];i++){
+	    let td = row.firstChild;
+	    let item = NicoLiveHelper.request_list[i];
+
+	    row.className = (i+1)%2?"table_oddrow":"table_evenrow";
+	    if( item.is_casterselection ){
+		row.className = "table_casterselection";
+	    }
+
+	    RemoveChildren( td );
+	    td.appendChild( document.createTextNode('#'+(i+1)));
+	    if( item.comment_no ){
+		td.appendChild(CreateHTMLElement('br'));
+		td.appendChild(document.createTextNode("C#"+item.comment_no));
+	    }
+	    // TODO 先頭から何分後にあるかの表示
+	    let t;
+	    t = GetTimeString( 0 );
+	    td.appendChild(CreateHTMLElement('br'));
+	    td.appendChild(document.createTextNode("+"+t));
+	}
+    },
+
 
     /**
      * リクエストの表示を全更新する.

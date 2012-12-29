@@ -24,9 +24,6 @@ var NicoLiveStock = {
 	td = tr.insertCell(tr.cells.length);
 	td.appendChild(document.createTextNode("#"+table.rows.length));
 
-	let n = table.rows.length;
-	tr.setAttribute("stock-index",n); // 1,2,3,...
-
 	td = tr.insertCell(tr.cells.length);
 
 	let vbox;
@@ -54,30 +51,31 @@ var NicoLiveStock = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.playStock(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-top.png');
-	//button.setAttribute('label','↑');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.goTopStock(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_up.png');
-	//button.setAttribute('label','↑');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.moveUpStock(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_down.png');
-	//button.setAttribute('label','↓');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.moveDownStock(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-bottom.png');
-	//button.setAttribute('label','↓');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.goBottomStock(event);");
 	hbox.appendChild(button);
 
 	let spacer = CreateElement('spacer');
@@ -88,6 +86,7 @@ var NicoLiveStock = {
 	button.setAttribute('image','data/remove.png');
 	button.setAttribute('label','削除');
 	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveStock.removeStock(event);");
 	hbox.appendChild(button);
 
 	vbox.appendChild(hbox);
@@ -110,6 +109,138 @@ var NicoLiveStock = {
 	    NicoLiveHelper.addStock(id);
 	}
 	$('input-stock').value="";
+    },
+
+    getIndex: function(event){
+	let tr = FindParentElement(event.target,'html:tr');
+	let n = tr.sectionRowIndex;
+	return n;
+    },
+
+    /**
+     * リクエストを再生する
+     * @param event 再生ボタンのoncommandイベント
+     */
+    playStock: function(event){
+	let n = this.getIndex(event);
+	debugprint("Play Stock: #"+n);
+	NicoLiveHelper.playStock(n);
+
+	let tr = FindParentElement(event.target,'html:tr');
+	tr.className = "table_played";
+	this.resetStockIndex();
+    },
+
+    /**
+     * リクエストを削除する
+     * @param event 削除ボタンのoncommandのイベント
+     */
+    removeStock: function(event){
+	let n = this.getIndex(event);
+	debugprint("Remove Stock: #"+n);
+	NicoLiveHelper.removeStock(n);
+
+	let tr = FindParentElement(event.target,'html:tr');
+	RemoveElement( tr );
+	this.resetStockIndex();
+    },
+
+    swapStock: function( n1, n2 ){
+	let rows = evaluateXPath( document, "//html:table[@id='stock-table']//html:tr//*[@class='vinfo']");
+	
+	let parent1, parent2;
+	parent1 = rows[n1].parentNode;
+	parent2 = rows[n2].parentNode;
+
+	let tmp1, tmp2;
+	tmp1 = rows[n1].cloneNode(true);
+	tmp2 = rows[n2].cloneNode(true);
+
+	parent1.replaceChild( tmp2, rows[n1] );
+	parent2.replaceChild( tmp1, rows[n2] );
+    },
+
+    moveUpStock: function(event){
+	let n = this.getIndex(event);
+	if( n>=1 ){
+	    this.swapStock( n, n-1 );
+	    NicoLiveHelper.swapRequest( n, n-1, NicoLiveHelper.stock_list );
+	    this.resetStockIndex();
+	}
+    },
+    moveDownStock: function(event){
+	let n = this.getIndex(event);
+	if( n<NicoLiveHelper.stock_list.length-1 ){
+	    this.swapStock( n, n+1 );
+	    NicoLiveHelper.swapRequest( n, n+1, NicoLiveHelper.stock_list );
+	    this.resetStockIndex();
+	}
+    },
+
+    goTopStock: function(event){
+	let n = this.getIndex(event);
+	if( n>0 ){
+	    let rows = evaluateXPath( document, "//html:table[@id='stock-table']//html:tr");
+	    let tmp = rows[n].cloneNode(true);
+	    RemoveElement( rows[n] );
+	    rows[0].parentNode.insertBefore( tmp, rows[0] );
+	    NicoLiveHelper.goTopRequest( n, NicoLiveHelper.stock_list );
+	    this.resetStockIndex();
+	}
+    },
+    goBottomStock: function(event){
+	let n = this.getIndex(event);
+	if( n<NicoLiveHelper.stock_list.length-1 ){
+	    let rows = evaluateXPath( document, "//html:table[@id='stock-table']//html:tr");
+	    let tmp = rows[n].cloneNode(true);
+	    let parentNode = rows[0].parentNode;
+	    RemoveElement( rows[n] );
+	    parentNode.appendChild( tmp );
+	    NicoLiveHelper.goBottomRequest( n, NicoLiveHelper.stock_list );
+	    this.resetStockIndex();
+	}
+    },
+
+
+    /**
+     * リクエストの番号表記と背景色を1から付け直す。
+     */
+    resetStockIndex: function(){
+	let tr = $('stock-table').getElementsByTagName('html:tr');	
+	for(let i=0,row;row=tr[i];i++){
+	    let td = row.firstChild;
+	    let item = NicoLiveHelper.stock_list[i];
+
+	    row.className = (i+1)%2?"table_oddrow":"table_evenrow";
+	    if( item.is_played ){
+		row.className = "table_played";
+	    }else if( item.is_casterselection ){
+		row.className = "table_casterselection";
+	    }
+
+	    RemoveChildren( td );
+	    td.appendChild( document.createTextNode('#'+(i+1)));
+	    // TODO 先頭から何分後にあるかの表示 ストックでは不要かな
+	    /*
+	    let t;
+	    t = GetTimeString( 0 );
+	    td.appendChild(CreateHTMLElement('br'));
+	    td.appendChild(document.createTextNode("+"+t));
+	     */
+	}
+    },
+
+    /**
+     * リクエストの表示を全更新する.
+     */
+    updateView: function( requestqueue ){
+	let table = $('stock-table');
+	if(!table){ return; }
+
+	clearTable(table);
+	for(let i=0,item;item=requestqueue[i];i++){
+	    this._addStockView( table, item );
+	}
     },
 
     init:function(){

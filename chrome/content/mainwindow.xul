@@ -29,9 +29,12 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
 
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/commandmenu.js" />
+
   <keyset>
     <!-- CTRL+W: Close this window -->
     <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
+    <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
   </keyset>
 
   <toolbox id="global-toolbox">
@@ -76,8 +79,7 @@
 	  <menupopup>
 <!--	    <menuitem label="test" oncommand="test();"/> -->
 	    
-	    <menuitem label="&toolbar.connect;"
-		      oncommand="NicoLiveWindow.connectToBroadcasting();"/>
+	    <menuitem label="&toolbar.connect;" oncommand="CommandMenu.openBroadcasting();"/>
 	    <menuitem label="放送開始する" tooltiptext="&toolbar.tooltip_beginbroadcasting;"
 		      oncommand="NicoLiveHelper.startBroadcasting();"/>
 	    <menuseparator/>

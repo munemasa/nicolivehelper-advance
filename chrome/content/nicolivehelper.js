@@ -5,6 +5,7 @@
 //Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
 //Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
+
 var NicoLiveHelper = {
     // getplayerstatusの情報
     liveinfo: {},      // LiveInfo
@@ -47,15 +48,65 @@ var NicoLiveHelper = {
      */
     play: function( request ){
 	let str;
+	let is_sub = $('do-subdisplay').checked;
 	if( request.video_id.indexOf("im")==0 ){
-	    str = "/play " + request.video_id + " " + ($('do-subdisplay').checked?"sub":"main");
+	    str = "/play " + request.video_id + " " + (is_sub?"sub":"main");
 	}else{
 	    str = "/play" + ($('menuid-soundonly').checked?"sound ":" ")+ request.video_id;
-	    if($('do-subdisplay').checked){
+	    if( is_sub ){
 		str += " sub"; // サブ画面で再生する.
 	    }
 	}
 	this.postCasterComment( str, "" ); // 再生
+
+	let i = is_sub?SUB:MAIN;
+	this.play_target = i;
+	// 再生時間は /play受信時に再設定するので、ここでは仮設定扱い
+	request.is_played = true;
+	this.play_status[ i ].videoinfo = request;
+	this.play_status[ i ].play_begin = GetCurrentTime();
+	this.play_status[ i ].play_end = this.play_status[i].play_begin + request.length_ms/1000 +1;
+    },
+
+    /**
+     * n1,n2のリクエストを入れ替える
+     * @param n1 0,1,2,...
+     * @param n2 0,1,2,...
+     * @param q 入れ替えするリスト(optional) 指定しなければリクエストリストを対象とする
+     */
+    swapRequest: function( n1, n2, q ){
+	if( !q ) q = this.request_list;
+	let tmp = q[n1];
+	q[n1] = q[n2];
+	q[n2] = tmp;
+    },
+
+    /**
+     * リクエストを一番上に移動する.
+     * @param n 移動するリクエストのindex
+     * @param q 入れ替えするリスト(optional) 指定しなければリクエストリストを対象とする
+     */
+    goTopRequest: function( n, q ){
+	if( !q ) q = this.request_list;
+
+	let t;
+	t = q.splice(n,1);
+	if(t){
+	    q.unshift(t[0]);
+	}
+    },
+    /**
+     * リクエストを一番下に移動する.
+     * @param n 移動するリクエストのindex
+     * @param q 入れ替えするリスト(optional) 指定しなければリクエストリストを対象とする
+     */
+    goBottomRequest: function( n, q ){
+	if( !q ) q = this.request_list;
+	let t;
+	t = q.splice(n,1);
+	if(t){
+	    q.push(t[0]);
+	}
     },
 
     /**
@@ -64,15 +115,20 @@ var NicoLiveHelper = {
      */
     removeRequest: function(n){
 	let removeditem = this.request_list.splice(n,1);
-
-	// TODO 表示の更新
-	NicoLiveRequest.updateView(this.request_list);
-
+	return removeditem[0];
+    },
+    /**
+     * ストックを1つ削除して、それを返す
+     * @param n 0,1,2,...
+     */
+    removeStock: function(n){
+	let removeditem = this.stock_list.splice(n,1);
 	return removeditem[0];
     },
 
     /**
-     * リクエストを再生する
+     * リクエストを再生する.
+     * 再生すると、そのリクエストは削除される。
      * @param n リクエスト先頭から0,1,2,3,....
      */
     playRequest: function(n){
@@ -82,6 +138,11 @@ var NicoLiveHelper = {
 	if( !request ) return;
 
 	this.play( request );
+    },
+    playStock: function(n){
+	if( this.isOffline() || !this.iscaster ) return;
+	let item = this.stock_list[n];
+	this.play( item );
     },
 
     /**
@@ -611,7 +672,7 @@ var NicoLiveHelper = {
                 videoinfo.request_time = GetCurrentTime();
                 videoinfo.is_self_request = request.is_self_request;
                 videoinfo.product_code = request.product_code;
-                if (videoinfo.comment_no == 0) {
+                if ( videoinfo.comment_no==0 ) {
                     videoinfo.is_casterselection = true;
                 }
 
@@ -620,6 +681,7 @@ var NicoLiveHelper = {
                         NicoLiveHelper.request_list.push(videoinfo);
                         NicoLiveRequest.addRequestView(videoinfo); // 表示追加
                     } else {
+			videoinfo.is_casterselection = true;
                         NicoLiveHelper.stock_list.push(videoinfo);
                         NicoLiveStock.addStockView(videoinfo);
                     }
@@ -741,13 +803,19 @@ var NicoLiveHelper = {
     /** コントロールパネルのサウンドオンリーフラグの更新処理
      * @param text コメントテキスト
      */
-    processSoundOnlyState:function(text){
+    processPlayState:function(text){
 	let main = $('main-state-soundonly');
 	let sub = $('sub-state-soundonly');
 	if( text.match(/^\/play rtmp/) ){
 	    // カメラ映像
 	    main.checked = false;
 	    $('main-video-title').value = "";
+
+	    // カメラのときは動画情報は何もなしで
+	    this.play_status[MAIN] = new Object();
+	    this.play_status[MAIN].play_begin = 0;
+	    this.play_status[MAIN].play_end = 0;
+	    this.play_target = MAIN;
 	    return;
 	}
 	if( text.match(/^\/stop\s*(sub)*/) ){
@@ -849,7 +917,7 @@ var NicoLiveHelper = {
 	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
 
 	    // 再生ステータスを更新
-	    this.processSoundOnlyState(chat.text);
+	    this.processPlayState(chat.text);
 	    break;
 
 	default:
@@ -1166,6 +1234,9 @@ var NicoLiveHelper = {
 
 	this.request_q = new Array();
 	this.stock_q = new Array();
+
+	this.play_status[MAIN] = new Object();
+	this.play_status[SUB] = new Object();
     },
 
     /**
