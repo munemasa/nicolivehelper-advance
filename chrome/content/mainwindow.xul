@@ -27,8 +27,12 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehistory.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
+
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivewindow.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivemylist.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
 
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/commandmenu.js" />
 
@@ -131,7 +135,7 @@
 	<button label="&general.camera;" tooltiptext="/play" oncommand="NicoLiveHelper.postCasterComment('/play');"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/>
       </hbox>
-      <label id="main-video-title" class="video-title" crop="end" value="初音ミクオリジナ曲　「魔法少女ラジカルペイント（LONG VERSION）」"/>
+      <label id="main-video-title" class="video-title" crop="end" value=""/>
     </groupbox>
     <hbox align="center">
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
@@ -142,7 +146,7 @@
 	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand="NicoLiveHelper.playSoundOnly(1,this.checked);"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop sub');" tooltiptext="/stop sub"/>
       </hbox>
-      <label id="sub-video-title" class="video-title" crop="end" value="初音ミクオリジナ曲　「魔法少女ラジカルペイント（LONG VERSION）」"/>
+      <label id="sub-video-title" class="video-title" crop="end" value=""/>
     </groupbox>
   </hbox>
 
@@ -268,7 +272,26 @@
 
       <!-- playlist tab -->
       <vbox id="tab-playlist">
-	<label value="Playlist"/>
+	<hbox>
+	  <button label="&button.clearall;" tooltiptext="&playlist.tooltip_clearall;"
+		  oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayList();"/>
+	  <button label="&playlist.recover_text;" tooltiptext="&playlist.tooltip_recover_text;"
+		  oncommand="NicoLiveHistory.restorePlaylistText();"/>
+	  <spacer flex="1"/>
+	  <menulist id="id-playlist-style" persist="value" oncommand="$('playlist-deck').selectedIndex=this.value;">
+	    <menupopup>
+	      <menuitem label="&playlist.bydetail;" value="0"/>
+	      <menuitem label="&playlist.bytext;" value="1"/>
+	    </menupopup>
+	  </menulist>
+	</hbox>
+	<deck id="playlist-deck" persist="selectedIndex" flex="1">
+	  <vbox flex="1" style="overflow:auto">
+	    <html:table id="playlist-table" class="historyview">
+	    </html:table>
+	  </vbox>
+	  <textbox id="played-list-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
+	</deck>
       </vbox>
 
       <!-- comment tab -->
@@ -393,19 +416,38 @@
 
   <!-- statusbar -->
   <statusbar id="statusbar">
-    <stack id="statusbar-currentmusic" flex="1" context="popup-add-mylist" onclick="">
+    <stack id="statusbar-currentmusic" context="" onclick="">
       <progressmeter id="statusbar-music-progressmeter" mode="determined" value="0" flex="1" />
       <statusbarpanel id="statusbar-music-name" label="" flex="1" crop="start"/>
     </stack>
     <spacer flex="1"/>
     <statusbarpanel id="statusbar-n-of-listeners" label="&live.watcher;"/>
-    <statusbarpanel id="statusbar-live-progress" label="999:99" onclick=""/>
+    <statusbarpanel id="statusbar-live-progress" label="0:00" onclick=""/>
     <statusbarpanel id="statusbar-autonext" context="popup-nicolive-alert"
 		    class="statusbarpanel-iconic" src="data/next-mono.png"
 		    onclick=""/>
     <statusbarpanel id="status-bar-browser"
-		    class="statusbarpanel-iconic" src="data/safari.png"/>
+		    class="statusbarpanel-iconic" src="data/firefox.png"
+		    context="popup-select-browser"
+		    />
   </statusbar>
+
+  <popupset>
+
+    <menupopup id="popup-select-browser" oncommand="NicoLiveWindow.changeBrowser();">
+      <menuitem name="use-browser" id="use-firefox"
+		persist="checked" label="Firefox" type="radio" autocheck="true" tooltiptext=""/>
+      <menuitem name="use-browser" id="use-google-chrome"
+		persist="checked" label="Google Chrome" type="radio" autocheck="true" tooltiptext="Win/Mac/LinuxのGoogle Chromeのクッキーを読み込みます。"/>
+      <menuitem name="use-browser" id="use-protected-mode-ie"
+		persist="checked" label="Internet Explorer(保護モード)" type="radio" autocheck="true"/>
+      <menuitem name="use-browser" id="use-standard-mode-ie"
+		persist="checked" label="Internet Explorer(標準モード)" type="radio" autocheck="true"/>
+      <menuitem name="use-browser" id="use-mac-safari"
+		persist="checked" label="Safari(Mac OS X)" type="radio" autocheck="true"/>
+    </menupopup>
+
+  </popupset>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="string-bundle" src="chrome://nicolivehelper/locale/nicolivehelper.properties"/>

@@ -32,7 +32,7 @@ var NicoLiveHelper = {
     // 各種リスト
     request_list: [],   // リクエスト
     stock_list: [],     // ストック
-    history_list: [],   // 再生履歴
+    playlist_list: [],   // 再生履歴
     reject_list: [],    // リジェクト
 
     // リクエスト、ストックを順番通りに処理するためのキュー
@@ -53,6 +53,56 @@ var NicoLiveHelper = {
     setPlayTarget: function( is_sub ){
 	debugprint( is_sub?"Play Subscreen":"Play Mainscreen");
 	this.play_target = is_sub?SUB:MAIN;
+
+	if( is_sub ){
+	    $('cp-mainscreen-label').style.fontWeight = 'normal';
+	    $('cp-subscreen-label').style.fontWeight = 'bold';
+	}else{
+	    $('cp-mainscreen-label').style.fontWeight = 'bold';
+	    $('cp-subscreen-label').style.fontWeight = 'normal';
+	}
+    },
+
+    /**
+     * プレイリストに追加する(テキストのみ).
+     */
+    addPlaylistText:function(item){
+	let elem = $('played-list-textbox');
+	if( GetCurrentTime()-this.liveinfo.start_time < 180 ){
+	    // 放送開始して最初の再生らしきときには番組名と番組IDを付加.
+	    if( !this._first_play ){
+		elem.value += "\n"+this.liveinfo.title+" "
+		    + this.liveinfo.request_id
+		    + " ("+GetFormattedDateString("%Y/%m/%d %H:%M",this.liveinfo.start_time*1000)+"-)\n";
+		this._first_play = true;
+	    }
+	}
+	elem.value += item.video_id+" "+item.title+"\n";
+    },
+
+    /**
+     * プレイリストに追加する.
+     */
+    addPlaylist: function( item, notext ){
+	// プレイリストに追加する.
+	let elem = $('played-list-textbox');
+	let now = GetCurrentTime();
+	if( now-this.liveinfo.start_time < 180 ){
+	    // 放送開始して最初の再生らしきときには番組名と番組IDを付加.
+	    if( !this._first_play ){
+		if( !notext ){
+		    elem.value += "\n"+this.liveinfo.title+" "+this.liveinfo.request_id+" ("+GetFormattedDateString("%Y/%m/%d %H:%M",this.liveinfo.start_time*1000)+"-)\n";
+		    this._first_play = true;
+		}
+	    }
+	}
+	item.playedtime = now;
+	this.playlist_list.push(item); // 再生済みリストに登録.
+	this.playlist_list["_"+item.video_id] = now;
+	if( !notext ){
+	    elem.value += item.video_id+" "+item.title+"\n";
+	}
+	NicoLiveHistory.addPlayList(item);
     },
 
     /**
@@ -70,6 +120,8 @@ var NicoLiveHelper = {
 	    }
 	}
 	this.postCasterComment( str, "" ); // 再生
+
+	this.addPlaylist( request, true ); // notext=true
 
 	let i = is_sub?SUB:MAIN;
 	this.play_target = i;
@@ -156,13 +208,22 @@ var NicoLiveHelper = {
 	let item = this.stock_list[n];
 	this.play( item );
     },
+    playHistory: function(n){
+	if( this.isOffline() || !this.iscaster ) return;
+	let item = this.playlist_list[n];
+	this.play( item );
+    },
 
     /**
      * 現在再生している動画情報を返す
      */
-    getCurrentVideoInfo: function(){
+    getCurrentVideoInfo: function(n){
 	try{
-	    return this.play_status[ this.play_target ].videoinfo;
+	    if( n==MAIN || n==SUB ){
+		return this.play_status[ n ].videoinfo;
+	    }else{
+		return this.play_status[ this.play_target ].videoinfo;
+	    }
 	} catch (x) {
 	    return null;
 	}
@@ -830,7 +891,7 @@ var NicoLiveHelper = {
 	NicoLiveStock.updateView( this.stock_list );
     },
 
-    /** コントロールパネルのサウンドオンリーフラグの更新処理
+    /** コントロールパネルの再生状態の更新処理
      * @param text コメントテキスト
      */
     processPlayState:function(text){
@@ -883,10 +944,12 @@ var NicoLiveHelper = {
 		let subtitle = $('sub-video-title');
 		subtitle.value = "";
 		subtitle.setAttribute('tooltiptext',"");
+		this.play_status[ SUB ].videoinfo = null;
 	    }else{
 		let maintitle = $('main-video-title');
 		maintitle.value = "";
 		maintitle.setAttribute('tooltiptext',"");
+		this.play_status[ MAIN ].videoinfo = null;
 	    }
 	    return;
 	}
@@ -918,6 +981,88 @@ var NicoLiveHelper = {
     },
 
     /**
+     * メモリ上から動画情報を探して返す.
+     * @param video_id 動画ID
+     */
+    findVideoInfoFromMemory: function(video_id){
+	let i,item;
+	for(i=0; item=this.request_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	for(i=0; item=this.stock_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	for(i=0; item=this.playlist_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	return null;
+    },
+
+    /**
+     * 動画情報を送信する.
+     */
+    sendVideoInfo: function(){
+	
+    },
+
+    /**
+     * 現在の再生動画の情報を取得して再生状態を設定する.
+     * あらかじめtargetのplay_beginをセットしておくこと.
+     * @param video_id 動画ID
+     * @param target MAIN or SUB
+     * @param retry リトライフラグ
+     */
+    setCurrentPlayVideo: function(video_id, target, retry){
+        let f = function (xml, req) {
+            if (req.status != 200) {
+                if (retry) {
+                    // リトライ失敗
+                    return;
+                }
+		NicoLiveHelper.setCurrentPlayVideo( video_id, target, true ); // retry=true
+                return;
+            }
+
+            let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
+            if (videoinfo.error) {
+                debugprint(videoinfo.error);
+            } else {
+		NicoLiveHelper.play_status[ target ].videoinfo = videoinfo;
+		NicoLiveHelper.play_status[ target ].play_end =
+		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
+		NicoLiveHelper.addPlaylist( videoinfo );
+            }
+        };
+        NicoApi.getthumbinfo(video_id, f);
+    },
+
+    /**
+     * 運営コメントを処理する.
+     */
+    processCastersComment: function(chat){
+	if( chat.text.match(/^\/play(sound)*\s*smile:(((sm|nm|ze|so)\d+)|\d+)\s*(main|sub)\s*\"(.*)\"$/) ) {
+	    let video_id = RegExp.$2;
+	    let target = RegExp.$5;
+	    let title = RegExp.$6;
+	    target = target=="main"?MAIN:SUB;
+	    let current = this.getCurrentVideoInfo( target );
+	    if( current && (current.video_id==video_id) ){
+		// 再生ボタンから再生された動画
+		this.play_status[target].play_begin = GetCurrentTime();
+		this.play_status[target].play_end = this.play_status[target].play_begin + current.length_ms/1000 + 1;
+		this.addPlaylistText( current );
+		this.sendVideoInfo();
+	    }else{
+		this.play_status[ target ].play_begin = GetCurrentTime();
+		this.setCurrentPlayVideo(video_id, target);
+	    }
+	}
+	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
+	    
+	}
+    },
+
+    /**
      * 視聴者コメントを処理する.
      */
     processListenersComment: function(chat){
@@ -936,6 +1081,7 @@ var NicoLiveHelper = {
 	}
 	if( chat.text.match(/(\d{10})/) ){
 	    let video_id = RegExp.$1;
+	    if( video_id=="8888888888" ) return;
 	    let is_self_request = chat.text.match(/[^他](貼|張)/);
 	    let code = "";
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
@@ -956,6 +1102,7 @@ var NicoLiveHelper = {
 
 	    // 再生ステータスを更新
 	    this.processPlayState(chat.text);
+	    this.processCastersComment(chat);
 	    break;
 
 	default:
@@ -1125,6 +1272,8 @@ var NicoLiveHelper = {
 	    lines = -100;
 	}
 
+	this.initLiveUpdateTimers();
+
 	if( !this.iscaster ){
 	    let tmp = this.connectCommentServer(
 		this.serverinfo.addr,
@@ -1149,7 +1298,7 @@ var NicoLiveHelper = {
 		}else{
 		    // ロスタイム突入
 		}
-		// exclude(排他)は放送開始しているかどうかのフラグ
+		// TODO exclude(排他)は放送開始しているかどうかのフラグ
 		//NicoLiveHelper._exclude = parseInt(publishstatus.getElementsByTagName('exclude')[0].textContent);
 		//debugprint('exclude='+NicoLiveHelper._exclude);
 		debugprint('token='+NicoLiveHelper.post_token);
@@ -1167,11 +1316,14 @@ var NicoLiveHelper = {
 	    }
 	};
 	NicoApi.getpublishstatus( request_id, f );
-
-	this.initLiveUpdateTimers();
     },
 
     initLiveUpdateTimers: function(){
+	debugprint("initialize timers...");
+	clearInterval( this._update_timer );
+	clearInterval( this._keep_timer );
+	clearInterval( this._heartbeat_timer );
+
 	this._update_timer = setInterval( function(){
 					      NicoLiveHelper.update();
 					  }, 1000 );
@@ -1183,6 +1335,9 @@ var NicoLiveHelper = {
 					     }, 1*60*1000);
     },
 
+    /**
+     * getplayerstatus APIのXMLをJavascriptオブジェクトに展開する.
+     */
     extractGetPlayerStatus:function(xml){
 	let live_info = new LiveInfo();
 	try{
@@ -1279,6 +1434,50 @@ var NicoLiveHelper = {
 	    }
 	    NicoLiveHelper.extractGetPlayerStatus(xml);
 
+	    // 現在再生している動画を調べる.
+	    let contents = xml.getElementsByTagName('contents');
+	    for(let i=0,currentplay;currentplay=contents[i];i++){
+		let id = currentplay.getAttribute('id');
+		let title = currentplay.getAttribute('title') || "";
+		let b = currentplay.getAttribute('disableVideo')=='1'?true:false;
+		if( id=="main" ){
+		    $('main-state-soundonly').checked = b;
+		    $('main-video-title').value = title;
+		    $('main-video-title').setAttribute('tooltiptext', title);
+		}
+		if( id=="sub" ){
+		    $('sub-state-soundonly').checked = b;
+		    $('sub-video-title').value = title;
+		    $('sub-video-title').setAttribute('tooltiptext', title);
+		}
+		let target = id=="main"?MAIN:SUB;
+
+		let st = currentplay.getAttribute('start_time'); // 再生開始時刻.
+		let du = currentplay.getAttribute('duration');   // 動画の長さ.
+		st = st && parseInt(st) || 0;
+		du = du && parseInt(du) || 0;
+		if(du){
+		    // 動画の長さが設定されているときは何か再生中.
+
+		    // 再生中の動画情報をセット.
+		    let tmp = currentplay.textContent.match(/(sm|nm|ze|so)\d+|\d{10}/);
+		    if(tmp){
+			NicoLiveHelper.play_status[target].play_begin = st;
+			NicoLiveHelper.play_status[target].play_end = st+du+1;
+			NicoLiveHelper.setCurrentPlayVideo(tmp[0],target);
+		    }
+
+		    if( NicoLiveHelper.iscaster ){
+			// TODO 生主なら次曲再生できるようにセット.
+			let remain;
+			remain = (st+du)-GetCurrentTime(); // second.
+			remain *= 1000; // convert to ms.
+			remain = Math.floor(remain);
+			//NicoLiveHelper.setupPlayNextMusic(remain);
+		    }
+		}
+	    }
+
 	    let serverdate = evaluateXPath(xml,"/getplayerstatus/@time");
 	    if(serverdate.length){
 		serverdate = serverdate[0].textContent;
@@ -1351,8 +1550,15 @@ var NicoLiveHelper = {
 
 	let meter = $('statusbar-music-progressmeter');
 	let currentvideo = this.getCurrentVideoInfo();
+	let liveprogressmeter = $('statusbar-live-progress');
 
+	liveprogressmeter.label = GetTimeString(liveprogress);
+
+	let videoname = $('statusbar-music-name');
 	if( !currentvideo ){
+	    videoname.label = '';
+	    meter.value = 0;
+	    $('statusbar-currentmusic').setAttribute("tooltiptext",'');
 	    return;
 	}
 
@@ -1363,10 +1569,21 @@ var NicoLiveHelper = {
 	let p = parseInt( videoprogress / videolength * 100 );
 	meter.value = p;
 
-	let videoname = $('statusbar-music-name');
 	let videoremain = videolength - videoprogress;
 	if( videoremain<0 ) videoremain = 0;
 	videoname.label = currentvideo.title + '('+'-'+GetTimeString(videoremain)+'/'+currentvideo.length+')';
+
+	// チップヘルプでの動画情報表示
+	let str;
+	str = "投稿日/"+GetDateString(this.musicinfo.first_retrieve*1000)
+	    + " 再生数/"+currentvideo.view_counter
+	    + " コメント/"+currentvideo.comment_num
+	    + " マイリスト/"+currentvideo.mylist_counter+"\n"
+	    + "タグ/"+currentvideo.tags['jp'].join(' ');
+	if(currentvideo.mylist!=null){
+	    str = "マイリスト登録済み:"+currentvideo.mylist + "\n"+str;
+	}
+	$('statusbar-currentmusic').setAttribute("tooltiptext",str);
 
 	// プログレスバーの長さ制限
 	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
@@ -1379,6 +1596,43 @@ var NicoLiveHelper = {
      */
     update: function(){
 	this.updateStatusBar();
+    },
+
+    /**
+     * user_sessionクッキーを読み込む.
+     */
+    setupCookie:function(){
+	this._use_other_browser = false;
+	if( !NicoLiveCookie.getCookie("http://www.nicovideo.jp/") ){
+	    // getCookieで取れなければサードパーティクッキーの保存にチェックが入ってないので.
+	    SetUserSessionCookie( NicoLiveCookie.getCookie2("http://www.nicovideo.jp/","user_session") );
+	}
+	if( $('use-standard-mode-ie').hasAttribute('checked') ){
+	    SetUserSessionCookie( NicoLiveCookie.getStdIECookie("http://www.nicovideo.jp/","user_session") );
+	    debugprint("use Standard mode IE");
+	    this._use_other_browser = true;
+	}
+	if( $('use-protected-mode-ie').hasAttribute('checked') ){
+	    SetUserSessionCookie( NicoLiveCookie.getIECookie("http://www.nicovideo.jp/","user_session") );
+	    debugprint("use Protected mode IE");
+	    this._use_other_browser = true;
+	}
+	if( $('use-google-chrome').hasAttribute('checked') ){
+	    SetUserSessionCookie( NicoLiveCookie.getChromeCookie() );
+	    debugprint("use Google Chrome");
+	    this._use_other_browser = true;
+	}
+	if( $('use-mac-safari').hasAttribute('checked') ){
+	    SetUserSessionCookie( NicoLiveCookie.getMacSafariCookie() );
+	    debugprint("use Mac Safari");
+	    this._use_other_browser = true;
+	}
+	if( LibUserSessionCookie ){
+	    debugprint("user_session=" + LibUserSessionCookie );
+	}
+	if( !RUN_ON_FIREFOX && this._use_other_browser ){
+	    NicoLiveCookie.setCookie( LibUserSessionCookie );
+	}
     },
 
     /**
@@ -1398,6 +1652,8 @@ var NicoLiveHelper = {
 	this.play_status[SUB] = new Object();
 
 	this.connectioninfo = new Array();
+
+	this._first_play = false;
     },
 
     /**
@@ -1411,6 +1667,10 @@ var NicoLiveHelper = {
 	SetUserAgent("NicoLiveHelperAdvance/"+GetAddonVersion());
 
 	this.initVars();
+	this.setPlayTarget( $('do-subdisplay').checked );
+	this.setupCookie();
+
+	// 以下、生放送への接続処理など
 
 	let request_id, title, iscaster, community_id;
 	try{

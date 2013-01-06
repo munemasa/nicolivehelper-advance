@@ -63,6 +63,36 @@ var NicoLiveWindow = {
 	$('iframe-thumbnail').width = 312;
 	$('iframe-thumbnail').height = 0;
 	$('iframe-thumbnail').style.opacity = 0;
-    }
+    },
 
+    changeBrowser: function(){
+	this.initBrowserIcon();
+	ShowNotice('ブラウザ設定が変更されました。ウィンドウを開き直してください。',true);
+    },
+
+    initBrowserIcon: function(){
+	let panel = $('status-bar-browser');
+	if( $('use-firefox').hasAttribute('checked') ){
+	    panel.setAttribute('src','data/firefox.png');
+	}
+	if( $('use-google-chrome').hasAttribute('checked') ){
+	    panel.setAttribute('src','data/chrome.png');
+	}
+	if( $('use-protected-mode-ie').hasAttribute('checked') ){
+	    panel.setAttribute('src','data/ie.png');
+	}
+	if( $('use-standard-mode-ie').hasAttribute('checked') ){
+	    panel.setAttribute('src','data/ie.png');
+	}
+	if( $('use-mac-safari').hasAttribute('checked') ){
+	    panel.setAttribute('src','data/safari.png');
+	}
+    },
+
+    init: function(){
+	this.initBrowserIcon();
+    }
 };
+
+
+window.addEventListener("load", function(e){ NicoLiveWindow.init(); }, false);
