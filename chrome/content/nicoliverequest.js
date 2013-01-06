@@ -30,8 +30,8 @@ var NicoLiveRequest = {
 	img.className = "video-thumbnail";
 
 	// マウスオーバーのサムネ表示
-	a.setAttribute("onmouseover","NicoLiveComment.showThumbnail(event,'"+item.video_id+"');");
-	a.setAttribute("onmouseout","NicoLiveComment.hideThumbnail();");
+	a.setAttribute("onmouseover","NicoLiveWindow.showThumbnail(event,'"+item.video_id+"');");
+	a.setAttribute("onmouseout","NicoLiveWindow.hideThumbnail();");
 	a.appendChild(img);
 
 	let label;
@@ -82,8 +82,8 @@ var NicoLiveRequest = {
 		let a = CreateHTMLElement('a');
 		let vid = s;
 		a.setAttribute("onclick","NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/"+vid+"');");
-		a.setAttribute("onmouseover","NicoLiveComment.showThumbnail(event,'"+vid+"');");
-		a.setAttribute("onmouseout","NicoLiveComment.hideThumbnail();");
+		a.setAttribute("onmouseover","NicoLiveWindow.showThumbnail(event,'"+vid+"');");
+		a.setAttribute("onmouseout","NicoLiveWindow.hideThumbnail();");
 		a.appendChild(document.createTextNode(s));
 		div2.appendChild(a);
 	    }else{
@@ -146,9 +146,6 @@ var NicoLiveRequest = {
 	img.style.marginRight = '0.5em';
 	img.className = "video-thumbnail";
 
-	// マウスオーバーのサムネ表示
-	a.setAttribute("onmouseover","NicoLiveComment.showThumbnail(event,'"+item.video_id+"');");
-	a.setAttribute("onmouseout","NicoLiveComment.hideThumbnail();");
 	a.appendChild(img);
 
 	let label;

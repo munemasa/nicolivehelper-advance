@@ -44,10 +44,16 @@ var ServerInfo = function( addr, port, thread ){
     this.addr = addr;
     this.port = port;
     this.thread = thread;
+    this.tid = new Array();
 };
 
 var TwitterInfo = function(){
     this.live_enabled = 0;
     this.vip_mode_count = 10000;
     this.live_api_url = "http://watch.live.nicovideo.jp/api/";
+};
+
+var ConnectionInfo = function(){
+    this.coStream = null;
+    this.ciStream = null;
 };

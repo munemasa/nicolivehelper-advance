@@ -28,6 +28,7 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivewindow.js" />
 
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/commandmenu.js" />
 
@@ -73,7 +74,8 @@
 		       style="padding-left:5px; padding-right:5px;"/>
 	<!-- play in subscreen -->
 	<toolbarbutton persist="checked" label="&play.subdisplay;"
-		       id="do-subdisplay" autoCheck="true" type="checkbox" tooltiptext="&play.tooltip_subdisplay;"/>
+		       id="do-subdisplay" autoCheck="true" type="checkbox" tooltiptext="&play.tooltip_subdisplay;"
+		       oncommand="NicoLiveHelper.setPlayTarget(this.checked);"/>
 
 	<toolbarbutton label="&toolbar.command;" type="menu">
 	  <menupopup>
@@ -187,9 +189,9 @@
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
-			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearRequest();"/>
+			oncommand="NicoLiveHelper.clearAllRequest();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayedRequest();"/>
+			oncommand="TODO"/>
 	    </menupopup>
 	  </button>
 	  <label id="total-playtime" value="999分99秒/999件"/>
@@ -245,9 +247,9 @@
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
-			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearStock();"/>
+			oncommand="NicoLiveHelper.clearAllStock();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayedStock();"/>
+			oncommand="TODO"/>
 	    </menupopup>
 	  </button>
 	  <label id="stock-playtime" value="999分99秒/999件"/>
@@ -385,11 +387,13 @@
 
     <notificationbox id="noticewin">
     </notificationbox>
+
+    <html:iframe id="iframe-thumbnail" width="312" height="0" src="about:blank" scrolling="no" style="display:none; opacity:0; border:solid 1px #CCC;float:left;position:fixed;bottom:30px;left:25px;" frameborder="0"></html:iframe>
   </tabbox>
 
   <!-- statusbar -->
   <statusbar id="statusbar">
-    <stack id="statusbar-currentmusic" context="popup-add-mylist" onclick="">
+    <stack id="statusbar-currentmusic" flex="1" context="popup-add-mylist" onclick="">
       <progressmeter id="statusbar-music-progressmeter" mode="determined" value="0" flex="1" />
       <statusbarpanel id="statusbar-music-name" label="" flex="1" crop="start"/>
     </stack>

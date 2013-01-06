@@ -15,6 +15,9 @@ var NicoLiveHelper = {
 
     iscaster: false,    // 主かどうか
     post_token: "",     // 主コメ用のトークン
+
+    connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+
     ticket: "",         // 視聴者コメント用のチケット
     postkey: "",        // 視聴者コメント用のキー
     last_res: 0,        // 最後のコメント番号
@@ -41,6 +44,15 @@ var NicoLiveHelper = {
      */
     isOffline: function(){
 	return this.liveinfo.request_id=='lv0';
+    },
+
+    /**
+     * メインとサブ画面のどちらで再生するか指定する.
+     * @param is_sub サブならtrueを渡す
+     */
+    setPlayTarget: function( is_sub ){
+	debugprint( is_sub?"Play Subscreen":"Play Mainscreen");
+	this.play_target = is_sub?SUB:MAIN;
     },
 
     /**
@@ -152,7 +164,7 @@ var NicoLiveHelper = {
 	try{
 	    return this.play_status[ this.play_target ].videoinfo;
 	} catch (x) {
-	    return {};
+	    return null;
 	}
     },
 
@@ -800,49 +812,31 @@ var NicoLiveHelper = {
 	}
     },
 
+    /**
+     * リクエストを全削除する.
+     * 画面の更新あり
+     */
+    clearAllRequest: function(){
+	this.request_list = new Array();
+	NicoLiveRequest.updateView( this.request_list );
+    },
+
+    /**
+     * ストックを全削除する.
+     * 画面の更新あり
+     */
+    clearAllStock: function(){
+	this.stock_list = new Array();
+	NicoLiveStock.updateView( this.stock_list );
+    },
+
     /** コントロールパネルのサウンドオンリーフラグの更新処理
      * @param text コメントテキスト
      */
     processPlayState:function(text){
 	let main = $('main-state-soundonly');
 	let sub = $('sub-state-soundonly');
-	if( text.match(/^\/play rtmp/) ){
-	    // カメラ映像
-	    main.checked = false;
-	    $('main-video-title').value = "";
 
-	    // カメラのときは動画情報は何もなしで
-	    this.play_status[MAIN] = new Object();
-	    this.play_status[MAIN].play_begin = 0;
-	    this.play_status[MAIN].play_end = 0;
-	    this.play_target = MAIN;
-	    return;
-	}
-	if( text.match(/^\/stop\s*(sub)*/) ){
-	    let target = RegExp.$1;
-	    if( target=='sub' ){
-		let subtitle = $('sub-video-title');
-		subtitle.value = "";
-		subtitle.setAttribute('tooltiptext',"");
-	    }else{
-		let maintitle = $('main-video-title');
-		maintitle.value = "";
-		maintitle.setAttribute('tooltiptext',"");
-	    }
-	    return;
-	}
-	if( text.match(/^\/soundonly (on|off)\s*(.*)/) ){
-	    // soundonlyコマンド
-	    let onoff = RegExp.$1;
-	    let target = RegExp.$2;
-	    let b = onoff=='on'?true:false;
-	    if( target=='sub' ){
-		sub.checked = b;
-	    }else{
-		main.checked = b;
-	    }
-	    return;
-	}
 	if( text.match(/^\/play(sound)*\s*smile:.*(main|sub).*\"(.*)\"$/) ){
 	    // 動画の再生
 	    let is_soundonly = RegExp.$1;
@@ -862,6 +856,7 @@ var NicoLiveHelper = {
 	    }
 	    return;
 	}
+
 	if( text.match(/^\/swap/) ){
 	    // メイン・サブ切り替え
 	    let tmp = main.checked;
@@ -876,6 +871,49 @@ var NicoLiveHelper = {
 
 	    maintitle.setAttribute('tooltiptext', maintitle.value );
 	    subtitle.setAttribute('tooltiptext', subtitle.value );
+
+	    tmp = this.play_status[ MAIN ];
+	    this.play_status[ MAIN ] = this.play_status[ SUB ];
+	    this.play_status[ SUB ] = tmp;
+	}
+
+	if( text.match(/^\/stop\s*(sub)*/) ){
+	    let target = RegExp.$1;
+	    if( target=='sub' ){
+		let subtitle = $('sub-video-title');
+		subtitle.value = "";
+		subtitle.setAttribute('tooltiptext',"");
+	    }else{
+		let maintitle = $('main-video-title');
+		maintitle.value = "";
+		maintitle.setAttribute('tooltiptext',"");
+	    }
+	    return;
+	}
+
+	if( text.match(/^\/play rtmp/) ){
+	    // カメラ映像
+	    main.checked = false;
+	    $('main-video-title').value = "";
+
+	    // カメラのときは動画情報は何もなしで
+	    this.play_status[MAIN] = new Object();
+	    this.play_status[MAIN].videoinfo = null;
+	    this.play_status[MAIN].play_begin = 0;
+	    this.play_status[MAIN].play_end = 0;
+	    return;
+	}
+	if( text.match(/^\/soundonly (on|off)\s*(.*)/) ){
+	    // soundonlyコマンド
+	    let onoff = RegExp.$1;
+	    let target = RegExp.$2;
+	    let b = onoff=='on'?true:false;
+	    if( target=='sub' ){
+		sub.checked = b;
+	    }else{
+		main.checked = b;
+	    }
+	    return;
 	}
     },
 
@@ -885,7 +923,7 @@ var NicoLiveHelper = {
     processListenersComment: function(chat){
 	if( chat.text.match(/((sm|nm|so|im)\d+)/) ){
 	    let video_id = RegExp.$1;
-	    let is_self_request = chat.text.match(/自(貼|張)/);
+	    let is_self_request = chat.text.match(/[^他](貼|張)/);
 	    let code = "";
 	    try{
 		// TODO 作品コードの処理
@@ -898,7 +936,7 @@ var NicoLiveHelper = {
 	}
 	if( chat.text.match(/(\d{10})/) ){
 	    let video_id = RegExp.$1;
-	    let is_self_request = chat.text.match(/自(貼|張)/);
+	    let is_self_request = chat.text.match(/[^他](貼|張)/);
 	    let code = "";
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
 	}
@@ -999,13 +1037,47 @@ var NicoLiveHelper = {
 	}
     },
 
-    connectCommentServer: function(){
-	let addr = this.serverinfo.addr;
-	let port = this.serverinfo.port;
-	let thread = this.serverinfo.thread;
-
+    /**
+     * コメントサーバーに接続する.
+     * @param addr アドレス
+     * @param port ポート番号
+     * @param thread コメントのスレッド番号
+     * @param dataListener データリスナ
+     * @param lines 取得する過去ログの行数
+     */
+    connectCommentServer: function(addr, port, thread, dataListener, lines){
 	debugprint("Connecting "+addr+":"+port+" ...");
 
+	let iostream = TcpLib.connectTcpServer( addr, port, dataListener );
+	iostream.thread = thread;
+
+	let str = "<thread thread=\""+thread+"\" res_from=\""+lines+"\" version=\"20061206\"/>\0";
+	iostream.ostream.writeString(str);
+	return iostream;
+    },
+
+    /**
+     * 全ての接続を切断する.
+     */
+    closeConnection: function(){
+	for(let i=0,item; item=this.connectioninfo[i]; i++){
+	    try{
+		item.ostream.close();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	    try{
+		item.istream.close();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	}
+    },
+
+    /**
+     * コメントサーバー(アリーナ)接続前処理
+     */
+    preprocessConnectServer: function(request_id){
 	let dataListener = {
 	    line: "",
 	    onStartRequest: function(request, context){},
@@ -1029,7 +1101,7 @@ var NicoLiveHelper = {
 		let r;
 		while(1){
 		    try{
-			r = NicoLiveHelper.ciStream.readString(1,lineData);
+			r = NicoLiveHelper.connectioninfo[ARENA].istream.readString(1,lineData);
 		    } catch (x) { debugprint(x); return; }
 		    if( !r ){ break; }
 		    if( lineData.value=="\0" ){
@@ -1046,39 +1118,22 @@ var NicoLiveHelper = {
 	    }
 	};
 
-	let iostream = TcpLib.connectTcpServer( addr, port, dataListener );
-	this.coStream = iostream.ostream;
-	this.ciStream = iostream.istream;
-
 	let lines;
 	try{
 	    lines = NicoLivePreference.getBranch().getIntPref("comment.log") * -1;
 	} catch (x) {
 	    lines = -100;
 	}
-	let str = "<thread thread=\""+thread+"\" res_from=\""+lines+"\" version=\"20061206\"/>\0";
-	this.coStream.writeString(str);
-    },
 
-    closeConnection: function(){
-	if( this.coStream ){
-	    debugprint("delete output stream");
-	    this.coStream.close();
-	    delete this.coStream;
-	}
-	if( this.ciStream ){
-	    debugprint("delete input stream");
-	    this.ciStream.close();
-	    delete this.ciStream;
-	}
-    },
-
-    /**
-     * コメントサーバー接続前処理
-     */
-    preprocessConnectServer: function(request_id){
 	if( !this.iscaster ){
-	    this.connectCommentServer();
+	    let tmp = this.connectCommentServer(
+		this.serverinfo.addr,
+		this.serverinfo.port,
+		this.serverinfo.thread,
+		dataListener,
+		lines
+	    );
+	    this.connectioninfo[ARENA] = tmp;
 	    return;
 	}
 
@@ -1101,10 +1156,31 @@ var NicoLiveHelper = {
 		debugprint('starttime='+NicoLiveHelper.liveinfo.start_time);
 		debugprint('endtime='+NicoLiveHelper.liveinfo.end_time);
 
-		NicoLiveHelper.connectCommentServer();
+		tmp = NicoLiveHelper.connectCommentServer(
+		    NicoLiveHelper.serverinfo.addr,
+		    NicoLiveHelper.serverinfo.port,
+		    NicoLiveHelper.serverinfo.thread,
+		    dataListener,
+		    lines
+		);
+		NicoLiveHelper.connectioninfo[ARENA] = tmp;
 	    }
 	};
 	NicoApi.getpublishstatus( request_id, f );
+
+	this.initLiveUpdateTimers();
+    },
+
+    initLiveUpdateTimers: function(){
+	this._update_timer = setInterval( function(){
+					      NicoLiveHelper.update();
+					  }, 1000 );
+	this._keep_timer = setInterval( function(){
+					    NicoLiveHelper.keepConnection();
+					}, 3*60*1000 );
+	this._heartbeat_timer = setInterval( function(){
+						 NicoLiveHelper.heartbeat();
+					     }, 1*60*1000);
     },
 
     extractGetPlayerStatus:function(xml){
@@ -1162,6 +1238,11 @@ var NicoLiveHelper = {
 	    server_info.addr = GetXmlText(xml,"/getplayerstatus/ms/addr");
 	    server_info.port = parseInt( GetXmlText(xml,"/getplayerstatus/ms/port") );
 	    server_info.thread = GetXmlText(xml,"/getplayerstatus/ms/thread");
+	    // tidが1増えるたびに接続先ポートが1増える(アリーナ、立見席A,B,C)
+	    let tmp = evaluateXPath(xml,"/getplayerstatus/tid_list/tid/text()");
+	    for( let i=0,item; item=tmp[i]; i++){
+		server_info.tid.push( item.textContent );
+	    }
 	} catch (x) {
 	    debugprint(x);
 	}
@@ -1223,6 +1304,84 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ハートビートを実施する.
+     * 1分ごとに呼ばれて、来場者数を更新する。
+     */
+    heartbeat:function(){
+	let f = function(xml,req){
+	    if( req.readyState==4 && req.status==200 ){
+		let xml = req.responseXML;
+		try{
+		    let watcher = xml.getElementsByTagName('watchCount')[0].textContent;
+		    $('statusbar-n-of-listeners').label = LoadFormattedString('STR_WATCHER',[watcher]);
+		} catch (x) {
+		}
+	    }
+	};
+	let data = new Array();
+	data.push("v="+this.liveinfo.request_id);
+	NicoApi.heartbeat( data, f );
+    },
+
+    /**
+     * 接続が切れないように適当に通信する.
+     * 3分ごとに呼ばれる。
+     */
+    keepConnection:function(){
+	let len = this.connectioninfo.length;
+	for(let i=0; i<len; i++){
+	    try{
+		let item = this.connectioninfo[i];
+		if( !item ) continue;
+		let str = "<thread thread=\""+item.thread+"\" res_from=\"0\" version=\"20061206\"/>\0";
+		item.ostream.writeString(str);
+	    } catch (x) {
+		debugprint(x);
+	    }
+	}
+    },
+
+    /**
+     * ステータスバーの表示更新.
+     */
+    updateStatusBar: function(){
+	let now = GetCurrentTime();
+	let liveprogress = now - this.liveinfo.start_time;
+	let liveremain = this.liveinfo.end_time - now;
+
+	let meter = $('statusbar-music-progressmeter');
+	let currentvideo = this.getCurrentVideoInfo();
+
+	if( !currentvideo ){
+	    return;
+	}
+
+	let begin_time = this.play_status[ this.play_target ].play_begin;
+	let videolength = currentvideo.length_ms/1000;
+	let videoprogress = now-begin_time;
+
+	let p = parseInt( videoprogress / videolength * 100 );
+	meter.value = p;
+
+	let videoname = $('statusbar-music-name');
+	let videoremain = videolength - videoprogress;
+	if( videoremain<0 ) videoremain = 0;
+	videoname.label = currentvideo.title + '('+'-'+GetTimeString(videoremain)+'/'+currentvideo.length+')';
+
+	// プログレスバーの長さ制限
+	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
+	w-=32;
+	videoname.style.maxWidth = w + "px";
+    },
+
+    /**
+     * 毎秒呼び出される関数.
+     */
+    update: function(){
+	this.updateStatusBar();
+    },
+
+    /**
      * 変数の初期化を行う.
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
@@ -1237,13 +1396,15 @@ var NicoLiveHelper = {
 
 	this.play_status[MAIN] = new Object();
 	this.play_status[SUB] = new Object();
+
+	this.connectioninfo = new Array();
     },
 
     /**
      * ウィンドウを開くときに真っ先に呼ばれる初期化関数.
      */
     init: function(){
-	debugprint('Initializing NicoLive Helper...');
+	debugprint('Initializing NicoLive Helper Advance '+GetAddonVersion()+'...');
 	document.title = "NicoLive Helper Advance " + GetAddonVersion();
 	srand( GetCurrentTime() );
 
@@ -1291,6 +1452,9 @@ var NicoLiveHelper = {
 
     destroy: function(){
 	this.closeConnection();
+	clearInterval( this._update_timer );
+	clearInterval( this._keep_timer );
+	clearInterval( this._heartbeat_timer );
     }
 
 };

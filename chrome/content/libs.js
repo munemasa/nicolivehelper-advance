@@ -18,6 +18,11 @@ const HTML_NS= "http://www.w3.org/1999/xhtml";
 const MAIN = 0;
 const SUB = 1;
 
+const ARENA = 0;
+const STAND_A = 1;
+const STAND_B = 2;
+const STAND_C = 3;
+
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前
 const COMMENT_STATE_MOVIEINFO_BEGIN = 1;   // 動画情報を送信中
 const COMMENT_STATE_MOVIEINFO_DONE = 2;    // 動画情報の送信が終わった
