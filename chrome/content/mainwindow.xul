@@ -127,11 +127,13 @@
     </toolbar>
   </toolbox>
 
+  <!-- Current Play Status -->
   <hbox id="player-current-status">
     <groupbox flex="1">
       <caption id="cp-mainscreen-label" label="&general.main_screen;"/>
       <hbox>
-	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand=""/>
+	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
+		       oncommand="NicoLiveHelper.setSoundOnly(MAIN,this.checked);"/>
 	<button label="&general.camera;" tooltiptext="/play" oncommand="NicoLiveHelper.postCasterComment('/play');"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/>
       </hbox>
@@ -143,7 +145,8 @@
     <groupbox flex="1">
       <caption id="cp-subscreen-label" label="&general.sub_screen;"/>
       <hbox>
-	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox" oncommand="NicoLiveHelper.playSoundOnly(1,this.checked);"/>
+	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
+		       oncommand="NicoLiveHelper.setSoundOnly(SUB,this.checked);"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop sub');" tooltiptext="/stop sub"/>
       </hbox>
       <label id="sub-video-title" class="video-title" crop="end" value=""/>

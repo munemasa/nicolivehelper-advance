@@ -215,6 +215,22 @@ var NicoLiveHelper = {
     },
 
     /**
+     * サウンドオンリーのON/OFFを行う.
+     * @param target 0:MAIN 1:SUB
+     * @param b true(ON) or false(OFF)
+     */
+    setSoundOnly:function(target,b){
+	switch(target){
+	case 0:
+	    this.postCasterComment("/soundonly "+(b?"on":"off"));
+	    break;
+	case 1:
+	    this.postCasterComment("/soundonly "+(b?"on":"off")+" sub");
+	    break;
+	}
+    },
+
+    /**
      * 現在再生している動画情報を返す
      */
     getCurrentVideoInfo: function(n){
@@ -1175,12 +1191,12 @@ var NicoLiveHelper = {
 		ShowNotice("コメントサーバに接続しました");
 	    }
 	    this.ticket = newticket;
-	    debugprint('ticket='+this.ticket);
+	    //debugprint('ticket='+this.ticket);
 	}
 	if( line.match(/<thread.*last_res=\"([0-9a-fA-Fx]*)\".*\/>/) ){
 	    let last_res = RegExp.$1;
 	    this.last_res = parseInt( last_res );
-	    debugprint('last_res='+this.last_res);
+	    //debugprint('last_res='+this.last_res);
 	}
     },
 
