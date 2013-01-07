@@ -64,6 +64,44 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 再生スタイルを指定する.
+     */
+    setPlayStyle: function(playstyle){
+	switch(playstyle){
+	case 0:// 手動(順次)
+	default:
+	    this.autoplay = false;
+	    this.playstyle = PLAY_SEQUENTIAL;
+	    break;
+	case 1:// 自動(順次)
+	    this.autoplay = true;
+	    this.playstyle = PLAY_SEQUENTIAL;
+	    break;
+	case 2:// 手動(ランダム)
+	    this.autoplay = false;
+	    this.playstyle = PLAY_RANDOM;
+	    break;
+	case 3:// 自動(ランダム)
+	    this.autoplay = true;
+	    this.playstyle = PLAY_RANDOM;
+	    break;
+	case 4:// 手動(消化数順)
+	    this.autoplay = false;
+	    this.playstyle = PLAY_CONSUMPTION;
+	    break;
+	case 5:// 自動(消化数順)
+	    this.autoplay = true;
+	    this.playstyle = PLAY_CONSUMPTION;
+	    break;
+	}
+
+	let e = evaluateXPath(document,"//*[@id='toolbar-playstyle']//*[@playstyle='"+playstyle+"']");
+	if(e.length){
+	    $('toolbar-playstyle').label = e[0].label;
+	}
+    },
+
+    /**
      * プレイリストに追加する(テキストのみ).
      */
     addPlaylistText:function(item){
@@ -684,7 +722,7 @@ var NicoLiveHelper = {
 		if( !info.tags ){
 		    info.tags = new Object();
 		}
-		info.tags[domain] = new Array();
+		if( !info.tags[domain] ) info.tags[domain] = new Array();
 		for(let i=0,item;item=tag[i];i++){
 		    let tag = restorehtmlspecialchars(ZenToHan(item.textContent));
 		    info.tags[domain].push(tag);
@@ -1591,7 +1629,7 @@ var NicoLiveHelper = {
 
 	// チップヘルプでの動画情報表示
 	let str;
-	str = "投稿日/"+GetDateString(this.musicinfo.first_retrieve*1000)
+	str = "投稿日/"+GetDateString(currentvideo.first_retrieve*1000)
 	    + " 再生数/"+currentvideo.view_counter
 	    + " コメント/"+currentvideo.comment_num
 	    + " マイリスト/"+currentvideo.mylist_counter+"\n"
@@ -1603,7 +1641,7 @@ var NicoLiveHelper = {
 
 	// プログレスバーの長さ制限
 	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
-	w-=32;
+	w-=64;
 	videoname.style.maxWidth = w + "px";
     },
 
@@ -1672,6 +1710,16 @@ var NicoLiveHelper = {
 	this._first_play = false;
     },
 
+    // 仮セーブロード
+    tempSave: function(){
+	Application.storage.set("nicolive_request", this.request_list);
+	Application.storage.set("nicolive_stock", this.stock_list);
+    },
+    tempLoad: function(){
+	this.request_list = Application.storage.get("nicolive_request",[]);
+	this.stock_list = Application.storage.get("nicolive_stock",[]);
+    },
+
     /**
      * ウィンドウを開くときに真っ先に呼ばれる初期化関数.
      */
@@ -1685,6 +1733,10 @@ var NicoLiveHelper = {
 	this.initVars();
 	this.setPlayTarget( $('do-subdisplay').checked );
 	this.setupCookie();
+
+	this.tempLoad();
+	NicoLiveRequest.updateView( this.request_list );
+	NicoLiveStock.updateView( this.stock_list );
 
 	// 以下、生放送への接続処理など
 
@@ -1727,6 +1779,8 @@ var NicoLiveHelper = {
     },
 
     destroy: function(){
+	this.tempSave();
+
 	this.closeConnection();
 	clearInterval( this._update_timer );
 	clearInterval( this._keep_timer );

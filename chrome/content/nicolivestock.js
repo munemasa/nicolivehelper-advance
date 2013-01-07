@@ -51,7 +51,7 @@ var NicoLiveStock = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
-	button.setAttribute("oncommand","NicoLiveStock.playStock(event);");
+	button.setAttribute("oncommand","NicoLiveStock._playStock(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
@@ -118,17 +118,24 @@ var NicoLiveStock = {
     },
 
     /**
-     * リクエストを再生する
+     * ストックを再生する.
      * @param event 再生ボタンのoncommandイベント
      */
-    playStock: function(event){
+    _playStock: function(event){
 	let n = this.getIndex(event);
+	this.playStock(n);
+    },
+    /**
+     * ストックを再生する.
+     */
+    playStock: function(n){
 	debugprint("Play Stock: #"+n);
 	NicoLiveHelper.playStock(n);
 
-	let tr = FindParentElement(event.target,'html:tr');
+	//let tr = FindParentElement(event.target,'html:tr');
+	let tr = evaluateXPath(document,"//html:table[@id='stock-table']//html:tr")[n];
 	tr.className = "table_played";
-	this.resetStockIndex();
+	//this.resetStockIndex(); // いらないはず
     },
 
     /**

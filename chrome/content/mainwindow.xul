@@ -34,6 +34,7 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivemylist.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
 
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/toolbar.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/commandmenu.js" />
 
   <keyset>
@@ -48,14 +49,14 @@
 	<!-- auto/manual sequential/random playstyle -->
 	<toolbarbutton label="&playstyle.manual_sequential;" type="menu" id="toolbar-playstyle">
 	  <menupopup id="toolbar-popup-playstyle">
-	    <menuitem label="&playstyle.manual_sequential;" playstyle="0"/>
-	    <menuitem label="&playstyle.auto_sequential;" playstyle="1"/>
+	    <menuitem label="&playstyle.manual_sequential;" playstyle="0" oncommand="NicoLiveHelper.setPlayStyle(0);"/>
+	    <menuitem label="&playstyle.auto_sequential;" playstyle="1" oncommand="NicoLiveHelper.setPlayStyle(1);"/>
 	    <menuseparator/>
-	    <menuitem label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;"/>
-	    <menuitem label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;"/>
+	    <menuitem label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(2);"/>
+	    <menuitem label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(3);"/>
 	    <menuseparator/>
-	    <menuitem label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;"/>
-	    <menuitem label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;"/>
+	    <menuitem label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(4);"/>
+	    <menuitem label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(5);"/>
 	  </menupopup>
 	</toolbarbutton>
 	<!-- allow/disallow request -->
@@ -67,11 +68,12 @@
 	</toolbarbutton>
 	<!-- play next -->
 	<toolbarbutton label="&play.next;" tooltiptext="&play.tooltip_next;"
-		       image="chrome://nicolivehelper/content/data/play.png"/>
+		       oncommand="Toolbar.playNext();"
+		       image="chrome://nicolivehelperadvance/content/data/play.png"/>
 	<!-- pause to play -->
 	<toolbarbutton persist="checked" type="checkbox" autoCheck="true" id="do-pauseplay"
 		       label="&play.pause;" tooltiptext="&play.tooltip_pause;"
-		       image="chrome://nicolivehelper/content/data/pause.png"/>
+		       image="chrome://nicolivehelperadvance/content/data/pause.png"/>
 	<!-- play soundonly -->
 	<toolbarbutton persist="checked" id="menuid-soundonly" type="checkbox" autoCheck="true" label=""
 		       tooltiptext="&play.tooltip_soundonly;" image="data/soundonly.png"
@@ -117,7 +119,7 @@
 	</toolbarbutton>
 	<toolbarbutton label="&toolbar.open_preference;" oncommand="OpenSettingsDialog();"/>
 	<toolbarspacer flex="1"/>
-	<toolbarbutton image="chrome://nicolivehelper/content/data/window-list.png" label="" type="menu">
+	<toolbarbutton image="chrome://nicolivehelperadvance/content/data/window-list.png" label="" type="menu">
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
 	    <menuseparator/>
@@ -271,6 +273,10 @@
       <!-- reject tab -->
       <vbox id="tab-reject">
 	<label value="Request Error"/>
+	<vbox flex="1" style="overflow:auto">
+	  <html:table id="reject-table" class="requestview">
+	  </html:table>
+	</vbox>
       </vbox>
 
       <!-- playlist tab -->
@@ -453,7 +459,7 @@
   </popupset>
 
   <stringbundleset id="stringbundleset">
-    <stringbundle id="string-bundle" src="chrome://nicolivehelper/locale/nicolivehelper.properties"/>
+    <stringbundle id="string-bundle" src="chrome://nicolivehelperadvance/locale/nicolivehelper.properties"/>
   </stringbundleset>
 
 </window>

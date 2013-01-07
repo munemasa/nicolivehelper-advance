@@ -214,7 +214,7 @@ var NicoLiveRequest = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
-	button.setAttribute("oncommand","NicoLiveRequest.playRequest(event);");
+	button.setAttribute("oncommand","NicoLiveRequest._playRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
@@ -284,12 +284,20 @@ var NicoLiveRequest = {
      * リクエストを再生する
      * @param event 再生ボタンのoncommandイベント
      */
-    playRequest: function(event){
+    _playRequest: function(event){
 	let n = this.getIndex(event);
+	this.playRequest(n);
+    },
+    /**
+     * リクエストを再生する
+     * @param n 対象のリクエスト(0,1,2,...)
+     */
+    playRequest: function(n){
 	debugprint("Play Request: #"+n);
 	NicoLiveHelper.playRequest(n);
 
-	let tr = FindParentElement(event.target,'html:tr');
+	//let tr = FindParentElement(event.target,'html:tr');
+	let tr = evaluateXPath(document,"//html:table[@id='request-table']//html:tr")[n];
 	RemoveElement( tr );
 	this.resetRequestIndex();
     },
