@@ -158,7 +158,6 @@ var NicoLiveHelper = {
 	    }
 	}
 	this.postCasterComment( str, "" ); // 再生
-
 	this.addPlaylist( request, true ); // notext=true
 
 	let i = is_sub?SUB:MAIN;
@@ -168,6 +167,56 @@ var NicoLiveHelper = {
 	this.play_status[ i ].videoinfo = request;
 	this.play_status[ i ].play_begin = GetCurrentTime();
 	this.play_status[ i ].play_end = this.play_status[i].play_begin + request.length_ms/1000 +1;
+
+	// 再生コマンドを投げたあと、コマンドが返ってこずに飲み込まれる場合がある
+	// 自動再生タイマーは/play受信時なので、その対策として、60秒タイマーを仕掛ける
+	// 正常に /play を受信できれば、その時に改めて再設定される
+	let l = request.length_ms/1000;
+	if( l > 60) l = 60;
+	this.setupPlayNext( i, l, true ); // no prepare
+    },
+
+    /**
+     * 次曲ボタンを押したときのアクション.
+     */
+    playNext: function(){
+	let request = this.request_list;
+	let stock = this.stock_list;
+
+	switch( this.playstyle ){
+	case PLAY_SEQUENTIAL:
+	default:
+	    if( request.length ){
+		NicoLiveRequest.playRequest(0);
+		return;
+	    }else if( stock.length ){
+		for(let i=0,item; item=stock[i]; i++){
+		    if( !item.is_played ){
+			NicoLiveStock.playStock( i );
+			return;
+		    }
+		}
+	    }
+	    ShowNotice("再生できる動画がありませんでした");
+	    break;
+
+	case PLAY_RANDOM:
+	    break;
+
+	case PLAY_CONSUMPTION:
+	    break;
+	}
+    },
+
+    /**
+     * 次曲の自動再生の確認して、再生する.
+     */
+    checkPlayNext: function(){
+	if( $('do-pauseplay').checked ){
+	    // 一時停止が押されているので自動で次曲に行かない.
+	    return;
+	}
+	this.playNext();
     },
 
     /**
@@ -1106,6 +1155,7 @@ var NicoLiveHelper = {
 		this.play_status[target].play_end = this.play_status[target].play_begin + current.length_ms/1000 + 1;
 		this.addPlaylistText( current );
 		this.sendVideoInfo();
+		this.setupPlayNext( target, current.length_ms/1000 );
 	    }else{
 		this.play_status[ target ].play_begin = GetCurrentTime();
 		this.setCurrentPlayVideo(video_id, target);
@@ -1490,6 +1540,7 @@ var NicoLiveHelper = {
 
 	    // 現在再生している動画を調べる.
 	    let contents = xml.getElementsByTagName('contents');
+	    let noprepare = 0;
 	    for(let i=0,currentplay;currentplay=contents[i];i++){
 		let id = currentplay.getAttribute('id');
 		let title = currentplay.getAttribute('title') || "";
@@ -1518,16 +1569,16 @@ var NicoLiveHelper = {
 		    if(tmp){
 			NicoLiveHelper.play_status[target].play_begin = st;
 			NicoLiveHelper.play_status[target].play_end = st+du+1;
-			NicoLiveHelper.setCurrentPlayVideo(tmp[0],target);
+			NicoLiveHelper.setCurrentPlayVideo( tmp[0], target );
 		    }
 
-		    if( NicoLiveHelper.iscaster ){
-			// TODO 生主なら次曲再生できるようにセット.
+		    if( NicoLiveHelper.liveinfo.is_owner ){
+			// 生主なら次曲再生できるようにセット.
 			let remain;
 			remain = (st+du)-GetCurrentTime(); // second.
-			remain *= 1000; // convert to ms.
-			remain = Math.floor(remain);
-			//NicoLiveHelper.setupPlayNextMusic(remain);
+			remain = remain + 1; // 1秒ほどゲタ履かせておく
+			NicoLiveHelper.setupPlayNext( target, remain, noprepare );
+			noprepare++;
 		    }
 		}
 	    }
@@ -1646,11 +1697,56 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 次曲自動再生タイマーをしかける.
+     * @param target MAIN or SUB
+     * @param duration 現在の動画の残り時間(秒)
+     * @param noprepare /prepareタイマーを設定しない
+     */
+    setupPlayNext: function(target, duration, noprepare){
+	if( !this.liveinfo.is_owner ) return;
+
+	let interval = parseInt(Config.play_interval*1000);
+	duration = duration * 1000;
+
+	clearTimeout( this.play_status[target]._playend );
+	clearTimeout( this.play_status[target]._playnext );
+	clearTimeout( this.play_status[target]._prepare );
+
+	// 再生終了タイマー
+	this.play_status[target]._playend = setTimeout(
+	    function(){
+		NicoLiveHelper.play_status[target].videoinfo = null;
+	    }, duration );
+
+	// 次曲再生タイマー
+	let next_time = duration + interval;
+	this.play_status[target]._playnext = setTimeout(
+	    function(){
+		let current_target = $('do-subdisplay').checked ? SUB:MAIN;
+		if( current_target==target ){
+		    NicoLiveHelper.checkPlayNext();
+		}
+	    }, next_time );
+	debugprint( parseInt((next_time)/1000)+'秒後に次曲を再生します');
+
+	if( noprepare ) return;
+
+	// 先読み開始タイマー
+	let prepare_time = 1000;
+	this.play_status[target]._prepare = setTimeout(
+	    function(){
+		
+	    }, prepare_time );
+    },
+
+
+    /**
      * 毎秒呼び出される関数.
      */
     update: function(){
 	this.updateStatusBar();
     },
+
 
     /**
      * user_sessionクッキーを読み込む.

@@ -24,6 +24,7 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoapi.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/datastruct.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/config.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
@@ -40,6 +41,7 @@
   <keyset>
     <!-- CTRL+W: Close this window -->
     <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
+    <!-- CTRL+O: Open a broadcasting -->
     <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
   </keyset>
 
