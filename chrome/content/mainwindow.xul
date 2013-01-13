@@ -189,7 +189,7 @@
 	      <menuitem label="9" value="9"/>
 	    </menupopup>
 	  </menulist>
-	  <button label="&button.shuffle;"/>
+	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleRequest();"/>
 	  <button type="menu" label="リク受付方法">
 	    <menupopup>
 	      <menuitem label="アンカー指定" oncommand="OpenAnchorWindow();"/>
@@ -247,7 +247,7 @@
 	    </menupopup>
 	  </menulist>
 	  
-	  <button label="&button.shuffle;" oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.shuffleStock();"/>
+	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleStock();"/>
 	  <button type="menu" label="&button.load_mylist;" style="min-width:1em;">
 	    <menupopup id="menupopup-from-mylist">
 	      <menuitem label="&toriaezu_mylist;"/>

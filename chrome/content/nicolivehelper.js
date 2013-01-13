@@ -277,6 +277,24 @@ var NicoLiveHelper = {
 	return removeditem[0];
     },
 
+    _shuffle: function(list){
+	let i = list.length;
+	while(i){
+	    let j = Math.floor(Math.random()*i);
+	    let t = list[--i];
+	    list[i] = list[j];
+	    list[j] = t;
+	}
+    },
+    shuffleRequest: function(){
+	this._shuffle( this.request_list );
+	NicoLiveRequest.updateView( this.request_list );
+    },
+    shuffleStock: function(){
+	this._shuffle( this.stock_list );
+	NicoLiveStock.updateView( this.stock_list );
+    },
+
     /**
      * リクエストを再生する.
      * 再生すると、そのリクエストは削除される。
@@ -1104,8 +1122,17 @@ var NicoLiveHelper = {
     /**
      * 動画情報を送信する.
      */
-    sendVideoInfo: function(){
-	
+    sendVideoInfo: function(videoinfo){
+	clearInterval( this._sendvideoinfo );
+
+	this._sendvideoinfo = setInterval(
+	    function(){
+		NicoLiveHelper._sendVideoInfo();
+	    }, Config.videoinfo_interval*1000 );
+	this._sendVideoInfo();
+    },
+
+    _sendVideoInfo: function(){
     },
 
     /**
@@ -1154,7 +1181,7 @@ var NicoLiveHelper = {
 		this.play_status[target].play_begin = GetCurrentTime();
 		this.play_status[target].play_end = this.play_status[target].play_begin + current.length_ms/1000 + 1;
 		this.addPlaylistText( current );
-		this.sendVideoInfo();
+		this.sendVideoInfo( current );
 		this.setupPlayNext( target, current.length_ms/1000 );
 	    }else{
 		this.play_status[ target ].play_begin = GetCurrentTime();
@@ -1371,7 +1398,8 @@ var NicoLiveHelper = {
 
 	let lines;
 	try{
-	    lines = NicoLivePreference.getBranch().getIntPref("comment.log") * -1;
+	    // TODO コメントのバックログ取得数
+	    lines = Config.getBranch().getIntPref("comment.log") * -1;
 	} catch (x) {
 	    lines = -100;
 	}
@@ -1724,7 +1752,9 @@ var NicoLiveHelper = {
 	    function(){
 		let current_target = $('do-subdisplay').checked ? SUB:MAIN;
 		if( current_target==target ){
-		    NicoLiveHelper.checkPlayNext();
+		    if( NicoLiveHelper.autoplay ){
+			NicoLiveHelper.checkPlayNext();
+		    }
 		}
 	    }, next_time );
 	debugprint( parseInt((next_time)/1000)+'秒後に次曲を再生します');

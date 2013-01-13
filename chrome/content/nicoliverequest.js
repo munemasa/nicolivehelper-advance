@@ -1,5 +1,6 @@
 
 var NicoLiveRequest = {
+    _summation_time: 0,
 
     /**
      * table内に表示する動画情報を作成する.
@@ -68,7 +69,7 @@ var NicoLiveRequest = {
 	let div2 = CreateHTMLElement('div');
 	div2.className = 'detail selection';
 	let str;
-	// 動画詳細の部分、innerHTMLが使えないのでひたすらDOM操作.
+	// 動画詳細の部分、innerHTMLが使えなかったのでひたすらDOM操作.
 	str = item.description.split(/(mylist\/\d+|sm\d+|nm\d+)/);
 	for(i=0;i<str.length;i++){
 	    let s = str[i];
@@ -179,12 +180,12 @@ var NicoLiveRequest = {
 	    td.appendChild(document.createTextNode("C#"+item.comment_no));
 	}
 
-	// TODO 先頭から何分後にあるかの表示
+	// 先頭から何分後にあるかの表示
 	let t;
-	t = GetTimeString( 0 );
+	t = GetTimeString( this._summation_time );
 	td.appendChild(CreateHTMLElement('br'));
 	td.appendChild(document.createTextNode("+"+t));
-	//this._summation_time += NicoLivePreference.nextplay_interval + item.length_ms/1000;
+	this._summation_time += Config.play_interval + item.length_ms/1000;
 
 	td = tr.insertCell(tr.cells.length);
 
@@ -378,6 +379,7 @@ var NicoLiveRequest = {
      */
     resetRequestIndex:function(){
 	let tr = $('request-table').getElementsByTagName('html:tr');	
+	let t = 0;
 	for(let i=0,row;row=tr[i];i++){
 	    let td = row.firstChild;
 	    let item = NicoLiveHelper.request_list[i];
@@ -393,12 +395,13 @@ var NicoLiveRequest = {
 		td.appendChild(CreateHTMLElement('br'));
 		td.appendChild(document.createTextNode("C#"+item.comment_no));
 	    }
-	    // TODO 先頭から何分後にあるかの表示
-	    let t;
-	    t = GetTimeString( 0 );
+	    // 先頭から何分後にあるかの表示
+	    let timestr = GetTimeString( t );
 	    td.appendChild(CreateHTMLElement('br'));
-	    td.appendChild(document.createTextNode("+"+t));
+	    td.appendChild(document.createTextNode("+"+timestr));
+	    t += Config.play_interval + item.length_ms/1000;
 	}
+	this._summation_time = t;
     },
 
 
@@ -409,6 +412,7 @@ var NicoLiveRequest = {
 	let table = $('request-table');
 	if(!table){ return; }
 
+	this._summation_time = 0;
 	clearTable(table);
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addRequestView( table, item );
