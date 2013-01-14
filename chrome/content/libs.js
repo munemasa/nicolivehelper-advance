@@ -395,6 +395,13 @@ function restorehtmlspecialchars(ch){
     return ch;
 }
 
+function syslog(txt){
+    let tmp = GetDateString( GetCurrentTime()*1000 );
+    txt = tmp + " " +txt;
+    if( $('syslog-textbox') )
+	$('syslog-textbox').value += txt + "\n";
+}
+
 function debugprint(txt){
     if( $('debug-textbox') )
 	$('debug-textbox').value += txt + "\n";

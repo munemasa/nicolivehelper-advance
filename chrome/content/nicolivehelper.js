@@ -29,6 +29,10 @@ var NicoLiveHelper = {
     play_status: [],
     play_target: 0,  // 0:main 1:sub
 
+    // 再生方法
+    autoplay: false,
+    playstyle: PLAY_SEQUENTIAL,
+
     // 各種リスト
     request_list: [],   // リクエスト
     stock_list: [],     // ストック
@@ -716,6 +720,34 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 再生時間総計を求める.
+     * @param list リクエスト、ストックのリスト
+     * @param exclude_played 再生済みを除外するかどうが
+     */
+    getTotalPlayTime: function(list, exclude_played){
+	let t = 0; // second
+
+	let tmp=0;
+	let maxplay = Config.max_playtime * 60 * 1000; // min to millisec
+	let interval = Config.play_interval;
+	for(let i=0,item; item=list[i]; i++){
+	    if( exclude_played && item.is_played ) continue;
+	    if( maxplay ){
+		tmp = maxplay>item.length_ms?item.length_ms:maxplay;
+	    }else{
+		tmp = item.length_ms;
+	    }
+	    t += tmp/1000;
+	    t += interval;
+	}
+
+	let min,sec;
+	min = parseInt(t/60);
+	sec = t%60;
+	return {"min":min, "sec":sec};
+    },
+
+    /**
      * 返却するオブジェクトの error にエラーの有無あり
      */
     extractVideoInfo: function(xml){
@@ -1012,6 +1044,95 @@ var NicoLiveHelper = {
 	NicoLiveStock.updateView( this.stock_list );
     },
 
+    /**
+     * メモリ上から動画情報を探して返す.
+     * @param video_id 動画ID
+     */
+    findVideoInfoFromMemory: function(video_id){
+	let i,item;
+	for(i=0; item=this.request_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	for(i=0; item=this.stock_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	for(i=0; item=this.playlist_list[i]; i++){
+	    if( item.video_id==video_id ) return item;
+	}
+	return null;
+    },
+
+    /**
+     * 動画情報を送信する.
+     */
+    sendVideoInfo: function(videoinfo){
+	clearInterval( this._sendvideoinfo_timer );
+
+	this._sendvideoinfo_counter = 0;
+	this._sendvideoinfo_timer = setInterval(
+	    function(){
+		NicoLiveHelper._sendVideoInfo();
+	    }, Config.videoinfo_interval*1000 );
+	this._sendVideoInfo();
+    },
+
+    _sendVideoInfo: function(){
+	let n = this._sendvideoinfo_counter++;
+	let str = Config.videoinfo[n].comment;
+	let cmd = Config.videoinfo[n].command || "";
+
+	if( str ){
+	    this.postCasterComment( str, cmd, '', COMMENT_MSG_TYPE_MOVIEINFO );
+	}else{
+	    clearInterval( this._sendvideoinfo_timer );
+	}
+    },
+
+    /**
+     * 現在の再生動画の情報を取得して再生状態を設定する.
+     * あらかじめtargetのplay_beginをセットしておくこと.
+     * @param video_id 動画ID
+     * @param target MAIN or SUB
+     * @param retry リトライフラグ
+     */
+    setCurrentPlayVideo: function(video_id, target, retry){
+        let f = function (xml, req) {
+            if (req.status != 200) {
+                if (retry) {
+                    // リトライ失敗
+                    return;
+                }
+		NicoLiveHelper.setCurrentPlayVideo( video_id, target, true ); // retry=true
+                return;
+            }
+
+            let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
+            if (videoinfo.error) {
+                debugprint(videoinfo.error);
+            } else {
+		NicoLiveHelper.play_status[ target ].videoinfo = videoinfo;
+		NicoLiveHelper.play_status[ target ].play_end =
+		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
+		NicoLiveHelper.addPlaylist( videoinfo );
+            }
+        };
+        NicoApi.getthumbinfo(video_id, f);
+    },
+
+    /**
+     * 放送終了時の処理.
+     */
+    finishBroadcasting: function(){
+	this._donotshowdisconnectalert = true;
+	this.stopTimers();
+	this.closeConnection();
+
+	PlayAlertSound();
+	let msg = this.liveinfo.request_id+' '+this.liveinfo.title+' は終了しました';
+	syslog(msg);
+	ShowNotice(msg,true);
+    },
+
     /** コントロールパネルの再生状態の更新処理
      * @param text コメントテキスト
      */
@@ -1102,78 +1223,15 @@ var NicoLiveHelper = {
     },
 
     /**
-     * メモリ上から動画情報を探して返す.
-     * @param video_id 動画ID
-     */
-    findVideoInfoFromMemory: function(video_id){
-	let i,item;
-	for(i=0; item=this.request_list[i]; i++){
-	    if( item.video_id==video_id ) return item;
-	}
-	for(i=0; item=this.stock_list[i]; i++){
-	    if( item.video_id==video_id ) return item;
-	}
-	for(i=0; item=this.playlist_list[i]; i++){
-	    if( item.video_id==video_id ) return item;
-	}
-	return null;
-    },
-
-    /**
-     * 動画情報を送信する.
-     */
-    sendVideoInfo: function(videoinfo){
-	clearInterval( this._sendvideoinfo );
-
-	this._sendvideoinfo = setInterval(
-	    function(){
-		NicoLiveHelper._sendVideoInfo();
-	    }, Config.videoinfo_interval*1000 );
-	this._sendVideoInfo();
-    },
-
-    _sendVideoInfo: function(){
-    },
-
-    /**
-     * 現在の再生動画の情報を取得して再生状態を設定する.
-     * あらかじめtargetのplay_beginをセットしておくこと.
-     * @param video_id 動画ID
-     * @param target MAIN or SUB
-     * @param retry リトライフラグ
-     */
-    setCurrentPlayVideo: function(video_id, target, retry){
-        let f = function (xml, req) {
-            if (req.status != 200) {
-                if (retry) {
-                    // リトライ失敗
-                    return;
-                }
-		NicoLiveHelper.setCurrentPlayVideo( video_id, target, true ); // retry=true
-                return;
-            }
-
-            let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
-            if (videoinfo.error) {
-                debugprint(videoinfo.error);
-            } else {
-		NicoLiveHelper.play_status[ target ].videoinfo = videoinfo;
-		NicoLiveHelper.play_status[ target ].play_end =
-		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
-		NicoLiveHelper.addPlaylist( videoinfo );
-            }
-        };
-        NicoApi.getthumbinfo(video_id, f);
-    },
-
-    /**
-     * 運営コメントを処理する.
+     * 運営コメント系を処理する.
      */
     processCastersComment: function(chat){
 	if( chat.text.match(/^\/play(sound)*\s*smile:(((sm|nm|ze|so)\d+)|\d+)\s*(main|sub)\s*\"(.*)\"$/) ) {
 	    let video_id = RegExp.$2;
 	    let target = RegExp.$5;
 	    let title = RegExp.$6;
+	    syslog(title+"の再生を開始します。");
+
 	    target = target=="main"?MAIN:SUB;
 	    let current = this.getCurrentVideoInfo( target );
 	    if( current && (current.video_id==video_id) ){
@@ -1190,6 +1248,28 @@ var NicoLiveHelper = {
 	}
 	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
 	    
+	}
+
+	if( chat.text.match(/^\/disconnect/) ){
+	    this.finishBroadcasting();
+	    return;
+	}
+
+	if( chat.text.match(/^\/prepare\s*(.*)/) ){
+	    let video_id = RegExp.$1;
+	    syslog(video_id+"を読み込み開始します。");
+	    return;
+	}
+	if( chat.text.match(/^\/info\s*\d\s*"(.*)"$/) ){
+	    let info = RegExp.$1;
+	    syslog(info);
+	    return;
+	}
+	if( chat.text.match(/^\/koukoku\s*show\d*\s*(.*)$/) ){
+	    let info = RegExp.$1;
+	    info = info.replace(/<.*?>/g,"");
+	    syslog(info);
+	    return;
 	}
     },
 
@@ -1226,7 +1306,7 @@ var NicoLiveHelper = {
 	NicoLiveComment.addComment(chat);
 
 	switch(chat.premium){
-	case 2: // チャンネル生放送の場合、こちらの場合もあり
+	case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
 	case 3: // 運営コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
 	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
@@ -1303,6 +1383,7 @@ var NicoLiveHelper = {
 	if( line.match(/<thread.*ticket=\"([0-9a-fA-Fx]*)\".*\/>/) ){
 	    let newticket = RegExp.$1;
 	    if( this.ticket != newticket ){
+		syslog("コメントサーバーに接続しました。");
 		ShowNotice("コメントサーバに接続しました");
 	    }
 	    this.ticket = newticket;
@@ -1338,7 +1419,9 @@ var NicoLiveHelper = {
      * 全ての接続を切断する.
      */
     closeConnection: function(){
-	for(let i=0,item; item=this.connectioninfo[i]; i++){
+	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+	for(let i=0; i<4; i++){
+	    let item = this.connectioninfo[i];
 	    try{
 		item.ostream.close();
 	    } catch (x) {
@@ -1367,7 +1450,8 @@ var NicoLiveHelper = {
 			PlayAlertSound();
 			ShowNotice('コメントサーバから切断されました。',true);
 			setTimeout( function(){
-					AlertPrompt('コメントサーバから切断されました。(code='+status+')',NicoLiveHelper.liveinfo.request_id);
+					AlertPrompt('コメントサーバから切断されました。(code='+status+')',
+						    NicoLiveHelper.liveinfo.request_id);
 				    }, 5000 );
 		    }
 		    NicoLiveHelper.closeConnection();
@@ -1557,7 +1641,11 @@ var NicoLiveHelper = {
 	this.initVars();
 
 	let f = function(xml, req){
-	    if( req.readyState!=4 || req.status!=200 ) return;
+	    if( req.readyState!=4 ) return;
+	    if( req.status!=200 ){
+		debugalert("getplayerstatusに失敗しました。再度、接続してください。");
+		return;
+	    }
 
 	    let status = evaluateXPath(xml,"/getplayerstatus/@status")[0].value;
 	    if( status=='fail' ){
@@ -1565,6 +1653,8 @@ var NicoLiveHelper = {
 		return;
 	    }
 	    NicoLiveHelper.extractGetPlayerStatus(xml);
+	    // ショートカット作成
+	    NicoLiveHelper.iscaster = NicoLiveHelper.liveinfo.is_owner;
 
 	    // 現在再生している動画を調べる.
 	    let contents = xml.getElementsByTagName('contents');
@@ -1606,7 +1696,7 @@ var NicoLiveHelper = {
 			remain = (st+du)-GetCurrentTime(); // second.
 			remain = remain + 1; // 1秒ほどゲタ履かせておく
 			NicoLiveHelper.setupPlayNext( target, remain, noprepare );
-			noprepare++;
+			noprepare++; // 先読みするのは一つだけにしておく
 		    }
 		}
 	    }
@@ -1624,8 +1714,6 @@ var NicoLiveHelper = {
 	    if( title ){
 		NicoLiveHelper.liveinfo.title = title;
 	    }
-	    // ショートカット作成
-	    NicoLiveHelper.iscaster = NicoLiveHelper.liveinfo.is_owner;
 	    if( !NicoLiveHelper.iscaster ){
 		$('textbox-comment').setAttribute('maxlength','64');
 	    }
@@ -1820,6 +1908,8 @@ var NicoLiveHelper = {
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
     initVars: function(){
+	this._donotshowdisconnectalert = false;
+
 	this.liveinfo = new LiveInfo();
 	this.userinfo = new UserInfo();
 	this.serverinfo = new ServerInfo();
@@ -1904,13 +1994,27 @@ var NicoLiveHelper = {
 	this.openNewBroadcast( request_id, title, iscaster, community_id );
     },
 
-    destroy: function(){
-	this.tempSave();
-
-	this.closeConnection();
+    stopTimers: function(){
 	clearInterval( this._update_timer );
 	clearInterval( this._keep_timer );
 	clearInterval( this._heartbeat_timer );
+	clearInterval( this._sendvideoinfo_timer );
+
+	clearTimeout( this.play_status[MAIN]._playend );
+	clearTimeout( this.play_status[MAIN]._playnext );
+	clearTimeout( this.play_status[MAIN]._prepare );
+	clearTimeout( this.play_status[SUB]._playend );
+	clearTimeout( this.play_status[SUB]._playnext );
+	clearTimeout( this.play_status[SUB]._prepare );
+    },
+
+    destroy: function(){
+	this._donotshowdisconnectalert = true;
+
+	this.tempSave();
+
+	this.stopTimers();
+	this.closeConnection();
     }
 
 };

@@ -414,7 +414,16 @@
       </vbox>
 
       <vbox id="tab-debug">
-	<textbox id="debug-textbox" emptytext="for debugging." multiline="true" flex="1" />
+	<menulist id="id-debug-style" persist="value" oncommand="$('debug-deck').selectedIndex=this.value;">
+	  <menupopup>
+	    <menuitem label="&general.debug;" value="0"/>
+	    <menuitem label="&general.syslog;" value="1"/>
+	  </menupopup>
+	</menulist>
+	<deck id="debug-deck" persist="selectedIndex" flex="1">
+	  <textbox id="debug-textbox" emptytext="for debugging." multiline="true" flex="1" />
+	  <textbox id="syslog-textbox" emptytext="System Logging." multiline="true" flex="1" />
+	</deck>
       </vbox>
 
     </tabpanels>

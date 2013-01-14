@@ -264,6 +264,9 @@ var NicoLiveRequest = {
 	let table = $('request-table');
 	if( !table ) return;
 	this._addRequestView( table, videoinfo );
+
+	let t = NicoLiveHelper.getTotalPlayTime( NicoLiveHelper.request_list );
+	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.request_list.length]);
     },
 
     addRequest: function(text){
@@ -417,12 +420,8 @@ var NicoLiveRequest = {
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addRequestView( table, item );
 	}
-	// TODO 累積時間の更新
-	/*
-	if(requestqueue.length==0){
-	    this.setTotalPlayTime({min:0,sec:0});
-	}
-	 */
+	let t = NicoLiveHelper.getTotalPlayTime( requestqueue );
+	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, requestqueue.length]);
     },
 
     init:function(){

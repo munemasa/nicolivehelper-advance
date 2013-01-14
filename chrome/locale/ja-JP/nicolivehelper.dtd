@@ -12,6 +12,8 @@
 <!ENTITY general.stop_play "再生停止">
 <!ENTITY general.sound_only "サウンドオンリー">
 <!ENTITY general.mylist_manager "マイリストマネージャ">
+<!ENTITY general.debug "デバッグ">
+<!ENTITY general.syslog "システムログ">
 
 <!ENTITY playstyle.manual_sequential "手動(順次)">
 <!ENTITY playstyle.manual_random "手動(ランダム)">
@@ -83,7 +85,7 @@
 <!ENTITY tab.talk "読み上げ">
 <!ENTITY tab.database "動画DB">
 <!ENTITY tab.controlpanel "コントロールパネル">
-<!ENTITY tab.debug "デバッグ">
+<!ENTITY tab.debug "ログ">
 
 <!ENTITY button.shuffle "シャッフル">
 <!ENTITY button.clearall "全消去">

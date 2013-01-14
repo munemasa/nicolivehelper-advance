@@ -100,6 +100,9 @@ var NicoLiveStock = {
 	let table = $('stock-table');
 	if( !table ) return;
 	this._addStockView( table, videoinfo );
+
+	let t = NicoLiveHelper.getTotalPlayTime( NicoLiveHelper.stock_list );
+	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.stock_list.length]);
     },
 
     addStock: function(text){
@@ -248,6 +251,9 @@ var NicoLiveStock = {
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addStockView( table, item );
 	}
+
+	let t = NicoLiveHelper.getTotalPlayTime( requestqueue );
+	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, requestqueue.length]);
     },
 
     init:function(){
