@@ -53,11 +53,7 @@ var NicoLiveComment = {
 
 	// コメントボディのセル
 	td = tr.insertCell(tr.cells.length);
-	if(comment.premium==3 || comment.premium==2){
-	    str = comment.text.replace(/<.*?>/g,""); // 主コメだけタグ除去.
-	}else{
-	    str = comment.text;
-	}
+	str = comment.text_notag;
 	str = htmlspecialchars(str);
 	let tmp = str.split(/(sm\d+|nm\d+|\d{10}|&\w+;)/);
 	let i;

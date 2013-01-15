@@ -1265,9 +1265,8 @@ var NicoLiveHelper = {
 	    syslog(info);
 	    return;
 	}
-	if( chat.text.match(/^\/koukoku\s*show\d*\s*(.*)$/) ){
+	if( chat.text_notag.match(/^\/koukoku\s*show\d*\s*(.*)$/) ){
 	    let info = RegExp.$1;
-	    info = info.replace(/<.*?>/g,"");
 	    syslog(info);
 	    return;
 	}
@@ -1345,6 +1344,12 @@ var NicoLiveHelper = {
 	chat.anonymity = chat.anonymity && parseInt(chat.anonymity) || 0;
 	chat.no        = chat.no && parseInt(chat.no) || 0;
 	chat.comment_no = chat.no;
+
+	if( chat.premium==3 || chat.premium==2 ){
+	    chat.text_notag = chat.text.replace(/<.*?>/g,"");
+	}else{
+	    chat.text_notag = chat.text;
+	}
 
 	this.last_res = chat.no;
 	return chat;
