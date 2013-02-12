@@ -83,9 +83,16 @@ vbox:hover + hbox.btn_command, hbox.btn_command:hover {
     margin: 0;
 }
 
-tabpanels button {
+#tab-request button {
     margin: 0;
 }
+#tab-stock button {
+    margin: 0;
+}
+#tab-comment button {
+    margin: 0;
+}
+
 
 /* リク、ストックなどのコマンドボタン */
 hbox.command-buttons {

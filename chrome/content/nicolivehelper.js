@@ -594,6 +594,109 @@ var NicoLiveHelper = {
     },
 
     /**
+     * リスナーコメントを送信する
+     * @param comment コメント
+     * @param mail コマンド
+     */
+    postListenerComment: function(comment,mail){
+	if(this.isOffline()) return;
+	if(!comment) return;
+	if(comment.length<=0) return;
+	if( !mail ) mail = "";
+
+	// JASRACコードの-を=に変換
+	comment = comment.replace(/((...)[-](....)[-](.))/g,"$2=$3=$4");
+
+	if( this.previouschat==comment ){
+	    ShowNotice("同じコメントの連投はできません");
+	    return;
+	}
+
+	this._getpostkeycounter = 0;
+	setTimeout(function(){
+		       NicoLiveHelper._postListenerComment( ARENA, comment, mail);
+		   }, 0);
+    },
+    /**
+     * リスナーコメントを送信する(本体)
+     * @param target コメント送信先のサーバー(ARENA, STAND_A, STAND_B, STAND_C)
+     * @param comment コメント
+     * @param mail コマンド
+     */
+    _postListenerComment: function(target, comment, mail){
+	this.chatbuffer = comment;
+	this.mailbuffer = mail;
+
+	if(!this.postkey){
+	    this.getpostkey(); // ポストキーがまだないときはまず取ってこないとね.
+	    return;
+	}
+	let str;
+	let vpos = Math.floor((GetCurrentTime()-this.liveinfo.open_time)*100);
+	// mailアトリビュートに空白区切りでコマンド(shita greenとか)を付ける.
+	str = "<chat thread=\""+this.serverinfo.thread+"\""
+	    + " ticket=\""+this.ticket+"\""
+	    + " vpos=\""+vpos+"\""
+	    + " postkey=\""+this.postkey+"\""
+	    + " mail=\""+mail+(Config.comment184?" 184\"":"\"")
+	    + " user_id=\""+this.userinfo.user_id+"\""
+	    + " premium=\""+this.userinfo.is_premium+"\" locale=\"jp\">"
+	    + htmlspecialchars(comment)
+	    + "</chat>\0";
+	//debugprint(str);
+
+	this.connectioninfo[target].ostream.writeString(str);
+    },
+
+    /**
+     * リスナーコメント投稿用のキーを取得して、コメント送信する.
+     * NicoLiveHelper.chatbuffer と NicoLiveHelper.mailbuffer に
+     * あらかじめ送信データをセットしておくこと。
+     */
+    getpostkey:function(){
+	if( this.isOffline() ) return;
+	let thread = this.serverinfo.thread;
+	if( !thread ) return;
+	let block_no;
+	if( this._getpostkeycounter<=0 ){
+	    block_no = parseInt(this.last_res/100) + this._getpostkeycounter;
+	    this._bk_block_no = block_no;
+	}else{
+	    block_no = this._bk_block_no + this._getpostkeycounter;
+	}
+	this._getpostkeycounter++;
+	if( this._getpostkeycounter > 3){
+	    // リトライは最大3回まで.
+	    debugprint('getpostkey: retry failed\n');
+	    return;
+	}
+
+	let f = function(xml,req){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    let tmp = req.responseText.match(/postkey=(.*)/);
+		    if(tmp){
+			NicoLiveHelper.postkey = tmp[1];
+			debugprint('postkey='+NicoLiveHelper.postkey);
+			if(NicoLiveHelper.postkey){
+			    // 取得終わったら、コメ送信する.
+			    NicoLiveHelper._postListenerComment( ARENA,
+								 NicoLiveHelper.chatbuffer,
+								 NicoLiveHelper.mailbuffer );
+			}
+		    }else{
+			NicoLiveHelper.postkey = "";
+		    }
+		}else{
+		    ShowNotice("postkeyの取得に失敗しました");
+		    NicoLiveHelper.getpostkey();
+		}
+	    }
+	};
+	NicoApi.getpostkey( thread, block_no, f );
+    },
+
+    /**
      * コメントを投稿する.
      * 生主、視聴者両用
      */
@@ -601,7 +704,7 @@ var NicoLiveHelper = {
 	if( this.iscaster ){
 	    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL );
 	}else{
-	    
+	    this.postListenerComment( text, mail );
 	}
     },
 
@@ -701,7 +804,11 @@ var NicoLiveHelper = {
 	return pname;	
     },
 
-
+    /**
+     * 静画情報を展開する.
+     * @param video_id 静画ID
+     * @param text 静画情報のテキスト
+     */
     extractSeigaInfo: function(video_id, text){
 	let info = new Object();
 	let title = "ニコニコ静画";
@@ -1373,6 +1480,7 @@ var NicoLiveHelper = {
 	    case 0: // success
 		this.previouschat = this.chatbuffer;
 		break;
+	    case 8:
 	    case 4: // need getpostkey
 		this.getpostkey();
 		break;
@@ -1386,13 +1494,13 @@ var NicoLiveHelper = {
 	}
 	// 16進数表すキーワードってなんだったっけ….
 	if( line.match(/<thread.*ticket=\"([0-9a-fA-Fx]*)\".*\/>/) ){
+	    //debugprint(line);
 	    let newticket = RegExp.$1;
 	    if( this.ticket != newticket ){
 		syslog("コメントサーバーに接続しました。");
 		ShowNotice("コメントサーバに接続しました");
 	    }
 	    this.ticket = newticket;
-	    //debugprint('ticket='+this.ticket);
 	}
 	if( line.match(/<thread.*last_res=\"([0-9a-fA-Fx]*)\".*\/>/) ){
 	    let last_res = RegExp.$1;
@@ -1426,7 +1534,8 @@ var NicoLiveHelper = {
     closeConnection: function(){
 	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
 	for(let i=0; i<4; i++){
-	    let item = this.connectioninfo[i];
+	    let item = this.connectioni
+	    nfo[i];
 	    try{
 		item.ostream.close();
 	    } catch (x) {
@@ -1488,7 +1597,7 @@ var NicoLiveHelper = {
 	let lines;
 	try{
 	    // TODO コメントのバックログ取得数
-	    lines = Config.getBranch().getIntPref("comment.log") * -1;
+	    lines = Config.getBranch().getIntPref("comment.backlog") * -1;
 	} catch (x) {
 	    lines = -100;
 	}
@@ -1753,8 +1862,8 @@ var NicoLiveHelper = {
      * 3分ごとに呼ばれる。
      */
     keepConnection:function(){
-	let len = this.connectioninfo.length;
-	for(let i=0; i<len; i++){
+	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+	for(let i=0; i<4; i++){
 	    try{
 		let item = this.connectioninfo[i];
 		if( !item ) continue;

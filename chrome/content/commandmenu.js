@@ -60,7 +60,7 @@ var CommandMenu = {
     },
 
     openBroadcasting: function(){
-	let lvid = InputPrompt("・接続する番組の放送ID(lvXXXX)\n・コミュニティ・チャンネルID\nもしくはURLを入力してください。\n何も入力せずにOKすると、現在放送中の番組に接続します。","放送IDを入力","");
+	let lvid = InputPrompt("接続する番組の放送ID(lvXXXX)、コミュニティ・チャンネルID、もしくはURLを入力してください。\n何も入力せずにOKすると、現在放送中の番組に接続します。","放送IDを入力","");
 	let request_id;
 	if( lvid==null ) return;
 	if( lvid=="" ){

@@ -14,29 +14,49 @@
 	windowtype="NicoLiveHelperAdvanceMainWindow"
 	title="NicoLive Helper Advance">
 
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/prefutils.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/csvparser.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/oauth.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/sha1.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/cookiemonster.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/tcplib.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/prefutils.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/csvparser.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/oauth.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/sha1.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/cookiemonster.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/utils/tcplib.js" />
 
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoapi.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/datastruct.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/config.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivehistory.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/libs.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicoapi.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/datastruct.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/config.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivestock.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivehistory.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
 
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivewindow.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivemylist.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivewindow.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivemylist.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
 
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/toolbar.js" />
-  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/commandmenu.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/commandmenu.js" />
 
   <keyset>
     <!-- CTRL+W: Close this window -->
@@ -291,17 +311,17 @@
 	  <spacer flex="1"/>
 	  <menulist id="id-playlist-style" persist="value" oncommand="$('playlist-deck').selectedIndex=this.value;">
 	    <menupopup>
-	      <menuitem label="&playlist.bydetail;" value="0"/>
-	      <menuitem label="&playlist.bytext;" value="1"/>
+	      <menuitem label="&playlist.bytext;" value="0"/>
+	      <menuitem label="&playlist.bydetail;" value="1"/>
 	    </menupopup>
 	  </menulist>
 	</hbox>
 	<deck id="playlist-deck" persist="selectedIndex" flex="1">
+	  <textbox id="played-list-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
 	  <vbox flex="1" style="overflow:auto">
 	    <html:table id="playlist-table" class="historyview">
 	    </html:table>
 	  </vbox>
-	  <textbox id="played-list-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
 	</deck>
       </vbox>
 
