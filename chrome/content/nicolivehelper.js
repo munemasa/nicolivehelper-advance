@@ -751,27 +751,28 @@ var NicoLiveHelper = {
 
     /**
      * コメントを投稿する.
-     * 生主、視聴者両用
+     * 生主、視聴者両用。
+     * コメントタブからのコメント送信はここを経由します。
      * @param text コメント
      * @param mail コマンド
      * @param name 名前
      */
     postComment: function( text, mail, name ){
 	if( this.iscaster ){
-	    if( text.match(/^((sm|nm)\d+|\d{10})$/) ){
-		//debugprint(str+'を手動再生しようとしています');
-		this._comment_video_id = str;
-		this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+	    if( text.match(/^((sm|nm|so)\d+|\d{10})$/) ){
+		debugprint(text+'を手動で再生します');
+		this._comment_video_id = text;
+		this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL );
 	    }else{
 		if( text.indexOf('/')==0 ){
 		    // コマンドだった場合/clsを送らない.
-		    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+		    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL );
 		}else{
 		    // 直前のコメがhidden+/permで、上コメ表示にチェックがされていたら、/clsを送ってから.
 		    let func = function(){
-			NicoLiveHelper.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+			NicoLiveHelper.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL );
 		    };
-		    this.clearCasterCommentAndRun(func);
+		    this.clearCasterCommentAndRun( func );
 		}
 	    }
 	}else{
@@ -794,7 +795,7 @@ var NicoLiveHelper = {
 	    NicoLiveHelper.postCasterComment("/cls","");
 	    NicoLiveHelper._clscounter++;
 	    if(NicoLiveHelper._clscounter>=5){
-		clearInterval( NicoLiveHelper._sendclsid );
+		clearInterval( NicoLiveHelper._sendclstimer );
 		NicoLiveHelper.postclsfunc = null;
 	    }
 	};
@@ -805,10 +806,10 @@ var NicoLiveHelper = {
 		// postclsfuncが空いているので、登録したのち/cls
 		this.postclsfunc = func;
 		this.postCasterComment("/cls","");
-		clearInterval(this._sendclsid);
+		clearInterval(this._sendclstimer);
 		this._clscounter = 0;
 		// /clsがきちんと送れるように6秒間隔でリトライする
-		this._sendclsid = setInterval( sendclsfunc, 6000 );
+		this._sendclstimer = setInterval( sendclsfunc, 6000 );
 	    }else{
 		// 1秒ごとにpost /cls関数が空いてないかチェック.
 		let timer = setInterval(
@@ -822,9 +823,9 @@ var NicoLiveHelper = {
 				// 登録したのち/cls
 				NicoLiveHelper.postclsfunc = func;
 				NicoLiveHelper.postCasterComment("/cls","");
-				clearInterval(NicoLiveHelper._sendclsid);
+				clearInterval(NicoLiveHelper._sendclstimer);
 				NicoLiveHelper._clscounter = 0;
-				NicoLiveHelper._sendclsid = setInterval( sendclsfunc, 6000 );
+				NicoLiveHelper._sendclstimer = setInterval( sendclsfunc, 6000 );
 			    }
 			    clearInterval(timer);
 			}
@@ -1351,11 +1352,11 @@ var NicoLiveHelper = {
      * 15秒後に動画情報再送信を行う.
      */
     setupRevertVideoInfo:function(){
-	clearInterval( this._revertcommentid );
-	this._revertcommentid = setInterval(
+	clearInterval( this._revertcommenttimer );
+	this._revertcommenttimer = setInterval(
 	    function(){
 		NicoLiveHelper.revertVideoInfo();
-		clearInterval( NicoLiveHelper._revertcommentid );
+		clearInterval( NicoLiveHelper._revertcommenttimer );
 	    }, 15*1000 );
     },
 
@@ -1387,7 +1388,7 @@ var NicoLiveHelper = {
 	    break;
 	}
 	// revertMusicInfoが直接呼ばれた場合タイマー動作は不要になるので.
-	clearInterval( this._revertcommentid );
+	clearInterval( this._revertcommenttimer );
 	let ismovieinfo = COMMENT_MSG_TYPE_MOVIEINFO;
 	this.postCasterComment( sendstr, cmd, "", ismovieinfo );
     },
@@ -1591,7 +1592,7 @@ var NicoLiveHelper = {
 		}, 15*1000 );
 	}
 	if( chat.text.indexOf("/cls")==0 || chat.text.indexOf("/clear")==0 ){
-	    clearInterval(NicoLiveHelper._sendclsid);
+	    clearInterval(NicoLiveHelper._sendclstimer);
 	    NicoLiveHelper.commentViewState = COMMENT_VIEW_NORMAL;
 	    if( 'function'==typeof NicoLiveHelper.postclsfunc ){
 		NicoLiveHelper.postclsfunc();
@@ -2435,6 +2436,9 @@ var NicoLiveHelper = {
 	clearInterval( this._keep_timer );
 	clearInterval( this._heartbeat_timer );
 	clearInterval( this._sendvideoinfo_timer );
+	clearInterval( this._sendclstimer );
+	clearInterval( this._revertcommenttimer );
+	clearInterval( this._commentstatetimer );
 
 	clearTimeout( this.play_status[MAIN]._playend );
 	clearTimeout( this.play_status[MAIN]._playnext );

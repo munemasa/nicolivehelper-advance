@@ -264,11 +264,11 @@ var NicoLiveHelperAdvanceOverlay = {
 	let version;
 	try{
 	    let em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-	    let addon = em.getItemForID("nicolivehelper@miku39.jp");
+	    let addon = em.getItemForID("nicolivehelperadvance@miku39.jp");
 	    version = addon.version;
 	} catch (x) {
 	    // Fx4
-	    AddonManager.getAddonByID("nicolivehelper@miku39.jp",
+	    AddonManager.getAddonByID("nicolivehelperadvance@miku39.jp",
 				      function(addon) {
 					  version = addon.version;
 					  //alert("My extension's version is " + addon.version);
