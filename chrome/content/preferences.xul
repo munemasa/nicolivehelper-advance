@@ -6,15 +6,105 @@
 <prefwindow id="nicolivehelper-advanced-settings" title="NicoLive Helper Advance Settings" windowtype="prefwindow"
 	    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
 
-  <!-- basic settings -->
-  <prefpane id="nicolivehelper-prefpane-basic" label="基本設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
-    <preferences>
-      <preference id="pref-nextplay-interval"
-		  name="extensions.nicolivehelperadvance.play.interval" type="int"/><!-- 再生インターバル -->
-      <preference id="pref-max-movieplay-time"
-		  name="extensions.nicolivehelperadvance.play.maxtime" type="int"/><!-- 最大再生時間 -->
-    </preferences>
+  <preferences>
+    <preference id="pref-nextplay-interval"
+		name="extensions.nicolivehelperadvance.play.interval" type="int"/><!-- 再生インターバル -->
+    <preference id="pref-max-movieplay-time"
+		name="extensions.nicolivehelperadvance.play.maxtime" type="int"/><!-- 最大再生時間 -->
+    <preference id="pref-videoinfo1"
+		name="extensions.nicolivehelperadvance.videoinfo1" type="unichar"/>
+    <preference id="pref-videoinfo2"
+		name="extensions.nicolivehelperadvance.videoinfo2" type="unichar"/>
+    <preference id="pref-videoinfo3"
+		name="extensions.nicolivehelperadvance.videoinfo3" type="unichar"/>
+    <preference id="pref-videoinfo4"
+		name="extensions.nicolivehelperadvance.videoinfo4" type="unichar"/>
+    <preference id="pref-videoinfo1-command"
+		name="extensions.nicolivehelperadvance.videoinfo1-command" type="unichar"/>
+    <preference id="pref-videoinfo2-command"
+		name="extensions.nicolivehelperadvance.videoinfo2-command" type="unichar"/>
+    <preference id="pref-videoinfo3-command"
+		name="extensions.nicolivehelperadvance.videoinfo3-command" type="unichar"/>
+    <preference id="pref-videoinfo4-command"
+		name="extensions.nicolivehelperadvance.videoinfo4-command" type="unichar"/>
+    <preference id="pref-videoinfo-interval"
+		name="extensions.nicolivehelperadvance.videoinfo.interval" type="int"/>
+    <preference id="pref-typeofvideoinfo"
+		name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
+    <preference id="pref-revert-videoinfo"
+		name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
+    
+    <preference id="pref-msg-deleted"
+		name="extensions.nicolivehelperadvance.msg.deleted" type="unichar"/>
+    <preference id="pref-msg-notaccept"
+		name="extensions.nicolivehelperadvance.msg.notaccept" type="unichar"/>
+    <preference id="pref-msg-newmovie"
+		name="extensions.nicolivehelperadvance.msg.newmovie" type="unichar"/>
+    <preference id="pref-msg-played"
+		name="extensions.nicolivehelperadvance.msg.played" type="unichar"/>
+    <preference id="pref-msg-requested"
+		name="extensions.nicolivehelperadvance.msg.requested" type="unichar"/>
+    <preference id="pref-msg-accept"
+		name="extensions.nicolivehelperadvance.msg.accept" type="unichar"/>
+    <preference id="pref-msg-no-live-play"
+		name="extensions.nicolivehelperadvance.msg.no-live-play" type="unichar"/>
+    <preference id="pref-msg-within-livespace"
+		name="extensions.nicolivehelperadvance.msg.within-livespace" type="unichar"/>
+    <preference id="pref-msg-limitnumberofrequests"
+		name="extensions.nicolivehelperadvance.msg.limitnumberofrequests" type="unichar"/>
+    <preference id="pref-msg-requestok"
+		name="extensions.nicolivehelperadvance.msg.requestok" type="unichar"/>
+    <preference id="pref-msg-requestng"
+		name="extensions.nicolivehelperadvance.msg.requestng" type="unichar"/>
+    <preference id="pref-msg-requestok-command"
+		name="extensions.nicolivehelperadvance.msg.requestok-command" type="unichar"/>
+    <preference id="pref-msg-requestng-command"
+		name="extensions.nicolivehelperadvance.msg.requestng-command" type="unichar"/>
+    
+    <preference id="pref-msg-lessmylists"
+		name="extensions.nicolivehelperadvance.msg.lessmylists" type="unichar"/>
+    <preference id="pref-msg-greatermylists"
+		name="extensions.nicolivehelperadvance.msg.greatermylists" type="unichar"/>
+    <preference id="pref-msg-lessviews"
+		name="extensions.nicolivehelperadvance.msg.lessviews" type="unichar"/>
+    <preference id="pref-msg-greaterviews"
+		name="extensions.nicolivehelperadvance.msg.greaterviews" type="unichar"/>
+    <preference id="pref-msg-longertime"
+		name="extensions.nicolivehelperadvance.msg.longertime" type="unichar"/>
+    <preference id="pref-msg-shortertime"
+		name="extensions.nicolivehelperadvance.msg.shortertime" type="unichar"/>
+    <preference id="pref-msg-outofdaterange"
+		name="extensions.nicolivehelperadvance.msg.outofdaterange" type="unichar"/>
+    <preference id="pref-msg-requiredkeyword"
+		name="extensions.nicolivehelperadvance.msg.requiredkeyword" type="unichar"/>
+    <preference id="pref-msg-forbiddenkeyword"
+		name="extensions.nicolivehelperadvance.msg.forbiddenkeyword" type="unichar"/>
+    <preference id="pref-msg-requiredkeyword-title"
+		name="extensions.nicolivehelperadvance.msg.requiredkeyword-title" type="unichar"/>
+    <preference id="pref-msg-forbiddenkeyword-title"
+		name="extensions.nicolivehelperadvance.msg.forbiddenkeyword-title" type="unichar"/>
+    <preference id="pref-msg-high-bitrate"
+		name="extensions.nicolivehelperadvance.msg.high-bitrate" type="unichar"/>
+    <preference id="pref-msg-ngvideo"
+		name="extensions.nicolivehelperadvance.msg.ng-video-reply-message" type="unichar"/>
 
+    <!-- TODO -->
+    <!--
+    <preference id="pref-videoinfo-playfailed"
+		name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
+    <preference id="pref-userdefined-uri"
+		name="extensions.nicolivehelperadvance.userdefined-data-uri" type="string"/>
+    <preference id="pref-nocomment-for-directplay"
+		name="extensions.nicolivehelperadvance.nocomment-for-directplay" type="bool"/>
+    <preference id="pref-no-autopname"
+		name="extensions.nicolivehelperadvance.no-auto-pname" type="bool"/>
+    -->
+  </preferences>
+
+
+  <!-- basic settings -->
+  <prefpane id="nicolivehelper-prefpane-basic"
+	    label="基本設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
     <tabbox persist="selectedIndex" id="prefwindow-basicsettings">
       <tabs>
 	<tab label="進行"/>
@@ -30,59 +120,35 @@
 	    </columns>
 	    <rows>
 	      <row>
-		<hbox align="center"><label value="次の動画を再生するまでの待ち時間(0-99)" tooltiptext="動画の再生が終わり、次の動画を再生するまでの待ち時間を指定します。"/></hbox>
+		<hbox align="center">
+		  <label value="次の動画を再生するまでの待ち時間(0-99)" tooltiptext="動画の再生が終わり、次の動画を再生するまでの待ち時間を指定します。"/>
+		</hbox>
 		<textbox preference="pref-nextplay-interval" type="number" min="0" max="99" size="3"/>
-		<hbox align="center"><label value="秒"/></hbox>
+		<hbox align="center">
+		  <label value="秒"/>
+		</hbox>
 	      </row>
 	      <row>
-		<hbox align="center"><label value="1つの動画の最大再生時間(0-99)" tooltiptext="動画を再生する最大時間を指定します。0の場合は無制限になります。"/></hbox>
+		<hbox align="center">
+		  <label value="1つの動画の最大再生時間(0-99)"
+			 tooltiptext="動画を再生する最大時間を指定します。0の場合は無制限になります。"/>
+		</hbox>
 		<textbox preference="pref-max-movieplay-time" type="number" min="0" max="99" size="3"/>
-		<hbox align="center"><label value="分"/></hbox>
+		<hbox align="center">
+		  <label value="分"/>
+		</hbox>
 	      </row>
 	    </rows>
 	  </grid>
 	</tabpanel>
 	<tabpanel orient="vertical">
+	  
 	</tabpanel>
       </tabpanels>
     </tabbox>
   </prefpane>
 
-  <prefpane id="nicolivehelper-perfpane-movieinfo" label="動画情報" image="chrome://nicolivehelperadvance/content/data/icon1.png" onpaneload="NLHPreference.loadPNameWhitelist();">
-    <preferences>
-      <preference id="pref-videoinfo1"
-		  name="extensions.nicolivehelperadvance.videoinfo1" type="unichar"/>
-      <preference id="pref-videoinfo2"
-		  name="extensions.nicolivehelperadvance.videoinfo2" type="unichar"/>
-      <preference id="pref-videoinfo3"
-		  name="extensions.nicolivehelperadvance.videoinfo3" type="unichar"/>
-      <preference id="pref-videoinfo4"
-		  name="extensions.nicolivehelperadvance.videoinfo4" type="unichar"/>
-      <preference id="pref-videoinfo1-command"
-		  name="extensions.nicolivehelperadvance.videoinfo1-command" type="unichar"/>
-      <preference id="pref-videoinfo2-command"
-		  name="extensions.nicolivehelperadvance.videoinfo2-command" type="unichar"/>
-      <preference id="pref-videoinfo3-command"
-		  name="extensions.nicolivehelperadvance.videoinfo3-command" type="unichar"/>
-      <preference id="pref-videoinfo4-command"
-		  name="extensions.nicolivehelperadvance.videoinfo4-command" type="unichar"/>
-      <preference id="pref-videoinfo-interval"
-		  name="extensions.nicolivehelperadvance.videoinfo.interval" type="int"/>
-      <preference id="pref-typeofvideoinfo"
-		  name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
-      <preference id="pref-revert-videoinfo"
-		  name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
-
-      <preference id="pref-videoinfo-playfailed"
-		  name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
-      <preference id="pref-userdefined-uri"
-		  name="extensions.nicolivehelperadvance.userdefined-data-uri" type="string"/>
-      <preference id="pref-nocomment-for-directplay"
-		  name="extensions.nicolivehelperadvance.nocomment-for-directplay" type="bool"/>
-      <preference id="pref-no-autopname"
-		  name="extensions.nicolivehelperadvance.no-auto-pname" type="bool"/>
-    </preferences>
-
+  <prefpane id="nicolivehelper-perfpane-movieinfo" label="動画情報" image="chrome://nicolivehelperadvance/content/data/icon1.png" onpaneload="">
     <tabbox persist="selectedIndex" id="prefwindow-videoinfo">
       <tabs>
 	<tab label="動画情報"></tab>
@@ -109,7 +175,8 @@
 		  <menuitem label="4" value="4"></menuitem>
 		</menupopup>
 	      </menulist>
-	      <label value="行目の動画情報を再送信する" tooltiptext="動画情報以外の何かをコメントした場合、指定行数目の動画情報を再送信します。"/>
+	      <label value="行目の動画情報を再送信する"
+		     tooltiptext="動画情報以外の何かをコメントした場合、指定行数目の動画情報を再送信します。"/>
 	    </hbox>
 	  </hbox>
 	  <groupbox>
@@ -123,28 +190,36 @@
 		<hbox align="center"><label control="videoinfo1" value="1行目"/></hbox>
 		<hbox>
 		  <textbox preference="pref-videoinfo1-command" size="5" emptytext="コマンド"/>
-		  <textbox preference="pref-videoinfo1" id="videoinfo1" onkeypress="NLHPreference.previewVideoInfo(this.value);" flex="1" emptytext="動画情報1行目"/>
+		  <textbox preference="pref-videoinfo1" id="videoinfo1"
+			   flex="1" emptytext="動画情報1行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
 		</hbox>
 	      </row>
 	      <row>
 		<hbox align="center"><label control="videoinfo2" value="2行目"/></hbox>
 		<hbox>
 		  <textbox preference="pref-videoinfo2-command" size="5" emptytext="コマンド"/>
-		  <textbox preference="pref-videoinfo2" id="videoinfo2" onkeypress="NLHPreference.previewVideoInfo(this.value);" flex="1" emptytext="動画情報2行目"/>
+		  <textbox preference="pref-videoinfo2" id="videoinfo2"
+			   flex="1" emptytext="動画情報2行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
 		</hbox>
 	      </row>
 	      <row>
 		<hbox align="center"><label control="videoinfo3" value="3行目"/></hbox>
 		<hbox>
 		  <textbox preference="pref-videoinfo3-command" size="5" emptytext="コマンド"/>
-		  <textbox preference="pref-videoinfo3" id="videoinfo3" onkeypress="NLHPreference.previewVideoInfo(this.value);" flex="1" emptytext="動画情報3行目"/>
+		  <textbox preference="pref-videoinfo3" id="videoinfo3"
+			   flex="1" emptytext="動画情報3行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
 		</hbox>
 	      </row>
 	      <row>
 		<hbox align="center"><label control="videoinfo4" value="4行目"/></hbox>
 		<hbox>
 		  <textbox preference="pref-videoinfo4-command" size="5" emptytext="コマンド"/>
-		  <textbox preference="pref-videoinfo4" id="videoinfo4" onkeypress="NLHPreference.previewVideoInfo(this.value);" flex="1" emptytext="動画情報4行目"/>
+		  <textbox preference="pref-videoinfo4" id="videoinfo4"
+			   flex="1" emptytext="動画情報4行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
 		</hbox>
 	      </row>
 	      <hbox align="center">

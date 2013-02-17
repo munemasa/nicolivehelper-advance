@@ -13,6 +13,8 @@ var NicoLiveHelper = {
     serverinfo: {},    // ServerInfo
     twitterinfo: {},   // TwitterInfo
 
+    allowrequest: true, // リクエストの可否
+
     iscaster: false,    // 主かどうか
     post_token: "",     // 主コメ用のトークン
 
@@ -39,6 +41,8 @@ var NicoLiveHelper = {
     playlist_list: [],   // 再生履歴
     reject_list: [],    // リジェクト
 
+    product_code: {},   // JWID作品コード
+
     // リクエスト、ストックを順番通りに処理するためのキュー
     request_q: [],
     stock_q: [],
@@ -53,6 +57,34 @@ var NicoLiveHelper = {
      */
     isOffline: function(){
 	return this.liveinfo.request_id=='lv0';
+    },
+
+    /**
+     * リクエスト可否を切り替える.
+     * @param flg 可否のフラグ
+     * @param ev 押されているキーを取得するためのevent
+     * @param nomsg リクエスト可否切り替え時に運営コメントしない
+     */
+    setAllowRequest:function(flg, ev, nomsg){
+	this.allowrequest = flg;
+	debugprint("リクエスト"+(flg?"許可":"不可")+"に切り替えました");
+	// TODO
+	let str = ""; //flg ? NicoLivePreference.msg.requestok : NicoLivePreference.msg.requestng;
+	let command = ""; //flg ? NicoLivePreference.msg.requestok_command : NicoLivePreference.msg.requestng_command;
+	if(!command) command = "";
+	if( ev && ev.ctrlKey ){
+	    // CTRLキーが押されていたら運営コメントを入力して、それを使用.
+	    let tmp = InputPrompt('リクエスト'+(flg?"許可":"不可")+'に切り替える時の運営コメントを入力してください','リクエスト可否切り替えコメントの入力',str);
+	    if( tmp ) str = tmp;
+	}
+	if(str && !nomsg){
+	    if( this.iscaster ) this.postComment(str,command);
+	}
+	if( !flg ) this.anchor = {};
+	let e = evaluateXPath(document,"//*[@id='toolbar-allowrequest']//*[@allowrequest='"+flg+"']");
+	if(e.length){
+	    $('toolbar-allowrequest').label = e[0].label;
+	}
     },
 
     /**
@@ -363,6 +395,7 @@ var NicoLiveHelper = {
 	let t=0;
 	let maxplay = parseInt(Config.max_playtime*60*1000);
 	let s;
+
 	for(let i=0,item;item=list[i];i++){
 	    if( excludeplayed && item.isplayed ) continue;
 	    if( maxplay>0 && checkmaxplay ){
@@ -464,6 +497,12 @@ var NicoLiveHelper = {
 		// 詳細を40文字まで(世界の新着と同じ)
 		tmp = info.description.match(/.{1,40}/);
 		break;
+
+	    case 'comment_no':
+		// リク主のコメント番号
+		tmp = info.comment_no || "";
+		break;
+
 	    case 'requestnum': // リク残数.
 		tmp = NicoLiveHelper.request_list.length;
 		break;
@@ -954,34 +993,6 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 再生時間総計を求める.
-     * @param list リクエスト、ストックのリスト
-     * @param exclude_played 再生済みを除外するかどうが
-     */
-    getTotalPlayTime: function(list, exclude_played){
-	let t = 0; // second
-
-	let tmp=0;
-	let maxplay = Config.max_playtime * 60 * 1000; // min to millisec
-	let interval = Config.play_interval;
-	for(let i=0,item; item=list[i]; i++){
-	    if( exclude_played && item.is_played ) continue;
-	    if( maxplay ){
-		tmp = maxplay>item.length_ms?item.length_ms:maxplay;
-	    }else{
-		tmp = item.length_ms;
-	    }
-	    t += tmp/1000;
-	    t += interval;
-	}
-
-	let min,sec;
-	min = parseInt(t/60);
-	sec = t%60;
-	return {"min":min, "sec":sec};
-    },
-
-    /**
      * 返却するオブジェクトの error にエラーの有無あり
      */
     extractVideoInfo: function(xml){
@@ -1184,13 +1195,18 @@ var NicoLiveHelper = {
             let text = req.responseText;
             let seigainfo = NicoLiveHelper.extractSeigaInfo(request.video_id, text);
             seigainfo.comment_no = request.comment_no;
-            if (!isstock) {
-                NicoLiveHelper.request_list.push(seigainfo);
-                NicoLiveRequest.addRequestView(seigainfo);
-            } else {
-                NicoLiveHelper.stock_list.push(seigainfo);
-                NicoLiveStock.addStockView(seigainfo);
-            }
+
+	    if( Config.allow_seiga ){
+		if (!isstock) {
+                    NicoLiveHelper.request_list.push(seigainfo);
+                    NicoLiveRequest.addRequestView(seigainfo);
+		} else {
+                    NicoLiveHelper.stock_list.push(seigainfo);
+                    NicoLiveStock.addStockView(seigainfo);
+		}
+	    }else{
+		// 静画のリクエスト受け付けはなし
+	    }
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
 
@@ -1203,6 +1219,7 @@ var NicoLiveHelper = {
 
     /**
      * リクエストやストックに動画を追加する
+     * @param isstock ストックならtrue
      */
     runAddRequest: function( isstock, retryobj ){
 	let request;
@@ -1214,15 +1231,28 @@ var NicoLiveHelper = {
 	    request = q[0];
 	}
 	if( request.video_id.indexOf("im")==0 ){
-            this.getSeigaInfoToAddRequest(request, q, isstock);
+	    this.getSeigaInfoToAddRequest(request, q, isstock);
         }else{
             this.getVideoInfoToAddRequest(retryobj, q, isstock, request);
         }
     },
 
+    /**
+     * リクエストに追加する.
+     * @param video_id 動画IDや静画ID
+     * @param comment_no リク主のコメント番号
+     * @param user_id リク主のユーザーID
+     * @param is_self_request 自貼りかどうか
+     * @param code JWIDの作品コード
+     */
     addRequest: function(video_id, comment_no, user_id, is_self_request, code ){
 	if( !video_id ) return;
 	if( video_id.length < 3 ) return;
+	if( !this.allowrequest ){
+	    // TODO リクエストは受け付けていません
+	    debugprint("リクエストは受け付けていません");
+	    return;
+	}
 
 	let n = this.request_q.length;
 
@@ -1647,13 +1677,17 @@ var NicoLiveHelper = {
 	default:
 	    // 視聴者コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
-//	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
+	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
 
 	    this.processListenersComment(chat);
 	    break;
 	}
     },
 
+    /**
+     * コメントのXMLからJavascriptのオブジェクトに変換する.
+     * @param xmlchat コメントのXML
+     */
     extractComment: function(xmlchat){
 	let chat = new Object();
 	chat.text = restorehtmlspecialchars( xmlchat.textContent );

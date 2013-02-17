@@ -265,7 +265,7 @@ var NicoLiveRequest = {
 	if( !table ) return;
 	this._addRequestView( table, videoinfo );
 
-	let t = NicoLiveHelper.getTotalPlayTime( NicoLiveHelper.request_list );
+	let t = NicoLiveHelper.getTotalRequestTime();
 	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.request_list.length]);
     },
 
@@ -320,6 +320,9 @@ var NicoLiveRequest = {
 	let tr = FindParentElement(event.target,'html:tr');
 	RemoveElement( tr );
 	this.resetRequestIndex();
+
+	let t = NicoLiveHelper.getTotalRequestTime();
+	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.request_list.length]);
     },
 
     swapRequest: function( n1, n2 ){
@@ -422,7 +425,7 @@ var NicoLiveRequest = {
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addRequestView( table, item );
 	}
-	let t = NicoLiveHelper.getTotalPlayTime( requestqueue );
+	let t = NicoLiveHelper.getTotalRequestTime();
 	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, requestqueue.length]);
     },
 

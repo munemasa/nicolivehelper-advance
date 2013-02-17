@@ -8,6 +8,8 @@ var Config = {
 
     max_playtime: 0,           // 最大再生時間(minute)
 
+    msg: {},  // 各種応答メッセージ
+
     getBranch:function(){
 	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");
 	return prefs;
@@ -16,6 +18,40 @@ var Config = {
 	// "greasemonkey.scriptvals.http://miku39.jp/nicolivehelper/WakutoriF modified-1."
 	var prefs = new PrefsWrapper1(branch);
 	return prefs;
+    },
+
+    /**
+     * 応答メッセージのロード.
+     * @param branch 設定のブランチ
+     */
+    loadReplyMessage:function (branch) {
+        this.msg = new Object();
+        this.msg.deleted = branch.getUnicharPref("msg.deleted");
+        this.msg.notaccept = branch.getUnicharPref("msg.notaccept");
+        this.msg.newmovie = branch.getUnicharPref("msg.newmovie");
+        this.msg.played = branch.getUnicharPref("msg.played");
+        this.msg.requested = branch.getUnicharPref("msg.requested");
+        this.msg.accept = branch.getUnicharPref("msg.accept");
+        this.msg.no_live_play = branch.getUnicharPref("msg.no-live-play");
+        this.msg.requestok = branch.getUnicharPref("msg.requestok");
+        this.msg.requestng = branch.getUnicharPref("msg.requestng");
+        this.msg.requestok_command = branch.getUnicharPref("msg.requestok-command");
+        this.msg.requestng_command = branch.getUnicharPref("msg.requestng-command");
+        this.msg.lessmylists = branch.getUnicharPref("msg.lessmylists");
+        this.msg.greatermylists = branch.getUnicharPref("msg.greatermylists");
+        this.msg.lessviews = branch.getUnicharPref("msg.lessviews");
+        this.msg.greaterviews = branch.getUnicharPref("msg.greaterviews");
+        this.msg.longertime = branch.getUnicharPref("msg.longertime");
+        this.msg.shortertime = branch.getUnicharPref("msg.shortertime");
+        this.msg.outofdaterange = branch.getUnicharPref("msg.outofdaterange");
+        this.msg.requiredkeyword = branch.getUnicharPref("msg.requiredkeyword");
+        this.msg.forbiddenkeyword = branch.getUnicharPref("msg.forbiddenkeyword");
+        this.msg.limitnumberofrequests = branch.getUnicharPref("msg.limitnumberofrequests");
+        this.msg.within_livespace = branch.getUnicharPref("msg.within-livespace");
+        this.msg.requiredkeyword_title = branch.getUnicharPref("msg.requiredkeyword-title");
+        this.msg.forbiddenkeyword_title = branch.getUnicharPref("msg.forbiddenkeyword-title");
+        this.msg.highbitrate = branch.getUnicharPref("msg.high-bitrate");
+        this.msg.ngvideo = branch.getUnicharPref("msg.ng-video-reply-message");
     },
 
     loadPrefs: function(){
@@ -34,6 +70,11 @@ var Config = {
 
 	this.play_interval  = branch.getIntPref("play.interval");
 	this.max_playtime   = branch.getIntPref("play.maxtime");
+
+	this.allow_seiga    = branch.getBoolPref("request.seiga");
+
+	// 各種応答メッセージ
+        this.loadReplyMessage(branch);
     },
 
     register:function(){
@@ -54,8 +95,10 @@ var Config = {
 
     init: function(){
 	this.loadPrefs();
+	this.register();
     },
     destroy: function(){
+	this.unregister();
     }
 };
 

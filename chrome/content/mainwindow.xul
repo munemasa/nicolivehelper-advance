@@ -100,8 +100,8 @@
 	<!-- allow/disallow request -->
 	<toolbarbutton label="&allow_request;" type="menu" id="toolbar-allowrequest">
 	  <menupopup>
-	    <menuitem label="&allow_request;" allowrequest="true"/>
-	    <menuitem label="&disallow_request;" allowrequest="false"/>
+	    <menuitem label="&allow_request;" allowrequest="true" oncommand="NicoLiveHelper.setAllowRequest(true,event);"/>
+	    <menuitem label="&disallow_request;" allowrequest="false" oncommand="NicoLiveHelper.setAllowRequest(false,event);"/>
 	  </menupopup>
 	</toolbarbutton>
 	<!-- play next -->
@@ -227,11 +227,13 @@
 	    </menupopup>
 	  </menulist>
 	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleRequest();"/>
+	  <!--
 	  <button type="menu" label="リク受付方法">
 	    <menupopup>
 	      <menuitem label="アンカー指定" oncommand="OpenAnchorWindow();"/>
 	    </menupopup>
 	  </button>
+	  -->
 	  <textbox id="input-request" emptytext="&request.emptytext_add_from_mylist;"
 		   flex="1" type="search" searchbutton="true" oncommand="NicoLiveRequest.addRequest(this.value);"/>
 	  <button type="menu" label="消去" style="min-width:1em;">
@@ -464,7 +466,9 @@
       </vbox>
 
       <vbox id="tab-debug">
-	<menulist id="id-debug-style" persist="value" oncommand="$('debug-deck').selectedIndex=this.value;">
+	<menulist id="id-debug-style" persist="value"
+		  style="margin:0; padding:0;"
+		  oncommand="$('debug-deck').selectedIndex=this.value;">
 	  <menupopup>
 	    <menuitem label="&general.debug;" value="0"/>
 	    <menuitem label="&general.syslog;" value="1"/>
