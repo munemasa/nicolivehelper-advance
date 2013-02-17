@@ -132,10 +132,11 @@ var NicoLiveStock = {
      * ストックを再生する.
      */
     playStock: function(n){
+	if( NicoLiveHelper.isOffline() ) return;
+
 	debugprint("Play Stock: #"+n);
 	NicoLiveHelper.playStock(n);
 
-	//let tr = FindParentElement(event.target,'html:tr');
 	let tr = evaluateXPath(document,"//html:table[@id='stock-table']//html:tr")[n];
 	tr.className = "table_played";
 	//this.resetStockIndex(); // いらないはず

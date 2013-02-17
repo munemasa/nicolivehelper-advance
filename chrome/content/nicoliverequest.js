@@ -297,6 +297,8 @@ var NicoLiveRequest = {
      * @param n 対象のリクエスト(0,1,2,...)
      */
     playRequest: function(n){
+	if( NicoLiveHelper.isOffline() ) return;
+
 	debugprint("Play Request: #"+n);
 	NicoLiveHelper.playRequest(n);
 

@@ -27,7 +27,7 @@ var CommandMenu = {
 			    NicoLiveHelper.openNewBroadcast(lvid,"",true,"");
 			}
 		    } catch (x) {
-			ShowNotice("放送中の番組が見つかりませんでした。");
+			AlertPrompt("放送中の番組が見つかりませんでした。",'NicoLive Helper Advance');
 		    }
 		}
 	    }

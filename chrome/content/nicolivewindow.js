@@ -1,6 +1,5 @@
 var NicoLiveWindow = {
 
-
     /**
      * 指定のURLを開く.
      * @param url URL
@@ -39,6 +38,22 @@ var NicoLiveWindow = {
 	return win;
     },
 
+    // 左のタブから1,2,3,....,9,0 の番号としてタブを切り替える.
+    changeTab:function(n){
+	n = (n + 9) % 10;
+	$('maintabs').selectedIndex = n;
+    },
+    moveRightTab:function(){
+	let n = $('maintabs').selectedIndex+1;
+	n++;
+	this.changeTab(n);
+    },
+    moveLeftTab:function(){
+	let n = $('maintabs').selectedIndex+1;
+	n--;
+	this.changeTab(n);
+    },
+
     showThumbnail:function(event,video_id){
 	$('iframe-thumbnail').src = "http://ext.nicovideo.jp/thumb/"+video_id;
 	let x,y;
@@ -65,9 +80,12 @@ var NicoLiveWindow = {
 	$('iframe-thumbnail').style.opacity = 0;
     },
 
+    /**
+     * クッキーを利用するブラウザを変更する
+     */
     changeBrowser: function(){
 	this.initBrowserIcon();
-	ShowNotice('ブラウザ設定が変更されました。ウィンドウを開き直してください。',true);
+	AlertPrompt('ブラウザ設定が変更されました。有効にするにはウィンドウを開き直してください。','NicoLive Helper Advance');
     },
 
     initBrowserIcon: function(){

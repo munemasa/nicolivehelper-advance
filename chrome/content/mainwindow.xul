@@ -28,6 +28,9 @@
 	  src="chrome://nicolivehelperadvance/content/utils/tcplib.js" />
 
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/misc.js" />
+
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoapi.js" />
@@ -63,6 +66,18 @@
     <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
     <!-- CTRL+O: Open a broadcasting -->
     <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
+
+    <!-- CTRL+Num: Change the tab -->
+    <key id="tab-move-0" key="0" modifiers="accel" oncommand="NicoLiveWindow.changeTab(0);"/>
+    <key id="tab-move-1" key="1" modifiers="accel" oncommand="NicoLiveWindow.changeTab(1);"/>
+    <key id="tab-move-2" key="2" modifiers="accel" oncommand="NicoLiveWindow.changeTab(2);"/>
+    <key id="tab-move-3" key="3" modifiers="accel" oncommand="NicoLiveWindow.changeTab(3);"/>
+    <key id="tab-move-4" key="4" modifiers="accel" oncommand="NicoLiveWindow.changeTab(4);"/>
+    <key id="tab-move-5" key="5" modifiers="accel" oncommand="NicoLiveWindow.changeTab(5);"/>
+    <key id="tab-move-6" key="6" modifiers="accel" oncommand="NicoLiveWindow.changeTab(6);"/>
+    <key id="tab-move-7" key="7" modifiers="accel" oncommand="NicoLiveWindow.changeTab(7);"/>
+    <key id="tab-move-8" key="8" modifiers="accel" oncommand="NicoLiveWindow.changeTab(8);"/>
+    <key id="tab-move-9" key="9" modifiers="accel" oncommand="NicoLiveWindow.changeTab(9);"/>
   </keyset>
 
   <toolbox id="global-toolbox">
@@ -74,11 +89,12 @@
 	    <menuitem label="&playstyle.manual_sequential;" playstyle="0" oncommand="NicoLiveHelper.setPlayStyle(0);"/>
 	    <menuitem label="&playstyle.auto_sequential;" playstyle="1" oncommand="NicoLiveHelper.setPlayStyle(1);"/>
 	    <menuseparator/>
-	    <menuitem label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(2);"/>
-	    <menuitem label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(3);"/>
+	    <!-- TODO -->
+	    <menuitem disabled="true" label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(2);"/>
+	    <menuitem disabled="true" label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(3);"/>
 	    <menuseparator/>
-	    <menuitem label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(4);"/>
-	    <menuitem label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(5);"/>
+	    <menuitem disabled="true" label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(4);"/>
+	    <menuitem disabled="true" label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(5);"/>
 	  </menupopup>
 	</toolbarbutton>
 	<!-- allow/disallow request -->
@@ -113,7 +129,8 @@
 	    <menuitem label="放送開始する" tooltiptext="&toolbar.tooltip_beginbroadcasting;"
 		      oncommand="NicoLiveHelper.startBroadcasting();"/>
 	    <menuseparator/>
-	    <menu label="&toolbar.backuprestore;" tooltiptext="&toolbar.backuprestore.help;"><!-- バックアップと復元 -->
+	    <!-- TODO -->
+	    <menu disabled="true" label="&toolbar.backuprestore;" tooltiptext="&toolbar.backuprestore.help;"><!-- バックアップと復元 -->
 	      <menupopup>
 		<menuitem label="&toolbar.backup;" oncommand="NicoLiveWindow.inputBackupName();"/>
 		<menu label="&toolbar.restore;">
@@ -128,14 +145,14 @@
 	    </menu>
 	    <menuseparator/>
 	    <!-- 連続コメント -->
-	    <menuitem label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
+	    <menuitem disabled="true" label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
 	    <menuseparator/>
 	    <!-- アンケート関係 -->
-	    <menuitem label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
+	    <menuitem disabled="true" label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
 		      oncommand="OpenVoteDialog();"/>
-	    <menuitem label="&toolbar.voteshowresult;" tooltiptext="&toolbar.tooltip_voteshowresult;"
+	    <menuitem disabled="true" label="&toolbar.voteshowresult;" tooltiptext="&toolbar.tooltip_voteshowresult;"
 		      oncommand="NicoLiveHelper.postCasterComment('/vote showresult','');"/>
-	    <menuitem label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
+	    <menuitem disabled="true" label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
 		      oncommand="NicoLiveHelper.postCasterComment('/vote stop','');"/>
 	  </menupopup>
 	</toolbarbutton>
@@ -327,98 +344,111 @@
 
       <!-- comment tab -->
       <vbox id="tab-comment">
-	<hbox id="box-caster-comment">
-	  <menulist id="textbox-mail" label="" editable="true" value="">
-	    <menupopup>
-	      <menuitem label="" value=""/>
-	      <menuitem label="&comment.command_caster;" value=""/>
-	      <menuitem label="se1" value="se1"/>
-	      <menuitem label="se2" value="se2"/>
-	      <menuitem label="hidden" value="hidden"/>
-	      <menuitem label="&comment.command_listener;" value=""/>
-	      <menuitem label="cyan big" value="cyan big"/>
-	      <menuitem label="shita" value="shita"/>
-	      <menuitem label="green shita small" value="green shita small"/>
-	      <menuitem label="orange" value="orange"/>
-	      <menuitem label="&comment.command_premium;" value=""/>
-	      <menuitem label="marineblue" value="marineblue"/>
-	      <menuitem label="passionorange" value="passionorange"/>
-	      <menuitem label="elementalgreen ue" value="elementalgreen ue"/>
-	      <menuitem label="truered shita small" value="truered shita small"/>
-	      <menuitem label="niconicowhite big" value="niconicowhite big"/>
-	    </menupopup>
-	  </menulist>	  
-	  <textbox id="textbox-comment"
-		   style="padding: 2px;"
-		   flex="1"
-		   maxlength="1024"
-		   type="autocomplete"
-		   autocompletesearch="simple-autocomplete"
-		   enablehistory="true"
-		   showcommentcolumn="true" 
-		   emptytext="&comment.emptytext_input;"
-		   onkeypress="NicoLiveComment.postComment(this,event);"
-		   ontextreverted="this.select();"
-		   />
-	  <button label="送信" style="min-width:0;" oncommand="NicoLiveComment.postComment($('textbox-comment'),null);"/>
-	  <checkbox persist="checked" id="overwrite-hidden-perm" label="&comment.write_upperarea;" tooltiptext="&comment.tooltip_write_upperarea;"/>
-	</hbox>
-	<scrollbox id="comment-box" orient="vertical" flex="1" style="overflow:auto;">
-	  <html:table id="comment-table" style="width:100%"></html:table>
-	</scrollbox>
-	<splitter collapse="after" state="collapsed"/>
-	<vbox flex="1" style="overflow:auto;">
-	  <hbox style="display: inline-block;" flex="1">
-	    <grid>
-	      <columns>
-		<column/>
-		<column/>
-		<column/>
-	      </columns>
-	      <rows>
-		<row>
-		  <hbox align="center"><label value="&comment.comment_no;"/></hbox>
-		  <textbox id="comment_no_to_add_reflection"/>
-		  <button label="&comment.register_reflection;" oncommand=""/>
-		</row>
-		<row>
-		  <hbox align="center"><label value="&comment.user_id;"/></hbox>
-		  <hbox><textbox id="comment-user-id"/></hbox>
-		  <button type="menu" label="&general.command;">
-		    <menupopup id="menupopup-comment-command">
-		      <menuitem label="&comment.menu_setname;" oncommand=""/>
-		      <menuitem label="&comment.menu_reflection;" oncommand=""/>
-		      <menuitem label="&comment.del_nguser;" oncommand=""/>
-		    </menupopup>
-		  </button>
-		</row>
-	      </rows>
-	    </grid>
-	    <spacer flex="1"/>
-	    <button label="Open As Textbox" oncommand=""/>
+	<vbox flex="1">
+	  <hbox id="box-caster-comment">
+	    <menulist id="textbox-mail" label="" editable="true" value="">
+	      <menupopup>
+		<menuitem label="" value=""/>
+		<menuitem label="&comment.command_caster;" value=""/>
+		<menuitem label="se1" value="se1"/>
+		<menuitem label="se2" value="se2"/>
+		<menuitem label="hidden" value="hidden"/>
+		<menuitem label="&comment.command_listener;" value=""/>
+		<menuitem label="cyan big" value="cyan big"/>
+		<menuitem label="shita" value="shita"/>
+		<menuitem label="green shita small" value="green shita small"/>
+		<menuitem label="orange" value="orange"/>
+		<menuitem label="&comment.command_premium;" value=""/>
+		<menuitem label="marineblue" value="marineblue"/>
+		<menuitem label="passionorange" value="passionorange"/>
+		<menuitem label="elementalgreen ue" value="elementalgreen ue"/>
+		<menuitem label="truered shita small" value="truered shita small"/>
+		<menuitem label="niconicowhite big" value="niconicowhite big"/>
+	      </menupopup>
+	    </menulist>	  
+	    <textbox id="textbox-comment"
+		     style="padding: 2px;"
+		     flex="1"
+		     maxlength="1024"
+		     type="autocomplete"
+		     autocompletesearch="simple-autocomplete"
+		     enablehistory="true"
+		     showcommentcolumn="true" 
+		     emptytext="&comment.emptytext_input;"
+		     onkeypress="NicoLiveComment.postComment(this,event);"
+		     ontextreverted="this.select();"
+		     />
+	    <button label="送信" style="min-width:0;" oncommand="NicoLiveComment.postComment($('textbox-comment'),null);"/>
+	    <!-- 基本的にONで使うと思うので廃止
+	    <checkbox persist="checked" id="overwrite-hidden-perm" label="&comment.write_upperarea;" tooltiptext="&comment.tooltip_write_upperarea;"/>
+	    -->
 	  </hbox>
-	  <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="">
-	    <listcols>
-	      <listcol flex="1" />
-	      <listcol flex="1" />
-	    </listcols>
-	    <listhead>
-	      <listheader label="&comment.user_id;" />
-	      <listheader label="&comment.kotehan;" />
-	    </listhead>
-	  </listbox>
+	  <scrollbox id="comment-box" orient="vertical" flex="1" style="overflow:auto;">
+	    <html:table id="comment-table" style="width:100%"></html:table>
+	  </scrollbox>
+	  
+	  <splitter collapse="after" state="collapsed"/>
+	  <vbox flex="1" style="overflow:auto;">
+	    <hbox style="display: inline-block;" flex="1">
+	      <grid>
+		<columns>
+		  <column/>
+		  <column/>
+		  <column/>
+		</columns>
+		<rows>
+		  <row>
+		    <hbox align="center"><label value="&comment.comment_no;"/></hbox>
+		    <textbox id="comment_no_to_add_reflection"/>
+		    <button label="&comment.register_reflection;" oncommand=""/>
+		  </row>
+		  <row>
+		    <hbox align="center"><label value="&comment.user_id;"/></hbox>
+		    <hbox><textbox id="comment-user-id"/></hbox>
+		    <button type="menu" label="&general.command;">
+		      <menupopup id="menupopup-comment-command">
+			<menuitem label="&comment.menu_setname;" oncommand=""/>
+			<menuitem label="&comment.menu_reflection;" oncommand=""/>
+			<menuitem label="&comment.del_nguser;" oncommand=""/>
+		      </menupopup>
+		    </button>
+		  </row>
+		</rows>
+	      </grid>
+	      <spacer flex="1"/>
+	      <button label="Open As Textbox" oncommand=""/>
+	    </hbox>
+	    <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="">
+	      <listcols>
+		<listcol flex="1" />
+		<listcol flex="1" />
+	      </listcols>
+	      <listhead>
+		<listheader label="&comment.user_id;" />
+		<listheader label="&comment.kotehan;" />
+	      </listhead>
+	    </listbox>
+	  </vbox>
 	</vbox>
 	<arrowscrollbox orient="horizontal">
-	  <hbox align="center" flex="1">
-	    <checkbox persist="checked" id="auto-kotehan" label="自動コテハン登録" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
-	    <checkbox persist="checked" id="nlhaddon-allowoverwrite" label="上書き登録" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
-	    <checkbox persist="checked" id="nlhaddon-ref-userprof" label="プロフィール参照登録" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
+	  <hbox align="center" flex="1" style="padding: 0px;">
+	    <menulist id="id-select-comment-room" style="padding: 0px; margin: 0px;">
+	      <menupopup>
+		<menuitem label="アリーナ" value="0"/>
+		<menuitem label="立ち見A列" value="1"/>
+		<menuitem label="立ち見B列" value="2"/>
+		<menuitem label="立ち見C列" value="3"/>
+	      </menupopup>
+	    </menulist>
+
+	    <checkbox persist="checked" id="auto-kotehan" label="自動コテハン" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
+	    <checkbox persist="checked" id="nlhaddon-allowoverwrite" label="上書き" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
+	    <checkbox persist="checked" id="nlhaddon-ref-userprof" label="プロフィール参照" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
 	    <spacer flex="1"/>
 	    <label id="comment-font-scale-value" value="11pt"/>
 	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveCommentProcessor.changeFontScale(this.value);"/>
 	  </hbox>
 	</arrowscrollbox>
-
       </vbox>
       
       <vbox id="tab-talk">

@@ -43,6 +43,10 @@ var NicoLiveHelper = {
     request_q: [],
     stock_q: [],
 
+    postclsfunc: null,   // /cls,/clearを受け取ったときに実行する関数
+
+    commentViewState: COMMENT_VIEW_NORMAL,
+
     /**
      * 生放送に接続しているかどうかを返す
      */
@@ -699,15 +703,87 @@ var NicoLiveHelper = {
     /**
      * コメントを投稿する.
      * 生主、視聴者両用
+     * @param text コメント
+     * @param mail コマンド
+     * @param name 名前
      */
     postComment: function( text, mail, name ){
 	if( this.iscaster ){
-	    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL );
+	    if( text.match(/^((sm|nm)\d+|\d{10})$/) ){
+		//debugprint(str+'を手動再生しようとしています');
+		this._comment_video_id = str;
+		this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+	    }else{
+		if( str.indexOf('/')==0 ){
+		    // コマンドだった場合/clsを送らない.
+		    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+		}else{
+		    // 直前のコメがhidden+/permで、上コメ表示にチェックがされていたら、/clsを送ってから.
+		    let func = function(){
+			NicoLiveHelper.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
+		    };
+		    this.clearCasterCommentAndRun(func);
+		}
+	    }
 	}else{
 	    this.postListenerComment( text, mail );
 	}
     },
 
+    /**
+     * 運営コメント欄を/clsで消去したあと、指定の関数を実行する.
+     * 消去の必要がない場合は消去せずに指定の関数を実行する.
+     */
+    clearCasterCommentAndRun:function(func){
+	// /clsが飲み込まれて送られてこなかったらどうしよう.
+	// というときのために、/clsを送る必要があるときは
+	// /clsか/clearを受けとるまで6秒間隔で/clsを送信.
+	if( 'function'!=typeof func ) return;
+
+	let sendclsfunc = function(){
+	    NicoLiveHelper.postCasterComment("/cls","");
+	    NicoLiveHelper._clscounter++;
+	    if(NicoLiveHelper._clscounter>=5){
+		clearInterval( NicoLiveHelper._sendclsid );
+		NicoLiveHelper.postclsfunc = null;
+	    }
+	};
+
+	if( this.commentview==COMMENT_VIEW_HIDDEN_PERM ){
+	    // hidden/permのときは先に/clsを送らないといけない.
+	    if('function'!=typeof this.postclsfunc){
+		// postclsfuncが空いているので、登録したのち/cls
+		this.postclsfunc = func;
+		this.postCasterComment("/cls","");
+		clearInterval(this._sendclsid);
+		this._clscounter = 0;
+		// /clsがきちんと送れるように6秒間隔でリトライする
+		this._sendclsid = setInterval( sendclsfunc, 6000 );
+	    }else{
+		// 1秒ごとにpost /cls関数が空いてないかチェック.
+		let timer = setInterval(
+		    function(){
+			if( 'function'!=typeof NicoLiveHelper.postclsfunc ){
+			    // postclsfuncが空いた.
+			    if( NicoLiveHelper.commentview!=COMMENT_VIEW_HIDDEN_PERM ){
+				// hidden/permじゃないので、/clsは不要.
+				func();
+			    }else{
+				// 登録したのち/cls
+				NicoLiveHelper.postclsfunc = func;
+				NicoLiveHelper.postCasterComment("/cls","");
+				clearInterval(NicoLiveHelper._sendclsid);
+				NicoLiveHelper._clscounter = 0;
+				NicoLiveHelper._sendclsid = setInterval( sendclsfunc, 6000 );
+			    }
+			    clearInterval(timer);
+			}
+		    }, 1000);
+	    }
+	}else{
+	    func();
+	}
+    },
 
     /**
      *  リクエストの処理状況を表示する.
@@ -1377,6 +1453,30 @@ var NicoLiveHelper = {
 	    syslog(info);
 	    return;
 	}
+
+	if( chat.text.indexOf("/perm")==0 && chat.mail.indexOf("hidden")!=-1 ){
+	    NicoLiveHelper.commentViewState = COMMENT_VIEW_HIDDEN_PERM;
+	    clearInterval(NicoLiveHelper._commentstatetimer);
+	    return;
+	}
+	if( chat.mail.indexOf("hidden")!=-1 ){
+	    // hiddenだけの場合は、15秒間だけHIDDEN_PERM.
+	    NicoLiveHelper.commentViewState = COMMENT_VIEW_HIDDEN_PERM;
+	    clearInterval(NicoLiveHelper._commentstatetimer);
+	    NicoLiveHelper._commentstatetimer = setInterval(
+		function(){
+		    NicoLiveHelper.commentViewState = COMMENT_VIEW_NORMAL;
+		    clearInterval(NicoLiveHelper._commentstatetimer);
+		}, 15*1000 );
+	}
+	if( chat.text.indexOf("/cls")==0 || chat.text.indexOf("/clear")==0 ){
+	    clearInterval(NicoLiveHelper._sendclsid);
+	    NicoLiveHelper.commentViewState = COMMENT_VIEW_NORMAL;
+	    if( 'function'==typeof NicoLiveHelper.postclsfunc ){
+		NicoLiveHelper.postclsfunc();
+		NicoLiveHelper.postclsfunc = null;
+	    }
+	}
     },
 
     /**
@@ -1534,8 +1634,7 @@ var NicoLiveHelper = {
     closeConnection: function(){
 	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
 	for(let i=0; i<4; i++){
-	    let item = this.connectioni
-	    nfo[i];
+	    let item = this.connectioninfo[i];
 	    try{
 		item.ostream.close();
 	    } catch (x) {
@@ -1596,7 +1695,7 @@ var NicoLiveHelper = {
 
 	let lines;
 	try{
-	    // TODO コメントのバックログ取得数
+	    // コメントのバックログ取得数
 	    lines = Config.getBranch().getIntPref("comment.backlog") * -1;
 	} catch (x) {
 	    lines = -100;
@@ -1613,6 +1712,7 @@ var NicoLiveHelper = {
 		lines
 	    );
 	    this.connectioninfo[ARENA] = tmp;
+	    // リスナーの場合はここで終わり
 	    return;
 	}
 
@@ -1740,12 +1840,108 @@ var NicoLiveHelper = {
 	} catch (x) {
 	    debugprint(x);
 	}
+
 	this.liveinfo = live_info;
         this.userinfo = user_info;
 	this.serverinfo = server_info;
 	this.twitterinfo = twitter_info;
     },
 
+    /**
+     * 放送を開始する(手順その2)
+     * @param token 主コメのトークン
+     */
+    beginLive:function(token){
+	if( !this.iscaster ) return;
+
+	let f = function(xml,req){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    let confstatus = req.responseXML.getElementsByTagName('response_configurestream')[0];
+		    if( confstatus.getAttribute('status')=='ok' ){
+			// 配信中ステータスへ.
+			NicoLiveHelper.setLiveStartingStatus(token);
+		    }else{
+			debugalert(LoadString('STR_FAILED_TO_START_BROADCASTING'));
+		    }
+		}else{
+		    debugalert(LoadString('STR_FAILED_TO_START_BROADCASTING'));
+		}
+	    }
+	};
+	NicoApi.configurestream( this.liveinfo.request_id, "key=hq&value=0&version=2&token="+token, f );
+    },
+
+    /**
+     * 配信開始ステータスに変える.
+     * @param token 主コメのトークン
+     */
+    setLiveStartingStatus:function(token){
+	if( !this.iscaster ) return;
+	// exclude=0ってパラメタだから
+	// 視聴者を排除(exclude)するパラメタをOFF(0)にするって意味だろうな.
+	// 新バージョンは version=2 を渡して、開演、終了時刻を知る必要がある.
+	// 配信開始前にこれがある
+	// 外部配信 http://watch.live.nicovideo.jp/api/configurestream/lv25214688?token=39cf24389dfda675eb2ba996934627794c86fd9b&key=hq&value=1&version=2
+	// 簡易配信 http://watch.live.nicovideo.jp/api/configurestream/lv25214688?token=39cf24389dfda675eb2ba996934627794c86fd9b&key=hq&value=0&version=2
+	// 配信終了 http://watch.live.nicovideo.jp/api/configurestream/lv25353436?token=8c1fdb8790312869e872ae6617a3ddf43de8eb5b&version=2&key=end%5Fnow
+
+	let f = function(xml,req){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    let confstatus = req.responseXML.getElementsByTagName('response_configurestream')[0];
+		    if( confstatus.getAttribute('status')=='ok' ){
+			// TODO 放送開始をツイート
+			/*
+			if( NicoLivePreference.twitter.when_beginlive ){
+			    let msg = NicoLiveHelper.replaceMacros(NicoLivePreference.twitter.beginlive, this.musicinfo);
+			    NicoLiveTweet.tweet(msg);
+			}
+			 */
+			try{
+			    NicoLiveHelper.liveinfo.start_time = parseInt(req.responseXML.getElementsByTagName('start_time')[0].textContent);
+			    NicoLiveHelper.liveinfo.end_time = parseInt(req.responseXML.getElementsByTagName('end_time')[0].textContent);
+			} catch (x) {
+			    debugprint(x);
+			}
+		    }else{
+			debugalert(LoadString('STR_FAILED_TO_START_BROADCASTING'));
+		    }
+		}else{
+		    debugalert(LoadString('STR_FAILED_TO_START_BROADCASTING'));
+		}
+	    }
+	};
+	NicoApi.configurestream( this.liveinfo.request_id, "key=exclude&value=0&version=2&token="+token, f );
+    },
+
+    /**
+     * 配信開始を行う.
+     */
+    startBroadcasting:function(){
+	// getpublishstatus + configurestream
+	let request_id = this.liveinfo.request_id;
+	if( !request_id || request_id=="lv0" ) return;
+
+	let f = function(xml, req){
+	    if( req.readyState==4 && req.status==200 ){
+		let publishstatus = req.responseXML;
+		NicoLiveHelper.token = publishstatus.getElementsByTagName('token')[0].textContent;
+		NicoLiveHelper.beginLive( NicoLiveHelper.token );
+		// TODO
+		//NicoLiveHelper.setLiveProgressBarTipText();
+	    }
+	};
+	NicoApi.getpublishstatus( request_id, f );
+    },
+
+    /**
+     * 生放送に接続する.
+     * @param request_id 放送ID
+     * @param title 番組のタイトル(事前に分かっていれば)
+     * @param iscaster 生主かどうか（〃)
+     * @param community_id 放送しているコミュニティID
+     */
     openNewBroadcast: function(request_id, title, iscaster, community_id){
 	if( request_id=="lv0" ){
 	    debugprint("Not online.");
@@ -1828,8 +2024,10 @@ var NicoLiveHelper = {
 	    if( title ){
 		NicoLiveHelper.liveinfo.title = title;
 	    }
+
 	    if( !NicoLiveHelper.iscaster ){
-		$('textbox-comment').setAttribute('maxlength','64');
+		// リスナーはコメント60文字(公式)に合わせる
+		$('textbox-comment').setAttribute('maxlength','60');
 	    }
 
 	    NicoLiveHelper.preprocessConnectServer( NicoLiveHelper.liveinfo.request_id );
@@ -2108,6 +2306,9 @@ var NicoLiveHelper = {
 	this.openNewBroadcast( request_id, title, iscaster, community_id );
     },
 
+    /**
+     * 放送で使用する各種タイマーを停止する.
+     */
     stopTimers: function(){
 	clearInterval( this._update_timer );
 	clearInterval( this._keep_timer );
