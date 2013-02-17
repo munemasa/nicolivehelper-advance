@@ -46,6 +46,7 @@ var NicoLiveHelper = {
     postclsfunc: null,   // /cls,/clearを受け取ったときに実行する関数
 
     commentViewState: COMMENT_VIEW_NORMAL,
+    commentstate: COMMENT_STATE_NONE,
 
     /**
      * 生放送に接続しているかどうかを返す
@@ -358,6 +359,33 @@ var NicoLiveHelper = {
 	}
     },
 
+    getTotalPlayTime:function(list,excludeplayed,checkmaxplay){
+	let t=0;
+	let maxplay = parseInt(Config.max_playtime*60*1000);
+	let s;
+	for(let i=0,item;item=list[i];i++){
+	    if( excludeplayed && item.isplayed ) continue;
+	    if( maxplay>0 && checkmaxplay ){
+		s = maxplay>item.length_ms?item.length_ms:maxplay;
+	    }else{
+		s = item.length_ms;
+	    }
+	    t += s;
+	}
+	t /= 1000;
+	let min,sec;
+	min = parseInt(t/60);
+	sec = t%60;
+	return {"min":min, "sec":sec};
+    },
+
+    getTotalRequestTime: function(){
+	return this.getTotalPlayTime( this.request_list, true, true );
+    },
+    getTotalStockTime: function(){
+	return this.getTotalPlayTime( this.stock_list, true, true );
+    },
+
     /**
      * 文字列のマクロ展開を行う.
      * @param str 置換元も文字列
@@ -440,8 +468,7 @@ var NicoLiveHelper = {
 		tmp = NicoLiveHelper.request_list.length;
 		break;
 	    case 'requesttime': // リク残時間(mm:ss).
-		// TODO リクエスト残時間
-		let reqtime = NicoLiveHelper.getTotalMusicTime();
+		let reqtime = NicoLiveHelper.getTotalRequestTime();
 		tmp = GetTimeString(reqtime.min*60+reqtime.sec);
 		break;
 	    case 'stocknum':  // ストック残数.
@@ -454,7 +481,6 @@ var NicoLiveHelper = {
 		tmp = remainstock;
 		break;
 	    case 'stocktime': // ストック残時間(mm:ss).
-		// TODO ストック残時間
 		let stocktime = NicoLiveHelper.getTotalStockTime();
 		tmp = GetTimeString(stocktime.min*60+stocktime.sec);
 		break;
@@ -537,7 +563,10 @@ var NicoLiveHelper = {
 		if(ch=='}'){
 		    nest--;
 		    if(nest<=0){
-			r += replacefunc(token,token.substring(1,token.length-1));
+			try{
+			    r += replacefunc(token,token.substring(1,token.length-1));
+			} catch (x) {
+			}
 			token = "";
 		    }
 		}
@@ -595,6 +624,26 @@ var NicoLiveHelper = {
 	// コマンドは mail=green%20shita と付ける.
 	data.push("mail="+encodeURIComponent(mail));
 	NicoApi.broadcast( this.liveinfo.request_id, data, f );
+
+	// 主コメ送信のレスポンスが来たときにセットアップしていたのをここに移動.
+	switch( NicoLiveHelper.commentstate ){
+	case COMMENT_STATE_MOVIEINFO_DONE:
+	    try{
+		if( type==COMMENT_MSG_TYPE_MOVIEINFO ) break;
+		if( type!=COMMENT_MSG_TYPE_MOVIEINFO && comment.indexOf('/')==0 ) break;
+		if( NicoLiveHelper._comment_video_id==comment ) break; // 主コメ経由で動画IDを流したときには動画情報の復元は不要.
+		if( mail.indexOf("hidden")==-1 && NicoLiveHelper.commentViewState==COMMENT_VIEW_HIDDEN_PERM ){
+		    // hiddenコメじゃなければ上コメは上書きされないので復帰必要なし.
+		    break;
+		}
+		NicoLiveHelper.setupRevertVideoInfo();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	    break;
+	default:
+	    break;
+	}
     },
 
     /**
@@ -714,7 +763,7 @@ var NicoLiveHelper = {
 		this._comment_video_id = str;
 		this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
 	    }else{
-		if( str.indexOf('/')==0 ){
+		if( text.indexOf('/')==0 ){
 		    // コマンドだった場合/clsを送らない.
 		    this.postCasterComment( text, mail, name, COMMENT_MSG_TYPE_NORMAL);
 		}else{
@@ -733,6 +782,7 @@ var NicoLiveHelper = {
     /**
      * 運営コメント欄を/clsで消去したあと、指定の関数を実行する.
      * 消去の必要がない場合は消去せずに指定の関数を実行する.
+     * @param func /cls後に実行する関数
      */
     clearCasterCommentAndRun:function(func){
 	// /clsが飲み込まれて送られてこなかったらどうしよう.
@@ -749,7 +799,7 @@ var NicoLiveHelper = {
 	    }
 	};
 
-	if( this.commentview==COMMENT_VIEW_HIDDEN_PERM ){
+	if( this.commentViewState==COMMENT_VIEW_HIDDEN_PERM ){
 	    // hidden/permのときは先に/clsを送らないといけない.
 	    if('function'!=typeof this.postclsfunc){
 		// postclsfuncが空いているので、登録したのち/cls
@@ -765,7 +815,7 @@ var NicoLiveHelper = {
 		    function(){
 			if( 'function'!=typeof NicoLiveHelper.postclsfunc ){
 			    // postclsfuncが空いた.
-			    if( NicoLiveHelper.commentview!=COMMENT_VIEW_HIDDEN_PERM ){
+			    if( NicoLiveHelper.commentViewState!=COMMENT_VIEW_HIDDEN_PERM ){
 				// hidden/permじゃないので、/clsは不要.
 				func();
 			    }else{
@@ -1246,29 +1296,100 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 動画情報を送信する.
+     * 動画情報を送信開始する.
+     * @param videoinfo 動画情報(現在は未使用)
      */
     sendVideoInfo: function(videoinfo){
-	clearInterval( this._sendvideoinfo_timer );
+	let func = function(){
+	    clearInterval( NicoLiveHelper._sendvideoinfo_timer );
 
-	this._sendvideoinfo_counter = 0;
-	this._sendvideoinfo_timer = setInterval(
-	    function(){
-		NicoLiveHelper._sendVideoInfo();
-	    }, Config.videoinfo_interval*1000 );
-	this._sendVideoInfo();
+	    NicoLiveHelper._sendvideoinfo_counter = 0;
+	    NicoLiveHelper._sendvideoinfo_timer = setInterval(
+		function(){
+		    NicoLiveHelper._sendVideoInfo(videoinfo);
+		}, Config.videoinfo_interval*1000 );
+	    NicoLiveHelper._sendVideoInfo(videoinfo);
+	};
+	this.clearCasterCommentAndRun(func);
     },
 
-    _sendVideoInfo: function(){
+    /**
+     * 動画情報を送信する.
+     * @param videoinfo 動画情報(現在は未使用)
+     */
+    _sendVideoInfo: function(videoinfo){
 	let n = this._sendvideoinfo_counter++;
 	let str = Config.videoinfo[n].comment;
 	let cmd = Config.videoinfo[n].command || "";
-
-	if( str ){
-	    this.postCasterComment( str, cmd, '', COMMENT_MSG_TYPE_MOVIEINFO );
-	}else{
+	if( !str ){
+	    this.commentstate = COMMENT_STATE_MOVIEINFO_DONE;
 	    clearInterval( this._sendvideoinfo_timer );
+	    return;
 	}
+
+	switch( Config.videoinfo_type ){
+	case 1: // /perm
+	    str = "/perm "+str;
+	    break;
+	case 2: // hidden
+	    cmd += " hidden";
+	    break;
+	case 3: // /perm + hidden
+	    str = "/perm "+str;
+	    cmd += " hidden";
+	    break;
+	case 0: // default
+	default:
+	    break;
+	}
+
+	this.commentstate = COMMENT_STATE_MOVIEINFO_BEGIN;
+	this.postCasterComment( str, cmd, '', COMMENT_MSG_TYPE_MOVIEINFO );
+    },
+
+    /**
+     * 15秒後に動画情報再送信を行う.
+     */
+    setupRevertVideoInfo:function(){
+	clearInterval( this._revertcommentid );
+	this._revertcommentid = setInterval(
+	    function(){
+		NicoLiveHelper.revertVideoInfo();
+		clearInterval( NicoLiveHelper._revertcommentid );
+	    }, 15*1000 );
+    },
+
+    /**
+     *  動画情報を復元する.
+     */
+    revertVideoInfo:function(){
+	// 動画情報送信が終わっていないときは復元不要だし.
+	if( this.commentstate!=COMMENT_STATE_MOVIEINFO_DONE ) return;
+	let n = Config.videoinfo_revert_line;
+	if(n<=0) return;
+	let sendstr = Config.videoinfo[n-1].comment;
+	if(!sendstr) return;
+	let cmd = Config.videoinfo[n-1].command;
+	if(!cmd) cmd = "";
+	switch( Config.videoinfo_type ){
+	case 1: // /perm
+	    sendstr = "/perm "+sendstr;
+	    break;
+	case 2: // hidden
+	    cmd += " hidden";
+	    break;
+	case 3: // /perm + hidden
+	    sendstr = "/perm "+sendstr;
+	    cmd += " hidden";
+	    break;
+	case 0: // default
+	default:
+	    break;
+	}
+	// revertMusicInfoが直接呼ばれた場合タイマー動作は不要になるので.
+	clearInterval( this._revertcommentid );
+	let ismovieinfo = COMMENT_MSG_TYPE_MOVIEINFO;
+	this.postCasterComment( sendstr, cmd, "", ismovieinfo );
     },
 
     /**

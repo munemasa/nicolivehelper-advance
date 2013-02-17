@@ -21,7 +21,10 @@ var Config = {
     loadPrefs: function(){
 	let branch = this.getBranch();
 	// 動画情報.
-	this.videoinfo_interval = branch.getIntPref("videoinfo.interval");
+	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");
+	this.videoinfo_type        = branch.getIntPref("videoinfo.comment-type");
+	this.videoinfo_revert_line = branch.getIntPref("videoinfo.revert-line");
+
 	this.videoinfo = new Array();
 	for(let i=0;i<4;i++){
 	    this.videoinfo[i] = new Object();
@@ -29,7 +32,8 @@ var Config = {
 	    this.videoinfo[i].command = branch.getUnicharPref("videoinfo"+(i+1)+"-command");
 	}
 
-	this.play_interval = branch.getIntPref("play.interval");
+	this.play_interval  = branch.getIntPref("play.interval");
+	this.max_playtime   = branch.getIntPref("play.maxtime");
     },
 
     register:function(){

@@ -46,8 +46,10 @@ table.requestview tr, table.historyview tr {
     -moz-transition: width 0.25s, height 0.25s;
 }
 .video-thumbnail:hover {
+/*
     width: 130px;
     height: 100px;
+*/
 }
 
 .videotag {
