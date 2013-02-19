@@ -18,6 +18,8 @@ var NicoLiveHelper = {
     iscaster: false,    // 主かどうか
     post_token: "",     // 主コメ用のトークン
 
+    connecttime: 0,     // コメントサーバーへの接続時刻
+    currentRoom: ARENA,
     connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
 
     ticket: "",         // 視聴者コメント用のチケット
@@ -709,6 +711,7 @@ var NicoLiveHelper = {
 		       NicoLiveHelper._postListenerComment( ARENA, comment, mail);
 		   }, 0);
     },
+
     /**
      * リスナーコメントを送信する(本体)
      * @param target コメント送信先のサーバー(ARENA, STAND_A, STAND_B, STAND_C)
@@ -1460,7 +1463,7 @@ var NicoLiveHelper = {
     finishBroadcasting: function(){
 	this._donotshowdisconnectalert = true;
 	this.stopTimers();
-	this.closeConnection();
+	this.closeAllConnection();
 
 	PlayAlertSound();
 	let msg = this.liveinfo.request_id+' '+this.liveinfo.title+' は終了しました';
@@ -1766,6 +1769,28 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 部屋を移動する.
+     * @param target_room 移動先(ARENA, STAND_A, STAND_B, STAND_C)
+     */
+    changeCommentRoom: function( target_room ){
+	if( this.isOffline() ) return;
+
+	let old_target = this.currentRoom;
+	if( old_target==target_room ) return;
+
+	if( old_target!=ARENA ){
+	    this.closeConnection( old_target );
+	}
+	if( target_room!=ARENA ){
+	    this.connectSelectedCommentServer( target_room );
+	}
+
+	this.currentRoom = target_room;
+
+	NicoLiveComment.clear();
+    },
+
+    /**
      * コメントサーバーに接続する.
      * @param addr アドレス
      * @param port ポート番号
@@ -1775,6 +1800,10 @@ var NicoLiveHelper = {
      */
     connectCommentServer: function(addr, port, thread, dataListener, lines){
 	debugprint("Connecting "+addr+":"+port+" ...");
+	if( !thread ){
+	    debugprint("存在しないスレッドです");
+	    return;
+	}
 
 	let iostream = TcpLib.connectTcpServer( addr, port, dataListener );
 	iostream.thread = thread;
@@ -1785,23 +1814,67 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 全ての接続を切断する.
+     * アリーナ以外の任意のコメントサーバーに接続する.
+     * @param target_room 接続先の部屋
      */
-    closeConnection: function(){
-	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
-	for(let i=0; i<4; i++){
-	    let item = this.connectioninfo[i];
-	    try{
-		item.ostream.close();
-	    } catch (x) {
-		debugprint(x);
+    connectSelectedCommentServer: function( target_room ){
+	if( target_room==ARENA ) return;
+	let dataListener = {
+	    line: "",
+	    onStartRequest: function(request, context){},
+	    onStopRequest: function(request, context, status){
+		try{
+		    if( !NicoLiveHelper._donotshowdisconnectalert ){
+			PlayAlertSound();
+			//ShowNotice( ROOM_NAME[target_room]+' から切断されました。', true );
+			syslog( ROOM_NAME[target_room]+' から切断されました。' );
+		    }
+		    NicoLiveHelper.closeConnection( target_room );
+		} catch (x) {}
+	    },
+	    onDataAvailable: function(request, context, inputStream, offset, count) {
+		let lineData = {};
+		let r;
+		while(1){
+		    try{
+			r = NicoLiveHelper.connectioninfo[ target_room ].istream.readString(1,lineData);
+		    } catch (x) { debugprint(x); return; }
+		    if( !r ){ break; }
+		    if( lineData.value=="\0" ){
+			try{
+			    if( NicoLiveHelper.currentRoom==target_room ){
+				NicoLiveHelper.processLine(this.line);
+			    }
+			} catch (x) {
+			    debugprint(x);
+			}
+			this.line = "";
+			continue;
+		    }
+		    this.line += lineData.value;
+		}
 	    }
-	    try{
-		item.istream.close();
-	    } catch (x) {
-		debugprint(x);
-	    }
+	};
+
+	let lines;
+	try{
+	    // コメントのバックログ取得数
+	    lines = Config.getBranch().getIntPref("comment.backlog") * -1;
+	} catch (x) {
+	    lines = -100;
 	}
+
+	this.connecttime = GetCurrentTime();
+
+	this.currentRoom = target_room;
+	let tmp = this.connectCommentServer(
+	    this.serverinfo.addr,
+	    this.serverinfo.port + parseInt(target_room),
+	    this.serverinfo.tid[ target_room ],
+	    dataListener,
+	    lines
+	);
+	this.connectioninfo[ target_room ] = tmp;
     },
 
     /**
@@ -1823,9 +1896,8 @@ var NicoLiveHelper = {
 						    NicoLiveHelper.liveinfo.request_id);
 				    }, 5000 );
 		    }
-		    NicoLiveHelper.closeConnection();
-		} catch (x) {
-		}
+		    NicoLiveHelper.closeAllConnection();
+		} catch (x) {}
 	    },
 	    onDataAvailable: function(request, context, inputStream, offset, count) {
 		let lineData = {};
@@ -1837,7 +1909,9 @@ var NicoLiveHelper = {
 		    if( !r ){ break; }
 		    if( lineData.value=="\0" ){
 			try{
-			    NicoLiveHelper.processLine(this.line);
+			    if( NicoLiveHelper.currentRoom==ARENA ){
+				NicoLiveHelper.processLine(this.line);
+			    }
 			} catch (x) {
 			    debugprint(x);
 			}
@@ -1859,6 +1933,8 @@ var NicoLiveHelper = {
 
 	this.initLiveUpdateTimers();
 
+	this.currentRoom = ARENA;
+
 	if( !this.iscaster ){
 	    let tmp = this.connectCommentServer(
 		this.serverinfo.addr,
@@ -1868,6 +1944,8 @@ var NicoLiveHelper = {
 		lines
 	    );
 	    this.connectioninfo[ARENA] = tmp;
+
+	    $('id-select-comment-room').disabled = true;
 	    // リスナーの場合はここで終わり
 	    return;
 	}
@@ -1904,6 +1982,42 @@ var NicoLiveHelper = {
 	NicoApi.getpublishstatus( request_id, f );
     },
 
+
+    /**
+     * 接続を切断する.
+     * @param target 切断したいコメントサーバー
+     */
+    closeConnection: function( target ){
+	let item = this.connectioninfo[ parseInt(target) ];
+	if( item ){
+	    try{
+		item.ostream.close();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	    try{
+		item.istream.close();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	}
+	this.connectioninfo[ target ] = null;
+    },
+
+    /**
+     * 全ての接続を切断する.
+     */
+    closeAllConnection: function(){
+	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+	for(let i=0; i<4; i++){
+	    this.closeConnection( i );
+	}
+    },
+
+
+    /**
+     * 生放送で使用するタイマーを初期化する
+     */
     initLiveUpdateTimers: function(){
 	debugprint("initialize timers...");
 	clearInterval( this._update_timer );
@@ -2317,7 +2431,7 @@ var NicoLiveHelper = {
 
 	if( noprepare ) return;
 
-	// 先読み開始タイマー
+	// TODO 先読み開始タイマー
 	let prepare_time = 1000;
 	this.play_status[target]._prepare = setTimeout(
 	    function(){
@@ -2488,7 +2602,7 @@ var NicoLiveHelper = {
 	this.tempSave();
 
 	this.stopTimers();
-	this.closeConnection();
+	this.closeAllConnection();
     }
 
 };

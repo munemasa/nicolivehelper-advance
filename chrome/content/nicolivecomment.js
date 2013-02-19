@@ -5,11 +5,17 @@
  */
 var NicoLiveComment = {
 
+    comment_table: null,   // $('comment-table')
+
     colormap: {},
     namemap: {},
 
+    clear: function(){
+	clearTable( this.comment_table );
+    },
+
     addComment: function( comment ){
-	let table = $('comment-table');
+	let table = this.comment_table;
 	if(!table){ return; }
 
 	// TODO 表示行数に切り詰め
@@ -85,8 +91,6 @@ var NicoLiveComment = {
 	// コメント日時のセル
 	td = tr.insertCell(tr.cells.length);
 	td.textContent = GetDateString(comment.date*1000);
-
-
     },
 
     /**
@@ -127,6 +131,7 @@ var NicoLiveComment = {
 
     init: function(){
 	debugprint("NicoLiveComment.init");
+	this.comment_table = $('comment-table');
     },
     destroy: function(){
     }

@@ -434,7 +434,9 @@
 	</vbox>
 	<arrowscrollbox orient="horizontal">
 	  <hbox align="center" flex="1" style="padding: 0px;">
-	    <menulist id="id-select-comment-room" style="padding: 0px; margin: 0px;">
+	    <menulist id="id-select-comment-room"
+		      oncommand="NicoLiveHelper.changeCommentRoom( this.value );"
+		      style="padding: 0px; margin: 0px;">
 	      <menupopup>
 		<menuitem label="アリーナ" value="0"/>
 		<menuitem label="立ち見A列" value="1"/>

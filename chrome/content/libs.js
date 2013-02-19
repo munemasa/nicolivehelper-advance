@@ -22,6 +22,7 @@ const ARENA = 0;
 const STAND_A = 1;
 const STAND_B = 2;
 const STAND_C = 3;
+const ROOM_NAME = ["アリーナ", "立ち見A列", "立ち見B列", "立ち見C列" ];
 
 const PLAY_SEQUENTIAL = 0;
 const PLAY_RANDOM = 1;
