@@ -39,6 +39,8 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/config.js" />
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivedatabase.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
@@ -55,6 +57,8 @@
 	  src="chrome://nicolivehelperadvance/content/nicolivemylist.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivetweet.js" />
 
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
@@ -66,6 +70,8 @@
     <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
     <!-- CTRL+O: Open a broadcasting -->
     <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
+    <!-- CTRL+T: Tweet by Twitter -->
+    <key id="tweeting" key="t" modifiers="accel" oncommand="NicoLiveTweet.inputTweet();"/>
 
     <!-- CTRL+Num: Change the tab -->
     <key id="tab-move-0" key="0" modifiers="accel" oncommand="NicoLiveWindow.changeTab(0);"/>

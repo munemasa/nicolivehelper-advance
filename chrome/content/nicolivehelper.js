@@ -62,6 +62,13 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 放送IDを返す
+     */
+    getRequestId: function(){
+	return this.liveinfo.request_id;
+    },
+
+    /**
      * リクエスト可否を切り替える.
      * @param flg 可否のフラグ
      * @param ev 押されているキーを取得するためのevent
