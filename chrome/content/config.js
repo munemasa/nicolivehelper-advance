@@ -4,11 +4,16 @@ var Config = {
     play_interval: 0,          // 動作再生の間隔
     videoinfo_interval: 0,     // 動画情報コメントの送信間隔
 
-    comment184: 0,             // 184コメントするかどうか
-
     max_playtime: 0,           // 最大再生時間(minute)
 
-    msg: {},  // 各種応答メッセージ
+    msg: {},      // 各種応答メッセージ
+
+    // コメント関連の設定
+    comment184: 0,           // 184コメントするかどうか
+    comment: {
+	'view_lines': 500,   // コメント表示行数
+	'backlogs': 100      // サーバー接続時のバックログ取得行数
+    },
 
     getBranch:function(){
 	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");

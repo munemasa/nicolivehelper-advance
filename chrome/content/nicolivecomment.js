@@ -7,6 +7,7 @@ var NicoLiveComment = {
 
     comment_table: null,   // $('comment-table')
 
+    commentlog: [],    // アリーナ席のコメントログ
     colormap: {},
     namemap: {},
 
@@ -24,7 +25,7 @@ var NicoLiveComment = {
 	if(!table){ return; }
 
 	// TODO 表示行数に切り詰め
-	if( table.rows.length >= 1000 ){
+	if( table.rows.length >= Config.comment.view_lines ){
 	    table.deleteRow(table.rows.length-1);
 	}
 	
@@ -96,6 +97,19 @@ var NicoLiveComment = {
 	// コメント日時のセル
 	td = tr.insertCell(tr.cells.length);
 	td.textContent = GetDateString(comment.date*1000);
+    },
+
+    /**
+     * コメントログに追加する.
+     * ファイルに保存も行う。
+     * @param chat コメント
+     * @param target_room コメントのルーム
+     */
+    addCommentLog: function( chat, target_room ){
+	if( this.commentlog.length >= Config.comment.view_lines ){
+	    this.commentlog.shift();
+	}
+	this.commentlog.push( chat );
     },
 
     /**

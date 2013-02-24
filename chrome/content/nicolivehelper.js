@@ -53,7 +53,6 @@ var NicoLiveHelper = {
 
     postclsfunc: null,   // /cls,/clearを受け取ったときに実行する関数
 
-    commentlog: [],      // アリーナのコメントログ
     commentViewState: COMMENT_VIEW_NORMAL,
     commentstate: COMMENT_STATE_NONE,
 
@@ -1692,6 +1691,7 @@ var NicoLiveHelper = {
     processComment: function(chat, target_room){
 	if( target_room==ARENA ){
 	    // アリーナ席はコメントログは取る
+	    NicoLiveComment.addCommentLog( chat, target_room );
 	}
 
 	if( this.currentRoom!=target_room ){
@@ -1895,7 +1895,7 @@ var NicoLiveHelper = {
 	let lines;
 	try{
 	    // コメントのバックログ取得数
-	    lines = Config.getBranch().getIntPref("comment.backlog") * -1;
+	    lines = Config.comment.backlogs * -1;
 	} catch (x) {
 	    lines = -100;
 	}
