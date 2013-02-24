@@ -7,6 +7,8 @@ pref("extensions.nicolivehelperadvance.request.seiga", false); // 静画のリ�
 pref("extensions.nicolivehelperadvance.play.interval", 8);
 pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 
+pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画情報詳細表示
+
 pref("extensions.nicolivehelperadvance.videoinfo.interval", 8);
 pref("extensions.nicolivehelperadvance.videoinfo.comment-type", 0);
 pref("extensions.nicolivehelperadvance.videoinfo.revert-line", 0);

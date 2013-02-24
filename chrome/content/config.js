@@ -54,6 +54,27 @@ var Config = {
         this.msg.ngvideo = branch.getUnicharPref("msg.ng-video-reply-message");
     },
 
+    /**
+     * 動画説明の表示を設定する.
+     */
+    setVideoDetail: function(){
+	let branch = this.getBranch();
+	let isshow = branch.getBoolPref("display.show_detail");
+
+	let n = document.styleSheets[1].cssRules.length;
+	let i;
+	for(i=0;i<n;i++){
+	    let css = document.styleSheets[1].cssRules[i];
+	    if(css.selectorText==".detail"){
+		if( isshow ){
+		    css.style.display="block";
+		}else{
+		    css.style.display="none";
+		}
+	    }
+	}
+    },
+
     loadPrefs: function(){
 	debugprint("load Preferences.");
 	let branch = this.getBranch();
@@ -77,6 +98,8 @@ var Config = {
 
 	// 各種応答メッセージ
         this.loadReplyMessage(branch);
+
+	this.setVideoDetail();
     },
 
     register:function(){

@@ -170,7 +170,7 @@
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
 	    <menuseparator/>
-	    <menuitem label="About..."/>
+	    <menuitem label="About..." oncommand="AlertPrompt('NicoLive Helper Advance','About')"/>
 	  </menupopup>
 	</toolbarbutton>
       </arrowscrollbox>
