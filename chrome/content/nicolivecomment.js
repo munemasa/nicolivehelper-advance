@@ -24,7 +24,7 @@ var NicoLiveComment = {
 	let table = this.comment_table;
 	if(!table){ return; }
 
-	// TODO 表示行数に切り詰め
+	// 表示行数に切り詰め
 	if( table.rows.length >= Config.comment.view_lines ){
 	    table.deleteRow(table.rows.length-1);
 	}
