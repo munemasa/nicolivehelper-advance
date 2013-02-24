@@ -40,8 +40,10 @@ var NicoLiveHelper = {
     // 各種リスト
     request_list: [],   // リクエスト
     stock_list: [],     // ストック
-    playlist_list: [],   // 再生履歴
+    playlist_list: [],  // 再生履歴
     reject_list: [],    // リジェクト
+    request_setno: 0,   // リクエストのセット番号
+    stock_setno: 0,     // ストックのセット番号
 
     product_code: {},   // JWID作品コード
 
@@ -66,6 +68,19 @@ var NicoLiveHelper = {
      */
     getRequestId: function(){
 	return this.liveinfo.request_id;
+    },
+
+    /**
+     * リクエストセット番号を返す
+     */
+    getRequestSetNo: function(){
+	return this.request_setno;
+    },
+    /**
+     * ストックセット番号を返す
+     */
+    getStockSetNo: function(){
+	return this.stock_setno;
     },
 
     /**
@@ -155,7 +170,7 @@ var NicoLiveHelper = {
      * プレイリストに追加する(テキストのみ).
      */
     addPlaylistText:function(item){
-	let elem = $('played-list-textbox');
+	let elem = $('playlist-textbox');
 	if( GetCurrentTime()-this.liveinfo.start_time < 180 ){
 	    // 放送開始して最初の再生らしきときには番組名と番組IDを付加.
 	    if( !this._first_play ){
@@ -173,7 +188,7 @@ var NicoLiveHelper = {
      */
     addPlaylist: function( item, notext ){
 	// プレイリストに追加する.
-	let elem = $('played-list-textbox');
+	let elem = $('playlist-textbox');
 	let now = GetCurrentTime();
 	if( now-this.liveinfo.start_time < 180 ){
 	    // 放送開始して最初の再生らしきときには番組名と番組IDを付加.
@@ -1205,6 +1220,9 @@ var NicoLiveHelper = {
             let text = req.responseText;
             let seigainfo = NicoLiveHelper.extractSeigaInfo(request.video_id, text);
             seigainfo.comment_no = request.comment_no;
+            if ( seigainfo.comment_no==0 ) {
+                seigainfo.is_casterselection = true;
+            }
 
 	    if( Config.allow_seiga ){
 		if (!isstock) {
@@ -2221,7 +2239,7 @@ var NicoLiveHelper = {
      */
     openNewBroadcast: function(request_id, title, iscaster, community_id){
 	if( request_id=="lv0" ){
-	    debugprint("Not online.");
+	    debugprint("Now offline.");
 	    return;
 	}
 
@@ -2515,14 +2533,90 @@ var NicoLiveHelper = {
 	this._first_play = false;
     },
 
-    // 仮セーブロード
-    tempSave: function(){
-	Application.storage.set("nicolive_request", this.request_list);
-	Application.storage.set("nicolive_stock", this.stock_list);
+    /**
+     * リクエストセットの切り替え
+     * @param n セット番号
+     */
+    changeRequestSet: function(n){
+	if( this.request_setno==n ) return;
+	Storage.writeObject( "nico_request_setno"+this.request_setno, this.request_list );
+	this.request_list = Storage.readObject( "nico_request_setno"+n, [] );
+	NicoLiveRequest.updateView( this.request_list );
+	this.request_setno = n;
     },
-    tempLoad: function(){
-	this.request_list = Application.storage.get("nicolive_request",[]);
-	this.stock_list = Application.storage.get("nicolive_stock",[]);
+    /**
+     * ストックセットの切り替え
+     * @param n セット番号
+     */
+    changeStockSet: function(n){
+	if( this.stock_setno==n ) return;
+	Storage.writeObject( "nico_stock_setno"+this.stock_setno, this.stock_list );
+	this.stock_list = Storage.readObject( "nico_stock_setno"+n, [] );
+	NicoLiveStock.updateView( this.stock_list );
+	this.stock_setno = n;
+    },
+
+    /**
+     * リクエストをロードする
+     * @param n セット番号
+     * @return リクエストの配列を返す
+     */
+    loadRequest: function(n){
+	return Storage.readObject( "nico_request_setno"+n, [] );
+    },
+
+    /**
+     * ストックをロードする
+     * @param n セット番号
+     * @return ストックの配列を返す
+     */
+    loadStock: function(n){
+	return Storage.readObject( "nico_stock_setno"+n, [] );
+    },
+
+    /**
+     * プレイリストをロードする.
+     */
+    loadPlaylist: function(){
+	// load playlist
+	this.playlist_list = Storage.readObject( "nico_playlist", [] );
+	for(let i=0,item;item=this.playlist_list[i];i++){
+	    this.playlist_list["_"+item.video_id] = this.playlist_list[i].playedtime;
+	    NicoLiveHistory.addPlayList( item );
+	}
+	$('playlist-textbox').value = Storage.readObject( "nico_playlist_txt", "" );
+    },
+
+    /**
+     * リクエストをセーブする
+     */
+    saveRequest:function(){
+	// 視聴者ではリクエストは保存しない.
+	if(!this.iscaster && !this.isOffline()) return;
+	Storage.writeObject( "nico_request_setno"+this.request_setno, this.request_list );
+    },
+    /**
+     * ストックをセーブする
+     */
+    saveStock:function(){
+	Storage.writeObject( "nico_stock_setno"+this.stock_setno, this.stock_list );
+    },
+    /**
+     * プレイリストをセーブする
+     */
+    savePlaylist:function(){
+	// 視聴者ではプレイリストは保存しない.
+	if(!this.iscaster && !this.isOffline()) return;
+	Storage.writeObject( "nico_playlist", this.playlist_list );
+	Storage.writeObject( "nico_playlist_txt", $('playlist-textbox').value );
+    },
+    /**
+     * リクエスト、ストック、プレイリストを保存する
+     */
+    saveAll: function(){
+	this.saveRequest();
+	this.saveStock();
+	this.savePlaylist();
     },
 
     /**
@@ -2539,12 +2633,7 @@ var NicoLiveHelper = {
 	this.setPlayTarget( $('do-subdisplay').checked );
 	this.setupCookie();
 
-	this.tempLoad();
-	NicoLiveRequest.updateView( this.request_list );
-	NicoLiveStock.updateView( this.stock_list );
-
 	// 以下、生放送への接続処理など
-
 	let request_id, title, iscaster, community_id;
 	try{
 	    // XULRunnerではここからコマンドライン引数を取る
@@ -2580,6 +2669,27 @@ var NicoLiveHelper = {
 	debugprint("Community:"+community_id);
 	debugprint("title:"+title);
 
+	// リクエストやストックの復元
+	this.request_setno = $('request-set-no').value;
+	this.stock_setno = $('stock-set-no').value;
+
+	if( request_id && request_id!="lv0" ){
+	    // オンライン
+	    if( iscaster ){
+		this.request_list = this.loadRequest( this.request_setno );
+		NicoLiveRequest.updateView( this.request_list );
+		this.loadPlaylist();
+	    }
+	}else{
+	    // オフライン
+	    this.request_list = this.loadRequest( this.request_setno );
+	    NicoLiveRequest.updateView( this.request_list );
+	    this.loadPlaylist();
+	}
+	this.stock_list   = this.loadStock( this.stock_setno );
+	NicoLiveStock.updateView( this.stock_list );
+
+	// 生放送に接続開始
 	this.openNewBroadcast( request_id, title, iscaster, community_id );
     },
 
@@ -2606,7 +2716,7 @@ var NicoLiveHelper = {
     destroy: function(){
 	this._donotshowdisconnectalert = true;
 
-	this.tempSave();
+	this.saveAll();
 
 	this.stopTimers();
 	this.closeAllConnection();

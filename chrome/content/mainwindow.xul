@@ -35,6 +35,8 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoapi.js" />
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/storage.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/datastruct.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/config.js" />
@@ -168,6 +170,7 @@
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
 	    <menuseparator/>
+	    <menuitem label="About..."/>
 	  </menupopup>
 	</toolbarbutton>
       </arrowscrollbox>
@@ -218,7 +221,11 @@
       <!-- request tab -->
       <vbox id="tab-request">
 	<hbox align="center">
-	  <menulist id="request-set-no" persist="value">
+	  <menulist id="request-set-no" persist="value"
+		    onclick="NicoLiveRequest.changeSetName(this,event);"
+		    onpopupshowing="NicoLiveRequest.showSetListMenu(this);"
+		    onpopuphiding="NicoLiveRequest.hideSetListMenu(this);"
+		    oncommand="NicoLiveRequest.changeRequestSet(this.value);">
 	    <menupopup>
 	      <menuitem label="0" value="0"/>
 	      <menuitem label="1" value="1"/>
@@ -270,7 +277,7 @@
 		    onclick="NicoLiveRequest.changeSetName(this,event);"
 		    onpopupshowing="NicoLiveRequest.showSetListMenu(this);"
 		    onpopuphiding="NicoLiveRequest.hideSetListMenu(this);"
-		    oncommand="NicoLiveRequest.changeStockSet(this.value);">
+		    oncommand="NicoLiveStock.changeStockSet(this.value);">
 	    <menupopup>
 	      <menuitem label="0" value="0"/>
 	      <menuitem label="1" value="1"/>
@@ -342,7 +349,7 @@
 	  </menulist>
 	</hbox>
 	<deck id="playlist-deck" persist="selectedIndex" flex="1">
-	  <textbox id="played-list-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
+	  <textbox id="playlist-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
 	  <vbox flex="1" style="overflow:auto">
 	    <html:table id="playlist-table" class="historyview">
 	    </html:table>

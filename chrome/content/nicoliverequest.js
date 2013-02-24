@@ -56,9 +56,9 @@ var NicoLiveRequest = {
 	div.appendChild(CreateHTMLElement('br'));
 
 	let datestr = GetDateString(item.first_retrieve*1000);
-	div.appendChild(document.createTextNode("投稿日:" + datestr +" "
-		+ "再生数:"+FormatCommas(item.view_counter)+" コメント:"+FormatCommas(item.comment_num)
-		+ " マイリスト:"+FormatCommas(item.mylist_counter)+" 時間:"+item.length
+	div.appendChild(document.createTextNode("投:" + datestr +" "
+		+ "再:"+FormatCommas(item.view_counter)+" コ:"+FormatCommas(item.comment_num)
+		+ " マ:"+FormatCommas(item.mylist_counter)+" 時間:"+item.length
 		//+ (NicoLiveHelper.userdefinedvalue[item.video_id]?" 彡:"+NicoLiveHelper.userdefinedvalue[item.video_id]:'')
 		));
 	
@@ -410,6 +410,14 @@ var NicoLiveRequest = {
 	    t += Config.play_interval + item.length_ms/1000;
 	}
 	this._summation_time = t;
+    },
+
+    /**
+     * リクエストセットを切り替える.
+     * @param n セット番号
+     */
+    changeRequestSet: function(n){
+	NicoLiveHelper.changeRequestSet(n);
     },
 
 

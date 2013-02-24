@@ -245,7 +245,15 @@ var NicoLiveStock = {
     },
 
     /**
-     * リクエストの表示を全更新する.
+     * ストックセットを切り替える.
+     * @param n セット番号
+     */
+    changeStockSet: function(n){
+	NicoLiveHelper.changeStockSet(n);
+    },
+
+    /**
+     * ストック表示を全更新する.
      */
     updateView: function( requestqueue ){
 	let table = $('stock-table');

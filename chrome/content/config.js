@@ -55,11 +55,13 @@ var Config = {
     },
 
     loadPrefs: function(){
+	debugprint("load Preferences.");
 	let branch = this.getBranch();
 	// 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");
 	this.videoinfo_type        = branch.getIntPref("videoinfo.comment-type");
 	this.videoinfo_revert_line = branch.getIntPref("videoinfo.revert-line");
+	this.videoinfo_playfailed  = branch.getUnicharPref("videoinfo.playfailed");
 
 	this.videoinfo = new Array();
 	for(let i=0;i<4;i++){

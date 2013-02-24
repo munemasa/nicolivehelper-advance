@@ -88,6 +88,9 @@ var NicoLiveWindow = {
 	AlertPrompt('ブラウザ設定が変更されました。有効にするにはウィンドウを開き直してください。','NicoLive Helper Advance');
     },
 
+    /**
+     * ステータスバー上のブラウザアイコンの設定.
+     */
     initBrowserIcon: function(){
 	let panel = $('status-bar-browser');
 	if( $('use-firefox').hasAttribute('checked') ){

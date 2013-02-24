@@ -10,6 +10,7 @@ pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 pref("extensions.nicolivehelperadvance.videoinfo.interval", 8);
 pref("extensions.nicolivehelperadvance.videoinfo.comment-type", 0);
 pref("extensions.nicolivehelperadvance.videoinfo.revert-line", 0);
+pref("extensions.nicolivehelperadvance.videoinfo.playfailed","{id}の再生に失敗しました");
 pref("extensions.nicolivehelperadvance.videoinfo1","♪Length:{length} Views:{view} Comments:{comment} Mylist:{mylist}");
 pref("extensions.nicolivehelperadvance.videoinfo2","♪{title}<br>Date:{date}");
 pref("extensions.nicolivehelperadvance.videoinfo3","");

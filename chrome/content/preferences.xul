@@ -3,37 +3,13 @@
 <?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://nicolivehelperadvance/content/preferences.css" type="text/css"?>
-<prefwindow id="nicolivehelper-advanced-settings" title="NicoLive Helper Advance Settings" windowtype="prefwindow"
-	    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+<prefwindow id="nicolivehelper-advanced-settings"
+	    title="NicoLive Helper Advance Settings" windowtype="prefwindow"
+	    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	    xmlns:html="http://www.w3.org/1999/xhtml">
 
   <preferences>
-    <preference id="pref-nextplay-interval"
-		name="extensions.nicolivehelperadvance.play.interval" type="int"/><!-- 再生インターバル -->
-    <preference id="pref-max-movieplay-time"
-		name="extensions.nicolivehelperadvance.play.maxtime" type="int"/><!-- 最大再生時間 -->
-    <preference id="pref-videoinfo1"
-		name="extensions.nicolivehelperadvance.videoinfo1" type="unichar"/>
-    <preference id="pref-videoinfo2"
-		name="extensions.nicolivehelperadvance.videoinfo2" type="unichar"/>
-    <preference id="pref-videoinfo3"
-		name="extensions.nicolivehelperadvance.videoinfo3" type="unichar"/>
-    <preference id="pref-videoinfo4"
-		name="extensions.nicolivehelperadvance.videoinfo4" type="unichar"/>
-    <preference id="pref-videoinfo1-command"
-		name="extensions.nicolivehelperadvance.videoinfo1-command" type="unichar"/>
-    <preference id="pref-videoinfo2-command"
-		name="extensions.nicolivehelperadvance.videoinfo2-command" type="unichar"/>
-    <preference id="pref-videoinfo3-command"
-		name="extensions.nicolivehelperadvance.videoinfo3-command" type="unichar"/>
-    <preference id="pref-videoinfo4-command"
-		name="extensions.nicolivehelperadvance.videoinfo4-command" type="unichar"/>
-    <preference id="pref-videoinfo-interval"
-		name="extensions.nicolivehelperadvance.videoinfo.interval" type="int"/>
-    <preference id="pref-typeofvideoinfo"
-		name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
-    <preference id="pref-revert-videoinfo"
-		name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
-    
+    <!-- 応答メッセージ -->
     <preference id="pref-msg-deleted"
 		name="extensions.nicolivehelperadvance.msg.deleted" type="unichar"/>
     <preference id="pref-msg-notaccept"
@@ -90,8 +66,6 @@
 
     <!-- TODO -->
     <!--
-    <preference id="pref-videoinfo-playfailed"
-		name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
     <preference id="pref-userdefined-uri"
 		name="extensions.nicolivehelperadvance.userdefined-data-uri" type="string"/>
     <preference id="pref-nocomment-for-directplay"
@@ -105,6 +79,18 @@
   <!-- basic settings -->
   <prefpane id="nicolivehelper-prefpane-basic"
 	    label="基本設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
+    <preferences>
+      <!-- 再生インターバル -->
+      <preference id="pref-nextplay-interval"
+		  name="extensions.nicolivehelperadvance.play.interval" type="int"/>
+      <!-- 最大再生時間 -->
+      <preference id="pref-max-movieplay-time"
+		  name="extensions.nicolivehelperadvance.play.maxtime" type="int"/>
+      <!-- 静画リクエスト -->
+      <preference id="pref-allow-seiga-request"
+		  name="extensions.nicolivehelperadvance.request.seiga" type="bool"/>
+    </preferences>
+
     <tabbox persist="selectedIndex" id="prefwindow-basicsettings">
       <tabs>
 	<tab label="進行"/>
@@ -142,13 +128,43 @@
 	  </grid>
 	</tabpanel>
 	<tabpanel orient="vertical">
-	  
+	  <checkbox preference="pref-allow-seiga-request" label="静画のリクエストを受け付ける"
+		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
 	</tabpanel>
       </tabpanels>
     </tabbox>
   </prefpane>
 
   <prefpane id="nicolivehelper-perfpane-movieinfo" label="動画情報" image="chrome://nicolivehelperadvance/content/data/icon1.png" onpaneload="">
+    <preferences>
+      <!-- 動画情報 -->
+      <preference id="pref-videoinfo1"
+		  name="extensions.nicolivehelperadvance.videoinfo1" type="unichar"/>
+      <preference id="pref-videoinfo2"
+		  name="extensions.nicolivehelperadvance.videoinfo2" type="unichar"/>
+      <preference id="pref-videoinfo3"
+		  name="extensions.nicolivehelperadvance.videoinfo3" type="unichar"/>
+      <preference id="pref-videoinfo4"
+		  name="extensions.nicolivehelperadvance.videoinfo4" type="unichar"/>
+      <preference id="pref-videoinfo1-command"
+		  name="extensions.nicolivehelperadvance.videoinfo1-command" type="unichar"/>
+      <preference id="pref-videoinfo2-command"
+		  name="extensions.nicolivehelperadvance.videoinfo2-command" type="unichar"/>
+      <preference id="pref-videoinfo3-command"
+		  name="extensions.nicolivehelperadvance.videoinfo3-command" type="unichar"/>
+      <preference id="pref-videoinfo4-command"
+		  name="extensions.nicolivehelperadvance.videoinfo4-command" type="unichar"/>
+      <preference id="pref-videoinfo-interval"
+		  name="extensions.nicolivehelperadvance.videoinfo.interval" type="int"/>
+      <preference id="pref-typeofvideoinfo"
+		  name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
+      <preference id="pref-revert-videoinfo"
+		  name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
+      <!-- 再生に失敗した時 -->
+      <preference id="pref-videoinfo-playfailed"
+		  name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
+    </preferences>
+
     <tabbox persist="selectedIndex" id="prefwindow-videoinfo">
       <tabs>
 	<tab label="動画情報"></tab>
