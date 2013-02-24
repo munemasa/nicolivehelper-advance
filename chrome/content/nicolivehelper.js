@@ -53,6 +53,7 @@ var NicoLiveHelper = {
 
     postclsfunc: null,   // /cls,/clearを受け取ったときに実行する関数
 
+    commentlog: [],      // アリーナのコメントログ
     commentViewState: COMMENT_VIEW_NORMAL,
     commentstate: COMMENT_STATE_NONE,
 
@@ -1688,8 +1689,15 @@ var NicoLiveHelper = {
     /**
      * コメントを処理する本体.
      */
-    processComment: function(chat){
-	NicoLiveComment.addComment(chat);
+    processComment: function(chat, target_room){
+	if( target_room==ARENA ){
+	    // アリーナ席はコメントログは取る
+	}
+
+	if( this.currentRoom!=target_room ){
+	    return;
+	}
+	NicoLiveComment.addComment( chat, target_room );
 
 	switch(chat.premium){
 	case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
@@ -1746,13 +1754,18 @@ var NicoLiveHelper = {
 	return chat;
     },
 
-    processLine: function(line){
+    /**
+     * コメントサーバーから受信した1行を処理する.
+     * @param line 1行分のデータ
+     * @param target_room どこのルームのコメントか(ARENA, STAND_A,...)
+     */
+    processLine: function(line, target_room){
 	if(line.match(/^<chat\s+.*>/)){
 	    //debugprint(line);
 	    let parser = new DOMParser();
 	    let dom = parser.parseFromString(line,"text/xml");
 	    let chat = this.extractComment(dom.getElementsByTagName('chat')[0]);
-	    this.processComment(chat);
+	    this.processComment( chat, target_room );
 	    return;
 	}
 
@@ -1827,7 +1840,7 @@ var NicoLiveHelper = {
 	debugprint("Connecting "+addr+":"+port+" ...");
 	if( !thread ){
 	    debugprint("存在しないスレッドです");
-	    return;
+	    return null;
 	}
 
 	let iostream = TcpLib.connectTcpServer( addr, port, dataListener );
@@ -1867,9 +1880,7 @@ var NicoLiveHelper = {
 		    if( !r ){ break; }
 		    if( lineData.value=="\0" ){
 			try{
-			    if( NicoLiveHelper.currentRoom==target_room ){
-				NicoLiveHelper.processLine(this.line);
-			    }
+			    NicoLiveHelper.processLine( this.line, NicoLiveHelper.currentRoom );
 			} catch (x) {
 			    debugprint(x);
 			}
@@ -1934,9 +1945,7 @@ var NicoLiveHelper = {
 		    if( !r ){ break; }
 		    if( lineData.value=="\0" ){
 			try{
-			    if( NicoLiveHelper.currentRoom==ARENA ){
-				NicoLiveHelper.processLine(this.line);
-			    }
+			    NicoLiveHelper.processLine( this.line, ARENA );
 			} catch (x) {
 			    debugprint(x);
 			}

@@ -75,8 +75,11 @@ var Config = {
 	}
     },
 
+    /**
+     * 設定を全てロードする
+     */
     loadPrefs: function(){
-	debugprint("load Preferences.");
+	debugprint("load preferences.");
 	let branch = this.getBranch();
 	// 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");

@@ -13,8 +13,13 @@ var NicoLiveComment = {
     clear: function(){
 	clearTable( this.comment_table );
     },
-
-    addComment: function( comment ){
+    
+    /**
+     * コメント表示に追加する.
+     * @param comment コメント
+     * @param target_room コメントのルーム
+     */
+    addComment: function( comment, target_room ){
 	let table = this.comment_table;
 	if(!table){ return; }
 
