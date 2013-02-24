@@ -22,7 +22,7 @@ var NicoLiveHelper = {
     currentRoom: ARENA,
     connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
 
-    ticket: "",         // 視聴者コメント用のチケット
+    ticket: "",         // 視聴者コメント用のチケット(アリーナ席用のみ)
     postkey: "",        // 視聴者コメント用のキー
     last_res: 0,        // 最後のコメント番号
 
@@ -1789,6 +1789,10 @@ var NicoLiveHelper = {
 	    }
 	    return;
 	}
+
+	// リスナー接続時にしかリスナーコメントしないので、
+	// ARENA(初期に入るコメントサーバー)の分しか扱わない
+	if( target_room!=ARENA ) return;
 	// 16進数表すキーワードってなんだったっけ….
 	if( line.match(/<thread.*ticket=\"([0-9a-fA-Fx]*)\".*\/>/) ){
 	    //debugprint(line);
@@ -1826,6 +1830,9 @@ var NicoLiveHelper = {
 	this.currentRoom = target_room;
 
 	NicoLiveComment.clear();
+	if( target_room==ARENA ){
+	    NicoLiveComment.revertArenaComment();
+	}
     },
 
     /**
@@ -1863,7 +1870,7 @@ var NicoLiveHelper = {
 	    onStopRequest: function(request, context, status){
 		try{
 		    if( !NicoLiveHelper._donotshowdisconnectalert ){
-			PlayAlertSound();
+			//PlayAlertSound();
 			//ShowNotice( ROOM_NAME[target_room]+' から切断されました。', true );
 			syslog( ROOM_NAME[target_room]+' から切断されました。' );
 		    }
@@ -1894,10 +1901,10 @@ var NicoLiveHelper = {
 
 	let lines;
 	try{
-	    // コメントのバックログ取得数
-	    lines = Config.comment.backlogs * -1;
+	    // コメントのバックログ取得数(アリーナ席以外は50固定でいいかな)
+	    lines = -50; //Config.comment.backlogs * -1;
 	} catch (x) {
-	    lines = -100;
+	    lines = -50;
 	}
 
 	this.connecttime = GetCurrentTime();
@@ -1960,7 +1967,7 @@ var NicoLiveHelper = {
 	let lines;
 	try{
 	    // コメントのバックログ取得数
-	    lines = Config.getBranch().getIntPref("comment.backlog") * -1;
+	    lines = Config.comment.backlogs * -1;
 	} catch (x) {
 	    lines = -100;
 	}

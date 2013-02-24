@@ -113,6 +113,15 @@ var NicoLiveComment = {
     },
 
     /**
+     * アリーナ席のコメント表示を復元.
+     */
+    revertArenaComment: function(){
+	for( let i=0, comment; comment=this.commentlog[i]; i++ ){
+	    this.addComment( comment, ARENA );
+	}
+    },
+
+    /**
      * コメントを投稿する.
      * @param textbox コメント入力欄の要素
      * @param event DOMイベント
