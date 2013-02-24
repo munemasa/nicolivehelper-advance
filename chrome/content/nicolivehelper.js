@@ -2410,22 +2410,25 @@ var NicoLiveHelper = {
 	if( videoremain<0 ) videoremain = 0;
 	videoname.label = currentvideo.title + '('+'-'+GetTimeString(videoremain)+'/'+currentvideo.length+')';
 
-	// チップヘルプでの動画情報表示
-	let str;
-	str = "投稿日/"+GetDateString(currentvideo.first_retrieve*1000)
-	    + " 再生数/"+currentvideo.view_counter
-	    + " コメント/"+currentvideo.comment_num
-	    + " マイリスト/"+currentvideo.mylist_counter+"\n"
-	    + "タグ/"+currentvideo.tags['jp'].join(' ');
-	if(currentvideo.mylist!=null){
-	    str = "マイリスト登録済み:"+currentvideo.mylist + "\n"+str;
-	}
-	$('statusbar-currentmusic').setAttribute("tooltiptext",str);
-
 	// プログレスバーの長さ制限
 	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
 	w-=64;
 	videoname.style.maxWidth = w + "px";
+
+	// チップヘルプでの動画情報表示
+	try{
+	    let str;
+	    str = "投稿日/"+GetDateString(currentvideo.first_retrieve*1000)
+		+ " 再生数/"+currentvideo.view_counter
+		+ " コメント/"+currentvideo.comment_num
+		+ " マイリスト/"+currentvideo.mylist_counter+"\n"
+		+ "タグ/"+currentvideo.tags['jp'].join(' ');
+	    if(currentvideo.mylist!=null){
+		str = "マイリスト登録済み:"+currentvideo.mylist + "\n"+str;
+	    }
+	    $('statusbar-currentmusic').setAttribute("tooltiptext",str);
+	} catch (x) {
+	}
     },
 
     /**
