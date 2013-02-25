@@ -91,7 +91,7 @@ var NicoLiveHelper = {
      */
     setAllowRequest:function(flg, ev, nomsg){
 	this.allowrequest = flg;
-	debugprint("リクエスト"+(flg?"許可":"不可")+"に切り替えました");
+	//debugprint("リクエスト"+(flg?"許可":"不可")+"に切り替えました");
 	// TODO
 	let str = ""; //flg ? NicoLivePreference.msg.requestok : NicoLivePreference.msg.requestng;
 	let command = ""; //flg ? NicoLivePreference.msg.requestok_command : NicoLivePreference.msg.requestng_command;

@@ -41,7 +41,7 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/config.js" />
   <script type="application/javascript;version=1.7"
-	  src="chrome://nicolivehelperadvance/content/nicolivedatabase.js" />
+	  src="chrome://nicolivehelperadvance/content/database.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7"
