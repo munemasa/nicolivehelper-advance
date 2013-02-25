@@ -132,6 +132,7 @@ var NicoLiveHelper = {
      * 再生スタイルを指定する.
      */
     setPlayStyle: function(playstyle){
+	this._playstyle = playstyle;
 	switch(playstyle){
 	case 0:// 手動(順次)
 	default:
@@ -723,10 +724,12 @@ var NicoLiveHelper = {
 	// JASRACコードの-を=に変換
 	comment = comment.replace(/((...)[-](....)[-](.))/g,"$2=$3=$4");
 
+	/*
 	if( this.previouschat==comment ){
 	    ShowNotice("同じコメントの連投はできません");
 	    return;
 	}
+	 */
 
 	this._getpostkeycounter = 0;
 	setTimeout(function(){

@@ -105,11 +105,13 @@
 	    <menuitem disabled="true" label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(5);"/>
 	  </menupopup>
 	</toolbarbutton>
-	<!-- allow/disallow request -->
+	<!-- リクエスト許可・不可 -->
 	<toolbarbutton label="&allow_request;" type="menu" id="toolbar-allowrequest">
 	  <menupopup>
-	    <menuitem label="&allow_request;" allowrequest="true" oncommand="NicoLiveHelper.setAllowRequest(true,event);"/>
-	    <menuitem label="&disallow_request;" allowrequest="false" oncommand="NicoLiveHelper.setAllowRequest(false,event);"/>
+	    <menuitem label="&allow_request;" allowrequest="true"
+		      oncommand="NicoLiveHelper.setAllowRequest(true,event);"/>
+	    <menuitem label="&disallow_request;" allowrequest="false"
+		      oncommand="NicoLiveHelper.setAllowRequest(false,event);"/>
 	  </menupopup>
 	</toolbarbutton>
 	<!-- play next -->
@@ -462,8 +464,8 @@
 	    <checkbox persist="checked" id="nlhaddon-allowoverwrite" label="上書き" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
 	    <checkbox persist="checked" id="nlhaddon-ref-userprof" label="プロフィール参照" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
 	    <spacer flex="1"/>
-	    <label id="comment-font-scale-value" value="11pt"/>
-	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveCommentProcessor.changeFontScale(this.value);"/>
+	    <label id="comment-font-scale-value" value="9pt"/>
+	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveComment.changeFontScale(this.value);"/>
 	  </hbox>
 	</arrowscrollbox>
       </vbox>

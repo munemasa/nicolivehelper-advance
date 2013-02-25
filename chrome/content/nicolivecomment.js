@@ -157,9 +157,21 @@ var NicoLiveComment = {
 	return true;
     },
 
+    /**
+     * コメントのフォントサイズを変更する.
+     * @param size フォントサイズ(ポイント)
+     */
+    changeFontScale:function(size){
+	if( !size ){ debugprint('font size is default 9pt.'); size = 9; }
+	$('comment-table').style.fontSize = size+"pt";
+	$('comment-font-scale-value').value = size + "pt";
+    },
+
     init: function(){
 	debugprint("NicoLiveComment.init");
 	this.comment_table = $('comment-table');
+
+	this.changeFontScale( $('comment-font-scale').value );
     },
     destroy: function(){
     }

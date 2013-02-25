@@ -2,8 +2,10 @@ pref("extensions.nicolivehelperadvance.mikuonly",false);
 
 pref("extensions.nicolivehelperadvance.comment.backlog", 50);
 
+pref("extensions.nicolivehelperadvance.request.allow", true);  // リクエスト可否
 pref("extensions.nicolivehelperadvance.request.seiga", false); // 静画のリクエスト可否
 
+pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイル(手動順次とか)
 pref("extensions.nicolivehelperadvance.play.interval", 8);
 pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 

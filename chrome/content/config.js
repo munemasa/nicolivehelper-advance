@@ -86,6 +86,9 @@ var Config = {
     loadPrefs: function(){
 	debugprint("load preferences.");
 	let branch = this.getBranch();
+	// リクエスト可否
+	this.allowrequest = branch.getBoolPref( "request.allow" );
+
 	// 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");
 	this.videoinfo_type        = branch.getIntPref("videoinfo.comment-type");
@@ -129,8 +132,17 @@ var Config = {
     init: function(){
 	this.loadPrefs();
 	this.register();
+
+	let b = this.getBranch().getBoolPref( "request.allow" );
+	NicoLiveHelper.setAllowRequest( b, null, true ); // nomsg=true
+
+	let style = this.getBranch().getIntPref( "play.style" );
+	NicoLiveHelper.setPlayStyle( style );
     },
     destroy: function(){
+	this.getBranch().setBoolPref( "request.allow", NicoLiveHelper.allowrequest );
+	this.getBranch().setIntPref( "play.style", NicoLiveHelper._playstyle );
+
 	this.unregister();
     }
 };
