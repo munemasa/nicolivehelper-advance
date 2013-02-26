@@ -3,7 +3,38 @@ var NicoLiveMylist = {
     mylists: {},               // マイリストグループ
     mylist_itemdata: {},       // 動画のマイリスト登録日とマイリストコメント
 
-    // マイリストコメント付きでマイリストからストックを追加する。
+
+
+    /**
+     * とりあえずマイリストからストックに追加する.
+     */
+    addStockFromDeflist:function(){
+	let f = function(xml,req){
+	    if( req.readyState==4 && req.status==200 ){
+		let result = JSON.parse(req.responseText);
+		switch(result.status){
+		case 'ok':
+		    let videos = new Array();
+		    for(let i=0;i<result.mylistitem.length;i++){
+			videos.push(result.mylistitem[i].item_data.video_id);
+		    }
+		    NicoLiveStock.addStock( videos.join(' ') );
+		    break;
+		case 'fail':
+		    break;
+		default:
+		    break;
+		}
+	    }
+	};
+	NicoApi.getDeflist( f );
+    },
+
+    /**
+     * マイリストからストックに追加する.
+     * @param mylist_id マイリストのID
+     * @param mylist_name マイリストの名前(未使用)
+     */
     addStockFromMylist:function(mylist_id,mylist_name){
 	let f = function(xml,req){
 	    if( req.readyState==4 && req.status==200 ){
