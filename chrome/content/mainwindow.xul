@@ -303,7 +303,7 @@
 	  
 	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleStock();"/>
 	  <button type="menu" label="&button.load_mylist;" style="min-width:1em;">
-	    <menupopup id="menupopup-from-mylist">
+	    <menupopup id="stock-from-mylist">
 	      <menuitem label="&toriaezu_mylist;"/>
 	    </menupopup>
 	  </button>

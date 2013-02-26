@@ -105,12 +105,26 @@ var NicoLiveStock = {
 	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.stock_list.length]);
     },
 
+    /**
+     * ストックに追加する.
+     * @param text 動画IDやマイリスト
+     */
     addStock: function(text){
 	if(text.length<3) return;
 	let l = text.match(/(sm|nm|so|im)\d+|\d{10}/g);
-	for(let i=0,id;id=l[i];i++){
-	    NicoLiveHelper.addStock(id);
+	if( l ){
+	    for(let i=0,id;id=l[i];i++){
+		NicoLiveHelper.addStock(id);
+	    }
 	}
+	l = text.match(/mylist\/\d+/g);
+	if(l){
+	    for(let i=0,mylist;mylist=l[i];i++){
+		let id = mylist.match(/mylist\/(\d+)/)[1];
+		NicoLiveMylist.addStockFromMylist(id,"");
+	    }
+	}
+
 	$('input-stock').value="";
     },
 
