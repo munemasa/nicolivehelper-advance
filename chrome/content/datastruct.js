@@ -1,3 +1,8 @@
+var RequestException = function(){
+    this.errno = 0;
+    this.errmsg = "";
+};
+
 var LiveInfo = function(){
     this.request_id = "lv0";
     this.title = "";

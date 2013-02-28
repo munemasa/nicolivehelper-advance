@@ -1021,7 +1021,8 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 返却するオブジェクトの error にエラーの有無あり
+     * 動画情報のXMLをJavascriptオブジェクトにする.
+     * @throw String エラーコードを例外として投げる
      */
     extractVideoInfo: function(xml){
 	// ニコニコ動画のgetthumbinfoのXMLから情報抽出.
@@ -1029,21 +1030,13 @@ var NicoLiveHelper = {
 
 	let error = GetXmlText(xml,"/nicovideo_thumb_response/error/code");
 	if( error ){
-	    // COMMUNITY NOT_FOUND
-	    debugprint( error );
-	    info.error = error;
-	    return info;
+	    // COMMUNITY or NOT_FOUND
+	    throw error;
 	}
 
 	let root;
-	try{
-	    root = xml.getElementsByTagName('thumb')[0];
-	    if( !root ) throw "no thumb tag";
-	} catch (x) {
-	    debugprint( x );
-	    info.error = "error occurred.";
-	    return info;
-	}
+	root = xml.getElementsByTagName('thumb')[0];
+	if( !root ) throw "no thumb tag";
 
 	for(let i=0,elem; elem=root.childNodes[i]; i++){	    	
 	    switch( elem.tagName ){
@@ -1068,6 +1061,7 @@ var NicoLiveHelper = {
 		info.first_retrieve = d.getTime() / 1000; // seconds from epoc.
 		break;
 	    case "length":
+		// TODO
 		if( 0 && this._videolength["_"+info.video_id] ){
 		    // getthumbinfo のデータと実際が合わない動画があるので調整データベースから
 		    info.length = this._videolength["_"+info.video_id];
@@ -1121,18 +1115,56 @@ var NicoLiveHelper = {
 	}
 	// video_id がないときはエラーとしておこう、念のため.
 	if( !info.video_id ){
-	    info.error = "no video id.";
-	    return info;
+	    throw "no video id.";
 	}
 
-	info.error = null;
 	return info;
     },
 
     /**
-     * リクエストをチェックして可否を返す
+     * すでにリクエスト済みかどうかチェックする
+     * @param video_id 動画ID
+     */
+    isAlreadyRequested: function( video_id ){
+	for( let i=0,item; item=this.request_list[i]; i++ ){
+	    if( item.video_id==video_id ){
+		return true;
+	    }
+	}
+	return false;
+    },
+
+    /**
+     * リクエストをチェックして可否を返す.
+     * リクエストを拒否する場合は例外を投げる.
+     * @throws RequestException (datastruct.js)
      */
     checkRequest: function( videoinfo ){
+	let error = new RequestException();
+
+	// TODO NG動画のチェック
+
+	if( !this.allowrequest ){
+	    // リクエスト不可
+	    error.errno = REASON_NOT_ACCEPT;
+	    error.errmsg = Config.msg.notaccept;
+	    throw error;
+	}
+
+	if( videoinfo.no_live_play ){
+	    // 生拒否
+	    error.errno = REASON_NO_LIVE_PLAY;
+	    error.errmsg = Config.msg.no_live_play;
+	    throw error;
+	}
+
+	if( this.isAlreadyRequested( videoinfo.video_id ) ){
+	    // すでにリクエスト済み
+	    error.errno = REASON_ALREADY_REQUESTED;
+	    error.errmsg = Config.msg.requested;
+	    throw error;
+	}
+
 	return true;
     },
 
@@ -1160,32 +1192,56 @@ var NicoLiveHelper = {
                 return;
             }
 
-            let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
-            if (videoinfo.error) {
-                debugprint(videoinfo.error);
-            } else {
-                // リク主の情報を追加
-                videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
-                videoinfo.comment_no = request.comment_no;
-                videoinfo.request_user_id = request.user_id;
-                videoinfo.request_time = GetCurrentTime();
-                videoinfo.is_self_request = request.is_self_request;
-                videoinfo.product_code = request.product_code;
-                if ( videoinfo.comment_no==0 ) {
+            let videoinfo = null;
+	    try{
+		videoinfo = NicoLiveHelper.extractVideoInfo(xml);
+		// リク主の情報を追加
+		videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
+		videoinfo.comment_no = request.comment_no;
+		videoinfo.request_user_id = request.user_id;
+		videoinfo.request_time = GetCurrentTime();
+		videoinfo.is_self_request = request.is_self_request;
+		videoinfo.product_code = request.product_code;
+		if ( videoinfo.comment_no==0 ) {
                     videoinfo.is_casterselection = true;
+		}
+		
+		// リクエストチェックでリクエストを拒否する場合は例外を投げる
+                NicoLiveHelper.checkRequest( videoinfo );
+                if ( !isstock ) {
+		    NicoLiveHelper.request_list.push( videoinfo );
+		    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
+		    
+		    if( Config.msg.accept ){
+			// 応答メッセージ
+			let func = function(){
+			    NicoLiveHelper.postCasterComment( Config.msg.accept, "" );
+			};
+			NicoLiveHelper.clearCasterCommentAndRun( func );
+		    }
+                } else {
+		    videoinfo.is_casterselection = true;
+		    NicoLiveHelper.stock_list.push( videoinfo );
+		    NicoLiveStock.addStockView( videoinfo );
                 }
+	    } catch (x) {
+		if( videoinfo ){
+		    // TODO リクエストはリジェクトされた
+		    NicoLiveHelper.reject_list.push( videoinfo );
+		    debugprint( x.errmsg );
 
-                if (NicoLiveHelper.checkRequest(videoinfo)) {
-                    if (!isstock) {
-                        NicoLiveHelper.request_list.push(videoinfo);
-                        NicoLiveRequest.addRequestView(videoinfo); // 表示追加
-                    } else {
-			videoinfo.is_casterselection = true;
-                        NicoLiveHelper.stock_list.push(videoinfo);
-                        NicoLiveStock.addStockView(videoinfo);
-                    }
-                }
-            }
+		    if( !isstock && x.errmsg ){
+			// 応答メッセージ
+			let func = function(){
+			    NicoLiveHelper.postCasterComment( x.errmsg, "" );
+			};
+			NicoLiveHelper.clearCasterCommentAndRun( func );
+		    }
+		}else{
+		    debugprint(x);
+		    ShowNotice( request.video_id+"の動画情報取得に失敗しました" );
+		}
+	    }
 
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
@@ -1668,13 +1724,13 @@ var NicoLiveHelper = {
     processListenersComment: function(chat){
 	if( chat.text.match(/((sm|nm|so|im)\d+)/) ){
 	    let video_id = RegExp.$1;
-	    let is_self_request = chat.text.match(/[^他](貼|張)/);
+	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
 	    let code = "";
 	    try{
 		// TODO 作品コードの処理
 		code = chat.text.match(/(...[-+=/]....[-+=/].)/)[1];
 		code = code.replace(/[-+=/]/g,"-"); // JWID用作品コード.
-		NicoLiveHelper.product_code["_"+sm[1]] = code;
+		NicoLiveHelper.product_code["_"+video_id] = code;
 	    } catch (x) {
 	    }
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
@@ -1682,7 +1738,7 @@ var NicoLiveHelper = {
 	if( chat.text.match(/(\d{10})/) ){
 	    let video_id = RegExp.$1;
 	    if( video_id=="8888888888" ) return;
-	    let is_self_request = chat.text.match(/[^他](貼|張)/);
+	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
 	    let code = "";
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
 	}

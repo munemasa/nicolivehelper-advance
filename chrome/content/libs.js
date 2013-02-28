@@ -28,6 +28,12 @@ const PLAY_SEQUENTIAL = 0;
 const PLAY_RANDOM = 1;
 const PLAY_CONSUMPTION = 2;
 
+// リクエストを受け付けない理由コード
+const REASON_NOT_ACCEPT = 1;
+const REASON_NO_LIVE_PLAY = 2;
+const REASON_ALREADY_REQUESTED = 3;
+
+
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前
 const COMMENT_STATE_MOVIEINFO_BEGIN = 1;   // 動画情報を送信中
 const COMMENT_STATE_MOVIEINFO_DONE = 2;    // 動画情報の送信が終わった
