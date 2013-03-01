@@ -78,11 +78,17 @@ var NicoLiveRejectRequest = {
 	return n;
     },
 
+    /**
+     * リクエストに直接追加
+     */
     addRequestDirect:function(event){
 	let n = this.getIndex(event);
 	let videoinfo = NicoLiveHelper.getRejectedVideo( n );
 	NicoLiveHelper.addRequestDirect( videoinfo );
     },
+    /**
+     * ストックに直接追加
+     */
     addStockDirect:function(event){
 	let n = this.getIndex(event);
 	let videoinfo = NicoLiveHelper.getRejectedVideo( n );

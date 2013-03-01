@@ -54,8 +54,39 @@ var NicoLiveHistory = {
 	button.setAttribute("oncommand","NicoLiveHistory.playHistory(event);");
 	hbox.appendChild(button);
 
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/add.png');
+	button.setAttribute('label','リクエスト');
+	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveHistory.addRequestDirect(event);");
+	hbox.appendChild(button);
+
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/add.png');
+	button.setAttribute('label','ストック');
+	button.setAttribute('class','command-button');
+	button.setAttribute("oncommand","NicoLiveHistory.addStockDirect(event);");
+	hbox.appendChild(button);
+
 	vbox.appendChild(hbox);
 	td.appendChild(vbox);
+    },
+
+    /**
+     * リクエストに直接追加
+     */
+    addRequestDirect:function(event){
+	let n = this.getIndex(event);
+	let videoinfo = NicoLiveHelper.getPlayedVideo( n );
+	NicoLiveHelper.addRequestDirect( videoinfo );
+    },
+    /**
+     * ストックに直接追加
+     */
+    addStockDirect:function(event){
+	let n = this.getIndex(event);
+	let videoinfo = NicoLiveHelper.getPlayedVideo( n );
+	NicoLiveHelper.addStockDirect( videoinfo );
     },
 
     /**
