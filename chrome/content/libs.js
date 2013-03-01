@@ -32,6 +32,7 @@ const PLAY_CONSUMPTION = 2;
 const REASON_NOT_ACCEPT = 1;
 const REASON_NO_LIVE_PLAY = 2;
 const REASON_ALREADY_REQUESTED = 3;
+const REASON_ALREADY_PLAYED = 4;
 
 
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前

@@ -18,7 +18,17 @@ var NicoLiveStock = {
      */
     _addStockView:function(table,item){
 	let tr = table.insertRow(table.rows.length);
-	tr.className = "table_casterselection";
+	switch( item.errno ){
+	case REASON_NO_LIVE_PLAY:
+	    tr.className = "table_played no_live_play";
+	    break;
+	default:
+	    tr.className = "table_casterselection";
+	    if ( item.is_played ){
+		tr.className = "table_played";
+	    }
+	    break;
+	}
 
 	let td;
 	td = tr.insertCell(tr.cells.length);

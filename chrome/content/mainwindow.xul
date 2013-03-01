@@ -51,6 +51,8 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivehistory.js" />
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivereject.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivecomment.js" />
 
   <script type="application/javascript;version=1.7"
@@ -326,9 +328,13 @@
 	</vbox>
       </vbox>
       
-      <!-- reject tab -->
+      <!-- reject tab リジェクト -->
       <vbox id="tab-reject">
-	<label value="Request Error"/>
+	<hbox>
+	  <spacer flex="1"/>
+	  <button label="&button.clearall;"
+		  oncommand="NicoLiveHelper.clearRejectList();"/>
+	</hbox>
 	<vbox flex="1" style="overflow:auto">
 	  <html:table id="reject-table" class="requestview">
 	  </html:table>
@@ -338,6 +344,7 @@
       <!-- playlist tab -->
       <vbox id="tab-playlist">
 	<hbox>
+	  <!-- TODO -->
 	  <button label="&button.clearall;" tooltiptext="&playlist.tooltip_clearall;"
 		  oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayList();"/>
 	  <button label="&playlist.recover_text;" tooltiptext="&playlist.tooltip_recover_text;"
@@ -453,16 +460,20 @@
 		      oncommand="NicoLiveHelper.changeCommentRoom( this.value );"
 		      style="padding: 0px; margin: 0px;">
 	      <menupopup>
-		<menuitem label="アリーナ" value="0"/>
+		<menuitem label="アリーナ"  value="0"/>
 		<menuitem label="立ち見A列" value="1"/>
 		<menuitem label="立ち見B列" value="2"/>
 		<menuitem label="立ち見C列" value="3"/>
 	      </menupopup>
 	    </menulist>
 
-	    <checkbox persist="checked" id="auto-kotehan" label="自動コテハン" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
-	    <checkbox persist="checked" id="nlhaddon-allowoverwrite" label="上書き" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
-	    <checkbox persist="checked" id="nlhaddon-ref-userprof" label="プロフィール参照" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
+	    <checkbox persist="checked" id="use_presscomment" label="BSP" tooltiptext="バックステージからコメントする(バックステージパス所持者用)"/>
+	    <checkbox persist="checked" id="auto-kotehan"
+		      label="自動コテハン" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
+	    <checkbox persist="checked" id="nlhaddon-allowoverwrite"
+		      label="上書き" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
+	    <checkbox persist="checked" id="nlhaddon-ref-userprof"
+		      label="プロフィール参照" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
 	    <spacer flex="1"/>
 	    <label id="comment-font-scale-value" value="9pt"/>
 	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveComment.changeFontScale(this.value);"/>

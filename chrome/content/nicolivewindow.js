@@ -1,6 +1,28 @@
 var NicoLiveWindow = {
 
     /**
+     * 指定の生放送のタブを検索する.
+     * @param request_id 放送ID
+     */
+    findTab:function(request_id){
+	let wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+	let browserEnumerator = wm.getEnumerator("navigator:browser");
+	let url = "http://live.nicovideo.jp/watch/"+request_id;
+	while(browserEnumerator.hasMoreElements()) {
+	    let browserInstance = browserEnumerator.getNext().gBrowser;
+	    // browser インスタンスの全てのタブを確認する.
+	    let numTabs = browserInstance.tabContainer.childNodes.length;
+	    for(let index=0; index<numTabs; index++) {
+		let currentBrowser = browserInstance.getBrowserAtIndex(index);
+		if (currentBrowser.currentURI.spec.match(url)) {
+		    return browserInstance.tabContainer.childNodes[index];
+		}
+	    }
+	}
+	return null;
+    },
+
+    /**
      * 指定のURLを開く.
      * @param url URL
      * @param hasfocus 開いたタブがフォーカスを得るか

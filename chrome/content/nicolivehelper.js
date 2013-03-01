@@ -711,6 +711,44 @@ var NicoLiveHelper = {
     },
 
     /**
+     * BSPコメントをする.
+     * @param comment コメント
+     * @param name 名前
+     * @param color 色
+     */
+    postUserPress:function(comment,name,color){
+	if( !comment ) return;
+	if( !name ) name = this.userinfo.nickname;
+	if( !color ) color = "#45bc38";
+	if( !this.user_press_token ){
+	    let tab = NicoLiveWindow.findTab(this.liveinfo.request_id) || NicoLiveWindow.findTab(this.liveinfo.default_community);
+	    if( tab ){
+		this.user_press_token = tab.linkedBrowser._contentWindow.window.document.getElementById('presscast_token').value;
+	    }else{
+		ShowNotice("生放送のページを開いていないため、BSPコメント用トークンを取得できませんでした");
+	    }
+	}
+
+	let data = new Array();
+	data.push("v="+this.liveinfo.request_id);
+	data.push("body="+encodeURIComponent(comment));
+	data.push("name="+encodeURIComponent(name));
+	data.push("token="+encodeURIComponent(this.user_press_token));
+	data.push("color="+encodeURIComponent(color));
+	data.push("mode=json");
+
+	let f = function(xml, req){
+	    if( req.readyState==4 && req.status==200 ) {
+		let result = JSON.parse(req.responseText);
+		if(result.status=="error"){
+		    ShowNotice("投稿エラーです");
+		}
+	    }
+	};
+	NicoApi.presscast( data, f );
+    },
+
+    /**
      * リスナーコメントを送信する
      * @param comment コメント
      * @param mail コマンド
@@ -843,7 +881,12 @@ var NicoLiveHelper = {
 		}
 	    }
 	}else{
-	    this.postListenerComment( text, mail );
+	    if ( $('use_presscomment').hasAttribute('checked') ){
+		let color = "";
+		this.postUserPress( comment, mail, color );
+	    }else{
+		this.postListenerComment( text, mail );
+	    }
 	}
     },
 
@@ -853,6 +896,8 @@ var NicoLiveHelper = {
      * @param func /cls後に実行する関数
      */
     clearCasterCommentAndRun:function(func){
+	if( this.isOffline() ) return;
+
 	// /clsが飲み込まれて送られてこなかったらどうしよう.
 	// というときのために、/clsを送る必要があるときは
 	// /clsか/clearを受けとるまで6秒間隔で/clsを送信.
@@ -1135,34 +1180,52 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 再生済みかどうかチェックする.
+     * @param video_id 動画ID
+     */
+    isAlreadyPlayed: function( video_id ){
+	for( let i=0,item; item=this.playlist_list[i]; i++ ){
+	    if( item.video_id==video_id ){
+		return true;
+	    }
+	}
+	return false;
+    },
+
+    /**
      * リクエストをチェックして可否を返す.
      * リクエストを拒否する場合は例外を投げる.
      * @throws RequestException (datastruct.js)
      */
     checkRequest: function( videoinfo ){
-	let error = new RequestException();
-
 	// TODO NG動画のチェック
-
-	if( !this.allowrequest ){
-	    // リクエスト不可
-	    error.errno = REASON_NOT_ACCEPT;
-	    error.errmsg = Config.msg.notaccept;
-	    throw error;
-	}
 
 	if( videoinfo.no_live_play ){
 	    // 生拒否
-	    error.errno = REASON_NO_LIVE_PLAY;
-	    error.errmsg = Config.msg.no_live_play;
-	    throw error;
+	    videoinfo.errno = REASON_NO_LIVE_PLAY;
+	    videoinfo.errmsg = Config.msg.no_live_play;
+	    throw videoinfo;
+	}
+
+	if( !this.allowrequest ){
+	    // リクエスト不可
+	    videoinfo.errno = REASON_NOT_ACCEPT;
+	    videoinfo.errmsg = Config.msg.notaccept;
+	    throw videoinfo;
 	}
 
 	if( this.isAlreadyRequested( videoinfo.video_id ) ){
 	    // すでにリクエスト済み
-	    error.errno = REASON_ALREADY_REQUESTED;
-	    error.errmsg = Config.msg.requested;
-	    throw error;
+	    videoinfo.errno = REASON_ALREADY_REQUESTED;
+	    videoinfo.errmsg = Config.msg.requested;
+	    throw videoinfo;
+	}
+
+	if( this.isAlreadyPlayed( videoinfo.video_id ) ){
+	    // 再生済み
+	    videoinfo.errno = REASON_ALREADY_PLAYED;
+	    videoinfo.errmsg = Config.msg.played;
+	    throw videoinfo;
 	}
 
 	return true;
@@ -1170,6 +1233,10 @@ var NicoLiveHelper = {
 
     /**
      * 動画情報を取ってきてリクエストに追加する
+     * @param retryobj
+     * @param q 操作するキュー
+     * @param isstock ストックならtrueで、リクエストならfalse
+     * @param request リクエスト情報
      */
     getVideoInfoToAddRequest:function (retryobj, q, isstock, request) {
         let f = function (xml, req) {
@@ -1185,13 +1252,14 @@ var NicoLiveHelper = {
                     }
                     return;
                 }
-                debugprint("Retry to get video information: " + request.video_id);
+                debugprint("Retry to get video information after 2 sec: " + request.video_id);
                 setTimeout(function () {
                     NicoLiveHelper.runAddRequest(isstock, request);
                 }, 2000);
                 return;
             }
 
+	    let sendmsg = null;    // 応答メッセージ
             let videoinfo = null;
 	    try{
 		videoinfo = NicoLiveHelper.extractVideoInfo(xml);
@@ -1211,14 +1279,7 @@ var NicoLiveHelper = {
                 if ( !isstock ) {
 		    NicoLiveHelper.request_list.push( videoinfo );
 		    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
-		    
-		    if( Config.msg.accept ){
-			// 応答メッセージ
-			let func = function(){
-			    NicoLiveHelper.postCasterComment( Config.msg.accept, "" );
-			};
-			NicoLiveHelper.clearCasterCommentAndRun( func );
-		    }
+		    sendmsg = Config.msg.accept;
                 } else {
 		    videoinfo.is_casterselection = true;
 		    NicoLiveHelper.stock_list.push( videoinfo );
@@ -1226,21 +1287,46 @@ var NicoLiveHelper = {
                 }
 	    } catch (x) {
 		if( videoinfo ){
-		    // TODO リクエストはリジェクトされた
-		    NicoLiveHelper.reject_list.push( videoinfo );
-		    debugprint( x.errmsg );
-
-		    if( !isstock && x.errmsg ){
+		    if( isstock ){
+			// ストックの場合は拒否する必要のないケースがあるので
+			switch( x.errno ){
+			case REASON_NOT_ACCEPT:
+			case REASON_ALREADY_REQUESTED:
+			case REASON_ALREADY_PLAYED:
+			    videoinfo.is_casterselection = true;
+			    NicoLiveHelper.stock_list.push( videoinfo );
+			    NicoLiveStock.addStockView( videoinfo );
+			    break;
+			default:
+			    NicoLiveHelper.reject_list.push( videoinfo );
+			    NicoLiveRejectRequest.addRejectRequest( videoinfo );
+			    break;
+			}
+		    }else{
+			// リクエストはリジェクトされた
+			NicoLiveHelper.reject_list.push( videoinfo );
+			NicoLiveRejectRequest.addRejectRequest( videoinfo );
+			debugprint( x.errmsg );
 			// 応答メッセージ
-			let func = function(){
-			    NicoLiveHelper.postCasterComment( x.errmsg, "" );
-			};
-			NicoLiveHelper.clearCasterCommentAndRun( func );
+			sendmsg = x.errmsg;
 		    }
 		}else{
 		    debugprint(x);
 		    ShowNotice( request.video_id+"の動画情報取得に失敗しました" );
+		    sendmsg = Config.msg.deleted;
+
+		    videoinfo = new Object();
+		    videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
+		    videoinfo.comment_no = request.comment_no;
 		}
+	    }
+
+	    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, videoinfo);
+	    if( !isstock && sendmsg ){
+		let func = function(){
+		    NicoLiveHelper.postCasterComment( sendmsg, "" );
+		};
+		NicoLiveHelper.clearCasterCommentAndRun( func );
 	    }
 
             q.shift(); // リク処理したので一個削除
@@ -1254,7 +1340,10 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 静画の情報を取ってきてリクエストに追加する
+     * 静画の情報を取ってきてリクエストやストックに追加する
+     * @param request リクエスト情報
+     * @param q リクエストやストックの処理キュー
+     * @param isstock ストックならtrue、リクエストならfalse
      */
     getSeigaInfoToAddRequest:function (request, q, isstock) {
         let req = new XMLHttpRequest();
@@ -1335,11 +1424,6 @@ var NicoLiveHelper = {
     addRequest: function(video_id, comment_no, user_id, is_self_request, code ){
 	if( !video_id ) return;
 	if( video_id.length < 3 ) return;
-	if( !this.allowrequest ){
-	    // TODO リクエストは受け付けていません
-	    debugprint("リクエストは受け付けていません");
-	    return;
-	}
 
 	let n = this.request_q.length;
 
@@ -1376,6 +1460,28 @@ var NicoLiveHelper = {
 	    this.runAddRequest( true ); // isstock=true
 	}
     },
+    
+    /**
+     * 動画情報をリクエストに直接追加する.
+     * @param videoinfo 動画情報
+     */
+    addRequestDirect: function(videoinfo){
+	NicoLiveHelper.request_list.push( videoinfo );
+	NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
+    },
+    /**
+     * 動画情報をストックに直接追加する.
+     * @param videoinfo 動画情報
+     */
+    addStockDirect: function(videoinfo){
+	videoinfo.is_casterselection = true;
+	NicoLiveHelper.stock_list.push( videoinfo );
+	NicoLiveStock.addStockView( videoinfo );
+    },
+
+    getRejectedVideo: function(n){
+	return this.reject_list[n];
+    },
 
     /**
      * リクエストを全削除する.
@@ -1393,6 +1499,15 @@ var NicoLiveHelper = {
     clearAllStock: function(){
 	this.stock_list = new Array();
 	NicoLiveStock.updateView( this.stock_list );
+    },
+
+    /**
+     * リジェクト動画一覧をクリアする.
+     * 画面の更新あり
+     */
+    clearRejectList: function(){
+	this.reject_list = new Array();
+	NicoLiveRejectRequest.updateView( this.reject_list );
     },
 
     /**
@@ -1528,15 +1643,15 @@ var NicoLiveHelper = {
                 return;
             }
 
-            let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
-            if (videoinfo.error) {
-                debugprint(videoinfo.error);
-            } else {
+	    try{
+		let videoinfo = NicoLiveHelper.extractVideoInfo(xml);
 		NicoLiveHelper.play_status[ target ].videoinfo = videoinfo;
 		NicoLiveHelper.play_status[ target ].play_end =
 		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
 		NicoLiveHelper.addPlaylist( videoinfo );
-            }
+	    } catch (x) {
+                debugprint(x);
+	    }
         };
         NicoApi.getthumbinfo(video_id, f);
     },

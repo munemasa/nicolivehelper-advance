@@ -172,6 +172,9 @@ var NicoLiveRequest = {
 	    // green
 	    tr.className = "table_selfreq";
 	}
+	if( item.errno==REASON_NO_LIVE_PLAY ){
+	    tr.className = "table_played no_live_play";
+	}
 	let td;
 	td = tr.insertCell(tr.cells.length);
 	td.appendChild(document.createTextNode("#"+table.rows.length));

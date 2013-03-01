@@ -234,6 +234,12 @@ tr.table_played{
     background-color: #cccccc;
 }
 
+tr.no_live_play div:first-child:before{
+    content: "[生放送不可]";
+    color: red;
+    font-weight: bold;
+}
+
 .red {
     color: red;
 }
