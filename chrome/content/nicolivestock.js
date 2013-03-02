@@ -44,8 +44,8 @@ var NicoLiveStock = {
 	    vbox = this.createVideoInformation(item);
 	}
 	vbox.setAttribute('class','vinfo');
-	// TODO ポップアップメニュー
-	vbox.setAttribute('context','popup-copyrequest');
+	// ポップアップメニュー
+	vbox.setAttribute('context','popup-stock');
 
 	let hbox = CreateElement('hbox');
 	hbox.setAttribute('tooltiptext','');

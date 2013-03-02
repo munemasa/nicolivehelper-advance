@@ -124,12 +124,12 @@ var NicoLiveMylist = {
      * @param mylist_id マイリストID、とりマイならdefaultにする
      * @param mylist_name マイリストの名前(デバッグログ用)
      * @param video_id 動画ID
-     * @param ev DOMイベント
+     * @param ev DOMイベント(CTRL押しながらだとマイリスコメを入力できるので、そのチェック用)
      */
     addMyList:function(mylist_id,mylist_name,video_id, ev){
 	try{
 	    let additional_msg = this.getDefaultMylistComment();
-	    if( ev.ctrlKey ){
+	    if( ev && ev.ctrlKey ){
 		additional_msg = InputPrompt("マイリストコメントを入力してください","マイリストコメント入力",additional_msg);
 		if( additional_msg==null ) additional_msg = "";
 	    }
@@ -200,7 +200,7 @@ var NicoLiveMylist = {
 		    let video_id;
 		    let description;
 		    try{
-			video_id = item.getElementsByTagName('link')[0].textContent.match(/(sm|nm)\d+/);
+			video_id = item.getElementsByTagName('link')[0].textContent.match(/(sm|nm)\d+|\d{10}/);
 		    } catch (x) {
 			video_id = "";
 		    }
@@ -230,6 +230,111 @@ var NicoLiveMylist = {
     },
 
     /**
+     * マイリストに追加のメニューを作成する
+     * @param mylists マイリストグループ
+     * @return メニューを返す
+     */
+    createMenuToAddMylist: function( mylists ){
+	let popupmenu = CreateElement('menu');
+	popupmenu.setAttribute('label',LoadString('STR_ADD_MYLIST')); // 'マイリストに追加'
+
+	let popup = CreateElement('menupopup');
+	popupmenu.appendChild(popup);
+
+	let elem = CreateMenuItem(LoadString('STR_DEF_MYLIST'),'default'); // 'とりあえずマイリスト'
+	popup.appendChild(elem);
+
+	for(let i=0,item;item=mylists[i];i++){
+	    let elem;
+	    let tmp = item.name.match(/.{1,25}/);
+	    elem = CreateMenuItem(tmp,item.id);
+	    elem.setAttribute("tooltiptext",item.name);
+	    popup.appendChild(elem);
+	}
+	return popupmenu;
+    },
+
+    /**
+     * メニューからマイリストに追加.
+     * @param mylist_id マイリストID
+     * @param mylist_name マイリスト名
+     * @param node メニューがポップアップしたノード
+     * @param ev eventオブジェクト
+     */
+    addMylistFromMenu: function( mylist_id, mylist_name, triggernode, ev ){
+	debugprint(mylist_id);
+	debugprint(mylist_name);
+	debugprint(triggernode);
+	this.triggernode = triggernode;
+
+	let videoinfo;
+	if( triggernode.tagName=='statusbarpanel' ){
+	    // ステータスバーから
+	    videoinfo = NicoLiveHelper.getCurrentVideoInfo();
+	}else if( triggernode.tagName=='label' ){
+	    // メイン、サブの再生曲タイトル表示のところから
+	    if( triggernode.id=='main-video-title' ){
+		videoinfo = NicoLiveHelper.getCurrentVideoInfo( MAIN );
+	    }else if( triggernode.id=='sub-video-title' ){
+		videoinfo = NicoLiveHelper.getCurrentVideoInfo( SUB );
+	    }
+	}else{
+	    let elem = FindParentElement(triggernode,'vbox');
+	    let video_id = elem.getAttribute('nicovideo_id'); // 動画IDを取れる.
+	    videoinfo = new Object();
+	    videoinfo.video_id = video_id;
+	}
+
+	if( videoinfo ){
+	    this.addMyList( mylist_id, mylist_name, videoinfo.video_id, ev );
+	}
+    },
+
+    /**
+     * マイリストグループを処理する.
+     * マイリス追加メニューを作ったり、いろいろ。
+     */
+    processMylistGroup:function () {
+        let mylists = NicoLiveMylist.mylists.mylistgroup;
+
+	let popup = this.createMenuToAddMylist( mylists );
+	popup.setAttribute("oncommand",
+			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-add-mylist').triggerNode, event);");
+	$('popup-add-mylist').appendChild( popup );
+
+	// リクエストのポップアップメニューに追加
+	popup = popup.cloneNode(true);
+	popup.setAttribute("oncommand",
+			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-request').triggerNode, event);");
+	$('popup-request').insertBefore( popup, $('popup-request-marker').nextSibling );
+
+	// ストックのポップアップメニューに追加
+	popup = popup.cloneNode(true);
+	popup.setAttribute("oncommand",
+			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-stock').triggerNode, event);");
+	$('popup-stock').insertBefore( popup, $('popup-stock-marker').nextSibling );
+
+        let elem;
+        for (let i = 0, item; item = mylists[i]; i++) {
+            let tmp = item.name.match(/.{1,20}/);
+
+            // マイリスト読み込み(stock)
+            elem = CreateMenuItem(tmp, item.id);
+            elem.setAttribute("tooltiptext", item.name);
+            elem.setAttribute("oncommand", "NicoLiveMylist.addStockFromMylist(event.target.value,event.target.label);");
+            $('stock-from-mylist').appendChild(elem);
+
+            /*
+             // マイリスト読み込み(db)
+             elem = CreateMenuItem(tmp,item.id);
+             elem.setAttribute("tooltiptext",item.name);
+             elem.setAttribute("oncommand","NicoLiveMylist.addDatabase(event.target.value,event.target.label);");
+             $('menupopup-from-mylist-to-db').appendChild(elem);
+             */
+        }
+    },
+
+    /**
      * マイリストグループを読み込む.
      */
     readMylistGroup: function(){
@@ -245,27 +350,8 @@ var NicoLiveMylist = {
 		    ShowNotice(LoadString('STR_ERR_MYLIST_HEADER')+NicoLiveMylist.mylists.error.description);
 		    return;
 		}
-
-		let mylists = NicoLiveMylist.mylists.mylistgroup;
-		let elem;
-		for(let i=0,item;item=mylists[i];i++){
-		    let tmp = item.name.match(/.{1,20}/);
-
-		    // マイリスト読み込み(stock)
-		    elem = CreateMenuItem(tmp,item.id);
-		    elem.setAttribute("tooltiptext",item.name);
-		    elem.setAttribute("oncommand","NicoLiveMylist.addStockFromMylist(event.target.value,event.target.label);");
-		    $('stock-from-mylist').appendChild(elem);
-
-		    /*
-		    // マイリスト読み込み(db)
-		    elem = CreateMenuItem(tmp,item.id);
-		    elem.setAttribute("tooltiptext",item.name);
-		    elem.setAttribute("oncommand","NicoLiveMylist.addDatabase(event.target.value,event.target.label);");
-		    $('menupopup-from-mylist-to-db').appendChild(elem);
-		     */
-		}
-	    }
+                NicoLiveMylist.processMylistGroup();
+            }
 	};
 	NicoApi.getmylistgroup( f );
     },

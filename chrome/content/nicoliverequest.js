@@ -201,8 +201,8 @@ var NicoLiveRequest = {
 	}
 
 	vbox.setAttribute('class','vinfo');
-	// TODO ポップアップメニュー
-	vbox.setAttribute('context','popup-copyrequest');
+	// ポップアップメニュー
+	vbox.setAttribute('context','popup-request');
 
 	let hbox = CreateElement('hbox');
 	hbox.setAttribute('tooltiptext','');

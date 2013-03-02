@@ -41,6 +41,8 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/config.js" />
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/menucontrol.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/database.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
@@ -174,7 +176,7 @@
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
 	    <menuseparator/>
-	    <menuitem label="About..." oncommand="AlertPrompt('NicoLive Helper Advance','About')"/>
+	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>
 	</toolbarbutton>
       </arrowscrollbox>
@@ -191,7 +193,7 @@
 	<button label="&general.camera;" tooltiptext="/play" oncommand="NicoLiveHelper.postCasterComment('/play');"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop');" tooltiptext="/stop"/>
       </hbox>
-      <label id="main-video-title" class="video-title" crop="end" value=""/>
+      <label id="main-video-title" class="video-title" crop="end" value="" context="popup-add-mylist"/>
     </groupbox>
     <hbox align="center">
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
@@ -203,7 +205,7 @@
 		       oncommand="NicoLiveHelper.setSoundOnly(SUB,this.checked);"/>
 	<button image="data/stop.png" label="&play.stop;" style="min-width:0;" oncommand="NicoLiveHelper.postCasterComment('/stop sub');" tooltiptext="/stop sub"/>
       </hbox>
-      <label id="sub-video-title" class="video-title" crop="end" value=""/>
+      <label id="sub-video-title" class="video-title" crop="end" value="" context="popup-add-mylist"/>
     </groupbox>
   </hbox>
 
@@ -258,10 +260,10 @@
 	      <menuitem label="&button.clearall;"
 			oncommand="NicoLiveHelper.clearAllRequest();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="TODO"/>
+			oncommand="NicoLiveHelper.clearPlayedRequest();"/>
 	    </menupopup>
 	  </button>
-	  <label id="total-playtime" value="999分99秒/999件"/>
+	  <label id="total-playtime" value="0分0秒/0件"/>
 	</hbox>
 	<!-- request list -->
 	<vbox flex="1" style="overflow:auto">
@@ -316,7 +318,7 @@
 	      <menuitem label="&button.clearall;"
 			oncommand="NicoLiveHelper.clearAllStock();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="TODO"/>
+			oncommand="NicoLiveHelper.clearPlayedStock();"/>
 	    </menupopup>
 	  </button>
 	  <label id="stock-playtime" value="999分99秒/999件"/>
@@ -518,24 +520,118 @@
 
   <!-- statusbar -->
   <statusbar id="statusbar">
-    <stack id="statusbar-currentmusic" context="" onclick="">
+    <stack id="statusbar-currentmusic" context="popup-add-mylist" onclick="">
       <progressmeter id="statusbar-music-progressmeter" mode="determined" value="0" flex="1" />
       <statusbarpanel id="statusbar-music-name" label="" flex="1" crop="start"/>
     </stack>
     <spacer flex="1"/>
     <statusbarpanel id="statusbar-n-of-listeners" label="&live.watcher;"/>
     <statusbarpanel id="statusbar-live-progress" label="0:00" onclick=""/>
+<!-- TODO
     <statusbarpanel id="statusbar-autonext" context="popup-nicolive-alert"
 		    class="statusbarpanel-iconic" src="data/next-mono.png"
 		    onclick=""/>
+-->
     <statusbarpanel id="status-bar-browser"
 		    class="statusbarpanel-iconic" src="data/firefox.png"
 		    context="popup-select-browser"
 		    />
   </statusbar>
 
+
+  <!-- ポップアップメニュー -->
   <popupset>
 
+    <!-- リクエスト用ポップアップ -->
+    <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this);">
+      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menu label="検索">
+	<menupopup>
+	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	</menupopup>
+      </menu>
+
+      <menuitem label="&sort.comment_no;" oncommand="NicoLiveHelper.sortRequestByCommentNo();"/>
+      <menu label="&sort.ascend_order;">
+	<menupopup>
+	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,1)"/>
+	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,1)"/>
+	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,1)"/>
+	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,1)"/>
+	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,1)"/>
+	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,1)"/>
+	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,1)"/>
+	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,1)"/>
+	</menupopup>
+      </menu>
+      <menu label="&sort.descend_order;">
+	<menupopup>
+	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,-1)"/>
+	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,-1)"/>
+	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,-1)"/>
+	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,-1)"/>
+	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,-1)"/>
+	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,-1)"/>
+	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,-1)"/>
+	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
+	</menupopup>
+      </menu>
+
+      <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
+    </menupopup>
+
+    <!-- ストック用のポップアップメニュー -->
+    <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this);">
+      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menu label="検索">
+	<menupopup>
+	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	</menupopup>
+      </menu>
+
+      <menu label="&sort.ascend_order;">
+	<menupopup>
+	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
+	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,1)"/>
+	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,1)"/>
+	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,1)"/>
+	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,1)"/>
+	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,1)"/>
+	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,1)"/>
+	  <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,1)"/>
+	  <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,1)"/>
+	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,1)"/>
+	</menupopup>
+      </menu>
+      <menu label="&sort.descend_order;">
+	<menupopup>
+	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,-1)"/>
+	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,-1)"/>
+	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,-1)"/>
+	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,-1)"/>
+	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,-1)"/>
+	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,-1)"/>
+	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,-1)"/>
+	  <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,-1)"/>
+	  <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,-1)"/>
+	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,-1)"/>
+	</menupopup>
+      </menu>
+
+      <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
+      <menuseparator/>
+      <menuitem label="&menu.stock_savefile;"/>
+    </menupopup>
+
+    <!-- マイリストに追加しかないメニュー -->
+    <menupopup id="popup-add-mylist">
+    </menupopup>
+
+    <!-- クッキー共有するブラウザ指定 -->
     <menupopup id="popup-select-browser" oncommand="NicoLiveWindow.changeBrowser();">
       <menuitem name="use-browser" id="use-firefox"
 		persist="checked" label="Firefox" type="radio" autocheck="true" tooltiptext=""/>

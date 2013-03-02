@@ -100,6 +100,10 @@
       <!-- 詳細表示 -->
       <preference id="pref-show-details"
 		  name="extensions.nicolivehelperadvance.display.show_detail" type="bool"/>
+
+      <!-- 184コメント -->
+      <preference id="pref-184comment"
+		  name="extensions.nicolivehelperadvance.comment.184comment" type="bool"/>
     </preferences>
 
     <tabbox persist="selectedIndex" id="prefwindow-basicsettings">
@@ -107,6 +111,7 @@
 	<tab label="進行"/>
 	<tab label="リクエスト"/>
 	<tab label="表示"/>
+	<tab label="コメント"/>
       </tabs>
       <tabpanels>
 	<!-- 進行 -->
@@ -151,6 +156,10 @@
 	<tabpanel orient="vertical">
 	  <checkbox preference="pref-show-details" label="動画説明を表示する"
 		    tooltiptext="チェックをすると、リクエスト、ストック等で動画説明を表示します。"/>
+	</tabpanel>
+	<!-- コメント -->
+	<tabpanel orient="vertical">
+	  <checkbox preference="pref-184comment" label="常に184コメント(匿名)にする"/>
 	</tabpanel>
       </tabpanels>
     </tabbox>

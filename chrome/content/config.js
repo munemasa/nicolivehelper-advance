@@ -83,6 +83,14 @@ var Config = {
     },
 
     /**
+     * コメント関係の設定を読む
+     */
+    loadCommentSettings:function (branch) {
+        this.comment184 = branch.getBoolPref("comment.184comment");
+        this.comment.backlogs = branch.getIntPref("comment.backlog");
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -95,7 +103,9 @@ var Config = {
 	// 重複許可
 	this.request.allow_duplicative = branch.getBoolPref( "request.allow-duplicative" );
 
-	// 動画情報.
+        this.loadCommentSettings(branch);
+
+        // 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");
 	this.videoinfo_type        = branch.getIntPref("videoinfo.comment-type");
 	this.videoinfo_revert_line = branch.getIntPref("videoinfo.revert-line");

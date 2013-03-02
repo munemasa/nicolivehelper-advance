@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<dialog id="votewindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
+	title="About (NicoLive Helper Advance)"
+	buttons="accept" ondialogaccept="return true;">
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
+  <vbox>
+    <hbox>
+      <image src='data/logo.png' width='64' height='64'/>
+      <vbox>
+	<label id="id-version" value="NicoLive Helper Advance"/>
+	<label value="Developed by amano."/>
+      </vbox>
+    </hbox>
+
+    <label value="Contact:"/>
+    <hbox style="margin-left: 1em;">
+      <label 
+	  style="color:blue; text-decoration:underline;cursor:pointer"
+	  onclick="window.opener.NicoLiveWindow.openDefaultBrowser('http://com.nicovideo.jp/community/co105163',true);"
+	  value="http://com.nicovideo.jp/community/co105163"/>
+    </hbox>
+    <label value="Donation:"/>
+    <hbox style="margin-left: 1em;">
+      <label value="PayPal"
+	     style="color:blue; text-decoration:underline;cursor:pointer"
+	     onclick="window.opener.NicoLiveWindow.openDefaultBrowser('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=EDQKQV3ME3Q24',true);"/>
+      <label value="Gumroad"
+	     style="color:blue; text-decoration:underline;cursor:pointer"
+	     onclick="window.opener.NicoLiveWindow.openDefaultBrowser('https://gumroad.com/l/TXFz',true);"/>
+    </hbox>
+  </vbox>
+
+  <script>
+  <![CDATA[
+  $('id-version').value = "NicoLive Helper Advance version "+GetAddonVersion();
+
+  ]]>
+  </script>
+
+</dialog>

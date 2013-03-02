@@ -403,6 +403,7 @@ var NicoLiveHelper = {
 
     /**
      * 現在再生している動画情報を返す
+     * @param n メインかサブかのターゲット指定。なければ現在の再生ターゲット。
      */
     getCurrentVideoInfo: function(n){
 	try{
@@ -721,7 +722,12 @@ var NicoLiveHelper = {
 	if( !this.user_press_token ){
 	    let tab = NicoLiveWindow.findTab(this.liveinfo.request_id) || NicoLiveWindow.findTab(this.liveinfo.default_community);
 	    if( tab ){
-		this.user_press_token = tab.linkedBrowser._contentWindow.window.document.getElementById('presscast_token').value;
+		try{
+		    this.user_press_token = tab.linkedBrowser._contentWindow.window.document.getElementById('presscast_token').value;
+		} catch (x) {
+		    ShowNotice("BSPコメント用トークンを取得できませんでした");
+		    return;
+		}
 	    }else{
 		ShowNotice("生放送のページを開いていないため、BSPコメント用トークンを取得できませんでした");
 	    }
@@ -881,7 +887,7 @@ var NicoLiveHelper = {
 	}else{
 	    if ( $('use_presscomment').hasAttribute('checked') ){
 		let color = "";
-		this.postUserPress( comment, mail, color );
+		this.postUserPress( text, mail, color );
 	    }else{
 		this.postListenerComment( text, mail );
 	    }
@@ -1535,12 +1541,40 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 再生済みのリクエストを削除する.
+     */
+    clearPlayedRequest: function(){
+	let newstock = new Array();
+	for( let i=0,item; item=this.request_list[i]; i++ ){
+	    if( !this.isAlreadyPlayed( item.video_id ) ) newstock.push(item);
+	}
+	this.request_list = newstock;
+	NicoLiveRequest.updateView( this.request_list );
+
+	this.saveRequest();
+    },
+
+    /**
      * ストックを全削除する.
      * 画面の更新あり
      */
     clearAllStock: function(){
 	this.stock_list = new Array();
 	NicoLiveStock.updateView( this.stock_list );
+    },
+
+    /**
+     * 再生済みのストックを削除する.
+     */
+    clearPlayedStock: function(){
+	let newstock = new Array();
+	for( let i=0,item; item=this.stock_list[i]; i++ ){
+	    if( !item.is_played ) newstock.push(item);
+	}
+	this.stock_list = newstock;
+	NicoLiveStock.updateView( this.stock_list );
+
+	this.saveStock();
     },
 
     /**
@@ -1891,6 +1925,7 @@ var NicoLiveHelper = {
 	    } catch (x) {
 	    }
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+	    return;
 	}
 	if( chat.text.match(/(\d{10})/) ){
 	    let video_id = RegExp.$1;
@@ -1898,6 +1933,12 @@ var NicoLiveHelper = {
 	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
 	    let code = "";
 	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+	    return;
+	}
+
+	if( chat.text.match(/\/ver$/) ){
+	    let str = "NicoLive Helper Advance version "+GetAddonVersion();
+	    this.postCasterComment( str, "" );
 	}
     },
 
@@ -2745,28 +2786,102 @@ var NicoLiveHelper = {
 	}
     },
 
+
     /**
-     * 変数の初期化を行う.
-     * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
+     * 配列をソートする.
      */
-    initVars: function(){
-	this._donotshowdisconnectalert = false;
-
-	this.liveinfo = new LiveInfo();
-	this.userinfo = new UserInfo();
-	this.serverinfo = new ServerInfo();
-	this.twitterinfo = new TwitterInfo();
-
-	this.request_q = new Array();
-	this.stock_q = new Array();
-
-	this.play_status[MAIN] = new Object();
-	this.play_status[SUB] = new Object();
-
-	this.connectioninfo = new Array();
-
-	this._first_play = false;
+    sortRequestStock:function(queue,type,order){
+	// order:1だと昇順、order:-1だと降順.
+	queue.sort( function(a,b){
+			let tmpa, tmpb;
+			switch(type){
+			case 0:// 再生数.
+			    tmpa = a.view_counter;
+			    tmpb = b.view_counter;
+			    break;
+			case 1:// コメ.
+			    tmpa = a.comment_num;
+			    tmpb = b.comment_num;
+			    break;
+			case 2:// マイリス.
+			    tmpa = a.mylist_counter;
+			    tmpb = b.mylist_counter;
+			    break;
+			case 3:// 時間.
+			    tmpa = a.length_ms;
+			    tmpb = b.length_ms;
+			    break;
+			case 4:// 投稿日.
+			default:
+			    tmpa = a.first_retrieve;
+			    tmpb = b.first_retrieve;
+			    break;
+			case 5:// マイリス率.
+			    tmpa = a.mylist_counter / a.view_counter;
+			    tmpb = b.mylist_counter / b.view_counter;
+			    break;
+			case 6:// タイトル.
+			    if(a.title < b.title){
+				return -order;
+			    }else{
+				return order;
+			    }
+			    break;
+			case 7:// マイリス登録日.
+			    tmpa = a.registerDate;
+			    tmpb = b.registerDate;
+			    break;
+			case 8:// 宣伝ポイント.
+			    tmpa = a.uadp;
+			    tmpb = b.uadp;
+			    break;
+			case 9:// ビットレート
+			    tmpa = a.highbitrate;
+			    tmpb = b.highbitrate;
+			    break;
+			}
+			return (tmpa - tmpb) * order;
+		    });
     },
+
+    /**
+     * リクエストをソート
+     */
+    sortRequest:function(type,order){
+	this.sortRequestStock(this.request_list,type,order);
+	NicoLiveRequest.updateView(this.request_list);
+	this.saveRequest();	
+    },
+
+    /**
+     * ストックをソート
+     */
+    sortStock:function(type,order){
+	this.sortRequestStock(this.stock_list,type,order);
+	NicoLiveStock.updateView(this.stock_list);
+	this.saveStock();
+    },
+
+    // コメ番順にソート.
+    sortRequestByCommentNo:function(){
+	// order:1だと昇順、order:-1だと降順.
+	let order = 1;
+	this.request_list.sort( function(a,b){
+				    if(b.comment_no==undefined) return -1;
+				    if(a.comment_no==undefined) return 1;
+				    try{
+					let a_cno = parseInt((""+a.comment_no).split(",")[0]);
+					let b_cno = parseInt((""+b.comment_no).split(",")[0]);
+					return (a_cno - b_cno) * order;
+				    } catch (x) {
+					debugprint(x);
+					return 0;
+				    }
+				});
+	NicoLiveRequest.updateView(this.request_list);
+	this.saveRequest();
+    },
+
 
     /**
      * リクエストセットの切り替え
@@ -2852,6 +2967,29 @@ var NicoLiveHelper = {
 	this.saveRequest();
 	this.saveStock();
 	this.savePlaylist();
+    },
+
+    /**
+     * 変数の初期化を行う.
+     * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
+     */
+    initVars: function(){
+	this._donotshowdisconnectalert = false;
+
+	this.liveinfo = new LiveInfo();
+	this.userinfo = new UserInfo();
+	this.serverinfo = new ServerInfo();
+	this.twitterinfo = new TwitterInfo();
+
+	this.request_q = new Array();
+	this.stock_q = new Array();
+
+	this.play_status[MAIN] = new Object();
+	this.play_status[SUB] = new Object();
+
+	this.connectioninfo = new Array();
+
+	this._first_play = false;
     },
 
     /**

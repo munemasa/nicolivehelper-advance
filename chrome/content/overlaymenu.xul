@@ -11,16 +11,31 @@
     </menu>
   </menupopup>
 
+<!--
+  <menubar id="main-menubar">
+    <menu id="nicolive-advance-topmenu" label="NicoLive Helper Advance">
+      <menupopup id="nicolive-advance-popup">
+	<menuitem label="Open" oncommand="NicoLiveHelperAdvanceOverlay.openNicoLiveWindow();"/>
+      </menupopup>
+    </menu>
+  </menubar>
+-->
+
   <popup id="contentAreaContextMenu">
     <menuitem id="nicolive-advance-popup-menu" label="Open NicoLive Helper Advance" oncommand="NicoLiveHelperAdvanceOverlay.openNicoLiveWindow();" />
   </popup>
 
-<!--
-  <statusbar id="status-bar">
-    <statusbarpanel id="NicoLive-panel" label="NicoLive Helper" />
-    <statusbarpanel id="nicolivehelper-panel" context="nicolivehelper-contextmenu" class="statusbarpanel-iconic" src="chrome://nicolivehelper/content/data/play.png" />
-  </statusbar>
+  <toolbar id="addon-bar">
+<!--    <statusbarpanel id="NicoLive-panel" label="NicoLive Helper" /> -->
+    <toolbarbutton id="nicolivehelper-panel"
+		   label="NicoLive Helper Advance"
+		   onclick="NicoLiveHelperAdvanceOverlay.openNicoLiveWindow();"
+		   context="nicolivehelper-contextmenu"
+		   class="toolbarbutton-1"
+		   image="chrome://nicolivehelperadvance/content/data/logo16.png" />
+  </toolbar>
 
+<!--
   <popupset>
     <menupopup id="nicolivehelper-contextmenu">
       <menuitem id="nlh-open-window" label="NicoLive Helperを開く" oncommand="NicoLiveOverlay.openNicoLiveWindow();"/>
