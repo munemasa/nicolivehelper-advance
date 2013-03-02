@@ -346,9 +346,9 @@
       <!-- playlist tab -->
       <vbox id="tab-playlist">
 	<hbox>
-	  <!-- TODO -->
 	  <button label="&button.clearall;" tooltiptext="&playlist.tooltip_clearall;"
-		  oncommand="NicoLiveWindow.backupCurrent(); NicoLiveHelper.clearPlayList();"/>
+		  oncommand="NicoLiveHelper.clearPlayList();"/>
+	  <!-- TODO -->
 	  <button label="&playlist.recover_text;" tooltiptext="&playlist.tooltip_recover_text;"
 		  oncommand="NicoLiveHistory.restorePlaylistText();"/>
 	  <spacer flex="1"/>
@@ -469,16 +469,21 @@
 	      </menupopup>
 	    </menulist>
 
-	    <checkbox persist="checked" id="use_presscomment" label="BSP" tooltiptext="バックステージからコメントする(バックステージパス所有の視聴者用)"/>
+	    <checkbox persist="checked" id="use_presscomment"
+		      label="BSP"
+		      tooltiptext="バックステージからコメントする(バックステージパス所有の視聴者用)"/>
 	    <checkbox persist="checked" id="auto-kotehan"
-		      label="自動コテハン" tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
+		      label="自動コテハン"
+		      tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
 	    <checkbox persist="checked" id="nlhaddon-allowoverwrite"
-		      label="上書き" tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
+		      label="上書き"
+		      tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
 	    <checkbox persist="checked" id="nlhaddon-ref-userprof"
-		      label="プロフィール参照" tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
+		      label="プロフィール参照"
+		      tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
 	    <spacer flex="1"/>
 	    <label id="comment-font-scale-value" value="9pt"/>
-	    <scale id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveComment.changeFontScale(this.value);"/>
+	    <scale flex="1" id="comment-font-scale" value="9" min="5" max="36" persist="value" onchange="NicoLiveComment.changeFontScale(this.value);"/>
 	  </hbox>
 	</arrowscrollbox>
       </vbox>

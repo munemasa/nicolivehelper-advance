@@ -1587,6 +1587,16 @@ var NicoLiveHelper = {
     },
 
     /**
+     * プレイリストを全消去する.
+     */
+    clearPlayList: function(){
+	$('playlist-textbox').value = '';
+	this.playlist_list = new Array();
+	NicoLiveHistory.updateView( this.playlist_list );
+	this.savePlaylist();
+    },
+
+    /**
      * メモリ上から動画情報を探して返す.
      * @param video_id 動画ID
      */

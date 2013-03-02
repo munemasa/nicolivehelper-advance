@@ -13,7 +13,7 @@ var NicoLiveHistory = {
     },
 
     /**
-     * リクエストリストに一個追加する
+     * プレイリストに一個追加する
      */
     _addHistoryView:function(table,item){
 	let tr = table.insertRow(table.rows.length);
@@ -115,7 +115,7 @@ var NicoLiveHistory = {
     },
 
     /**
-     * リクエストの表示を全更新する.
+     * プレイリストの表示を全更新する.
      */
     updateView: function( requestqueue ){
 	let table = $('playlist-table');
