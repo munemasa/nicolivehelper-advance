@@ -289,7 +289,14 @@ var NicoLiveStock = {
 	}
 
 	let t = NicoLiveHelper.getTotalStockTime();
-	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, requestqueue.length]);
+
+	let n = 0;
+	requestqueue.forEach( function(item){
+				  if(item.is_played) n++;
+			      });
+
+	n = requestqueue.length-n;
+	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, n]);
     },
 
     init:function(){

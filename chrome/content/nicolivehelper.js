@@ -257,7 +257,7 @@ var NicoLiveHelper = {
 		return;
 	    }else if( stock.length ){
 		for(let i=0,item; item=stock[i]; i++){
-		    if( !item.is_played ){
+		    if( !item.is_played && item.errno!=REASON_NO_LIVE_PLAY ){
 			NicoLiveStock.playStock( i );
 			return;
 		    }
@@ -422,7 +422,7 @@ var NicoLiveHelper = {
 	let s;
 
 	for(let i=0,item;item=list[i];i++){
-	    if( excludeplayed && item.isplayed ) continue;
+	    if( excludeplayed && item.is_played ) continue;
 	    if( maxplay>0 && checkmaxplay ){
 		s = maxplay>item.length_ms?item.length_ms:maxplay;
 	    }else{
@@ -507,7 +507,7 @@ var NicoLiveHelper = {
 		break;
 	    case 'username':
 		// TODO 動画の投稿者名
-		//tmp = UserNameCache[info.posting_user_id] || "";
+		//tmp = UserNameCache[info.user_id] || "";
 		break;
 	    case 'pname':
 		if(info.video_id==null || info.tags['jp']==null) break;
@@ -537,11 +537,9 @@ var NicoLiveHelper = {
 		break;
 	    case 'stocknum':  // ストック残数.
 		let remainstock = 0;
-		for(let i=0,item;item=NicoLiveHelper.stock_list[i];i++){
-		    if(!item.isplayed){
-			remainstock++;
-		    }
-		}
+		NicoLiveHelper.stock_list.forEach( function(item){
+						       if( !item.is_played ) remainstock++;
+						   });
 		tmp = remainstock;
 		break;
 	    case 'stocktime': // ストック残時間(mm:ss).
@@ -1167,10 +1165,13 @@ var NicoLiveHelper = {
     },
 
     /**
-     * すでにリクエスト済みかどうかチェックする
+     * すでにリクエスト済みかどうかチェックする.
+     * 重複許可なら常にtrueを返す。
      * @param video_id 動画ID
      */
     isAlreadyRequested: function( video_id ){
+	if( Config.request.allow_duplicative ) return true;
+
 	for( let i=0,item; item=this.request_list[i]; i++ ){
 	    if( item.video_id==video_id ){
 		return true;
@@ -1185,6 +1186,19 @@ var NicoLiveHelper = {
      */
     isAlreadyPlayed: function( video_id ){
 	if(this.playlist_list["_"+video_id]) return true;
+	return false;
+    },
+
+    /**
+     * すでにストックに持っているかどうか
+     * @param video_id 動画ID
+     */
+    hasStock: function( video_id ){
+	for( let i=0,item; item=this.stock_list[i]; i++ ){
+	    if( item.video_id==video_id ){
+		return true;
+	    }
+	}
 	return false;
     },
 
@@ -1273,13 +1287,17 @@ var NicoLiveHelper = {
 		// リクエストチェックでリクエストを拒否する場合は例外を投げる
                 NicoLiveHelper.checkRequest( videoinfo );
                 if ( !isstock ) {
+		    // リクエスト
 		    NicoLiveHelper.request_list.push( videoinfo );
 		    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
 		    sendmsg = Config.msg.accept;
                 } else {
-		    videoinfo.is_casterselection = true;
-		    NicoLiveHelper.stock_list.push( videoinfo );
-		    NicoLiveStock.addStockView( videoinfo );
+		    // ストック
+		    if( !NicoLiveHelper.hasStock(videoinfo.video_id) ){
+			videoinfo.is_casterselection = true;
+			NicoLiveHelper.stock_list.push( videoinfo );
+			NicoLiveStock.addStockView( videoinfo );
+		    }
                 }
 	    } catch (x) {
 		if( videoinfo ){
@@ -1289,6 +1307,7 @@ var NicoLiveHelper = {
 			case REASON_NOT_ACCEPT:
 			case REASON_ALREADY_REQUESTED:
 			case REASON_ALREADY_PLAYED:
+			    if( NicoLiveHelper.hasStock(videoinfo.video_id) ) break;
 			    videoinfo.is_casterselection = true;
 			    NicoLiveHelper.stock_list.push( videoinfo );
 			    NicoLiveStock.addStockView( videoinfo );
@@ -1317,9 +1336,9 @@ var NicoLiveHelper = {
 		}
 	    }
 
-	    if( NicoLiveHelper.iscaster ){
+	    if( !isstock && NicoLiveHelper.iscaster && Config.request.autoreply ){
 		sendmsg = NicoLiveHelper.replaceMacros(sendmsg, videoinfo);
-		if( !isstock && sendmsg ){
+		if( sendmsg ){
 		    let func = function(){
 			NicoLiveHelper.postCasterComment( sendmsg, "" );
 		    };
@@ -1372,11 +1391,17 @@ var NicoLiveHelper = {
 
 	    if( Config.allow_seiga ){
 		if (!isstock) {
-                    NicoLiveHelper.request_list.push(seigainfo);
-                    NicoLiveRequest.addRequestView(seigainfo);
+		    // リクエスト
+		    if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
+			NicoLiveHelper.request_list.push(seigainfo);
+			NicoLiveRequest.addRequestView(seigainfo);
+		    }
 		} else {
-                    NicoLiveHelper.stock_list.push(seigainfo);
-                    NicoLiveStock.addStockView(seigainfo);
+		    // ストック
+		    if( !NicoLiveHelper.hasStock(seigainfo.video_id) ){
+			NicoLiveHelper.stock_list.push(seigainfo);
+			NicoLiveStock.addStockView(seigainfo);
+		    }
 		}
 	    }else{
 		// 静画のリクエスト受け付けはなし
@@ -1464,24 +1489,38 @@ var NicoLiveHelper = {
      * @param videoinfo 動画情報
      */
     addRequestDirect: function(videoinfo){
-	// TODO すでに積んであるかチェック
-	NicoLiveHelper.request_list.push( videoinfo );
-	NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
+	if( !this.isAlreadyRequested( videoinfo.video_id ) ){
+	    NicoLiveHelper.request_list.push( videoinfo );
+	    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
+	}else{
+	    ShowNotice(videoinfo.video_id+"はすでにリクエストされています");
+	}
     },
     /**
      * 動画情報をストックに直接追加する.
      * @param videoinfo 動画情報
      */
     addStockDirect: function(videoinfo){
-	// TODO すでに積んであるかチェック
-	videoinfo.is_casterselection = true;
-	NicoLiveHelper.stock_list.push( videoinfo );
-	NicoLiveStock.addStockView( videoinfo );
+	if( !this.hasStock( videoinfo.video_id ) ){
+	    videoinfo.is_casterselection = true;
+	    NicoLiveHelper.stock_list.push( videoinfo );
+	    NicoLiveStock.addStockView( videoinfo );
+	}else{
+	    ShowNotice( videoinfo.video_id+"はすでにストックに存在しています" );
+	}
     },
 
+    /**
+     * リジェクトされた動画を取得する.
+     * @param n インデックス(範囲チェックなし)
+     */
     getRejectedVideo: function(n){
 	return this.reject_list[n];
     },
+    /**
+     * 再生済み動画を取得する.
+     * @param n インデックス(範囲チェックなし)
+     */
     getPlayedVideo: function(n){
 	return this.playlist_list[n];
     },

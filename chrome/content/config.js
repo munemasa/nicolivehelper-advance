@@ -4,6 +4,8 @@ var Config = {
     play_interval: 0,          // 動作再生の間隔
     videoinfo_interval: 0,     // 動画情報コメントの送信間隔
 
+    request:{}, // リクエスト設定
+
     max_playtime: 0,           // 最大再生時間(minute)
 
     msg: {},      // 各種応答メッセージ
@@ -88,6 +90,10 @@ var Config = {
 	let branch = this.getBranch();
 	// リクエスト可否
 	this.allowrequest = branch.getBoolPref( "request.allow" );
+	// 自動応答
+	this.request.autoreply = branch.getBoolPref( "request.autoreply" );
+	// 重複許可
+	this.request.allow_duplicative = branch.getBoolPref( "request.allow-duplicative" );
 
 	// 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");

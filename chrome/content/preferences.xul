@@ -9,6 +9,7 @@
 	    xmlns:html="http://www.w3.org/1999/xhtml">
 
   <preferences>
+    <!-- この位置のpreferencesは無効 -->
     <!-- 応答メッセージ -->
     <preference id="pref-msg-deleted"
 		name="extensions.nicolivehelperadvance.msg.deleted" type="unichar"/>
@@ -35,8 +36,7 @@
     <preference id="pref-msg-requestok-command"
 		name="extensions.nicolivehelperadvance.msg.requestok-command" type="unichar"/>
     <preference id="pref-msg-requestng-command"
-		name="extensions.nicolivehelperadvance.msg.requestng-command" type="unichar"/>
-    
+		name="extensions.nicolivehelperadvance.msg.requestng-command" type="unichar"/>    
     <preference id="pref-msg-lessmylists"
 		name="extensions.nicolivehelperadvance.msg.lessmylists" type="unichar"/>
     <preference id="pref-msg-greatermylists"
@@ -86,9 +86,16 @@
       <!-- 最大再生時間 -->
       <preference id="pref-max-movieplay-time"
 		  name="extensions.nicolivehelperadvance.play.maxtime" type="int"/>
+
+      <!-- リクエストへの自動応答 -->
+      <preference id="pref-request-autoreply"
+		  name="extensions.nicolivehelperadvance.request.autoreply" type="bool"/>
       <!-- 静画リクエスト -->
       <preference id="pref-allow-seiga-request"
 		  name="extensions.nicolivehelperadvance.request.seiga" type="bool"/>
+      <!-- 重複リクエストの許可 -->
+      <preference id="pref-allow-duplicative"
+		  name="extensions.nicolivehelperadvance.request.allow-duplicative" type="bool"/>
 
       <!-- 詳細表示 -->
       <preference id="pref-show-details"
@@ -102,6 +109,7 @@
 	<tab label="表示"/>
       </tabs>
       <tabpanels>
+	<!-- 進行 -->
 	<tabpanel orient="vertical">
 	  <grid>
 	    <columns>
@@ -132,10 +140,14 @@
 	    </rows>
 	  </grid>
 	</tabpanel>
+	<!-- リクエスト -->
 	<tabpanel orient="vertical">
+	  <checkbox preference="pref-request-autoreply" label="リクエストに対して自動で運営コメントを返す"/>
 	  <checkbox preference="pref-allow-seiga-request" label="静画のリクエストを受け付ける"
 		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
+	  <checkbox preference="pref-allow-duplicative" label="リクエストの重複を許可する"/>
 	</tabpanel>
+	<!-- 表示 -->
 	<tabpanel orient="vertical">
 	  <checkbox preference="pref-show-details" label="動画説明を表示する"
 		    tooltiptext="チェックをすると、リクエスト、ストック等で動画説明を表示します。"/>
