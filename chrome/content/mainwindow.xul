@@ -654,9 +654,9 @@
       <menu label="&comment.menu_color;">
 	<menupopup>
 	  <menuitem label="&comment.menu_clearcolor;"
-		    oncommand="TODO; NicoLiveComment.clearColorSetting($('popup-comment-user').triggerNode);"/>
+		    oncommand="NicoLiveComment.clearColorSetting($('popup-comment-user').triggerNode);"/>
 	  <colorpicker id="comment-color"
-		       onselect="TODO; NicoLiveComment.changeColor($('popup-comment-user').triggerNode);"/>
+		       onselect="NicoLiveComment.changeColor($('popup-comment-user').triggerNode);"/>
 	</menupopup>
       </menu>
       <menuitem label="&comment.menu_reflection;" tooltiptext="&comment.tooltip_reflection;"

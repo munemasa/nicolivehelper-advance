@@ -31,6 +31,7 @@ var NicoLiveComment = {
 	
 	//let tr = table.insertRow(table.rows.length);
 	let tr = table.insertRow(0);
+	tr.setAttribute("tr_comment_by", comment.user_id);
 
 	// 背景色の決定
 	if(!this.colormap[comment.user_id]){
@@ -289,9 +290,17 @@ var NicoLiveComment = {
 	    this.setName(userid,name);
 	}
 
+	let id;
+	for(id in this.namemap){
+	    if( id>0 ) continue;
+	    // 1週間経った匿名ユーザーのものは削除.
+	    if( now-this.namemap[id].date > 7*24*60*60 ){
+		delete this.namemap[id];
+	    }
+	}
+
 	// TODO
 	//this.addKotehanDatabase(userid,name);
-	//this.updateCommentsName(userid,name);
 	//this.createNameList();
     },
 
@@ -309,7 +318,7 @@ var NicoLiveComment = {
     },
 
     /**
-     * ユーザーに名前を設定する.
+     * ユーザーに名前を設定し、表示を更新する.
      * @param userid ユーザーID
      * @param name 名前(空だと設定クリア)
      */
@@ -321,6 +330,53 @@ var NicoLiveComment = {
 	    this.namemap[userid] = {'name':name, 'date':now };
 	}
 	this.updateCommentsName(userid, name);
+    },
+
+    /**
+     * コメントの背景色を更新する.
+     * @param userid ユーザーID
+     * @param color 色(nullとかundefinedなら無指定)
+     */
+    updateCommentsBackgroundColor: function(userid, color){
+	let elems = evaluateXPath(document,"//html:tr[@tr_comment_by=\""+userid+"\"]");
+	for(let i in elems ){
+	    let tr = elems[i];
+	    if( color ){
+		tr.style.backgroundColor = color;
+	    }else{
+		tr.style.backgroundColor = "";
+	    }
+	}
+    },
+
+    /**
+     * 色設定をクリアする
+     * @param node メニューを出したノード
+     */
+    clearColorSetting:function(node){
+	let userid = node.getAttribute('user_id');
+	delete this.colormap[userid];
+	this.updateCommentsBackgroundColor(userid);
+    },
+
+    /**
+     * 色を変更する.
+     * @param node メニューを出したノード
+     */
+    changeColor:function(node){
+	let userid = node.getAttribute('user_id');
+	let color = $('comment-color').color;
+	if( !color ) return;
+	let now = GetCurrentTime();
+	this.colormap[userid] = {"color":color,"date":now};
+	for(id in this.colormap){
+	    if( id>0 ) continue;
+	    // 1週間経った匿名ユーザーのものは削除.
+	    if( now-this.colormap[id].date > 7*24*60*60 ){
+		delete this.colormap[id];
+	    }
+	}
+	this.updateCommentsBackgroundColor(userid, color);
     },
 
     init: function(){
