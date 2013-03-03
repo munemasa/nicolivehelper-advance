@@ -299,6 +299,42 @@ var NicoLiveStock = {
 	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, n]);
     },
 
+    /** 動画の先読みを行う.
+     * @param node メニューがポップアップしたノード
+     */
+    prepare:function(node){
+	NicoLiveRequest.prepare(node);
+    },
+
+    /**
+     * ストックをファイルに保存する.
+     */
+    saveStockToFile:function(){
+	let ids = new Array();
+	for(let i=0,item;item=NicoLiveHelper.stock_list[i];i++){
+	    ids.push(item.video_id + " " + item.title);
+	}
+	if(ids.length<=0) return;
+
+	const nsIFilePicker = Components.interfaces.nsIFilePicker;
+	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+	fp.init(window, LoadString("STR_SAVE_STOCK"), nsIFilePicker.modeSave);
+	fp.appendFilters(nsIFilePicker.filterText);
+	let rv = fp.show();
+	if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+	    let file = fp.file;
+	    let path = fp.file.path;
+	    debugprint("「"+path+"」にストックを保存します");
+	    let os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
+	    let flags = 0x02|0x08|0x20;// wronly|create|truncate
+	    os.init(file,flags,0664,0);
+
+	    let cos = GetUTF8ConverterOutputStream(os);
+	    cos.writeString(ids.join('\r\n')+"\r\n");
+	    cos.close();
+	}
+    },
+
     init:function(){
 	debugprint("NicoLiveStock.init");
     }

@@ -61,7 +61,7 @@ var NicoLiveComment = {
 	// コメントにname属性があればその名前を使用する.
 	str = comment.name || this.namemap[comment.user_id] && this.namemap[comment.user_id].name || comment.user_id;
 	str = htmlspecialchars(str);
-	td.innerHTML = "<hbox style=\"width:10em; overflow:hidden; margin-right:4px;\" comment_by=\""+comment.user_id+"\" class=\"selection\" tooltiptext=\""+(comment.user_id)+"\" user_id=\""+comment.user_id+"\" comment_no=\""+comment.no+"\">"+str+"</hbox>";
+	td.innerHTML = "<hbox style=\"width:10em; overflow:hidden; margin-right:4px;\" comment_by=\""+comment.user_id+"\" class=\"selection\" tooltiptext=\""+(comment.user_id)+"\" context=\"popup-comment-user\" user_id=\""+comment.user_id+"\" comment_no=\""+comment.no+"\">"+str+"</hbox>";
 
 	// コメントボディのセル
 	td = tr.insertCell(tr.cells.length);
@@ -88,7 +88,7 @@ var NicoLiveComment = {
 	    }
 	}
 	try{
-	    td.innerHTML = "<hbox flex=\"1\" class=\"selection\">"+str+"</hbox>";
+	    td.innerHTML = "<hbox flex=\"1\" class=\"selection\" context=\"popup-comment-body\">"+str+"</hbox>";
 	} catch (x) {
 	    debugprint(x);
 	    debugprint(str);
@@ -165,6 +165,162 @@ var NicoLiveComment = {
 	if( !size ){ debugprint('font size is default 9pt.'); size = 9; }
 	$('comment-table').style.fontSize = size+"pt";
 	$('comment-font-scale-value').value = size + "pt";
+    },
+
+
+    /**
+     * ID欄でのポップアップメニューの表示処理.
+     * @param node ポップアップしたノード.
+     */
+    showPopupMenuForID:function(node){
+	let userid = node.getAttribute('user_id');
+	let commentno = node.getAttribute('comment_no');
+	$('popup-comment-displayuserid').value = "No."+commentno+"/" + userid;
+	if(userid>0){
+	    $('popup-comment-openprofile').hidden = false;
+	}else{
+	    $('popup-comment-openprofile').hidden = true;
+	}
+    },
+
+    /**
+     * プロフィールページを開く.
+     * @param node メニューがポップアップしたノード
+     */
+    openProfile:function(node){
+	let userid = node.getAttribute('user_id');
+	if(userid>0){
+	    NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/user/'+userid);
+	}
+    },
+
+    /**
+     * プロフィールから名前を取得
+     * @param user_id ユーザーID
+     */
+    // http://www.nicovideo.jp/user/... から登録(サムネから取れない時)
+    getProfileName2: function(user_id, defname, postfunc){
+	let req = new XMLHttpRequest();
+	if( !req ) return;
+	req.onreadystatechange = function(){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    try{
+			let text = req.responseText;
+			let name = text.match(/<h2><strong>(.*)<\/strong>/)[1];
+			if( name ){
+			    // 名前の取得に成功
+			    postfunc( name );
+			}
+		    } catch (x) {
+			postfunc( defname );
+		    }
+		}else{
+		    postfunc( defname );
+		}
+	    }
+	};
+	req.open('GET', 'http://www.nicovideo.jp/user/'+user_id );
+	req.send("");
+    },
+
+    /**
+     * プロフィールの名前を取得.
+     * @param user_id ユーザーID
+     * @param defname デフォルト名
+     * @param postfunc 取得成功後に実行する関数
+     */
+    // http:/ext.nicovideo.jp/thumb_user/... から登録(こちら優先)
+    getProfileName: function(user_id, defname, postfunc){
+	let req = new XMLHttpRequest();
+	if( !req ) return;
+	req.onreadystatechange = function(){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    try{
+			let text = req.responseText;
+			let name = text.match(/><strong>(.*)<\/strong>/)[1];
+			if( name ){
+			    // 成功
+			    postfunc( name );
+			}else{
+			    NicoLiveComment.getProfileName2(user_id, defname, postfunc);
+			}
+		    } catch (x) {
+			NicoLiveComment.getProfileName2(user_id, defname, postfunc);
+		    }
+		}else{
+		    NicoLiveComment.getProfileName2(user_id, defname, postfunc);
+		}
+	    }
+	};
+	req.open('GET', 'http://ext.nicovideo.jp/thumb_user/'+user_id );
+	req.send("");
+    },
+
+    /**
+     * コテハン登録.
+     * @param node メニューがポップアップしたノード.
+     */
+    addName:function(node){
+	let userid = node.getAttribute('user_id');
+	this.addNameFromId(userid);
+    },
+
+    /**
+     * コテハンを登録する
+     * @param userid ユーザーID
+     */
+    addNameFromId:function(userid){
+	if( !userid ) return;
+
+	if( !this.namemap[userid] && userid>0 ){
+	    let f = function(name){
+		let newname = InputPrompt( LoadFormattedString('STR_TEXT_SET_KOTEHAN',[userid]),
+					   LoadString('STR_CAPTION_SET_KOTEHAN'),
+					   name);
+		NicoLiveComment.setName(userid,newname);
+	    };
+	    this.getProfileName(userid, userid, f);
+	}else{
+	    let name = InputPrompt( LoadFormattedString('STR_TEXT_SET_KOTEHAN',[userid]),
+				    LoadString('STR_CAPTION_SET_KOTEHAN'),
+				    this.namemap[userid]?this.namemap[userid].name:userid);
+	    this.setName(userid,name);
+	}
+
+	// TODO
+	//this.addKotehanDatabase(userid,name);
+	//this.updateCommentsName(userid,name);
+	//this.createNameList();
+    },
+
+    /**
+     * コメントの名前部分のみ更新.
+     * @param user_id ユーザID
+     * @param name 名前(false扱いにあるデータの場合はユーザIDに戻す)
+     */
+    updateCommentsName:function(user_id,name){
+	let elems = evaluateXPath(document,"//*[@comment_by=\""+user_id+"\"]");
+	if( !name ) name = user_id;
+	for(let i=0,elem; elem=elems[i]; i++){
+	    elem.textContent = name;
+	}
+    },
+
+    /**
+     * ユーザーに名前を設定する.
+     * @param userid ユーザーID
+     * @param name 名前(空だと設定クリア)
+     */
+    setName: function( userid, name ){
+	if( !name ){
+	    delete this.namemap[userid];
+	}else{
+	    let now = GetCurrentTime();
+	    this.namemap[userid] = {'name':name, 'date':now };
+	}
+	this.updateCommentsName(userid, name);
     },
 
     init: function(){

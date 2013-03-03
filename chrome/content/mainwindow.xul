@@ -185,7 +185,7 @@
 
   <!-- Current Play Status -->
   <hbox id="player-current-status">
-    <groupbox flex="1">
+    <groupbox flex="1" style="padding: 0px;">
       <caption id="cp-mainscreen-label" label="&general.main_screen;"/>
       <hbox>
 	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
@@ -198,7 +198,7 @@
     <hbox align="center">
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
     </hbox>
-    <groupbox flex="1">
+    <groupbox flex="1" style="padding: 0px;">
       <caption id="cp-subscreen-label" label="&general.sub_screen;"/>
       <hbox>
 	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
@@ -583,6 +583,9 @@
 	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
 	</menupopup>
       </menu>
+      <menuseparator/>
+      <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
+		oncommand="NicoLiveRequest.prepare($('popup-request').triggerNode);"/>
 
       <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
     </menupopup>
@@ -597,7 +600,6 @@
 	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
-
       <menu label="&sort.ascend_order;">
 	<menupopup>
 	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
@@ -626,10 +628,61 @@
 	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,-1)"/>
 	</menupopup>
       </menu>
+      <menuseparator/>
+      <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
+		oncommand="NicoLiveStock.prepare($('popup-stock').triggerNode);"/>
 
       <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
       <menuseparator/>
-      <menuitem label="&menu.stock_savefile;"/>
+      <menuitem label="&menu.stock_savefile;" oncommand="NicoLiveStock.saveStockToFile();"/>
+    </menupopup>
+
+    <!-- コメントビューの名前・ID欄のところ -->
+    <menupopup id="popup-comment-user" onpopupshowing="NicoLiveComment.showPopupMenuForID( $('popup-comment-user').triggerNode );">
+      <hbox>
+<!--	<menuseparator/> -->
+	<label value="" id="popup-comment-displayuserid"/>
+      </hbox>
+      <menuitem id="popup-comment-openprofile" label="&comment.menu_openprofile;"
+		oncommand="NicoLiveComment.openProfile($('popup-comment-user').triggerNode);"/>
+      <menuitem id="" label="トラッキング"
+		oncommand="TODO; NicoLiveComment.trackComment($('popup-comment-user').triggerNode);"/>
+      <menuseparator/>
+      <!-- コテハン設定 -->
+      <menuitem label="&comment.menu_setname;"
+		oncommand="NicoLiveComment.addName($('popup-comment-user').triggerNode);"/>
+      <menu label="&comment.menu_color;">
+	<menupopup>
+	  <menuitem label="&comment.menu_clearcolor;"
+		    oncommand="TODO; NicoLiveComment.clearColorSetting($('popup-comment-user').triggerNode);"/>
+	  <colorpicker id="comment-color"
+		       onselect="TODO; NicoLiveComment.changeColor($('popup-comment-user').triggerNode);"/>
+	</menupopup>
+      </menu>
+      <menuitem label="&comment.menu_reflection;" tooltiptext="&comment.tooltip_reflection;"
+		oncommand="TODO; NicoLiveComment.addCommentReflector($('popup-comment-user').triggerNode);"/>
+      <menuseparator/>
+      <menuitem id="id-release-reflection" label="&comment.menu_release_reflection_all;"
+		oncommand="TODO; NicoLiveComment.releaseReflector();"/>
+    </menupopup>
+
+    <!-- コメント用ポップアップ -->
+    <menupopup id="popup-comment-body" onpopupshowing="">
+      <menu label="検索">
+	<menupopup>
+	  <menuitem label="&menu.search_by_google;" oncommand="NicoLiveMenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;" oncommand="NicoLiveMenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	</menupopup>
+      </menu>
+      <menuitem label="&comment.menu.jasracsearch;" id="comment-search-jasrac" oncommand="NicoLiveRights.searchJWID(window.getSelection().toString());"/>
+      <menuitem label="&comment.menu.elicensesearch;" id="comment-search-elicense" oncommand="NicoLiveRights.search_elicense(window.getSelection().toString());"/>
+      <menuitem label="&comment.menu_copy_comment;" oncommand="NicoLiveComment.copyComment(document.popupNode||$('popup-copycomment').triggerNode);"/>
+    </menupopup>
+    <menupopup id="popup-comment-anchor">
+      <menuitem label="&comment.menu_copy;" oncommand="NicoLiveComment.copyComment(document.popupNode||$('popup-copycomment').triggerNode);"/>
+      <menuitem label="&comment.menu_setselfrequest;" oncommand="NicoLiveComment.setSelfRequest(document.popupNode||$('popup-copycomment').triggerNode);"/>
+      <menuitem label="&comment.menu_moverequest_to_top;" oncommand="NicoLiveComment.moveRequestToTop(document.popupNode||$('popup-copycomment').triggerNode);"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->

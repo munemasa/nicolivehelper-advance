@@ -423,6 +423,14 @@ var NicoLiveRequest = {
 	NicoLiveHelper.changeRequestSet(n);
     },
 
+    /** 動画の先読みを行う.
+     * @param node メニューがポップアップしたノード
+     */
+    prepare:function(node){
+	let elem = FindParentElement(node,'vbox');
+	let vid = elem.getAttribute('nicovideo_id');
+	NicoLiveHelper.postCasterComment('/prepare '+vid,""); // 動画IDを取れる.
+    },
 
     /**
      * リクエストの表示を全更新する.

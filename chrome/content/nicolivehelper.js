@@ -21,6 +21,7 @@ var NicoLiveHelper = {
     connecttime: 0,     // コメントサーバーへの接続時刻
     currentRoom: ARENA,
     connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+    lastReceived: [],   // 最後に受信した時刻
 
     ticket: "",         // 視聴者コメント用のチケット(アリーナ席用のみ)
     postkey: "",        // 視聴者コメント用のキー
@@ -172,7 +173,7 @@ var NicoLiveHelper = {
      */
     addPlaylistText:function(item){
 	let elem = $('playlist-textbox');
-	if( GetCurrentTime()-this.liveinfo.start_time < 180 ){
+	if( GetCurrentTime()-this.liveinfo.start_time < 150 ){
 	    // 放送開始して最初の再生らしきときには番組名と番組IDを付加.
 	    if( !this._first_play ){
 		elem.value += "\n"+this.liveinfo.title+" "
@@ -2003,6 +2004,7 @@ var NicoLiveHelper = {
 	chat.name      = xmlchat.getAttribute('name') || "";
 	chat.locale    = xmlchat.getAttribute('locale') || "";
 	chat.origin    = xmlchat.getAttribute('origin') || "";
+	chat.score     = xmlchat.getAttribute('score'); // スコアは負の数
 
 	chat.date      = chat.date && parseInt(chat.date) || 0;
 	chat.premium   = chat.premium && parseInt(chat.premium) || 0;
@@ -2010,6 +2012,8 @@ var NicoLiveHelper = {
 	chat.anonymity = chat.anonymity && parseInt(chat.anonymity) || 0;
 	chat.no        = chat.no && parseInt(chat.no) || 0;
 	chat.comment_no = chat.no;
+	// 強・中・弱の閾値は、-1000 〜 -4800 〜 -10000 〜 負の最大数
+	chat.score      = chat.score && parseInt(chat.score) || 0;
 
 	if( chat.premium==3 || chat.premium==2 ){
 	    chat.text_notag = chat.text.replace(/<.*?>/g,"");
@@ -2027,6 +2031,8 @@ var NicoLiveHelper = {
      * @param target_room どこのルームのコメントか(ARENA, STAND_A,...)
      */
     processLine: function(line, target_room){
+	this.lastReceived[ target_room ] = GetCurrentTime();
+
 	if(line.match(/^<chat\s+.*>/)){
 	    //debugprint(line);
 	    let parser = new DOMParser();
@@ -2639,12 +2645,15 @@ var NicoLiveHelper = {
      */
     keepConnection:function(){
 	// 0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
+	let now = GetCurrentTime();
 	for(let i=0; i<4; i++){
 	    try{
 		let item = this.connectioninfo[i];
 		if( !item ) continue;
-		let str = "<thread thread=\""+item.thread+"\" res_from=\"0\" version=\"20061206\"/>\0";
-		item.ostream.writeString(str);
+		if( now - this.lastReceived[i] >= 180 ){
+		    let str = "<thread thread=\""+item.thread+"\" res_from=\"0\" version=\"20061206\"/>\0";
+		    item.ostream.writeString(str);
+		}
 	    } catch (x) {
 		debugprint(x);
 	    }
