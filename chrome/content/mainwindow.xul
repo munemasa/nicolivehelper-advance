@@ -475,10 +475,10 @@
 	    <checkbox persist="checked" id="auto-kotehan"
 		      label="自動コテハン"
 		      tooltiptext="「＠名前」のコメント、もしくはプロフィールを参照し、コテハンを自動登録します。"/>
-	    <checkbox persist="checked" id="nlhaddon-allowoverwrite"
+	    <checkbox persist="checked" id="kotehan-allowoverwrite"
 		      label="上書き"
 		      tooltiptext="「＠名前」で自動登録する場合、既存の設定を上書きします。"/>
-	    <checkbox persist="checked" id="nlhaddon-ref-userprof"
+	    <checkbox persist="checked" id="kotehan-ref-userprof"
 		      label="プロフィール参照"
 		      tooltiptext="コテハン設定が行われていないユーザの名前をプロフィールを参照して登録します。"/>
 	    <spacer flex="1"/>

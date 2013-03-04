@@ -5,16 +5,22 @@
  */
 var NicoLiveComment = {
 
-    comment_table: null,   // $('comment-table')
+    comment_table: null,     // $('comment-table')
+    auto_kotehan: null,      // $('auto-kotehan')
+    kotehan_overwrite: null, // $('kotehan-allowoverwrite')
+    kotehan_refprof: null,   // $('kotehan-ref-userprof')
 
     commentlog: [],    // アリーナ席のコメントログ
-    colormap: {},
-    namemap: {},
+    colormap: {},      // 配色マップ
+    namemap: {},       // コテハンマップ
 
+    /**
+     * コメントの表示のみをクリアする.
+     */
     clear: function(){
 	clearTable( this.comment_table );
     },
-    
+
     /**
      * コメント表示に追加する.
      * @param comment コメント
@@ -98,13 +104,15 @@ var NicoLiveComment = {
 	// コメント日時のセル
 	td = tr.insertCell(tr.cells.length);
 	td.textContent = GetDateString(comment.date*1000);
+
+	this.autoKotehan( comment, target_room );
     },
 
     /**
-     * コメントログに追加する.
-     * ファイルに保存も行う。
+     * アリーナ席のコメントログに追加する.
+     * TODO ファイルに保存も行う。
      * @param chat コメント
-     * @param target_room コメントのルーム
+     * @param target_room コメントのルーム(未使用)
      */
     addCommentLog: function( chat, target_room ){
 	if( this.commentlog.length >= Config.comment.view_lines ){
@@ -350,6 +358,40 @@ var NicoLiveComment = {
     },
 
     /**
+     * 自動コテハン登録
+     */
+    autoKotehan: function( chat, target_room ){
+	// 名前が付いていない
+	if( !this.auto_kotehan.checked ) return;
+	if( chat.premium==2 || chat.premium==3 ) return;
+	if( chat.date<NicoLiveHelper.connecttime ) return; // 過去ログ無視.
+
+	if( this.kotehan_refprof.checked && chat.user_id.match(/^\d+$/) && !this.namemap[chat.user_id] ){
+	    // ユーザIDからプロフィール参照登録.
+	    let f = function(name){
+		NicoLiveComment.setName( chat.user_id, name );
+	    };
+	    this.getProfileName( chat.user_id, chat.user_id, f );
+	    return;
+	}
+
+	let dat = chat.text.match(/[@＠]([^0-9０-９\s@＠][^\s@＠]*?)$/);
+	if(dat){
+	    let name = dat[1];
+	    debugprint(name);
+	    if( name=="初見" || name=="確認" || name=="アンケート" ||
+		name=="削除" || name=="代理" ) return;
+	    if( name=="○" || name=="×" || name=="△" ||
+		name=="□" || name=="◎") return;
+	    if( !this.namemap[chat.user_id] || this.kotehan_overwrite.checked ){
+		// コテハン設定をする
+		this.setName( chat.user_id, name );
+	    }
+	    
+	}
+    },
+
+    /**
      * 色設定をクリアする
      * @param node メニューを出したノード
      */
@@ -382,6 +424,9 @@ var NicoLiveComment = {
     init: function(){
 	debugprint("NicoLiveComment.init");
 	this.comment_table = $('comment-table');
+	this.auto_kotehan  = $('auto-kotehan');
+	this.kotehan_overwrite = $('kotehan-allowoverwrite');
+	this.kotehan_refprof   = $('kotehan-ref-userprof');
 
 	this.changeFontScale( $('comment-font-scale').value );
     },
