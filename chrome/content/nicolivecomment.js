@@ -429,8 +429,13 @@ var NicoLiveComment = {
 	this.kotehan_refprof   = $('kotehan-ref-userprof');
 
 	this.changeFontScale( $('comment-font-scale').value );
+
+	this.namemap  = Storage.readObject( "nico_namemap", {} );
+	this.colormap = Storage.readObject( "nico_colormap", {} );
     },
     destroy: function(){
+	Storage.writeObject( "nico_namemap", this.namemap );
+	Storage.writeObject( "nico_colormap", this.colormap );
     }
 };
 
