@@ -13,6 +13,7 @@ var Config = {
     // コメント関連の設定
     comment184: 0,           // 184コメントするかどうか
     comment: {
+	'savefile': false,   // コメントのファイル保存
 	'view_lines': 500,   // コメント表示行数
 	'backlogs': 100      // サーバー接続時のバックログ取得行数
     },
@@ -86,8 +87,10 @@ var Config = {
      * コメント関係の設定を読む
      */
     loadCommentSettings:function (branch) {
+	this.comment.savefile = branch.getBoolPref("comment.savefile");
         this.comment184 = branch.getBoolPref("comment.184comment");
         this.comment.backlogs = branch.getIntPref("comment.backlog");
+	this.comment.view_lines = branch.getIntPref("comment.viewlines");
     },
 
     /**

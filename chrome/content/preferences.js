@@ -366,7 +366,7 @@ var NLHPreference = {
     },
 
     // コメントログの保存先を選択.
-    refDirectory:function(){
+    selectCommentLogDirectory:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
 	fp.init(window, "コメントログの保存先を指定してください", nsIFilePicker.modeGetFolder);
@@ -385,7 +385,7 @@ var NLHPreference = {
 	}
     },
 
-    refContinuousCommentDirectory:function(){
+    selectContinuousCommentDirectory:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
 	fp.init(window, "連続コメント用テキストファイルの保存先を指定してください", nsIFilePicker.modeGetFolder);
@@ -423,12 +423,15 @@ var NLHPreference = {
     },
 
     updateFilePicker:function(){
-        var file = $('pref-commentlogDir').value;
+	var file;
+
+        file = $('pref-commentlogDir').value;
         if (file) {
             var fileField = $('commentlog');
             fileField.file = file;
             fileField.label = file.path;
         }
+
 	file = $('pref-continuousCommentDir').value;
         if (file) {
             var fileField = $('continuouscomment');
@@ -773,6 +776,8 @@ var NLHPreference = {
     },
 
     init:function(){
+	this.updateFilePicker();
+
 	/*
 	let data = opener.NicoLiveDatabase.loadGPStorage('nico_live_customscript',{});
 	this.script = data;

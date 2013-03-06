@@ -43,6 +43,21 @@
       <!-- 184コメント -->
       <preference id="pref-184comment"
 		  name="extensions.nicolivehelperadvance.comment.184comment" type="bool"/>
+      <!-- コメントの表示行数 -->
+      <preference id="pref-comment-view-num"
+		  name="extensions.nicolivehelperadvance.comment.viewlines" type="int"/>
+      <!-- バックログ取得行数 -->
+      <preference id="pref-comment-log-num"
+		  name="extensions.nicolivehelperadvance.comment.backlog" type="int"/>
+      <preference id="pref-save-comment"
+		  name="extensions.nicolivehelperadvance.comment.savefile" type="bool"/>
+      <!-- 連続コメントファイルのディレクトリ -->
+      <preference id="pref-continuousCommentDir"
+		  name="extensions.nicolivehelperadvance.comment.continuous-commentDir" type="file"/>
+      <!-- コメントログの保存先 -->
+      <preference id="pref-commentlogDir"
+		  name="extensions.nicolivehelperadvance.comment.commentlogDir" type="file"/>
+
     </preferences>
 
     <tabbox persist="selectedIndex" id="prefwindow-basicsettings">
@@ -98,7 +113,34 @@
 	</tabpanel>
 	<!-- コメント -->
 	<tabpanel orient="vertical">
+	  <hbox align="center">
+	    <label value="表示行数:"/><textbox preference="pref-comment-view-num" type="number" min="1" max="10000" size="5"/>
+	    <label value="接続時のログ取得行数:"/><textbox preference="pref-comment-log-num" type="number" min="1" max="500" size="3"/><label value="行"/>
+	  </hbox>
+
 	  <checkbox preference="pref-184comment" label="常に184コメント(匿名)にする"/>
+
+	  <hbox>
+	    <hbox align="center">
+	      <label control="continuouscomment" value="連続コメントテキスト保存先:"/>
+	    </hbox>
+	    <filefield id="continuouscomment" flex="1"/>
+	    <button label="参照..." oncommand="NLHPreference.selectContinuousCommentDirectory();"/>
+	  </hbox>
+
+	  <groupbox>
+	    <caption>
+	      <checkbox preference="pref-save-comment" label="コメントログをファイルに保存する" tooltiptext="コメントをファイルに保存します。保存先は必ず指定してください。"/>
+	    </caption>
+	    <hbox>
+	      <hbox align="center">
+		<label control="commentlog" value="コメントログ保存先:"/>
+	      </hbox>
+	      <filefield id="commentlog" flex="1"/>
+	      <button label="参照..." oncommand="NLHPreference.selectCommentLogDirectory();"/>
+	    </hbox>
+	  </groupbox>
+
 	</tabpanel>
       </tabpanels>
     </tabbox>
@@ -311,7 +353,6 @@
       <!-- スタートアップ -->
       <preference id="pref-startup-comment" name="extensions.nicolivehelperadvance.startup-comment" type="unichar"/>
 
-      <preference id="pref-continuousCommentDir" name="extensions.nicolivehelperadvance.continuous-commentDir" type="file"/>
     </preferences>
 
     <tabbox persist="selectedIndex" id="prefwindow-autoreplies">
@@ -474,13 +515,7 @@
       <button label="登録" oncommand="NLHPreference.addPresetComment(document.getElementById('id-comment-preset-name').value);"/>
       <button label="削除" oncommand="NLHPreference.deletePresetComment(document.getElementById('id-comment-preset-name').value);"/>
     </hbox>
-    <!--
-    <hbox align="center">
-      <label control="continuouscomment" value="連続コメント用テキストファイル保存先:"/>
-      <filefield id="continuouscomment" flex="1"/>
-      <button label="参照..." oncommand="NLHPreference.refContinuousCommentDirectory();"/>
-    </hbox>
-    -->
+
   </prefpane>
 
   <script type="application/x-javascript" src="chrome://mozapps/content/preferences/fontbuilder.js"/>

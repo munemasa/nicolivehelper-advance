@@ -1,6 +1,8 @@
 pref("extensions.nicolivehelperadvance.mikuonly",false);
 
+pref("extensions.nicolivehelperadvance.comment.savefile", false);
 pref("extensions.nicolivehelperadvance.comment.backlog", 50);
+pref("extensions.nicolivehelperadvance.comment.viewlines", 500);
 pref("extensions.nicolivehelperadvance.comment.184comment", true);
 
 pref("extensions.nicolivehelperadvance.request.autoreply", true);  // リクエストへの自動応答

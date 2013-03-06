@@ -119,6 +119,10 @@ var NicoLiveComment = {
 	    this.commentlog.shift();
 	}
 	this.commentlog.push( chat );
+	
+	if( Config.comment.savefile ){
+	    // TODO ファイルに保存
+	}
     },
 
     /**

@@ -93,9 +93,8 @@ var NicoLiveHelper = {
     setAllowRequest:function(flg, ev, nomsg){
 	this.allowrequest = flg;
 	//debugprint("リクエスト"+(flg?"許可":"不可")+"に切り替えました");
-	// TODO
-	let str = ""; //flg ? NicoLivePreference.msg.requestok : NicoLivePreference.msg.requestng;
-	let command = ""; //flg ? NicoLivePreference.msg.requestok_command : NicoLivePreference.msg.requestng_command;
+	let str = flg ? Config.msg.requestok : Config.msg.requestng;
+	let command = flg ? Config.msg.requestok_command : Config.msg.requestng_command;
 	if(!command) command = "";
 	if( ev && ev.ctrlKey ){
 	    // CTRLキーが押されていたら運営コメントを入力して、それを使用.
