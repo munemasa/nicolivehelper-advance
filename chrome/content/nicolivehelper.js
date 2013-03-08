@@ -718,7 +718,7 @@ var NicoLiveHelper = {
     postUserPress:function(comment,name,color){
 	if( !comment ) return;
 	if( !name ) name = this.userinfo.nickname;
-	if( !color ) color = "#45bc38";
+	if( !color ) color = "green";
 	if( !this.user_press_token ){
 	    let tab = NicoLiveWindow.findTab(this.liveinfo.request_id) || NicoLiveWindow.findTab(this.liveinfo.default_community);
 	    if( tab ){
