@@ -469,7 +469,8 @@
 	      </menupopup>
 	    </menulist>
 
-	    <checkbox persist="checked" id="use_presscomment"
+	    <checkbox persist="checked bsp_color" id="use_presscomment"
+		      bsp_color="green"
 		      label="BSP"
 		      tooltiptext="バックステージからコメントする(バックステージパス所有の視聴者用)"/>
 	    <checkbox persist="checked" id="auto-kotehan"

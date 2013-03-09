@@ -885,8 +885,9 @@ var NicoLiveHelper = {
 		}
 	    }
 	}else{
-	    if ( $('use_presscomment').hasAttribute('checked') ){
-		let color = "";
+	    let press = $('use_presscomment');
+	    if ( press.hasAttribute('checked') ){
+		let color = press.getAttribute("bsp_color");
 		this.postUserPress( text, mail, color );
 	    }else{
 		this.postListenerComment( text, mail );
