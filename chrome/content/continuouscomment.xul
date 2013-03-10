@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<dialog id="continuouscommentwindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
+	title="連続コメントウィンドウ(NicoLive Helper)"
+	buttons="cancel" ondialogcancel="return true;">
+
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/libs.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/continuouscomment.js" />
+
+  <vbox flex="1">
+    <hbox align="center">
+      <button label="1行送信" oncommand="SendContinuousComment();" flex="1"/>
+      <menulist id="menu-interval" persist="value" oncommand="if(this.value==0) clearInterval(interval_id);">
+	<menupopup>
+	  <menuitem label="手動" value="0"/>
+	  <menuitem label="1秒" value="1"/>
+	  <menuitem label="2秒" value="2"/>
+	  <menuitem label="3秒" value="3"/>
+	  <menuitem label="4秒" value="4"/>
+	  <menuitem label="5秒" value="5"/>
+	  <menuitem label="6秒" value="6"/>
+	  <menuitem label="7秒" value="7"/>
+	  <menuitem label="8秒" value="8"/>
+	  <menuitem label="9秒" value="9"/>
+	  <menuitem label="10秒" value="10"/>
+	</menupopup>
+      </menulist>
+      
+    </hbox>
+    <menulist oncommand="ReadTextFile(DirLists[this.value]);">
+      <menupopup id="menu-filelist">
+      </menupopup>
+    </menulist>
+
+    <hbox align="center">
+      <label id="label-1" value="コマンド:"/>
+      <textbox flex="1" id="multiline-command" emptytext="se1,hidden,shita,BSPコメの名前など"/>
+      <menulist id="bsp-name-color" style="display:none;">
+	<menupopup>
+	  <menuitem value="green" label="green"/>
+	  <menuitem value="niconicowhite" label="niconicowhite"/>
+	  <menuitem value="white" label="white"/>
+	  <menuitem value="red" label="red"/>
+	  <menuitem value="blue" label="blue"/>
+	  <menuitem value="cyan" label="cyan"/>
+	  <menuitem value="yellow" label="yellow"/>
+	  <menuitem value="purple" label="purple"/>
+	  <menuitem value="pink" label="pink"/>
+	  <menuitem value="orange" label="orange"/>
+	</menupopup>
+      </menulist>
+      <checkbox id="using-bsp" label="BSPを使用" oncommand="ChangeUsingBSP();"/>
+    </hbox>
+
+    <textbox flex="1" id="multiline-comment" multiline="true" rows="10"
+	     ondragenter="event.preventDefault();"
+	     ondragover="event.preventDefault();"
+	     ondrop="FileDropped(event);"
+	     >
+    </textbox>
+  </vbox>
+
+</dialog>

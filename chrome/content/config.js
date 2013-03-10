@@ -132,6 +132,27 @@ var Config = {
 	this.setVideoDetail();
     },
 
+    /**
+     * コメントログの保存先を返す
+     */
+    getCommentDir:function(){
+	try{
+	    return this.getBranch().getFilePref('comment.commentlogDir');
+	} catch (x) {
+	    return null;
+	}
+    },
+    /**
+     * 連続コメントディレクトリを返す
+     */
+    getContinuousCommentDir:function(){
+	try{
+	    return this.getBranch().getFilePref('comment.continuous-commentDir');
+	} catch (x) {
+	    return null;
+	}
+    },
+
     register:function(){
 	let prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 	this._branch = prefService.getBranch("extensions.nicolivehelperadvance.");

@@ -28,12 +28,26 @@ var MenuControl = {
      */
     showSelectionMenuIfTextSelected:function(elem){
 	let str = window.getSelection().toString() || "";
+	let elem = elem.firstChild.nextSibling;
 	if( str ){
-	    elem.firstChild.hidden = false;
-	    elem.firstChild.nextSibling.hidden = false;
+	    elem.hidden = false;
+	    elem.nextSibling.hidden = false;
 	}else{
-	    elem.firstChild.hidden = true;
-	    elem.firstChild.nextSibling.hidden = true;
+	    elem.hidden = true;
+	    elem.nextSibling.hidden = true;
+	}
+    },
+
+    /**
+     * リクエスト、ストックのメニューに動画IDをセットする
+     */
+    setVideoIdToMenu: function(elem, isrequest){
+	let tr = FindParentElement(elem,'html:tr');
+	let n = tr.sectionRowIndex;
+	if( isrequest ){
+	    $('menu-request-video-id').value = NicoLiveHelper.request_list[n].video_id;
+	}else{
+	    $('menu-stock-video-id').value = NicoLiveHelper.stock_list[n].video_id;
 	}
     },
 

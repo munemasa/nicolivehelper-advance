@@ -159,7 +159,7 @@
 	    </menu>
 	    <menuseparator/>
 	    <!-- 連続コメント -->
-	    <menuitem disabled="true" label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
+	    <menuitem label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
 	    <menuseparator/>
 	    <!-- アンケート関係 -->
 	    <menuitem disabled="true" label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
@@ -442,7 +442,8 @@
 		</rows>
 	      </grid>
 	      <spacer flex="1"/>
-	      <button label="Open As Textbox" oncommand=""/>
+	      <button label="Open As Textbox"
+		      oncommand="NicoLiveComment.openCommentLogDialog();"/>
 	    </hbox>
 	    <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="">
 	      <listcols>
@@ -549,7 +550,10 @@
   <popupset>
 
     <!-- リクエスト用ポップアップ -->
-    <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this);">
+    <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, true);">
+      <hbox>
+	<label id="menu-request-video-id" value="動画ID" style="padding-left:2em;"/>
+      </hbox>
       <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
@@ -592,7 +596,10 @@
     </menupopup>
 
     <!-- ストック用のポップアップメニュー -->
-    <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this);">
+    <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, false);">
+      <hbox>
+	<label id="menu-stock-video-id" value="動画ID" style="padding-left:2em;"/>
+      </hbox>
       <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
@@ -639,10 +646,10 @@
     </menupopup>
 
     <!-- コメントビューの名前・ID欄のところ -->
-    <menupopup id="popup-comment-user" onpopupshowing="NicoLiveComment.showPopupMenuForID( $('popup-comment-user').triggerNode );">
+    <menupopup id="popup-comment-user" onpopupshowing="NicoLiveComment.showPopupMenuForID( this.triggerNode );">
       <hbox>
 <!--	<menuseparator/> -->
-	<label value="" id="popup-comment-displayuserid"/>
+	<label value="" id="popup-comment-displayuserid" style="padding-left:2em;"/>
       </hbox>
       <menuitem id="popup-comment-openprofile" label="&comment.menu_openprofile;"
 		oncommand="NicoLiveComment.openProfile($('popup-comment-user').triggerNode);"/>

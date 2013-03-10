@@ -25,6 +25,9 @@ function OpenVoteDialog(){
     w.focus();
 }
 
+/**
+ * 連続コメントウィンドウを出す
+ */
 function OpenContinuousCommentWindow(){
     var value = null;
     var f = "chrome,resizable=yes,centerscreen";
