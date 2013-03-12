@@ -299,13 +299,6 @@ var NicoLiveStock = {
 	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, n]);
     },
 
-    /** 動画の先読みを行う.
-     * @param node メニューがポップアップしたノード
-     */
-    prepare:function(node){
-	NicoLiveRequest.prepare(node);
-    },
-
     /**
      * ストックをファイルに保存する.
      */

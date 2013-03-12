@@ -34,8 +34,7 @@ var NicoLiveHistory = {
 	}
 
 	vbox.setAttribute('class','vinfo');
-	// TODO ポップアップメニュー
-	vbox.setAttribute('context','popup-copyrequest');
+	vbox.setAttribute('context','popup-playlist');
 
 	let hbox = CreateElement('hbox');
 	hbox.setAttribute('tooltiptext','');
@@ -58,6 +57,7 @@ var NicoLiveHistory = {
 	button.setAttribute('image','data/add.png');
 	button.setAttribute('label','リクエスト');
 	button.setAttribute('class','command-button');
+	button.setAttribute("tooltiptext","リクエストに追加します");
 	button.setAttribute("oncommand","NicoLiveHistory.addRequestDirect(event);");
 	hbox.appendChild(button);
 
@@ -65,6 +65,7 @@ var NicoLiveHistory = {
 	button.setAttribute('image','data/add.png');
 	button.setAttribute('label','ストック');
 	button.setAttribute('class','command-button');
+	button.setAttribute("tooltiptext","ストックに追加します");
 	button.setAttribute("oncommand","NicoLiveHistory.addStockDirect(event);");
 	hbox.appendChild(button);
 

@@ -87,7 +87,7 @@ var NicoLiveComment = {
 	str = str.replace(/(\r\n|\r|\n)/gm,"<html:br/>");
 
 	// sm,nmにリンクを貼り付け.
-	str = str.replace(/((sm|nm)\d+)/g,"<hbox class=\"selection\" context=\"popup-comment-anchor\"><html:a onmouseover=\"NicoLiveWindow.showThumbnail(event,'$1');\" onmouseout=\"NicoLiveWindow.hideThumbnail();\" onclick=\"NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/$1');\">$1</html:a></hbox>");
+	str = str.replace(/((sm|nm)\d+)/g,"<hbox class=\"selection\" todo_context=\"popup-comment-anchor\"><html:a onmouseover=\"NicoLiveWindow.showThumbnail(event,'$1');\" onmouseout=\"NicoLiveWindow.hideThumbnail();\" onclick=\"NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/$1');\">$1</html:a></hbox>");
 	if( comment.premium!=3 ){
 	    // 数字10桁にもリンク.
 	    if( !str.match(/(sm|nm)\d+/) ){
@@ -423,6 +423,11 @@ var NicoLiveComment = {
 	    }
 	}
 	this.updateCommentsBackgroundColor(userid, color);
+    },
+
+    copyComment: function(elem){
+	debugprint(elem.textContent);
+	
     },
 
     init: function(){

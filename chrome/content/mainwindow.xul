@@ -65,6 +65,8 @@
 	  src="chrome://nicolivehelperadvance/content/nicolivecookie.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivetweet.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicoliverights.js" />
 
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
@@ -548,9 +550,8 @@
 
   <!-- ポップアップメニュー -->
   <popupset>
-
     <!-- リクエスト用ポップアップ -->
-    <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, true);">
+    <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 0);">
       <hbox>
 	<label id="menu-request-video-id" value="動画ID" style="padding-left:2em;"/>
       </hbox>
@@ -589,14 +590,19 @@
 	</menupopup>
       </menu>
       <menuseparator/>
+      <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
-		oncommand="NicoLiveRequest.prepare($('popup-request').triggerNode);"/>
+		oncommand="MenuControl.prepare($('popup-request').triggerNode);"/>
 
       <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
+
+      <menuseparator/>
+      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-request').triggerNode);"/>
+      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-request').triggerNode);"/>
     </menupopup>
 
     <!-- ストック用のポップアップメニュー -->
-    <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, false);">
+    <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 1);">
       <hbox>
 	<label id="menu-stock-video-id" value="動画ID" style="padding-left:2em;"/>
       </hbox>
@@ -637,12 +643,42 @@
 	</menupopup>
       </menu>
       <menuseparator/>
+      <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-stock').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
-		oncommand="NicoLiveStock.prepare($('popup-stock').triggerNode);"/>
+		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"/>
 
       <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
       <menuseparator/>
       <menuitem label="&menu.stock_savefile;" oncommand="NicoLiveStock.saveStockToFile();"/>
+
+      <menuseparator/>
+      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-stock').triggerNode);"/>
+      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-stock').triggerNode);"/>
+    </menupopup>
+
+    <!-- 再生履歴用ポップアップ -->
+    <menupopup id="popup-playlist" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 2);">
+      <hbox>
+	<label id="menu-playlist-video-id" value="動画ID" style="padding-left:2em;"/>
+      </hbox>
+      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menu label="検索">
+	<menupopup>
+	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	</menupopup>
+      </menu>
+
+      <menuseparator/>
+      <menuitem id="popup-playlist-marker"
+		label="&menu.copy_video_id;"
+		oncommand="MenuControl.copyVideoIdToClipboard($('popup-playlist').triggerNode);"/>
+      <!-- マイリストに追加を追加するためのマーカー -->
+
+      <menuseparator/>
+      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-playlist').triggerNode);"/>
+      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-playlist').triggerNode);"/>
     </menupopup>
 
     <!-- コメントビューの名前・ID欄のところ -->
@@ -675,22 +711,35 @@
     </menupopup>
 
     <!-- コメント用ポップアップ -->
-    <menupopup id="popup-comment-body" onpopupshowing="">
+    <menupopup id="popup-comment-body"
+	       onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.showRightsSearch();">
+      <menuitem label="none" style="display:none;"/><!-- showSelectionMenuIfTextSelected()が正しく処理できる用のダミーノード -->
+      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
-	  <menuitem label="&menu.search_by_google;" oncommand="NicoLiveMenuControl.searchByGoogle();"/>
-	  <menuitem label="&menu.search_by_niconico;" oncommand="NicoLiveMenuControl.searchByNicoNico();"/>
+	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
 	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
-      <menuitem label="&comment.menu.jasracsearch;" id="comment-search-jasrac" oncommand="NicoLiveRights.searchJWID(window.getSelection().toString());"/>
-      <menuitem label="&comment.menu.elicensesearch;" id="comment-search-elicense" oncommand="NicoLiveRights.search_elicense(window.getSelection().toString());"/>
-      <menuitem label="&comment.menu_copy_comment;" oncommand="NicoLiveComment.copyComment(document.popupNode||$('popup-copycomment').triggerNode);"/>
+      <menuitem label="&comment.menu.jasracsearch;" id="comment-search-jasrac"
+		oncommand="NicoLiveRights.searchJWID(window.getSelection().toString());"/>
+      <menuitem label="&comment.menu.elicensesearch;" id="comment-search-elicense"
+		oncommand="NicoLiveRights.search_elicense(window.getSelection().toString());"/>
+
+      <menuitem label="&comment.menu_copy_comment;"
+		oncommand="NicoLiveComment.copyComment($('popup-comment-body').triggerNode);"/>
+
     </menupopup>
-    <menupopup id="popup-comment-anchor">
-      <menuitem label="&comment.menu_copy;" oncommand="NicoLiveComment.copyComment(document.popupNode||$('popup-copycomment').triggerNode);"/>
-      <menuitem label="&comment.menu_setselfrequest;" oncommand="NicoLiveComment.setSelfRequest(document.popupNode||$('popup-copycomment').triggerNode);"/>
-      <menuitem label="&comment.menu_moverequest_to_top;" oncommand="NicoLiveComment.moveRequestToTop(document.popupNode||$('popup-copycomment').triggerNode);"/>
+
+    <!-- コメント内の動画ID用ポップアップメニュー -->
+    <menupopup id="TODO popup-comment-anchor">
+      <menuitem label="&comment.menu_copy;"
+		oncommand="NicoLiveComment.copyComment($('popup-copycomment').triggerNode);"/>
+      <menuitem label="&comment.menu_setselfrequest;"
+		oncommand="NicoLiveComment.setSelfRequest($('popup-copycomment').triggerNode);"/>
+      <menuitem label="&comment.menu_moverequest_to_top;"
+		oncommand="NicoLiveComment.moveRequestToTop($('popup-copycomment').triggerNode);"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->
