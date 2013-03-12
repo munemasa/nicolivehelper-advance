@@ -4,6 +4,7 @@
  * コメント
  */
 var NicoLiveComment = {
+    ostream: null,    // ログファイル(アリーナ)
 
     comment_table: null,     // $('comment-table')
     auto_kotehan: null,      // $('auto-kotehan')
@@ -121,7 +122,8 @@ var NicoLiveComment = {
 	this.commentlog.push( chat );
 	
 	if( Config.comment.savefile ){
-	    // TODO ファイルに保存
+	    // ファイルに保存
+	    this.writeFile( chat );
 	}
     },
 
@@ -426,8 +428,82 @@ var NicoLiveComment = {
     },
 
     copyComment: function(elem){
-	debugprint(elem.textContent);
-	
+	CopyToClipboard( elem.textContent );
+    },
+
+    /**
+     * コメントをファイルに書く.
+     * @param item コメントデータ
+     */
+    writeFile:function(item){
+	if(this.ostream){
+	    let str;
+	    let datestr = GetDateString(item.date*1000);
+	    str = item.no+'\t'+item.user_id+'\t'+item.text+'\t'+datestr+"\r\n";
+	    this.ostream.writeString(str);
+	}
+    },
+
+    /**
+     * ログファイルを開く
+     */
+    openFile:function(request_id, community){
+	let f = Config.getCommentDir();
+	if(!f) return;
+	if( community ){
+	    f.append(community);
+	    CreateFolder(f.path);
+	}
+	// TODO
+	//let fname = NicoLivePreference.getUnichar("logfile-name");
+	//fname = this.getLogfileName(fname);
+	let fname = request_id;
+	f.append(fname+'.txt');
+	let file;
+	let os;
+	this.closeFile();
+
+	// TODO
+	/*
+	var cnt=2;
+	if( NicoLivePreference.getBool("new-logfile") ){
+	    while( f.exists() ){
+		debugprint("already exists comment log file:"+f.path);
+		f.leafName = fname+"_"+cnt+".txt";
+		cnt++;
+	    }
+	}
+	 */
+
+	try{
+	    file = OpenFile(f.path);
+	} catch (x) {
+	    f = Config.getCommentDir();
+	    if( community ){
+		f.append(community);
+		CreateFolder(f.path);
+	    }
+	    f.append(request_id+".txt");
+	    file = OpenFile(f.path);
+	}
+	debugprint('open comment log:'+f.path);
+
+	os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
+	let flags = 0x02|0x10|0x08;// wronly|append|create
+	os.init(file,flags,0664,0);
+
+	let cos = Components.classes["@mozilla.org/intl/converter-output-stream;1"].createInstance(Components.interfaces.nsIConverterOutputStream);
+	cos.init(os,"UTF-8",0,Components.interfaces.nsIConverterOutputStream.DEFAULT_REPLACEMENT_CHARACTER);
+
+	this.ostream = cos;
+
+	cos.writeString('--- '+NicoLiveHelper.liveinfo.title+' ---\r\n');
+    },
+    closeFile:function(){
+	try{
+	    this.ostream.close();
+	} catch (x) {
+	}
     },
 
     init: function(){

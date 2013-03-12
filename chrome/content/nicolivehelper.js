@@ -1929,7 +1929,7 @@ var NicoLiveHelper = {
 	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
 	    let code = "";
 	    try{
-		// TODO 作品コードの処理
+		// 作品コードの処理
 		code = chat.text.match(/(...[-+=/]....[-+=/].)/)[1];
 		code = code.replace(/[-+=/]/g,"-"); // JWID用作品コード.
 		NicoLiveHelper.product_code["_"+video_id] = code;
@@ -2615,6 +2615,8 @@ var NicoLiveHelper = {
 	    }
 
 	    NicoLiveHelper.preprocessConnectServer( NicoLiveHelper.liveinfo.request_id );
+
+	    NicoLiveComment.openFile( NicoLiveHelper.liveinfo.request_id, NicoLiveHelper.liveinfo.default_community );
 	};
 	NicoApi.getplayerstatus( request_id, f );
     },
