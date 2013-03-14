@@ -741,7 +741,7 @@
       <menuitem id="popup-comment-openprofile" label="&comment.menu_openprofile;"
 		oncommand="NicoLiveComment.openProfile($('popup-comment-user').triggerNode);"/>
       <menuitem id="" label="トラッキング"
-		oncommand="TODO; NicoLiveComment.trackComment($('popup-comment-user').triggerNode);"/>
+		oncommand="NicoLiveComment.trackComment($('popup-comment-user').triggerNode);"/>
       <menuseparator/>
       <!-- コテハン設定 -->
       <menuitem label="&comment.menu_setname;"
