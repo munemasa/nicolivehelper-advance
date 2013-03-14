@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<dialog id="votewindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
+	title="アンケートウィンドウ(NicoLive Helper)"
+	width="640"
+	buttons="accept,cancel"
+	ondialogaccept="return AcceptFunction();"
+	ondialogcancel="return true;">
+
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/libs.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/votedialog.js" />
+
+  <vbox>
+    <hbox align="center">
+      <label value="質問文"/>
+      <textbox id="question" flex="1"/>
+    </hbox>
+    <hbox align="center">
+      <label value="選択肢1"/>
+      <textbox id="answer1" flex="1"/>
+      <label value="選択肢2"/>
+      <textbox id="answer2" flex="1"/>
+      <label value="選択肢3"/>
+      <textbox id="answer3" flex="1"/>
+    </hbox>
+    <hbox align="center">
+      <label value="選択肢4"/>
+      <textbox id="answer4" flex="1"/>
+      <label value="選択肢5"/>
+      <textbox id="answer5" flex="1"/>
+      <label value="選択肢6"/>
+      <textbox id="answer6" flex="1"/>
+    </hbox>
+    <hbox align="center">
+      <label value="選択肢7"/>
+      <textbox id="answer7" flex="1"/>
+      <label value="選択肢8"/>
+      <textbox id="answer8" flex="1"/>
+      <label value="選択肢9"/>
+      <textbox id="answer9" flex="1"/>
+    </hbox>
+
+    <hbox align="center">
+      <menulist id="menu-se">
+	<menupopup>
+	  <menuitem label="なし" value=""/>
+	  <menuitem label="se1" value="se1"/>
+	  <menuitem label="se2" value="se2"/>
+	</menupopup>
+      </menulist>
+      <label value="過去のアンケート"/>
+      <menulist oncommand="VoteDialog.restore(this.value);" flex="1">
+	<menupopup id="menu-recent">
+	</menupopup>
+      </menulist>
+    </hbox>
+  </vbox>
+
+</dialog>

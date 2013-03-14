@@ -164,11 +164,11 @@
 	    <menuitem label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
 	    <menuseparator/>
 	    <!-- アンケート関係 -->
-	    <menuitem disabled="true" label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
+	    <menuitem label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
 		      oncommand="OpenVoteDialog();"/>
-	    <menuitem disabled="true" label="&toolbar.voteshowresult;" tooltiptext="&toolbar.tooltip_voteshowresult;"
+	    <menuitem label="&toolbar.voteshowresult;" tooltiptext="&toolbar.tooltip_voteshowresult;"
 		      oncommand="NicoLiveHelper.postCasterComment('/vote showresult','');"/>
-	    <menuitem disabled="true" label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
+	    <menuitem label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
 		      oncommand="NicoLiveHelper.postCasterComment('/vote stop','');"/>
 	  </menupopup>
 	</toolbarbutton>
