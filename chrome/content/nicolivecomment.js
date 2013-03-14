@@ -147,8 +147,7 @@ var NicoLiveComment = {
 
 	textbox.controller.searchString = "";
 
-	// TODO update autocomplete
-	/*
+	// update autocomplete
 	let tmp = {value:str,comment:""};
 	for(let i=0,item;item=this.autocomplete[i];i++){
 	    if(item.value==str){
@@ -162,7 +161,6 @@ var NicoLiveComment = {
 
 	let concat_autocomplete = this.preset_autocomplete.concat( this.autocomplete );
 	textbox.setAttribute("autocompletesearchparam",JSON.stringify(concat_autocomplete));
-	 */
 
 	let mail = $('textbox-mail').value;
 
@@ -506,6 +504,33 @@ var NicoLiveComment = {
 	}
     },
 
+    /**
+     * オートコンプリートのプリセット設定をプリファレンスから読む.
+     */
+    loadPresetAutocomplete:function(){
+	let prefs = Config.getBranch();
+	let str;
+	try{
+	    str = prefs.getUnicharPref("comment.preset-autocomplete");	
+	} catch (x) {
+	    str = "";
+	}
+	let list = str.split(/\n|\r|\r\n/);
+	this.preset_autocomplete = new Array();
+	while(list.length){
+	    let tmp = {};
+	    let line = list.shift();
+	    let data = line.split(",");
+	    if(line.length){
+		tmp.value = data[0];
+		tmp.comment = data[1];
+		this.preset_autocomplete.push(tmp);
+	    }
+	}
+	let concat_autocomplete = this.preset_autocomplete.concat( this.autocomplete );
+	$('textbox-comment').setAttribute("autocompletesearchparam",JSON.stringify(concat_autocomplete));
+    },
+
     init: function(){
 	debugprint("NicoLiveComment.init");
 	this.comment_table = $('comment-table');
@@ -517,9 +542,25 @@ var NicoLiveComment = {
 
 	this.namemap  = Storage.readObject( "nico_namemap", {} );
 	this.colormap = Storage.readObject( "nico_colormap", {} );
+
+	this.autocomplete = Storage.readObject("nico_live_autocomplete",[]);
+	this.loadPresetAutocomplete();
     },
     destroy: function(){
 	Storage.writeObject( "nico_namemap", this.namemap );
+	Storage.writeObject( "nico_live_autocomplete", this.autocomplete);
+
+	let now = GetCurrentTime();
+	for(let id in this.colormap){
+	    // 1週間経ったユーザーのものは削除候補.
+	    if( now-this.colormap[id].date > 1*24*60*60 ){
+		let col = this.colormap[id].color;
+		if( col.indexOf('color')==0 ){
+		    // 自動設定で指定した色は削除
+		    delete this.colormap[id];
+		}
+	    }
+	}
 	Storage.writeObject( "nico_colormap", this.colormap );
     }
 };
