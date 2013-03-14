@@ -12,6 +12,7 @@ var NicoLiveComment = {
     kotehan_refprof: null,   // $('kotehan-ref-userprof')
 
     commentlog: [],    // アリーナ席のコメントログ
+    viewlog: [],       // 表示しているコメントのログ
     colormap: {},      // 配色マップ
     namemap: {},       // コテハンマップ
 
@@ -30,6 +31,11 @@ var NicoLiveComment = {
     addComment: function( comment, target_room ){
 	let table = this.comment_table;
 	if(!table){ return; }
+
+	if( this.viewlog.length >= Config.comment.view_lines ){
+	    this.viewlog.shift();
+	}
+	this.viewlog.push( comment );
 
 	// 表示行数に切り詰め
 	if( table.rows.length >= Config.comment.view_lines ){
@@ -434,12 +440,11 @@ var NicoLiveComment = {
     },
 
     /**
-     * コメントログ表示ダイアログ.
-     * TODO アリーナのみなので修正
+     * 表示しているコメントログのダイアログ表示.
      */
     openCommentLogDialog:function(){
 	let str = "";
-	for(let i=0,item;item=this.commentlog[i];i++){
+	for(let i=0,item;item=this.viewlog[i];i++){
 	    let datestr = GetDateString(item.date*1000);
 	    str += item.no+"\t"+item.user_id+"\t"+item.text+"\t"+datestr+"\n";
 	}
