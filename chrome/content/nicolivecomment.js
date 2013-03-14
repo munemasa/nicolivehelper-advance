@@ -425,8 +425,25 @@ var NicoLiveComment = {
 	this.updateCommentsBackgroundColor(userid, color);
     },
 
+    /**
+     * コメントをコピーする.
+     * @param elem コメントの格納されている要素
+     */
     copyComment: function(elem){
 	CopyToClipboard( elem.textContent );
+    },
+
+    /**
+     * コメントログ表示ダイアログ.
+     * TODO アリーナのみなので修正
+     */
+    openCommentLogDialog:function(){
+	let str = "";
+	for(let i=0,item;item=this.commentlog[i];i++){
+	    let datestr = GetDateString(item.date*1000);
+	    str += item.no+"\t"+item.user_id+"\t"+item.text+"\t"+datestr+"\n";
+	}
+	window.openDialog("chrome://nicolivehelperadvance/content/commentlog.xul","comment","chrome,dialog,width=640,height=320,resizable=yes,centerscreen",str).focus();
     },
 
     /**
