@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nicolivehelperadvance/content/mainwindow.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://nicolivehelperadvance/locale/nicolivehelper.dtd">
+
+<window id="browserwindow"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	persist="screenX screenY width height sizemode"
+	width="720"
+	height="512"
+	windowtype="NicoLiveHelperBrowserWindow"
+	title="Browser for NicoLive Helper">
+
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/browser.js" />
+
+  <keyset>
+    <!-- CTRL+W: Close this window -->
+    <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
+  </keyset>
+
+  <toolbar>
+    <toolbarbutton label="戻る" oncommand="InAppBrowser.backward();"/>
+    <toolbarbutton label="進む" oncommand="InAppBrowser.forward();"/>
+    <toolbarbutton label="リロード" oncommand="InAppBrowser.reload();"/>
+    <textbox id="url" flex="1"/>
+    <toolbarbutton label="Go" oncommand="InAppBrowser.go();"/>
+  </toolbar>
+
+  <!-- live pane (want 600px) -->
+  <browser id="page"
+	   flex="1"
+	   src="about:blank"
+	   type="content"
+	   style="overflow:auto;"
+	   homepage="http://live.nicovideo.jp/my"/>
+
+</window>

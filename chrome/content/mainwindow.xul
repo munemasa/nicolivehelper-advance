@@ -92,6 +92,13 @@
     <key id="tab-move-7" key="7" modifiers="accel" oncommand="NicoLiveWindow.changeTab(7);"/>
     <key id="tab-move-8" key="8" modifiers="accel" oncommand="NicoLiveWindow.changeTab(8);"/>
     <key id="tab-move-9" key="9" modifiers="accel" oncommand="NicoLiveWindow.changeTab(9);"/>
+    <!-- CTRL+→ 右のタブへ -->
+    <key id="tab-move-R" keycode="VK_RIGHT" modifiers="accel"
+	 oncommand="NicoLiveWindow.moveRightTab();"/>
+    <!-- CTRL+← 左のタブへ -->
+    <key id="tab-move-L" keycode="VK_LEFT" modifiers="accel"
+	 oncommand="NicoLiveWindow.moveLeftTab();"/>
+
   </keyset>
 
   <toolbox id="global-toolbox">
@@ -142,7 +149,8 @@
 <!--	    <menuitem label="test" oncommand="test();"/> -->
 	    
 	    <menuitem label="&toolbar.connect;" oncommand="CommandMenu.openBroadcasting();"/>
-	    <menuitem label="放送開始する" tooltiptext="&toolbar.tooltip_beginbroadcasting;"
+	    <menuitem label="&toolbar.beginbroadcasting;"
+		      tooltiptext="&toolbar.tooltip_beginbroadcasting;"
 		      oncommand="NicoLiveHelper.startBroadcasting();"/>
 	    <menuseparator/>
 	    <!-- TODO -->
@@ -500,8 +508,51 @@
 	<label value="Database"/>
       </vbox>
 
+      <!-- コントロールパネル -->
       <vbox id="tab-controlpanel">
-	<label value="Control panel"/>
+	<hbox style="display:inline-block; margin-top: 0.5em;">
+	  <button id="btn-connect-to-current-broadcast" label="放送中の番組に接続"
+		  tooltiptext="現在あなたが放送中の番組に接続します。"
+		  oncommand="CommandMenu.openCurrentBroadcasting();"/>
+	  <button label="&toolbar.beginbroadcasting;"
+		  oncommand="NicoLiveHelper.startBroadcasting();"/>
+	  <button label="ジングル再生"
+		  oncommand="TODO; NicoLiveHelper.playJingle();"/>
+	  <button label="動画情報の再送信"
+		  oncommand="TODO; NicoLiveHelper.sendVideoInfo(true);"/>
+	  <button label="リクエスト受付数リセット"
+		  oncommand="TODO; NicoLiveHelper.resetRequestCount();"/>
+	</hbox>
+	
+	<groupbox>
+	  <caption label="放送時間延長"/>
+	  <hbox>
+	    <button label="無料延長を行う"
+		    oncommand="TODO; NicoLiveHelper.getsalelist(true);"/>
+	    <checkbox id="controlpanel-auto-free-extend"
+		      label="自動無料延長を行う" persist="checked" autocheck="true"
+		      oncommand="TODO; NicoLiveHelper.setAutoFreeExtend(this.hasAttribute('checked'));"/>
+	  </hbox>
+	  <label id="controlpanel-remain-point" value="所持ニコニコポイント:(更新してください)"/>
+	  <hbox style="display:inline-block;">
+	    <button id="btn-update-extend-menu" label="&general.update;"
+		    oncommand="TODO; NicoLiveHelper.updateExtendMenu();"/>
+	    <menulist id="controlpanel-menu-live-extend-menulist">
+	      <menupopup id="controlpanel-menu-live-extend">
+		<menuitem value="need-update" label="更新してください"/>
+	      </menupopup>
+	    </menulist>
+	    <button id="btn-extend-live" label="延長" oncommand="TODO; NicoLiveHelper.pressExtendButtonOfControlPanel();"/>
+	    <button label="ポイント購入" oncommand="NicoLiveWindow.openDefaultBrowser('http://point.nicovideo.jp/',true);"/>
+	  </hbox>
+	</groupbox>
+	<hbox>
+	  <button label="&toolbar.nextlive_manually;" oncommand="TODO; NicoLiveHelper.nextBroadcasting(true);"/>
+	  <button label="&toolbar.nextlive;" oncommand="TODO; NicoLiveHelper.nextBroadcasting();"/>
+	</hbox>
+	<hbox>
+	  <button label="マイページ" oncommand="NicoLiveWindow.openDefaultBrowser('http://live.nicovideo.jp/my',true);"/>
+	</hbox>
       </vbox>
 
       <vbox id="tab-debug">

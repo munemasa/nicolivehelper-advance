@@ -50,6 +50,9 @@ var NicoLiveWindow = {
 	}
     },
 
+    /**
+     * アプリ内蔵ブラウザの方を開く.
+     */
     openInAppBrowser:function(url, hasfocus, param1, param2, param3, param4, param5){
 	let feature="chrome,resizable=yes";
 	let win = window.openDialog("chrome://nicolivehelperadvance/content/browser.xul",
@@ -60,22 +63,36 @@ var NicoLiveWindow = {
 	return win;
     },
 
-    // 左のタブから1,2,3,....,9,0 の番号としてタブを切り替える.
+    /**
+     * タブを切り替える.
+     * @param n タブ番号(左から1,2,3,...,0)
+     */
     changeTab:function(n){
 	n = (n + 9) % 10;
 	$('maintabs').selectedIndex = n;
     },
+    /**
+     * タブを右に切り替える.
+     */
     moveRightTab:function(){
 	let n = $('maintabs').selectedIndex+1;
 	n++;
 	this.changeTab(n);
     },
+    /**
+     * タブを左に切り替える.
+     */
     moveLeftTab:function(){
 	let n = $('maintabs').selectedIndex+1;
 	n--;
 	this.changeTab(n);
     },
 
+    /**
+     * 動画サムネイルを表示する.
+     * @param event DOMイベント
+     * @param video_id 動画ID
+     */
     showThumbnail:function(event,video_id){
 	$('iframe-thumbnail').src = "http://ext.nicovideo.jp/thumb/"+video_id;
 	let x,y;
@@ -96,6 +113,9 @@ var NicoLiveWindow = {
 	$('iframe-thumbnail').height = 176;
 	$('iframe-thumbnail').style.opacity = 1;
     },
+    /**
+     * 動画サムネイルを非表示にする.
+     */
     hideThumbnail:function(){
 	$('iframe-thumbnail').width = 312;
 	$('iframe-thumbnail').height = 0;
@@ -103,7 +123,7 @@ var NicoLiveWindow = {
     },
 
     /**
-     * クッキーを利用するブラウザを変更する
+     * クッキーを利用するブラウザを変更する.
      */
     changeBrowser: function(){
 	this.initBrowserIcon();
