@@ -10,6 +10,9 @@ pref("extensions.nicolivehelperadvance.request.autoreply", true);  // リクエ�
 pref("extensions.nicolivehelperadvance.request.allow", true);  // リクエスト可否
 pref("extensions.nicolivehelperadvance.request.seiga", false); // 静画のリクエスト可否
 pref("extensions.nicolivehelperadvance.request.allow-duplicative", false); // 重複許可
+pref("extensions.nicolivehelperadvance.request.limit-newmovie", false); // 新着規制
+pref("extensions.nicolivehelperadvance.request.accept-playedvideo",false); // 再生済みのリク許可
+pref("extensions.nicolivehelperadvance.request.allow-req-n-min-ago",0); // 何分前以上の再生済みがOKか
 
 pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイル(手動順次とか)
 pref("extensions.nicolivehelperadvance.play.interval", 8);

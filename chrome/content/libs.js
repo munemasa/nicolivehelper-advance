@@ -29,10 +29,11 @@ const PLAY_RANDOM = 1;
 const PLAY_CONSUMPTION = 2;
 
 // リクエストを受け付けない理由コード
-const REASON_NOT_ACCEPT = 1;
-const REASON_NO_LIVE_PLAY = 2;
-const REASON_ALREADY_REQUESTED = 3;
-const REASON_ALREADY_PLAYED = 4;
+const REASON_NOT_ACCEPT = 1;           // リクエストを受け付けていない
+const REASON_NO_LIVE_PLAY = 2;         // 生放送で引用できない
+const REASON_ALREADY_REQUESTED = 3;    // すでにリクエスト済み
+const REASON_ALREADY_PLAYED = 4;       // すでに再生済み
+const REASON_DISABLE_NEWMOVIE = 5;     // 新着動画の禁止
 
 
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前

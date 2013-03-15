@@ -105,6 +105,12 @@ var Config = {
 	this.request.autoreply = branch.getBoolPref( "request.autoreply" );
 	// 重複許可
 	this.request.allow_duplicative = branch.getBoolPref( "request.allow-duplicative" );
+	// 新着規制
+	this.request.disable_newmovie = branch.getBoolPref( "request.limit-newmovie" );
+	// 再生済みのリク許可
+	this.request.accept_played = branch.getBoolPref( "request.accept-playedvideo" );
+	// 何分前の再生済みを許可するか
+	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
 
         this.loadCommentSettings(branch);
 

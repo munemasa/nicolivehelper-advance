@@ -7,6 +7,8 @@
 
 
 var NicoLiveHelper = {
+    secofweek: 604800,    // 1週間の秒数(60*60*24*7).
+
     // getplayerstatusの情報
     liveinfo: {},      // LiveInfo
     userinfo: {},      // UserInfo
@@ -1190,6 +1192,7 @@ var NicoLiveHelper = {
     /**
      * 再生済みかどうかチェックする.
      * @param video_id 動画ID
+     * @return 再生済みだとtrueを返す
      */
     isAlreadyPlayed: function( video_id ){
 	if(this.playlist_list["_"+video_id]) return true;
@@ -1240,9 +1243,33 @@ var NicoLiveHelper = {
 
 	if( this.isAlreadyPlayed( videoinfo.video_id ) ){
 	    // 再生済み
-	    videoinfo.errno = REASON_ALREADY_PLAYED;
-	    videoinfo.errmsg = Config.msg.played;
-	    throw videoinfo;
+	    if( Config.request.accept_played ){
+		let n = Config.request.allow_n_min_ago * 60; // n分以上前に再生したものは許可.
+		let now = GetCurrentTime();
+		if( this.playlist_list["_"+video_id] >= now-n ){
+		    videoinfo.errno = REASON_ALREADY_PLAYED;
+		    videoinfo.errmsg = Config.msg.played;
+		    throw videoinfo;
+		}
+	    }else{
+		videoinfo.errno = REASON_ALREADY_PLAYED;
+		videoinfo.errmsg = Config.msg.played;
+		throw videoinfo;
+	    }
+	}
+
+	if( Config.request.disable_newmovie ){
+	    // 新着規制
+	    // 7日内に投稿された動画.
+	    let sevendaysago = GetCurrentTime()-this.secofweek;
+	    let d = new Date(sevendaysago*1000);
+	    d = new Date( d.toLocaleFormat("%Y/%m/%d 0:00:00") );
+	    d = d.getTime()/1000;
+	    if( videoinfo.first_retrieve >= d ){
+		videoinfo.errno = REASON_DISABLE_NEWMOVIE;
+		videoinfo.errmsg = Config.msg.newmovie;
+		throw videoinfo;
+	    }
 	}
 
 	return true;

@@ -35,6 +35,15 @@
       <!-- 重複リクエストの許可 -->
       <preference id="pref-allow-duplicative"
 		  name="extensions.nicolivehelperadvance.request.allow-duplicative" type="bool"/>
+      <!-- 新着規制 -->
+      <preference id="pref-limitnewmovie"
+		  name="extensions.nicolivehelperadvance.request.limit-newmovie" type="bool"/>
+      <!-- 再生済み動画の受付 -->
+      <preference id="pref-accept-playedvideo"
+		  name="extensions.nicolivehelperadvance.request.accept-playedvideo" type="bool"/>
+      <!-- n分以上前の再生済みを受付 -->
+      <preference id="pref-allow-req-n-min-ago"
+		  name="extensions.nicolivehelperadvance.request.allow-req-n-min-ago" type="int"/>
 
       <!-- 詳細表示 -->
       <preference id="pref-show-details"
@@ -105,12 +114,20 @@
 	  <checkbox preference="pref-allow-seiga-request" label="静画のリクエストを受け付ける"
 		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
 	  <checkbox preference="pref-allow-duplicative" label="リクエストの重複を許可する"/>
+	  <checkbox preference="pref-limitnewmovie" label="リクエストの新着(7日)規制を行う" tooltiptext="投稿して7日以内の動画のリクエストを受け付けなくなります。"/>
+	  <hbox align="center">
+	    <checkbox preference="pref-accept-playedvideo" label="再生済み動画のリクエストを受け付ける" tooltiptext="再生履歴にある動画のリクエストを受け付けるようになります。"/>
+	    <textbox preference="pref-allow-req-n-min-ago" type="number" min="0" size="3"/><label value="分以上前に再生された動画を受け付ける"/>
+	  </hbox>
+
 	</tabpanel>
+
 	<!-- 表示 -->
 	<tabpanel orient="vertical">
 	  <checkbox preference="pref-show-details" label="動画説明を表示する"
 		    tooltiptext="チェックをすると、リクエスト、ストック等で動画説明を表示します。"/>
 	</tabpanel>
+
 	<!-- コメント -->
 	<tabpanel orient="vertical">
 	  <hbox align="center">
