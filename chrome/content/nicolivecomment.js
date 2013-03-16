@@ -1,4 +1,4 @@
-//Components.utils.import("resource://nicolivehelpermodules/sharedobject.jsm");
+Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.jsm");
 
 /**
  * コメント
@@ -110,7 +110,8 @@ var NicoLiveComment = {
 
 	// コメント日時のセル
 	td = tr.insertCell(tr.cells.length);
-	td.textContent = GetDateString(comment.date*1000);
+	//td.textContent = GetDateString(comment.date*1000);
+	td.textContent = GetFormattedDateString("%H:%M:%S",comment.date*1000);
 
 	this.autoKotehan( comment, target_room );
     },
@@ -139,6 +140,51 @@ var NicoLiveComment = {
     revertArenaComment: function(){
 	for( let i=0, comment; comment=this.commentlog[i]; i++ ){
 	    this.addComment( comment, ARENA );
+	}
+    },
+
+    // コメントリフレクションを行う.
+    /**
+     * リフレクションを行う.
+     * @param comment コメント
+     */
+    reflection:function(comment){
+	if( !IsCaster() ) return;
+	if( comment.date<NicoLiveHelper.connecttime ) return;
+
+	let name,disptype,color;
+	if(NicoLiveCommentReflector[comment.user_id]){
+	    name = NicoLiveCommentReflector[comment.user_id].name;
+	    disptype = NicoLiveCommentReflector[comment.user_id].disptype;
+	    color = NicoLiveCommentReflector[comment.user_id].color;
+	}else{
+	    return;
+	}
+	let str;
+	switch(disptype){
+	case 0:
+	    str = name+":<br>"+comment.text;
+	    name = null;
+	    break;
+	case 1:// 運営コメ欄左上に名前.
+	    //str = '　' + comment.text + '　';
+	    str = '\u200b' + comment.text;
+	    break;
+	case 2:
+	    // BSP
+	    str = "/press show "+color+" \""+comment.text+"\" \""+name+"\"";
+	    name = null;
+	    break;
+	}
+	str = str.replace(/{=/g,'{-');
+	if( disptype==2 ){
+	    // BSPコメ
+	    NicoLiveHelper.postCasterComment(str, "", name);
+	}else{
+	    let func = function(){
+		NicoLiveHelper.postCasterComment(str, comment.mail, name, COMMENT_MSG_TYPE_NORMAL);
+	    };
+	    NicoLiveHelper.clearCasterCommentAndRun(func);
 	}
     },
 
@@ -431,6 +477,144 @@ var NicoLiveComment = {
 	this.updateCommentsBackgroundColor(userid, color);
     },
 
+    // コメントリフレクタから削除する.
+    removeFromCommentReflector:function(userid,name){
+	let user = evaluateXPath(document,"//*[@comment-reflector='"+userid+"']");
+	delete NicoLiveCommentReflector[userid];
+	RemoveElement(user[0]);
+	ShowNotice( LoadFormattedString('STR_OK_RELEASE_REFLECTION',[name,userid]) );
+
+	// %Sさん　運営コメント:OFF
+	let str = LoadFormattedString("STR_TURN_OFF_REFLECTION",[name]);
+	NicoLiveHelper.postCasterComment(str,"");
+    },
+
+    /**
+     * コメントリフレクション登録を行う.
+     * @param userid ユーザーID
+     * @param name 名前
+     * @param disptype 表示方法
+     * @param addnguser NGユーザーに登録するか(指定しても無効)
+     * @param color 色
+     * @param nodisp 登録結果の通知をしない場合true
+     */
+    addCommentReflectorCore:function(userid,name,disptype,addnguser,color, nodisp){
+	addnguser = false;
+	if(name && name.length){
+	    let user = evaluateXPath(document,"//*[@comment-reflector='"+userid+"']");
+	    NicoLiveCommentReflector[userid] = {"name":name, "disptype":disptype, "color":color };
+	    if(user.length==0){
+		// ここからリフレクション解除メニューの追加.
+		let menuitem = CreateMenuItem( LoadFormattedString('STR_MENU_RELEASE_REFLECTION',[name]), userid);
+		menuitem.setAttribute("comment-reflector",userid);
+		menuitem.setAttribute("comment-name",name);
+		menuitem.setAttribute("tooltiptext","ID="+userid);
+		menuitem.setAttribute("oncommand","NicoLiveComment.removeFromCommentReflector('"+userid+"','"+name+"');");
+		$('popup-comment-user').insertBefore(menuitem,$('id-release-reflection'));
+		// ここまで
+	    }else{
+		user[0].setAttribute('label',LoadFormattedString('STR_MENU_RELEASE_REFLECTION',[name]));
+	    }
+	    if( !nodisp ){
+		ShowNotice( LoadFormattedString('STR_OK_REGISTER_REFRECTION',[userid,name]) );
+	    }
+	    /*
+	    if( addnguser ){
+		debugprint(userid+'をNGユーザに追加します');
+		this.addNGUser(userid);
+	    }
+	     */
+	    return true;
+	}
+	return false;
+    },
+
+    /**
+     * リフレクション登録ダイアログを表示する.
+     * @param userid ユーザーID
+     * @param comment_no コメント番号
+     * @param defstring デフォルト名
+     */
+    showCommentReflectorDialog:function(userid, comment_no, defstring){
+	if( ! IsCaster() ) return;
+	if( !userid ) return;
+	if( !defstring ) defstring = "★";
+	let param = {
+	    "info": LoadFormattedString("STR_TEXT_REGISTER_REFLECTION",[userid]),
+	    "default": defstring,
+	    "disptype": 0,
+	    "color": "white"
+	};
+	let f = "chrome,dialog,centerscreen,modal";
+	if( NicoLiveCommentReflector[userid] ){
+	    param['default'] = NicoLiveCommentReflector[userid].name;
+	}
+	window.openDialog("chrome://nicolivehelperadvance/content/reg_commentreflector.xul","reflector",f,param);
+	let name = param['default'];
+	let disptype = param['disptype'];
+	let color = param['color'];
+
+	if(this.addCommentReflectorCore(userid, name, disptype, param.addnguser, color )){
+	    // >>%S %Sさん　運営コメント:ON
+	    let str;
+	    if( !comment_no ) comment_no = "";
+	    if( disptype==2 ){
+		// BSP
+		str = LoadFormattedString("STR_TURN_ON_REFLECTION_BSP",[comment_no, name]);
+	    }else{
+		str = LoadFormattedString("STR_TURN_ON_REFLECTION",[comment_no, name]);
+	    }
+	    NicoLiveHelper.postCasterComment(str,"");
+	}
+    },
+
+    /**
+     * コメントリフレクション登録.
+     * @param node メニューがポップアップしたノード
+     */
+    addCommentReflector:function(node){
+	let userid = node.getAttribute('user_id');
+	let comment_no = node.getAttribute('comment_no');
+	this.showCommentReflectorDialog(userid, comment_no);
+    },
+    /**
+     * コメント番号を指定してコメントリフレクション登録する.
+     * @param comment_no コメント番号
+     */
+    addReflectionFromCommentNo:function(comment_no){
+	if(comment_no<=0) return;
+	for(let i=0;i<this.commentlog.length;i++){
+	    if( this.commentlog[i].no == comment_no ){
+		this.showCommentReflectorDialog( this.commentlog[i].user_id, comment_no);
+	    }
+	}
+    },
+
+    /**
+     * コメントリフレクション登録を全て解放する.
+     */
+    releaseReflector:function(){
+	// コメント反射を全解放.
+	let cnt=0;
+	for (u in NicoLiveCommentReflector){
+	    // %Sさん　運営コメント:OFF
+	    let name = NicoLiveCommentReflector[u].name;
+	    let str = LoadFormattedString("STR_TURN_OFF_REFLECTION",[name]);
+	    NicoLiveHelper.postCasterComment(str,"");
+	    cnt++;
+	    delete NicoLiveCommentReflector[u];
+	}
+
+	try{
+	    if(cnt) ShowNotice( LoadString('STR_OK_ALL_RELEASE_REFLECTION') );
+	    let users = evaluateXPath(document,"//*[@comment-reflector]");
+	    for(let i=0,user;user=users[i];i++){
+		RemoveElement(user);
+	    }
+	} catch (x) {
+	}
+    },
+
     /**
      * コメントをコピーする.
      * @param elem コメントの格納されている要素
@@ -576,6 +760,19 @@ var NicoLiveComment = {
 	$('textbox-comment').setAttribute("autocompletesearchparam",JSON.stringify(concat_autocomplete));
     },
 
+    /**
+     * コメントリフレクターの登録状況を復元する.
+     */
+    initReflector:function(){
+	for (u in NicoLiveCommentReflector){
+	    // %Sさん　運営コメント:OFF
+	    let name = NicoLiveCommentReflector[u].name;
+	    let disptype = NicoLiveCommentReflector[u].disptype;
+	    let color = NicoLiveCommentReflector[u].color;
+	    this.addCommentReflectorCore( u, name, disptype, false, color, true ); // nodisp=true
+	}
+    },
+
     init: function(){
 	debugprint("NicoLiveComment.init");
 	this.comment_table = $('comment-table');
@@ -590,6 +787,9 @@ var NicoLiveComment = {
 
 	this.autocomplete = Storage.readObject("nico_live_autocomplete",[]);
 	this.loadPresetAutocomplete();
+
+	// コメントリフレクターの登録状況復帰.
+	this.initReflector();
     },
     destroy: function(){
 	Storage.writeObject( "nico_namemap", this.namemap );

@@ -66,6 +66,23 @@ function MergeSimpleObject(a,b)
     return a;
 }
 
+/**
+ * 生主ならtrueを返す
+ */
+function IsCaster()
+{
+    return NicoLiveHelper.iscaster;
+}
+
+/**
+ * 生放送に接続しているかどうかを返す
+ * @return オフラインならtrueを返す
+ */
+function IsOffline()
+{
+    return NicoLiveHelper.liveinfo.request_id=='lv0';
+}
+
 var LibUserSessionCookie = "";
 var LibUserAgent = "";
 function SetUserAgent(s)
@@ -171,10 +188,18 @@ function CreateHTMLElement(part){
     return elem;
 }
 
+/**
+ * 指定の要素を削除する.
+ * @param elem 削除したい要素
+ */
 function RemoveElement(elem){
     elem.parentNode.removeChild(elem);
 }
 
+/**
+ * 指定の要素の子要素を全削除する.
+ * @param elem 対象の要素
+ */
 function RemoveChildren(elem){
     while(elem.hasChildNodes()) { 
 	elem.removeChild(elem.childNodes[0]);
@@ -300,7 +325,10 @@ function InputPromptWithCheck(text,caption,input,checktext){
     }
 }
 
-/** Javascriptオブジェクトをファイルに保存する.
+/**
+ *  Javascriptオブジェクトをファイルに保存する.
+ * @param obj Javascriptオブジェクト
+ * @param caption ファイル保存ダイアログに表示するキャプション
  */
 function SaveObjectToFile(obj,caption)
 {
@@ -321,7 +349,9 @@ function SaveObjectToFile(obj,caption)
     }
 }
 
-/** ファイルからJavascriptオブジェクトを読み込む.
+/**
+ *  ファイルからJavascriptオブジェクトを読み込む.
+ * @param caption ファイル読み込みダイアログに表示するキャプション
  */
 function LoadObjectFromFile(caption)
 {
@@ -346,13 +376,23 @@ function LoadObjectFromFile(caption)
 	} while(hasmore);
 	istream.close();
 
-	let obj = JSON.parse(str);
-	return obj;
+	try{
+	    let obj = JSON.parse(str);
+	    return obj;
+	} catch (x) {
+	    debugprint(x);
+	    return null;
+	}
     }
     return null;
 }
 
 
+/**
+ * 指定タグを持つ親要素を探す.
+ * @param elem 検索の起点となる要素
+ * @param tag 親要素で探したいタグ名
+ */
 function FindParentElement(elem,tag){
     //debugprint("Element:"+elem+" Tag:"+tag);
     while(elem.parentNode &&
@@ -378,6 +418,10 @@ function WindowEnumerator(){
     return windowlist;
 }
 
+/**
+ * クリップボードにテキストをコピーする.
+ * @param str コピーする文字列
+ */
 function CopyToClipboard(str){
     if(str.length<=0) return;
     let gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"].  
@@ -470,6 +514,11 @@ function ShowPopupNotification(imageURL,title,text,request_id){
     }
 }
 
+/**
+ * ウィンドウを最前面に持ってくる.
+ * @param w ウィンドウ
+ * @param b 最前面に持ってくるかどうか
+ */
 function SetWindowTopMost(w,b){
     let Ci = Components.interfaces;
     let XULWindow = w

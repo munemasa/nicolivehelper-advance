@@ -20,7 +20,7 @@ var NicoLiveHelper = {
     iscaster: false,    // 主かどうか
     post_token: "",     // 主コメ用のトークン
 
-    connecttime: 0,     // コメントサーバーへの接続時刻
+    connecttime: 0,     // 現在表示しているコメントサーバーへの接続時刻
     currentRoom: ARENA,
     connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
     lastReceived: [],   // 最後に受信した時刻
@@ -2009,8 +2009,8 @@ var NicoLiveHelper = {
 	    // 視聴者コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
 	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
-
 	    this.processListenersComment(chat);
+	    NicoLiveComment.reflection( chat );
 	    break;
 	}
     },

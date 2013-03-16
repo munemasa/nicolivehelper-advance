@@ -755,10 +755,10 @@
 	</menupopup>
       </menu>
       <menuitem label="&comment.menu_reflection;" tooltiptext="&comment.tooltip_reflection;"
-		oncommand="TODO; NicoLiveComment.addCommentReflector($('popup-comment-user').triggerNode);"/>
+		oncommand="NicoLiveComment.addCommentReflector($('popup-comment-user').triggerNode);"/>
       <menuseparator/>
       <menuitem id="id-release-reflection" label="&comment.menu_release_reflection_all;"
-		oncommand="TODO; NicoLiveComment.releaseReflector();"/>
+		oncommand="NicoLiveComment.releaseReflector();"/>
     </menupopup>
 
     <!-- コメント用ポップアップ -->

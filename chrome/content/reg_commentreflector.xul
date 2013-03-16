@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/commonDialog.css" type="text/css"?>
+
+
+<!DOCTYPE dialog SYSTEM "chrome://nicolivehelper/locale/nicolivehelper.dtd">
+
+<dialog id="commentreflector"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	title="&comment.reflector.title;"
+	buttons="accept,cancel"
+	onload="init();"
+	ondialogaccept="return retval();" ondialogcancel="window.arguments[0].default=null; return true;">
+
+  <script>
+  <![CDATA[
+function init(){
+    //Application.console.log(window.arguments[0].info);
+    document.getElementById('info.body').appendChild(document.createTextNode(window.arguments[0].info));
+    document.getElementById('input-name').value = window.arguments[0].default;
+}
+
+function retval()
+{
+    window.arguments[0].default = document.getElementById('input-name').value;
+    window.arguments[0].disptype = document.getElementById('name-select-radio').selectedIndex;
+    window.arguments[0].addnguser = document.getElementById('add-nglist').checked;
+    window.arguments[0].color = document.getElementById('bsp-name-color').selectedItem.value;
+    return true;
+}
+  ]]>
+  </script>
+
+  <grid style="margin-bottom: 1em;">
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row>
+	<hbox align="center">
+	  <image id="info.icon" class="spaced question-icon"/>
+	</hbox>
+	<hbox align="center">
+	  <description id="info.body" noinitialfocus="true"></description>
+	</hbox>
+      </row>
+      <row align="center">
+	<label value=""/>
+	<textbox id="input-name"/>
+      </row>
+      <row>
+	<label value=""/>
+	<radiogroup id="name-select-radio">
+	  <radio id="name-included" persist="selected" label="運営コメントに名前を含めて表示" tooltiptext="運営コメントに名前を含めます"/>
+	  <radio id="name-attribute" persist="selected" label="運営コメント欄の四隅にある名前表示欄に表示" tooltiptext="運営コメント表示欄の四隅にある名前表示欄を利用して名前を表示します"/>
+	  <radio id="name-bsp" persist="selected" label="バックステージパスコメントを使用して表示"/>
+	</radiogroup>
+      </row>
+      <row column="3">
+	<label value=""/>
+	<hbox align="center">
+	  <label value="BSPコメント使用時の背景色"/>
+	  <menulist id="bsp-name-color">
+	    <menupopup>
+	      <menuitem value="green" label="green"/>
+	      <menuitem value="white" label="white"/>
+	      <menuitem value="niconicowhite" label="niconicowhite"/>
+	      <menuitem value="red" label="red"/>
+	      <menuitem value="blue" label="blue"/>
+	      <menuitem value="cyan" label="cyan"/>
+	      <menuitem value="yellow" label="yellow"/>
+	      <menuitem value="purple" label="purple"/>
+	      <menuitem value="pink" label="pink"/>
+	      <menuitem value="orange" label="orange"/>
+	    </menupopup>
+	  </menulist>
+	</hbox>
+      </row>
+
+      <row>
+	<label value=""/>
+	<checkbox style="display:none;" persist="checked" id="add-nglist" label="NGユーザ登録を行う(現在はチェックしてもNG登録されません)"/>
+      </row>
+
+    </rows>
+
+  </grid>
+</dialog>
