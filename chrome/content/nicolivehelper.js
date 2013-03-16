@@ -712,6 +712,19 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 直前の運営コメントを消去してから運営コメントをする.
+     * @param comment コメント
+     * @param mail コマンド
+     * @param name 名前
+     */
+    postCasterCommentWithClear: function(comment,mail,name){
+	let func = function(){
+	    NicoLiveHelper.postCasterComment(comment, mail, name, COMMENT_MSG_TYPE_NORMAL);
+	};
+	NicoLiveHelper.clearCasterCommentAndRun(func);
+    },
+
+    /**
      * BSPコメントをする.
      * @param comment コメント
      * @param name 名前

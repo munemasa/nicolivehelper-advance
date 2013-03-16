@@ -181,10 +181,7 @@ var NicoLiveComment = {
 	    // BSPコメ
 	    NicoLiveHelper.postCasterComment(str, "", name);
 	}else{
-	    let func = function(){
-		NicoLiveHelper.postCasterComment(str, comment.mail, name, COMMENT_MSG_TYPE_NORMAL);
-	    };
-	    NicoLiveHelper.clearCasterCommentAndRun(func);
+	    NicoLiveHelper.postCasterCommentWithClear(str, comment.mail, name);
 	}
     },
 
