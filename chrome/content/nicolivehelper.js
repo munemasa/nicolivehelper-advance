@@ -2006,6 +2006,7 @@ var NicoLiveHelper = {
 	    return;
 	}
 	NicoLiveComment.addComment( chat, target_room );
+	NicoLiveTalker.talkComment( chat );
 
 	switch(chat.premium){
 	case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ

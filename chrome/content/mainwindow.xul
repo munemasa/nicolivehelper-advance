@@ -226,13 +226,13 @@
       <tab id="tabs-reject" label="&tab.reject;" linkedpanel="tab-reject"/>
       <tab id="tabs-playlist" label="&tab.playlist;" linkedpanel="tab-playlist"/>
       <tab id="tabs-comment" label="&tab.comment;" linkedpanel="tab-comment"/>
-      <tab id="tabs-talk" label="&tab.talk;" linkedpanel="tab-talk"/>
+<!--      <tab id="tabs-talk" label="&tab.talk;" linkedpanel="tab-talk"/> -->
       <tab id="tabs-db" label="&tab.database;" linkedpanel="tab-database"/>
       <tab id="tabs-controlpanel" label="&tab.controlpanel;" linkedpanel="tab-controlpanel"/>
       <tab id="tabs-debug" label="&tab.debug;" linkedpanel="tab-debug"/>
     </tabs>
 
-    <tabpanels flex="1">
+    <tabpanels id="tabpanels" flex="1">
 
       <!-- request tab -->
       <vbox id="tab-request">
@@ -500,9 +500,11 @@
 	</arrowscrollbox>
       </vbox>
       
+<!--
       <vbox id="tab-talk">
 	<label value="Speech"/>
       </vbox>
+-->
 
       <vbox id="tab-database">
 	<label value="Database"/>
