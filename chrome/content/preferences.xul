@@ -149,6 +149,9 @@
 	    <caption>
 	      <checkbox preference="pref-save-comment" label="コメントログをファイルに保存する" tooltiptext="コメントをファイルに保存します。保存先は必ず指定してください。"/>
 	    </caption>
+	    <description>
+	      最初に接続したコメントの部屋のログのみ保存されます。
+	    </description>
 	    <hbox>
 	      <hbox align="center">
 		<label control="commentlog" value="コメントログ保存先:"/>
