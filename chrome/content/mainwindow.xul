@@ -185,6 +185,7 @@
 	<toolbarbutton image="chrome://nicolivehelperadvance/content/data/window-list.png" label="" type="menu">
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
+	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
 	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>
