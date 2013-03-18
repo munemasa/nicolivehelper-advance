@@ -133,8 +133,7 @@ var NicoLiveStock = {
 	if( !table ) return;
 	this._addStockView( table, videoinfo );
 
-	let t = NicoLiveHelper.getTotalStockTime();
-	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.stock_list.length]);
+	this.updateRemain();
     },
 
     /**
@@ -203,8 +202,7 @@ var NicoLiveStock = {
 	RemoveElement( tr );
 	this.resetStockIndex();
 
-	let t = NicoLiveHelper.getTotalStockTime();
-	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.stock_list.length]);
+	this.updateRemain();
     },
 
     swapStock: function( n1, n2 ){
@@ -273,7 +271,7 @@ var NicoLiveStock = {
 	debugprint("Turn off played status: "+ video_id );
 	NicoLiveHelper.turnoffPlayedStatus(video_id);
 	this.updatePlayedStatus( NicoLiveHelper.stock_list );
-	this.updateRemain( NicoLiveHelper.stock_list );
+	this.updateRemain();
     },
 
     /**
@@ -317,6 +315,7 @@ var NicoLiveStock = {
      * @param requestqueue ストック
      */
     updateRemain:function (requestqueue) {
+	let requestqueue = NicoLiveHelper.stock_list;
         let t = NicoLiveHelper.getTotalStockTime();
 
         let n = 0;
@@ -339,7 +338,7 @@ var NicoLiveStock = {
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addStockView( table, item );
 	}
-        this.updateRemain(requestqueue);
+        this.updateRemain();
     },
 
     /**
