@@ -601,7 +601,7 @@
 
   <!-- ポップアップメニュー -->
   <popupset>
-    <!-- リクエスト用ポップアップ -->
+    <!-- リクエスト用ポップアップ request -->
     <menupopup id="popup-request" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 0);">
       <hbox>
 	<label id="menu-request-video-id" value="動画ID" style="padding-left:2em;"/>
@@ -652,7 +652,7 @@
       <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-request').triggerNode);"/>
     </menupopup>
 
-    <!-- ストック用のポップアップメニュー -->
+    <!-- ストック用のポップアップメニュー stock -->
     <menupopup id="popup-stock" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 1);">
       <hbox>
 	<label id="menu-stock-video-id" value="動画ID" style="padding-left:2em;"/>
@@ -698,6 +698,8 @@
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"/>
 
+      <menuitem label="&menu.turnoff_playedflag;" oncommand="NicoLiveStock.turnoffPlayedStatus($('popup-stock').triggerNode);"/>
+
       <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
       <menuseparator/>
       <menuitem label="&menu.stock_savefile;" oncommand="NicoLiveStock.saveStockToFile();"/>
@@ -707,7 +709,7 @@
       <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-stock').triggerNode);"/>
     </menupopup>
 
-    <!-- 再生履歴用ポップアップ -->
+    <!-- 再生履歴用ポップアップ playlist history -->
     <menupopup id="popup-playlist" onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.setVideoIdToMenu(this.triggerNode, 2);">
       <hbox>
 	<label id="menu-playlist-video-id" value="動画ID" style="padding-left:2em;"/>
@@ -732,7 +734,7 @@
       <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-playlist').triggerNode);"/>
     </menupopup>
 
-    <!-- コメントビューの名前・ID欄のところ -->
+    <!-- コメントビューの名前・ID欄のところ comment -->
     <menupopup id="popup-comment-user" onpopupshowing="NicoLiveComment.showPopupMenuForID( this.triggerNode );">
       <hbox>
 <!--	<menuseparator/> -->

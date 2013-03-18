@@ -280,9 +280,11 @@ var NicoLiveMylist = {
 	    }
 	}else{
 	    let elem = FindParentElement(triggernode,'vbox');
-	    let video_id = elem.getAttribute('nicovideo_id'); // 動画IDを取れる.
-	    videoinfo = new Object();
-	    videoinfo.video_id = video_id;
+	    if( elem ){
+		let video_id = elem.getAttribute('nicovideo_id'); // 動画IDを取れる.
+		videoinfo = new Object();
+		videoinfo.video_id = video_id;
+	    }
 	}
 
 	if( videoinfo ){

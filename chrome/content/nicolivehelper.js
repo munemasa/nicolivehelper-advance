@@ -1644,6 +1644,19 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ストックの再生済みステータスを解除する.
+     * @param video_id 動画ID
+     */
+    turnoffPlayedStatus:function(video_id){
+	delete this.playlist_list["_"+video_id];
+	for(let i=0,item; item=this.stock_list[i];i++){
+	    if(item.video_id==video_id){
+		item.is_played = false;
+	    }
+	}
+    },
+
+    /**
      * メモリ上から動画情報を探して返す.
      * @param video_id 動画ID
      */

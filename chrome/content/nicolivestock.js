@@ -261,6 +261,18 @@ var NicoLiveStock = {
 	}
     },
 
+    /**
+     * ストックの再生済み状態をOFFにする.
+     * @param node メニューがポップアップしたノード
+     */
+    turnoffPlayedStatus:function(node){
+	let elem = FindParentElement(node,'vbox');
+	let video_id = elem.getAttribute('nicovideo_id');
+	debugprint("Turn off played status: "+ video_id );
+	NicoLiveHelper.turnoffPlayedStatus(video_id);
+	this.updatePlayedStatus( NicoLiveHelper.stock_list );
+    },
+
 
     /**
      * リクエストの番号表記と背景色を1から付け直す。
