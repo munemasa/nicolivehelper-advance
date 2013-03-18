@@ -63,7 +63,7 @@
 <!ENTITY toolbar.clearcomment "運営コメントを消す">
 <!ENTITY toolbar.tooltip_clearcomment "/cls 運営コメント欄に表示されているコメントを消去します。">
 <!ENTITY toolbar.downloadjson "JSONファイルダウンロード">
-<!ENTITY toolbar.connect "放送ID(lvXXXXX)を入力して接続">
+<!ENTITY toolbar.connect "放送IDを入力して接続">
 <!ENTITY toolbar.beginbroadcasting "放送開始">
 <!ENTITY toolbar.tooltip_beginbroadcasting "配信開始します。ニコ生アラート等で配信開始されたことを確認してください。">
 <!ENTITY toolbar.forcecastermode "強制生主モード">
@@ -72,7 +72,7 @@
 <!ENTITY toolbar.clear.req.queue.help "急にリクエストを受け付けなくなった場合、処理中のリクエストを全て破棄します。">
 <!ENTITY toolbar.forget_learning "分類エンジンの学習情報を初期化">
 <!ENTITY toolbar.resize_window_default "ウィンドウサイズを初期状態に戻す">
-<!ENTITY toolbar.open_preference "設定">
+<!ENTITY toolbar.open_preference "オプション">
 <!ENTITY toolbar.nextlive "次枠を自動取得">
 <!ENTITY toolbar.nextlive_manually "次枠へ">
 <!ENTITY toolbar.live_extend "放送時間延長">

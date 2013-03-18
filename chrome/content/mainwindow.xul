@@ -144,11 +144,11 @@
 		       id="do-subdisplay" autoCheck="true" type="checkbox" tooltiptext="&play.tooltip_subdisplay;"
 		       oncommand="NicoLiveHelper.setPlayTarget(this.checked);"/>
 
-	<toolbarbutton label="&toolbar.command;" type="menu">
+	<toolbarbutton label="ツール" type="menu">
 	  <menupopup>
 <!--	    <menuitem label="test" oncommand="test();"/> -->
 	    
-	    <menuitem label="&toolbar.connect;" oncommand="CommandMenu.openBroadcasting();"/>
+	    <menuitem label="&toolbar.connect;" accesskey="C" oncommand="CommandMenu.openBroadcasting();"/>
 	    <menuitem label="&toolbar.beginbroadcasting;"
 		      tooltiptext="&toolbar.tooltip_beginbroadcasting;"
 		      oncommand="NicoLiveHelper.startBroadcasting();"/>
@@ -178,14 +178,16 @@
 		      oncommand="NicoLiveHelper.postCasterComment('/vote showresult','');"/>
 	    <menuitem label="&toolbar.votestop;" tooltiptext="&toolbar.tooltip_votestop;"
 		      oncommand="NicoLiveHelper.postCasterComment('/vote stop','');"/>
+	    <menuseparator/>
+	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
+	    <menuseparator/>
+	    <menuitem label="&toolbar.open_preference;" accesskey="O" oncommand="OpenSettingsDialog();"/>
 	  </menupopup>
 	</toolbarbutton>
-	<toolbarbutton label="&toolbar.open_preference;" oncommand="OpenSettingsDialog();"/>
 	<toolbarspacer flex="1"/>
 	<toolbarbutton image="chrome://nicolivehelperadvance/content/data/window-list.png" label="" type="menu">
 	  <menupopup id="popup-windowlist" onpopupshowing="">
 	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
-	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
 	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>
