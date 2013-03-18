@@ -182,10 +182,12 @@ var NicoLiveStock = {
 
 	debugprint("Play Stock: #"+n);
 	NicoLiveHelper.playStock(n);
-
-	let tr = evaluateXPath(document,"//html:table[@id='stock-table']//html:tr")[n];
-	tr.className = "table_played";
-	//this.resetStockIndex(); // いらないはず
+	try{
+	    let tr = evaluateXPath(document,"//html:table[@id='stock-table']//html:tr")[n];
+	    tr.className = "table_played";
+	} catch (x) {
+	}
+	this.updateRemain();
     },
 
     /**
@@ -271,8 +273,8 @@ var NicoLiveStock = {
 	debugprint("Turn off played status: "+ video_id );
 	NicoLiveHelper.turnoffPlayedStatus(video_id);
 	this.updatePlayedStatus( NicoLiveHelper.stock_list );
+	this.updateRemain( NicoLiveHelper.stock_list );
     },
-
 
     /**
      * リクエストの番号表記と背景色を1から付け直す。
@@ -311,6 +313,22 @@ var NicoLiveStock = {
     },
 
     /**
+     * ストックの残り表示を更新する.
+     * @param requestqueue ストック
+     */
+    updateRemain:function (requestqueue) {
+        let t = NicoLiveHelper.getTotalStockTime();
+
+        let n = 0;
+        requestqueue.forEach(function (item) {
+            if (item.is_played) n++;
+        });
+
+        n = requestqueue.length - n;
+        $('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST', [t.min, t.sec, n]);
+    },
+
+    /**
      * ストック表示を全更新する.
      */
     updateView: function( requestqueue ){
@@ -321,16 +339,7 @@ var NicoLiveStock = {
 	for(let i=0,item;item=requestqueue[i];i++){
 	    this._addStockView( table, item );
 	}
-
-	let t = NicoLiveHelper.getTotalStockTime();
-
-	let n = 0;
-	requestqueue.forEach( function(item){
-				  if(item.is_played) n++;
-			      });
-
-	n = requestqueue.length-n;
-	$('stock-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, n]);
+        this.updateRemain(requestqueue);
     },
 
     /**
