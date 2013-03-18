@@ -4,40 +4,43 @@
 	 xmlns:html="http://www.w3.org/1999/xhtml">
 
   <script type="application/javascript;version=1.7"
-	  src="chrome://nicolivehelperadvance/content/libs.js" />
-  <script type="application/javascript;version=1.7"
 	  src="chrome://nlhadv_commenttalker/content/nicolivetalker.js" />
 
   <tabs id="maintabs">
-    <tab id="tabs-comment-talker" insertafter="tabs-db" label="棒読みちゃん" linkedpanel="tab-comment-talker"/>
+    <tab id="tabs-comment-talker" insertafter="tabs-db" label="読み上げ" linkedpanel="tab-comment-talker"/>
   </tabs>
 
   <tabpanels id="tabpanels">
     <vbox id="tab-comment-talker" insertafter="tab-database">
       <hbox align="center">
 	<checkbox id="enable-comment-talker" label="コメント読み上げを行う"/>
-	<html:a onclick="NicoLiveWindow.openDefaultBrowser('http://chi.usamimi.info/Program/Application/BouyomiChan/',true);">棒読みちゃん</html:a>
-	<textbox flex="1" id="nlhaddon-testbox"/>
+	<textbox flex="1" emptytext="テストで読み上げるテキストを入力してください" id="nlhaddon-testbox"/>
 	<button label="Test" oncommand="NicoLiveTalker.test();"/>
       </hbox>
 
-      <groupbox style="">
+      <groupbox style="margin:0;">
 	<caption label="設定"/>
-	<hbox><checkbox persist="checked" id="nlhaddon-read-castercomment" label="運営コメントを読み上げる"/></hbox>
-	<hbox><checkbox persist="checked" id="nlhaddon-dontread-leadingslash" label="/で始まるコメントを読み上げない"/></hbox>
-      <hbox align="center"><textbox id="nlhaddon-restrictlength" type="number" min="0" max="999" size="3"/><label value="文字以上のコメントは読み上げない(0:制限なし)"/></hbox>
+	<hbox>
+	  <checkbox persist="checked" id="nlhaddon-read-castercomment" label="運営コメントを読み上げる"/>
+	  <checkbox persist="checked" id="nlhaddon-dontread-leadingslash" label="/で始まるコメントを読み上げない"/>
+	</hbox>
+	<hbox align="center">
+	  <textbox id="nlhaddon-restrictlength" type="number" min="0" max="999" size="3"/><label value="文字以上のコメントは読み上げない(0:制限なし)"/>
+	</hbox>
 
-      <hbox align="center">
-	<label value="読み上げフォーマット:"/><textbox flex="1" id="nlhaddon-format" value="{comment} {name}"/>
-      </hbox>
-
-      <hbox><checkbox persist="checked" id="nlhaddon-use-external" label="外部プログラムを使用する(棒読みちゃんを使用しない)"/></hbox>
-      <hbox align="center">
-	<label value="外部プログラム:"/><textbox flex="1" id="nlhaddon-external-program" value="vrx.exe"/>
-	<button label="選択..." oncommand="NicoLiveTalker.selectExternalProgram();"/>
-      </hbox>
+	<hbox align="center">
+	  <label value="読み上げフォーマット:"/><textbox flex="1" id="nlhaddon-format" value="{comment} {name}"/>
+	</hbox>
+	
+	<hbox><checkbox persist="checked" id="nlhaddon-use-external" label="外部プログラムを使用する(棒読みちゃんを使用しない)"/></hbox>
+	<hbox align="center">
+	  <label value="外部プログラム:"/><textbox flex="1" id="nlhaddon-external-program" value="vrx.exe"/>
+	  <button label="選択..." oncommand="NicoLiveTalker.selectExternalProgram();"/>
+	</hbox>
       </groupbox>
-
+      <hbox>
+	<html:a onclick="NicoLiveWindow.openDefaultBrowser('http://chi.usamimi.info/Program/Application/BouyomiChan/',true);">棒読みちゃん</html:a>
+      </hbox>
     </vbox>
   </tabpanels>
 

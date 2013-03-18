@@ -14,6 +14,28 @@ var NicoLiveStock = {
 
 
     /**
+     * 再生済みステータスの表示更新.
+     * @param q ストック
+     */
+    updatePlayedStatus: function( q ){
+	let rows = $('stock-table').getElementsByTagName('html:tr');
+	for(let i=0,item; item=q[i]; i++){
+	    let tr = rows[i];
+	    switch( item.errno ){
+	    case REASON_NO_LIVE_PLAY:
+		tr.className = "table_played no_live_play";
+		break;
+	    default:
+		tr.className = "table_casterselection";
+		if ( item.is_played ){
+		    tr.className = "table_played";
+		}
+		break;
+	    }
+	}
+    },
+
+    /**
      * リクエストリストに一個追加する
      */
     _addStockView:function(table,item){

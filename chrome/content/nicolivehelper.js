@@ -405,7 +405,7 @@ var NicoLiveHelper = {
 
     /**
      * 現在再生している動画情報を返す
-     * @param n メインかサブかのターゲット指定。なければ現在の再生ターゲット。
+     * @param n メインかサブかのターゲット指定。指定がなければ現在の再生ターゲット。
      */
     getCurrentVideoInfo: function(n){
 	try{
@@ -1634,6 +1634,12 @@ var NicoLiveHelper = {
 	$('playlist-textbox').value = '';
 	this.playlist_list = new Array();
 	NicoLiveHistory.updateView( this.playlist_list );
+
+	for( let i=0,item; item=this.stock_list[i]; i++ ){
+	    item.is_played = false;
+	}
+	NicoLiveStock.updatePlayedStatus( this.stock_list );
+
 	this.savePlaylist();
     },
 
@@ -1657,9 +1663,10 @@ var NicoLiveHelper = {
 
     /**
      * 動画情報を送信開始する.
-     * @param videoinfo 動画情報(現在は未使用)
+     * @param videoinfo 動画情報(現在は未使用) 指定しないと現在の再生動画にする
      */
     sendVideoInfo: function(videoinfo){
+	if( !videoinfo ) videoinfo = this.getCurrentVideoInfo();
 	let func = function(){
 	    clearInterval( NicoLiveHelper._sendvideoinfo_timer );
 
@@ -2236,6 +2243,7 @@ var NicoLiveHelper = {
 
     /**
      * コメントサーバー(アリーナ)接続前処理
+     * @param request_id 放送ID
      */
     preprocessConnectServer: function(request_id){
 	let dataListener = {
@@ -2282,9 +2290,7 @@ var NicoLiveHelper = {
 	try{
 	    // コメントのバックログ取得数
 	    lines = Config.comment.backlogs * -1;
-	} catch (x) {
-	    lines = -100;
-	}
+	} catch (x) { lines = -100; }
 
 	this.initLiveUpdateTimers();
 
@@ -2299,27 +2305,27 @@ var NicoLiveHelper = {
 		lines
 	    );
 	    this.connectioninfo[ARENA] = tmp;
-
 	    $('id-select-comment-room').disabled = true;
 	    // リスナーの場合はここで終わり
 	    return;
 	}
 
+	// 生主の場合はgetpublishstatusをしてからコメントサーバーに接続する
 	let f = function(xml,req){
 	    if( req.readyState==4 && req.status==200 ){
-		let publishstatus = req.responseXML;
-		NicoLiveHelper.post_token = publishstatus.getElementsByTagName('token')[0].textContent;
-		NicoLiveHelper.liveinfo.start_time = parseInt(publishstatus.getElementsByTagName('start_time')[0].textContent);
-		let tmp = parseInt(publishstatus.getElementsByTagName('end_time')[0].textContent);
+		let xml = req.responseXML;
+		NicoLiveHelper.post_token = xml.getElementsByTagName('token')[0].textContent;
+		NicoLiveHelper.liveinfo.start_time = parseInt(xml.getElementsByTagName('start_time')[0].textContent);
+		let tmp = parseInt(xml.getElementsByTagName('end_time')[0].textContent);
 		if( GetCurrentTime() <= tmp ){
 		    // 取得した終了時刻がより現在より未来指していたら更新.
 		    NicoLiveHelper.liveinfo.end_time = tmp;
 		}else{
 		    // ロスタイム突入
 		}
-		// TODO exclude(排他)は放送開始しているかどうかのフラグ
-		//NicoLiveHelper._exclude = parseInt(publishstatus.getElementsByTagName('exclude')[0].textContent);
-		//debugprint('exclude='+NicoLiveHelper._exclude);
+		// exclude(排他)は放送開始しているかどうかのフラグ
+		NicoLiveHelper._exclude = parseInt(xml.getElementsByTagName('exclude')[0].textContent);
+		debugprint('exclude='+NicoLiveHelper._exclude);
 		debugprint('token='+NicoLiveHelper.post_token);
 		debugprint('starttime='+NicoLiveHelper.liveinfo.start_time);
 		debugprint('endtime='+NicoLiveHelper.liveinfo.end_time);
@@ -2705,9 +2711,9 @@ var NicoLiveHelper = {
 
     /**
      * ステータスバーの表示更新.
+     * @paran now 現在の時刻をUNIXタイムで
      */
-    updateStatusBar: function(){
-	let now = GetCurrentTime();
+    updateStatusBar: function( now ){
 	let liveprogress = now - this.liveinfo.start_time;
 	let liveremain = this.liveinfo.end_time - now;
 
@@ -2802,12 +2808,40 @@ var NicoLiveHelper = {
 	    }, prepare_time );
     },
 
+    /**
+     * 配信状態を確認する.
+     * テストから本放送に切り替わったのを検査するため。
+     * @param p 経過時間
+     */
+    checkForPublishStatus:function (p) {
+        if (this.iscaster && (p % 60) == 0 && this._exclude) {
+            // 配信開始していない間は1分ごとにステータスチェック.
+            let f = function (xml, req) {
+                if (req.readyState == 4 && req.status == 200) {
+                    let xml = req.responseXML;
+                    NicoLiveHelper.liveinfo.start_time = parseInt(xml.getElementsByTagName('start_time')[0].textContent);
+                    NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('end_time')[0].textContent);
+                    // exclude(排他)は放送開始しているかどうかのフラグ
+                    NicoLiveHelper._exclude = parseInt(xml.getElementsByTagName('exclude')[0].textContent);
+                    debugprint('exclude=' + NicoLiveHelper._exclude);
+                    debugprint('token=' + NicoLiveHelper.post_token);
+                    debugprint('starttime=' + NicoLiveHelper.liveinfo.start_time);
+                    debugprint('endtime=' + NicoLiveHelper.liveinfo.end_time);
+                }
+            };
+            NicoApi.getpublishstatus( this.getRequestId(), f);
+        }
+    },
 
     /**
      * 毎秒呼び出される関数.
      */
     update: function(){
-	this.updateStatusBar();
+	let now = GetCurrentTime();
+	let p = now - this.liveinfo.start_time;  // Progress
+
+	this.updateStatusBar( now );
+        this.checkForPublishStatus(p);
     },
 
 
@@ -2851,6 +2885,9 @@ var NicoLiveHelper = {
 
     /**
      * 配列をソートする.
+     * @param queue ソートする配列
+     * @param type ソート方法
+     * @param order 昇順 or 降順
      */
     sortRequestStock:function(queue,type,order){
 	// order:1だと昇順、order:-1だと降順.
