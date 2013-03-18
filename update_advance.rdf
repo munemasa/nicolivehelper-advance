@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBACZcsi+ZW+8Uxr9Grieq7pDVcstYICDaZcgOtJjACh+/fGxrDtsaWzTwwI+mlUs+wJ2rMBGDC9kzRUxlNWXtCQcGJgKYwE06MT2HjWLiNB+l6WCTV7Enegxnse2kyW4AD4h7OzUQTr/FbcLzH13nMsC855Yvf9uvoNPGaSZUY0/p">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$N3pNz">
+    <RDF:li RDF:resource="rdf:#$O3pNz"/>
+  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_0.3.xpi"
-                   em:updateHash="sha1:a71caf4fbd66279e1454907a090a73c8e0db4e71"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_0.4.xpi"
+                   em:updateHash="sha1:40687fad81974457b74188ec6680fe864a1af20a"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAIIwFpV6XiiMovwVLLT8DVWC/fee0q9Fgb5oDyF642cAY//GU788xSB5B55xP+wPryST2rdiwwmXCatyX/4khsecvfbu4xXOzL3PreahkdfAOsgxRpD2KMptt6UyZPrE3YjAF7i3wBqWMyfSlNDVTX9WcAvqB7LvFs412TI3vpBB">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="0.3">
+                   em:version="0.4">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
   </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$N3pNz">
-    <RDF:li RDF:resource="rdf:#$O3pNz"/>
-  </RDF:Seq>
 </RDF:RDF>
