@@ -35,6 +35,7 @@ var NLHPreference = {
     previewTweet:function(elem){
 	let info = {
 	    cno: 99,
+	    comment_no: 99,
 	    tags: ["ミクオリジナル曲","初音ミク","くちばしP","私の時間","VOCALOID殿堂入り","6/17発売「Vocalostar」収録曲","かわいいミクうた","弾幕ソング","職人とみんなの暖かいコメで作る動画"],
 	    video_id: "sm1340413",
 	    title: "初音ミクオリジナル「私の時間」",
@@ -64,7 +65,7 @@ var NLHPreference = {
 
     // 運営コメントプリセット.
     createPresetCommentMenu:function(){
-	this.presetcomment = opener.NicoLiveDatabase.loadGPStorage('nico_live_commentpreset',{});
+	this.presetcomment = opener.Storage.readObject('nico_live_commentpreset',{});
 	for (presetname in this.presetcomment){
 	    let menuitem = CreateMenuItem(presetname,'');
 	    menuitem.addEventListener("command",
@@ -94,6 +95,7 @@ var NLHPreference = {
 	$('pref-msg-lessviews').value = data["lessviews"];
 	$('pref-msg-greaterviews').value = data["greaterviews"];
 	$('pref-msg-longertime').value = data["longertime"];
+	$('pref-msg-shortertime').value = data["shortertime"]; // Advance+
 	$('pref-msg-outofdaterange').value = data["outofdaterange"];
 	$('pref-msg-requiredkeyword').value = data["requiredkeyword"];
 	$('pref-msg-forbiddenkeyword').value = data["forbiddenkeyword"];
@@ -105,6 +107,7 @@ var NLHPreference = {
 	$('pref-msg-forbiddenkeyword-title').value = data["forbiddenkeyword-title"] || $('pref-msg-forbiddenkeyword-title').defaultValue;
 	// 1.1.35+
 	$('pref-msg-high-bitrate').value = data["high-bitrate"] || $('pref-msg-high-bitrate').defaultValue;
+	$('pref-msg-ng-video').value = data["ng-video"]; // Advance+
     },
     addPresetComment:function(presetname){
 	let data = {
@@ -125,20 +128,19 @@ var NLHPreference = {
 	    "lessviews":$('pref-msg-lessviews').value,
 	    "greaterviews":$('pref-msg-greaterviews').value,
 	    "longertime":$('pref-msg-longertime').value,
+	    "shortertime":$('pref-msg-shortertime').value, // Advance+
 	    "outofdaterange":$('pref-msg-outofdaterange').value,
 	    "requiredkeyword":$('pref-msg-requiredkeyword').value,
 	    "forbiddenkeyword":$('pref-msg-forbiddenkeyword').value,
 	    "limitnumberofrequests":$('pref-msg-limitnumberofrequests').value,
-	    // 1.1.19+
-	    "within-livespace":$('pref-msg-within-livespace').value,
-	    //1.1.22+
-	    "requiredkeyword-title":$('pref-msg-requiredkeyword-title').value,
-	    "forbiddenkeyword-title":$('pref-msg-forbiddenkeyword-title').value,
-	    // 1.1.35+
-	    "high-bitrate":$('pref-msg-high-bitrate').value
+	    "within-livespace":$('pref-msg-within-livespace').value, // 1.1.19+
+	    "requiredkeyword-title":$('pref-msg-requiredkeyword-title').value, //1.1.22+
+	    "forbiddenkeyword-title":$('pref-msg-forbiddenkeyword-title').value, //1.1.22+
+	    "high-bitrate":$('pref-msg-high-bitrate').value, // 1.1.35+
+	    "ng-video": $('pref-msg-ng-video').value // Advance+
 	};
 	this.presetcomment[presetname] = data;
-	opener.NicoLiveDatabase.saveGPStorage('nico_live_commentpreset',this.presetcomment);
+	opener.Storage.writeObject('nico_live_commentpreset',this.presetcomment);
 
 	let existmenu = evaluateXPath(document,"//*[@id='id-menu-comment-preset']/*[@label='"+presetname+"']");
 	if(existmenu.length) return;
@@ -154,19 +156,24 @@ var NLHPreference = {
     // 運営コメントプリセットから削除.
     deletePresetComment:function(presetname){
 	delete this.presetcomment[presetname];
-	opener.NicoLiveDatabase.saveGPStorage('nico_live_commentpreset',this.presetcomment);
+	opener.Storage.writeObject('nico_live_commentpreset',this.presetcomment);
 	let existmenu = evaluateXPath(document,"//*[@id='id-menu-comment-preset']/*[@label='"+presetname+"']");
 	if(existmenu.length){
 	    RemoveElement(existmenu[0]);
 	}
     },
 
-    // P名ホワイトリスト.
+    /**
+     * P名ホワイトリストをセーブする.
+     */
     savePNameWhitelist:function(){
-	opener.NicoLiveDatabase.saveGPStorage('nicolive_pnamewhitelist',$('pname-whitelist').value);
+	opener.Storage.writeObject('nicolive_pnamewhitelist',$('pname-whitelist').value);
     },
+    /**
+     * P名ホワイトリストをロードする.
+     */
     loadPNameWhitelist:function(){
-	let pname = opener.NicoLiveDatabase.loadGPStorage('nicolive_pnamewhitelist','');
+	let pname = opener.Storage.readObject('nicolive_pnamewhitelist','');
 	$('pname-whitelist').value = pname;
     },
 
@@ -348,6 +355,7 @@ var NLHPreference = {
 	$('pref-msg-lessviews').value = $('pref-msg-lessviews').defaultValue;
 	$('pref-msg-greaterviews').value = $('pref-msg-greaterviews').defaultValue;
 	$('pref-msg-longertime').value = $('pref-msg-longertime').defaultValue;
+	$('pref-msg-shortertime').value = $('pref-msg-shortertime').defaultValue; // Advance+
 	$('pref-msg-outofdaterange').value = $('pref-msg-outofdaterange').defaultValue;
 	$('pref-msg-requiredkeyword').value = $('pref-msg-requiredkeyword').defaultValue;
 	$('pref-msg-forbiddenkeyword').value = $('pref-msg-forbiddenkeyword').defaultValue;
@@ -357,6 +365,8 @@ var NLHPreference = {
 	$('pref-msg-forbiddenkeyword-title').value = $('pref-msg-forbiddenkeyword-title').defaultValue;
 	// 1.1.35+
 	$('pref-msg-high-bitrate').value = $('pref-msg-high-bitrate').defaultValue;
+	// Advance+
+	$('pref-msg-ng-video').value = $('pref-msg-ng-video').defaultValue;
     },
 
     // 視聴者コマンドの応答をリセットする.
@@ -557,7 +567,7 @@ var NLHPreference = {
 	    data.commentfilter = $('custom-script').value;
 	    break;
 	}
-	opener.NicoLiveDatabase.saveGPStorage('nico_live_customscript',data);
+	opener.Storage.writeObject('nico_live_customscript',data);
     },
 
     buildFontList:function(){
@@ -601,7 +611,7 @@ var NLHPreference = {
     },
 
     saveTwitterScreenName:function(name){
-	let pref = opener.NicoLivePreference.getBranch();
+	let pref = opener.Config.getBranch();
 	pref.setCharPref("twitter.auth-user",name);
     },
 
@@ -610,7 +620,7 @@ var NLHPreference = {
 	let as_user = oauthobj["oauth_token"];
 	let as_pass = oauthobj["oauth_token_secret"];
 
-	let host = "chrome://nicolivehelper";
+	let host = "chrome://nicolivehelperadvance";
 	let nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1",
                                                      Components.interfaces.nsILoginInfo,
                                                      "init");
@@ -619,7 +629,7 @@ var NLHPreference = {
     },
 
     getSavedTwitterToken:function(){
-	let hostname = "chrome://nicolivehelper";
+	let hostname = "chrome://nicolivehelperadvance";
 	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);  
 	let logins = myLoginManager.findLogins({}, hostname, null, 'twitter token');
 	if( logins.length ){
@@ -633,7 +643,7 @@ var NLHPreference = {
     // Twitterトークンを全削除.
     removeAllTwitterToken:function(){
 	try { 
-	    let host = "chrome://nicolivehelper";
+	    let host = "chrome://nicolivehelperadvance";
 	    let logins = this._login.findLogins({}, host, null, 'twitter token');
 	    for (let i = 0; i < logins.length; ++i){
 		this.debugprint(logins[i]);
@@ -779,9 +789,11 @@ var NLHPreference = {
 	this.updateFilePicker();
 	this.buildFontList();
 	this.updateFontScaleView();
+	this._login = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
+	this.getSavedTwitterToken();
 
 	/*
-	let data = opener.NicoLiveDatabase.loadGPStorage('nico_live_customscript',{});
+	let data = opener.Storage.readObject('nico_live_customscript',{});
 	this.script = data;
 	if( data.requestchecker ){
 	    $('custom-script').value = data.requestchecker;
@@ -797,10 +809,6 @@ var NLHPreference = {
 	}else{
 	    this.setExistClasses();
 	}
-
-	this._login = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
-
-	this.getSavedTwitterToken();
 
 	$('prepare-timing-bar').value = $('pref-prepare-timing').value;
 	 */
