@@ -17,6 +17,7 @@ var Config = {
 	'view_lines': 500,   // コメント表示行数
 	'backlogs': 100      // サーバー接続時のバックログ取得行数
     },
+    twitter: {},
 
     getBranch:function(){
 	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");
@@ -94,6 +95,18 @@ var Config = {
     },
 
     /**
+     * Twitter設定を読む.
+     */
+    loadTwitterSettings:function (branch) {
+        this.twitter.api = branch.getCharPref('twitter.use-api');
+        this.twitter.when_beginlive = branch.getBoolPref('twitter.when-beginlive');
+        this.twitter.when_playmovie = branch.getBoolPref('twitter.when-playmovie');
+        this.twitter.when_addmylist = branch.getBoolPref('twitter.when-addmylist');
+        this.twitter.beginlive = branch.getUnicharPref('twitter.begin');
+        this.twitter.play = branch.getUnicharPref('twitter.play');
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -135,7 +148,10 @@ var Config = {
 	// 各種応答メッセージ
         this.loadReplyMessage(branch);
 
-	this.setVideoDetail();
+	// Twitter設定
+        this.loadTwitterSettings(branch);
+
+        this.setVideoDetail();
     },
 
     /**

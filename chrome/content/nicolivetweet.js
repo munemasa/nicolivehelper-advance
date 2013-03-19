@@ -265,7 +265,8 @@ var NicoLiveTweet = {
     },
 
     /**
-     * つぶやく
+     * つぶやく.
+     * 設定で指定した方法でつぶやく。
      * @param text テキスト
      */
     tweet:function(text){
