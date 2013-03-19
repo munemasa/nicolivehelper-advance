@@ -588,8 +588,8 @@
 	<button label="リセット" oncommand="$('twitter-tweet-play').value = $('twitter-tweet-play').defaultValue;"/>
       </hbox>
       <checkbox label="マイリスト登録した時につぶやく" preference="twitter-tweet-when-addmylist"/>
-      <label value="プレビュー:" flex="1"/>
-      <description id="tweet-preview" value=""/>
+      <label value="プレビュー:"/>
+      <description id="tweet-preview" style="height: 2.5em;"/>
     </vbox>
   </prefpane>
 

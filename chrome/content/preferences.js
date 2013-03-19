@@ -55,7 +55,7 @@ var NLHPreference = {
 	}
 	let str = elem.value;
 	str = window.opener.NicoLiveHelper.replaceMacros(str,info);
-	$('tweet-preview').value = str;
+	$('tweet-preview').textContent = str;
     },
 
     initDB:function(){

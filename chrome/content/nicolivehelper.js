@@ -911,6 +911,29 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ニコ生API経由でツイートする.
+     * @param tweet つぶやくメッセージ
+     */
+    postTweet:function(tweet){
+	if( !this.userinfo.twitter_info.status || !this.twitterinfo.live_enabled ) return;
+	let str = new Array();
+	let url;
+	str.push("entry_content="+encodeURIComponent(tweet));
+	str.push("token="+this.userinfo.twitter_info.tweet_token);
+	str.push("vid="+ this.getRequestId() );
+
+	url = this.twitterinfo.live_api_url + "twitterpost";
+	let req = CreateXHR("POST",url);
+	if( !req ) return;
+	req.onreadystatechange = function(){
+	    if( req.readyState==4 && req.status==200 ){
+	    }
+	};
+	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	req.send(str.join('&'));
+    },
+
+    /**
      * 運営コメント欄を/clsで消去したあと、指定の関数を実行する.
      * 消去の必要がない場合は消去せずに指定の関数を実行する.
      * @param func /cls後に実行する関数

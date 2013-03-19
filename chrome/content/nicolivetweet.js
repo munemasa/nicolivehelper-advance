@@ -52,8 +52,10 @@ var NicoLiveTweet = {
     },
 
     getRequestToken:function(consumer,consumerSecret){
-	// Desktop clientで7-digit PINコードを使うときにまずはrequest token URLにアクセスしoauth_tokenを取得して、
-	// authorize URLにoauth_tokenをGETパラメタで渡すと、7-digit PINコードを取得できる.
+	// Desktop clientで7-digit PINコードを使うときに
+	// まずはrequest token URLにアクセスしoauth_tokenを取得して、
+	// authorize URLにoauth_tokenをGETパラメタで渡すと、
+	// 7-digit PINコードを取得できる.
 	let accessor = {
 	    consumerSecret: consumerSecret,
 	    tokenSecret: ""
@@ -156,6 +158,10 @@ var NicoLiveTweet = {
 	req.send(str.join('&'));	
     },
 
+    /**
+     * xAuthでアクセストークンを取得.
+     * @note 現在使用できない
+     */
     getAccessTokenByXAuth:function(user_id,password,callback){
 	// xAuthを使用したアクセストークンの取得.
 	let accessor = {
@@ -209,6 +215,10 @@ var NicoLiveTweet = {
 	req.send(str.join('&'));
     },
 
+    /**
+     * ステータスを更新する(つぶやく)
+     * @param text テキスト(文字数チェックしていない)
+     */
     updateStatus:function(text){
 	if( !this.oauth["oauth_token_secret"] || !this.oauth["oauth_token"] ) return;
 	let accessor = {
@@ -254,9 +264,11 @@ var NicoLiveTweet = {
 	req.send("status="+encodeURIComponent(text));
     },
 
-    // つぶやく.
+    /**
+     * つぶやく
+     * @param text テキスト
+     */
     tweet:function(text){
-	// TODO 
 	if( Config.twitter.api=='self' ){
 	    this.updateStatus(text);
 	}else{
