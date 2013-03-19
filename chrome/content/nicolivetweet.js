@@ -34,7 +34,7 @@ var NicoLiveTweet = {
 
     getSavedToken:function(){
 	// ログインマネージャに保存したトークンとシークレットトークンを読み込む.
-	let hostname = "chrome://nicolivehelper";
+	let hostname = "chrome://nicolivehelperadvance";
 	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);  
 	let logins = myLoginManager.findLogins({}, hostname, null, 'twitter token');
 	if( logins.length ){

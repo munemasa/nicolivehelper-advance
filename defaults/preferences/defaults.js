@@ -20,6 +20,14 @@ pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 
 pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画情報詳細表示
 
+// Twitter
+pref("extensions.nicolivehelperadvance.twitter.use-api","self");
+pref("extensions.nicolivehelperadvance.twitter.when-beginlive",false);
+pref("extensions.nicolivehelperadvance.twitter.when-playmovie",false);
+pref("extensions.nicolivehelperadvance.twitter.when-addmylist",false);
+pref("extensions.nicolivehelperadvance.twitter.begin","【ニコ生】「{live-title}」を開始しました。http://nico.ms/{live-id} {hashtag}");
+pref("extensions.nicolivehelperadvance.twitter.play","再生中:{title} http://nico.ms/{id} #{id} {hashtag} http://nico.ms/{live-id}");
+
 // 動画情報
 pref("extensions.nicolivehelperadvance.videoinfo.interval", 8);
 pref("extensions.nicolivehelperadvance.videoinfo.comment-type", 0);

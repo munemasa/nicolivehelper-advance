@@ -538,6 +538,61 @@
 
   </prefpane>
 
+  <prefpane id="nicolivehelper-prefpane-twitter" label="Twitter" image="chrome://nicolivehelper/content/data/twitter.png">
+
+    <preferences>
+      <preference id="twitter-authorized-username"
+		  name="extensions.nicolivehelperadvance.twitter.auth-user" type="string"/>
+      <preference id="twitter-use-api"
+		  name="extensions.nicolivehelperadvance.twitter.use-api" type="string"/>
+      <preference id="twitter-tweet-when-beginlive"
+		  name="extensions.nicolivehelperadvance.twitter.when-beginlive" type="bool"/>
+      <preference id="twitter-tweet-when-playmovie"
+		  name="extensions.nicolivehelperadvance.twitter.when-playmovie" type="bool"/>
+      <preference id="twitter-tweet-when-addmylist"
+		  name="extensions.nicolivehelperadvance.twitter.when-addmylist" type="bool"/>
+      <preference id="twitter-tweet-begin"
+		  name="extensions.nicolivehelperadvance.twitter.begin" type="unichar"/>
+      <preference id="twitter-tweet-play"
+		  name="extensions.nicolivehelperadvance.twitter.play" type="unichar"/>
+    </preferences>
+
+    <vbox flex="1">
+      <radiogroup id="twitter-select-api" preference="twitter-use-api">
+	<radio label="NicoLiveHelperから直接つぶやく(以下でアカウント認証を行う必要があります)" value="self"/>
+	<radio label="ニコニコ生放送を経由してつぶやく(事前にニコニコ生放送にて認証を行っておく必要があります)" value="nicolive"/>
+      </radiogroup>
+
+      <!--
+      <hbox align="center"><label value="ユーザー名"/><textbox id="twitter-user" /></hbox>
+      <hbox align="center"><label value="パスワード"/><textbox id="twitter-password" type="password"/></hbox>
+      -->
+
+      <hbox align="center">
+	<button id="twitter-get-pin" label="PINを取得" oncommand="NLHPreference.getTwitterPin();"/>
+	<label value="PIN"/><textbox id="twitter-pin" />
+	<button id="twitter-authorization-button" label="認証" oncommand="NLHPreference.authTwitterPin();"/>
+      </hbox>
+      <hbox align="center"><!-- <button id="twitter-authorization-button" label="認証" oncommand="NLHPreference.authorizeTwitterUser();"/> --><label value="認証済み:"/><textbox readonly="true" value="なし" id="twitter-authorization-result" preference="twitter-authorized-username"/></hbox>
+
+      <html:hr/>
+
+      <checkbox label="配信開始した時につぶやく" preference="twitter-tweet-when-beginlive"/>
+      <hbox>
+	<textbox id="tweet-begin" flex="1" preference="twitter-tweet-begin" onkeypress="NLHPreference.previewTweet(this);"/>
+	<button label="リセット" oncommand="$('twitter-tweet-begin').value = $('twitter-tweet-begin').defaultValue;"/>
+      </hbox>
+      <checkbox label="動画を再生した時につぶやく" preference="twitter-tweet-when-playmovie"/>
+      <hbox>
+	<textbox id="tweet-play" flex="1" preference="twitter-tweet-play" onkeypress="NLHPreference.previewTweet(this);"/>
+	<button label="リセット" oncommand="$('twitter-tweet-play').value = $('twitter-tweet-play').defaultValue;"/>
+      </hbox>
+      <checkbox label="マイリスト登録した時につぶやく" preference="twitter-tweet-when-addmylist"/>
+      <label value="プレビュー:" flex="1"/>
+      <description id="tweet-preview" value=""/>
+    </vbox>
+  </prefpane>
+
   <script type="application/x-javascript" src="chrome://mozapps/content/preferences/fontbuilder.js"/>
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/preferences.js" />
