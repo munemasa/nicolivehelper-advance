@@ -19,6 +19,9 @@ pref("extensions.nicolivehelperadvance.play.interval", 8);
 pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 
 pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画情報詳細表示
+pref("extensions.nicolivehelperadvance.display.font","");
+pref("extensions.nicolivehelperadvance.display.font-color","");
+pref("extensions.nicolivehelperadvance.display.font-scale",9);
 
 // Twitter
 pref("extensions.nicolivehelperadvance.twitter.use-api","self");

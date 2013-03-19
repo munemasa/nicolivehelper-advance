@@ -1346,6 +1346,7 @@ var NicoLiveHelper = {
 		// リク主の情報を追加
 		videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
 		videoinfo.comment_no = request.comment_no;
+		videoinfo.cno = request.comment_no;
 		videoinfo.request_user_id = request.user_id;
 		videoinfo.request_time = GetCurrentTime();
 		videoinfo.is_self_request = request.is_self_request;

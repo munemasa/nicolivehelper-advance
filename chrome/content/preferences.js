@@ -777,6 +777,8 @@ var NLHPreference = {
 
     init:function(){
 	this.updateFilePicker();
+	this.buildFontList();
+	this.updateFontScaleView();
 
 	/*
 	let data = opener.NicoLiveDatabase.loadGPStorage('nico_live_customscript',{});
@@ -795,12 +797,10 @@ var NLHPreference = {
 	}else{
 	    this.setExistClasses();
 	}
-	this.buildFontList();
 
 	this._login = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
 
 	this.getSavedTwitterToken();
-	this.updateFontScaleView();
 
 	$('prepare-timing-bar').value = $('pref-prepare-timing').value;
 	 */

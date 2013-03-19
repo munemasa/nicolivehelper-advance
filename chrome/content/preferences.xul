@@ -48,6 +48,14 @@
       <!-- 詳細表示 -->
       <preference id="pref-show-details"
 		  name="extensions.nicolivehelperadvance.display.show_detail" type="bool"/>
+      <preference id="e.n.font"
+		  name="extensions.nicolivehelperadvance.display.font" type="unichar"/>
+      <preference id="e.n.font-color"
+		  name="extensions.nicolivehelperadvance.display.font-color" type="unichar"/>
+      <preference id="e.n.font-scale"
+		  name="extensions.nicolivehelperadvance.display.font-scale" type="int"/>
+      <!-- to obtain font group from browser settings -->
+      <preference id="font.language.group" name="font.language.group" type="wstring"/>
 
       <!-- 184コメント -->
       <preference id="pref-184comment"
@@ -126,6 +134,17 @@
 	<tabpanel orient="vertical">
 	  <checkbox preference="pref-show-details" label="動画説明を表示する"
 		    tooltiptext="チェックをすると、リクエスト、ストック等で動画説明を表示します。"/>
+	  <groupbox style="padding: 0.5em;">
+	    <caption>フォント</caption>
+	    <hbox align="center">
+	      <menulist id="select-font" preference="e.n.font"/>
+	      <colorpicker id="select-font-color" type="button" preference="e.n.font-color"/>
+	      <scale id="window-font-scale" value="9" min="5" max="36"
+		     onchange="NLHPreference.changeFontScale(this.value);"/>
+	      <label id="font-scale-label" value="9 pt."/>
+	    </hbox>
+	  </groupbox>
+
 	</tabpanel>
 
 	<!-- コメント -->
@@ -538,7 +557,8 @@
 
   </prefpane>
 
-  <prefpane id="nicolivehelper-prefpane-twitter" label="Twitter" image="chrome://nicolivehelper/content/data/twitter.png">
+  <prefpane id="nicolivehelper-prefpane-twitter"
+	    label="Twitter" image="chrome://nicolivehelperadvance/content/data/twitter.png">
 
     <preferences>
       <preference id="twitter-authorized-username"

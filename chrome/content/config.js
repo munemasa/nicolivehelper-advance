@@ -107,6 +107,24 @@ var Config = {
     },
 
     /**
+     * 表示設定を読み込む.
+     */
+    loadDisplaySettings: function(branch){
+	try{
+	    this.font = branch.getUnicharPref("display.font");
+	    $('mainwindow').style.fontFamily = this.font;
+	} catch (x) {
+	}
+	try{
+	    let col = branch.getUnicharPref("display.font-color");
+	    $('tabpanels').style.color = col;
+	} catch (x) {
+	}
+	let fontscale = branch.getIntPref("display.font-scale");
+	$('mainwindow-tab').style.fontSize = fontscale + "pt";
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -126,6 +144,7 @@ var Config = {
 	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
 
         this.loadCommentSettings(branch);
+	this.loadDisplaySettings(branch);
 
         // 動画情報.
 	this.videoinfo_interval    = branch.getIntPref("videoinfo.interval");
