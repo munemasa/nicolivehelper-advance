@@ -56,11 +56,39 @@ var NicoLiveWindow = {
     openInAppBrowser:function(url, hasfocus, param1, param2, param3, param4, param5){
 	let feature="chrome,resizable=yes";
 	let win = window.openDialog("chrome://nicolivehelperadvance/content/browser.xul",
-				    "inappbrowser",feature, url, param1, param2, param3, param4 ,param5);
+				    "inappbrowser",
+				    feature, url, param1, param2, param3, param4 ,param5);
 	if( hasfocus ){
 	    win.focus();
 	}
 	return win;
+    },
+
+    /**
+     * ウィンドウを移動する
+     * @param x X座標
+     * @param y Y座標
+     */
+    move: function(x,y){
+	window.moveTo(x,y);
+    },
+
+    /**
+     * ウィンドウサイズを変更する
+     * @param w 幅
+     * @param h 高さ
+     */
+    resize: function(w,h){
+	window.resizeTo(w,h);	
+    },
+
+    /**
+     * ウィンドウをデフォルトサイズにする.
+     */
+    setDefaultSize:function(){
+	//let dw = window.outerWidth-window.innerWidth;
+	//let dh = window.outerHeight-window.innerHeight;
+	this.resize(640,480);
     },
 
     /**

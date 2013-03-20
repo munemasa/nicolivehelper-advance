@@ -48,7 +48,8 @@ var NicoLiveHelper = {
     request_setno: 0,   // リクエストのセット番号
     stock_setno: 0,     // ストックのセット番号
 
-    product_code: {},   // JWID作品コード
+    product_code: {},        // JWID作品コード
+    number_of_requests: {},  // ユーザー一人一人のリクエスト数
 
     // リクエスト、ストックを順番通りに処理するためのキュー
     request_q: [],
@@ -580,11 +581,13 @@ var NicoLiveHelper = {
 		tmp = GetDateString( NicoLiveHelper.liveinfo.end_time * 1000 );
 		break;
 
-	    case 'progress':
-		// TODO 現在の動画の進行具合の棒グラフ.
-		if( NicoLiveHelper.musicinfo.length_ms<=0 ) return "";
-		let progress = GetCurrentTime()-NicoLiveHelper.musicstarttime;
-		let progressbar = Math.floor(progress / (NicoLiveHelper.musicinfo.length_ms/1000) * 100);
+	    case 'progress':{
+		// 現在の動画の進行具合の棒グラフ.
+		let vinfo = NicoLiveHelper.getCurrentVideoInfo();
+		if( vinfo.length_ms<=0 ) return "";
+		let target = NicoLiveHelper.play_target;
+		let progress = GetCurrentTime()-NicoLiveHelper.play_status[target].play_begin;
+		let progressbar = Math.floor(progress / (vinfo.length_ms/1000) * 100);
 		tmp = "0:00 <font color=\"#0000ff\">";
 		let j;
 		for(j=0;j<progressbar;j++){
@@ -594,8 +597,8 @@ var NicoLiveHelper = {
 		for(;j<100;j++){
 		    tmp += "|";
 		}
-		tmp += " " + NicoLiveHelper.musicinfo.length;
-		break;
+		tmp += " " + vinfo.length;
+		break;}
 	    case 'live-id':
 		tmp = NicoLiveHelper.liveinfo.request_id;
 		break;
@@ -608,7 +611,7 @@ var NicoLiveHelper = {
 	    }
 	    return tmp;
 	};
-	// String.replace()だとネストするとダメなので自前で置換
+	// String.replace()だとネストが処理できないので自前で置換
 	let r = "";
 	let token = "";
 	let nest = 0;
@@ -1308,6 +1311,16 @@ var NicoLiveHelper = {
 	    }
 	}
 
+	if( Config.request.accept_nreq ){
+	    // リクエスト受け付け数超過チェック
+	    let n = this.number_of_requests[videoinfo.request_user_id];
+	    if( n >= Config.request.accept_nreq ){
+		videoinfo.errno = REASON_MAX_NUMBER_OF_REQUEST;
+		videoinfo.errmsg = Config.msg.limitnumberofrequests;
+		throw videoinfo;
+	    }
+	}
+
 	return true;
     },
 
@@ -1343,7 +1356,7 @@ var NicoLiveHelper = {
             let videoinfo = null;
 	    try{
 		videoinfo = NicoLiveHelper.extractVideoInfo(xml);
-		// リク主の情報を追加
+		// 動画情報にリク主の情報を追加
 		videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
 		videoinfo.comment_no = request.comment_no;
 		videoinfo.cno = request.comment_no;
@@ -1354,7 +1367,8 @@ var NicoLiveHelper = {
 		if ( videoinfo.comment_no==0 ) {
                     videoinfo.is_casterselection = true;
 		}
-		
+		videoinfo.restrict = Config.request.restrict;
+
 		// リクエストチェックでリクエストを拒否する場合は例外を投げる
                 NicoLiveHelper.checkRequest( videoinfo );
                 if ( !isstock ) {
@@ -1362,6 +1376,11 @@ var NicoLiveHelper = {
 		    NicoLiveHelper.request_list.push( videoinfo );
 		    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
 		    sendmsg = Config.msg.accept;
+
+		    if( !NicoLiveHelper.number_of_requests[request.user_id] ){
+			NicoLiveHelper.number_of_requests[request.user_id] = 0;
+		    }
+		    NicoLiveHelper.number_of_requests[request.user_id]++;
                 } else {
 		    // ストック
 		    if( !NicoLiveHelper.hasStock(videoinfo.video_id) ){
@@ -1408,12 +1427,14 @@ var NicoLiveHelper = {
 	    }
 
 	    if( !isstock && NicoLiveHelper.iscaster && Config.request.autoreply ){
-		sendmsg = NicoLiveHelper.replaceMacros(sendmsg, videoinfo);
-		if( sendmsg ){
-		    let func = function(){
-			NicoLiveHelper.postCasterComment( sendmsg, "" );
-		    };
-		    NicoLiveHelper.clearCasterCommentAndRun( func );
+		if( videoinfo.cno ){
+		    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, videoinfo);
+		    if( sendmsg ){
+			let func = function(){
+			    NicoLiveHelper.postCasterComment( sendmsg, "" );
+			};
+			NicoLiveHelper.clearCasterCommentAndRun( func );
+		    }
 		}
 	    }
 
@@ -2559,13 +2580,12 @@ var NicoLiveHelper = {
 		if( req.status==200 ){
 		    let confstatus = req.responseXML.getElementsByTagName('response_configurestream')[0];
 		    if( confstatus.getAttribute('status')=='ok' ){
-			// TODO 放送開始をツイート
-			/*
-			if( NicoLivePreference.twitter.when_beginlive ){
-			    let msg = NicoLiveHelper.replaceMacros(NicoLivePreference.twitter.beginlive, this.musicinfo);
+			// 放送開始をツイート
+			if( Config.twitter.when_beginlive ){
+			    let vinfo = NicoLiveHelper.getCurrentVideoInfo();
+			    let msg = NicoLiveHelper.replaceMacros( Config.twitter.beginlive, vinfo );
 			    NicoLiveTweet.tweet(msg);
 			}
-			 */
 			try{
 			    NicoLiveHelper.liveinfo.start_time = parseInt(req.responseXML.getElementsByTagName('start_time')[0].textContent);
 			    NicoLiveHelper.liveinfo.end_time = parseInt(req.responseXML.getElementsByTagName('end_time')[0].textContent);
@@ -2594,8 +2614,8 @@ var NicoLiveHelper = {
 	let f = function(xml, req){
 	    if( req.readyState==4 && req.status==200 ){
 		let publishstatus = req.responseXML;
-		NicoLiveHelper.token = publishstatus.getElementsByTagName('token')[0].textContent;
-		NicoLiveHelper.beginLive( NicoLiveHelper.token );
+		NicoLiveHelper.post_token = publishstatus.getElementsByTagName('token')[0].textContent;
+		NicoLiveHelper.beginLive( NicoLiveHelper.post_token );
 		// TODO
 		//NicoLiveHelper.setLiveProgressBarTipText();
 	    }

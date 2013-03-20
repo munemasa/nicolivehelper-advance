@@ -1,8 +1,17 @@
 var NLHPreference = {
+    requestcond: {}, // リクエスト条件設定
+
     debugprint:function(txt){
-//	opener.debugprint(txt);
+	try{
+	    opener.debugprint(txt);
+	} catch (x) {
+	}
     },
 
+    /**
+     * 動画情報設定のプレビュー.
+     * @param str 動画情報設定の文字列
+     */
     previewVideoInfo:function(str){
 	let info = {
 	    cno: 99,
@@ -32,6 +41,9 @@ var NLHPreference = {
 	$('preview-videoinfo').innerHTML = str;
     },
 
+    /**
+     * つぶやき設定のプレビュー
+     */
     previewTweet:function(elem){
 	let info = {
 	    cno: 99,
@@ -76,6 +88,11 @@ var NLHPreference = {
 	    $('id-menu-comment-preset').insertBefore(menuitem,$('id-menu-comment-preset').lastChild);
 	}
     },
+
+    /**
+     * プリセットの運営コメントに設定する.
+     * @param presetname プリセット名
+     */
     setPresetComment:function(presetname){
 	let data = this.presetcomment[presetname];
 	$('pref-msg-deleted').value = data["deleted"];
@@ -109,6 +126,11 @@ var NLHPreference = {
 	$('pref-msg-high-bitrate').value = data["high-bitrate"] || $('pref-msg-high-bitrate').defaultValue;
 	$('pref-msg-ng-video').value = data["ng-video"]; // Advance+
     },
+
+    /**
+     * 運営コメントのプリセット設定を追加する.
+     * @param presetname プリセット名
+     */
     addPresetComment:function(presetname){
 	let data = {
 	    "deleted":$('pref-msg-deleted').value,
@@ -153,7 +175,11 @@ var NLHPreference = {
 				 },false);
 	$('id-menu-comment-preset').insertBefore(menuitem,$('id-menu-comment-preset').lastChild);
     },
-    // 運営コメントプリセットから削除.
+
+    /**
+     * 運営コメントのプリセット設定を削除
+     * @param presetname 削除するプリセット名
+     */
     deletePresetComment:function(presetname){
 	delete this.presetcomment[presetname];
 	opener.Storage.writeObject('nico_live_commentpreset',this.presetcomment);
@@ -169,6 +195,7 @@ var NLHPreference = {
     savePNameWhitelist:function(){
 	opener.Storage.writeObject('nicolive_pnamewhitelist',$('pname-whitelist').value);
     },
+
     /**
      * P名ホワイトリストをロードする.
      */
@@ -177,57 +204,42 @@ var NLHPreference = {
 	$('pname-whitelist').value = pname;
     },
 
-    // リク制限のプリセットをDBに登録する.
+    /**
+     * リクエスト制限設定のプリセットを保存する.
+     */
     savePresetRequestCond:function(name,obj){
-	let st;
-	let value = JSON.stringify(obj);
-	//Application.console.log(value);
-	try{
-	    st = this.dbconnect.createStatement('insert into requestcond(presetname,value) values(?1,?2)');
-	    st.bindUTF8StringParameter(0,name);
-	    st.bindUTF8StringParameter(1,value);
-	    st.execute();
-	    st.finalize();
-	} catch (x) {
-	    st = this.dbconnect.createStatement('update requestcond set value=?1 where presetname=?2');
-	    st.bindUTF8StringParameter(0,value);
-	    st.bindUTF8StringParameter(1,name);
-	    st.execute();
-	    st.finalize();
-	}
+	this.requestcond[name] = obj;
+	opener.Storage.writeObject( "nico_request_cond", this.requestcond );
     },
 
-    // リク制限のプリセット名を読む.
+    /**
+     * リクエスト制限のプリセット名を配列で返す.
+     */
     readPresetCondName:function(){
-	let st = this.dbconnect.createStatement('SELECT presetname FROM requestcond');
+	this.requestcond = opener.Storage.readObject( "nico_request_cond", {} );
 	let preset = new Array();
-	while(st.step()){
-	    preset.push(st.getString(0));
+	for( let k in this.requestcond ){
+	    preset.push(k);
 	}
-	st.finalize();
 	return preset;
     },
 
-    // リク制限設定をDBからロードして入力欄にセットする.
+    /**
+     * リクエスト制限設定のプリセット値をロードする.
+     * @param name プリセット名
+     */
     loadRestrictionPreset:function(name){
 	$('id-edit-presetname').value = name;
-
-	let st = this.dbconnect.createStatement('SELECT value FROM requestcond where presetname=?1');
-	st.bindUTF8StringParameter(0,name);
-	let value = "";
-	while(st.step()){
-	    value=st.getString(0);
-	}
-	st.finalize();
 	try{
-	    let item = JSON.parse(value);
+	    let item = this.requestcond[name];
 	    $('pref-restrict-date-from').value = item.date_from;
 	    $('pref-restrict-date-to').value   = item.date_to;
 	    $('pref-restrict-view-from').value = item.view_from;
 	    $('pref-restrict-view-to').value   = item.view_to;
 	    $('pref-restrict-mylist-from').value= item.mylist_from;
 	    $('pref-restrict-mylist-to').value  = item.mylist_to;
-	    $('pref-restrict-videolength').value= item.videolength;
+	    $('pref-restrict-videolength-from').value= item.videolength_from; // Advance+
+	    $('pref-restrict-videolength-to').value= item.videolength_to;
 	    $('pref-restrict-tag-include').value= item.tag_include;
 	    $('pref-restrict-tag-exclude').value= item.tag_exclude;
 	    $('pref-date-from').value = $('pref-restrict-date-from').value;
@@ -237,11 +249,16 @@ var NLHPreference = {
 	    $('pref-restrict-title-exclude').value= item.title_exclude || "";
 	    // 1.1.35+
 	    $('pref-restrict-bitrate').value = item.bitrate || 0;
-	} catch (x) {}
+	} catch (x) {
+	    debugprint(x);
+	}
     },
 
-    // プリセットをDBに登録する.
-    addPreset:function(name){
+    /**
+     * リクエスト制限のプリセット登録.
+     * @param name プリセット名
+     */
+    addPresetCond:function(name){
 	if(name.length<=0) return;
 	let item = {};
 	item.date_from     = $('pref-restrict-date-from').value;
@@ -250,7 +267,8 @@ var NLHPreference = {
 	item.view_to       = $('pref-restrict-view-to').value;
 	item.mylist_from   = $('pref-restrict-mylist-from').value;
 	item.mylist_to     = $('pref-restrict-mylist-to').value;
-	item.videolength   = $('pref-restrict-videolength').value;
+	item.videolength_from = $('pref-restrict-videolength-from').value;
+	item.videolength_to   = $('pref-restrict-videolength-to').value;
 	item.tag_include   = $('pref-restrict-tag-include').value;
 	item.tag_exclude   = $('pref-restrict-tag-exclude').value;
 	// 1.1.22+
@@ -274,13 +292,15 @@ var NLHPreference = {
 	$('id-menu-preset').appendChild(elem);
     },
 
-    // プリセットをDBから削除する
-    delPreset:function(name){
+    /**
+     * リクエスト制限のプリセットを削除する
+     * @param name 削除したいプリセット名
+     */
+    delPresetCond:function(name){
 	if(name.length<=0) return;
-	let st = this.dbconnect.createStatement('DELETE FROM requestcond where presetname=?1');
-	st.bindUTF8StringParameter(0,name);
-	st.execute();
-	st.finalize();
+
+	delete this.requestcond[name];
+	opener.Storage.writeObject( "nico_request_cond", this.requestcond );
 
 	let existmenu;
 	existmenu = evaluateXPath(document,"//*[@id='id-menu-preset']/*[@label='"+name+"']");
@@ -299,7 +319,8 @@ var NLHPreference = {
 	$('pref-restrict-view-to').value = 0;
 	$('pref-restrict-mylist-from').value = 0;
 	$('pref-restrict-mylist-to').value = 0;
-	$('pref-restrict-videolength').value = 0;
+	$('pref-restrict-videolength-from').value = 0;
+	$('pref-restrict-videolength-to').value = 0;
 	$('pref-restrict-tag-include').value = "";
 	$('pref-restrict-tag-exclude').value = "";
 	$('pref-restrict-title-include').value = "";
@@ -307,7 +328,7 @@ var NLHPreference = {
 	$('pref-restrict-bitrate').value = 0;
 	$('pref-date-from').value = "2007-08-31";
 	$('pref-date-to').value = "2007-08-31";
-	$('pref-bitrate').value = 0;
+	$('pref-restrict-bitrate').value = 0;
     },
 
     // 動画情報をデフォルトにする.
@@ -395,6 +416,9 @@ var NLHPreference = {
 	}
     },
 
+    /**
+     * 連続コメント用テキストファイル保存先の選択.
+     */
     selectContinuousCommentDirectory:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
@@ -414,7 +438,9 @@ var NLHPreference = {
 	}
     },
 
-    // リクエスト制限のプリセット読み込みメニューを作成など.
+    /**
+     * リクエスト制限のプリセット読み込みメニューを作成など.
+     */
     updateRestrictPane:function(){
 	$('pref-date-from').value = $('pref-restrict-date-from').value;
 	$('pref-date-to').value = $('pref-restrict-date-to').value;
@@ -791,6 +817,7 @@ var NLHPreference = {
 	this.updateFontScaleView();
 	this._login = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
 	this.getSavedTwitterToken();
+	this.loadPNameWhitelist();
 
 	/*
 	let data = opener.Storage.readObject('nico_live_customscript',{});

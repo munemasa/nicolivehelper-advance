@@ -187,7 +187,7 @@
 	<toolbarspacer flex="1"/>
 	<toolbarbutton image="chrome://nicolivehelperadvance/content/data/window-list.png" label="" type="menu">
 	  <menupopup id="popup-windowlist" onpopupshowing="">
-	    <menuitem label="&toolbar.resize_window_default;" oncommand=""/>
+	    <menuitem label="&toolbar.resize_window_default;" oncommand="NicoLiveWindow.setDefaultSize();"/>
 	    <menuseparator/>
 	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>

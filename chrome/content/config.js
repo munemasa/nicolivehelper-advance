@@ -64,6 +64,48 @@ var Config = {
     },
 
     /**
+     * リクエスト制限設定を読み込む.
+     */
+    loadRestrictionSetting:function(branch){
+	// リクエスト制限設定.
+	let restrict = {};
+	restrict.numberofrequests = this.request.accept_nreq;
+	restrict.dorestrict = branch.getBoolPref("request.restrict.enabled"); // リクエスト制限を行う
+	restrict.date_from  = branch.getCharPref("request.restrict.date-from");
+	restrict.date_to    = branch.getCharPref("request.restrict.date-to");
+	restrict.mylist_from= branch.getIntPref("request.restrict.mylist-from");
+	restrict.mylist_to  = branch.getIntPref("request.restrict.mylist-to");
+	let exclude = branch.getUnicharPref("request.restrict.tag-exclude");
+	restrict.tag_exclude = new Array();
+	if(exclude.length>0){
+	    restrict.tag_exclude = exclude.split(/\s+/);
+	}
+	let include = branch.getUnicharPref("request.restrict.tag-include");
+	restrict.tag_include = new Array();
+	if(include.length>0){
+	    restrict.tag_include = include.split(/\s+/);
+	}
+	restrict.videolength_from = branch.getIntPref("request.restrict.videolength-from"); // Advance+
+	restrict.videolength_to   = branch.getIntPref("request.restrict.videolength-to");
+	restrict.view_from   = branch.getIntPref("request.restrict.view-from");
+	restrict.view_to     = branch.getIntPref("request.restrict.view-to");
+	// 1.1.22+
+	exclude = branch.getUnicharPref("request.restrict.title-exclude");
+	restrict.title_exclude = new Array();
+	if(exclude.length>0){
+	    restrict.title_exclude = exclude.split(/\s+/);
+	}
+	include = branch.getUnicharPref("request.restrict.title-include");
+	restrict.title_include = new Array();
+	if(include.length>0){
+	    restrict.title_include = include.split(/\s+/);
+	}
+	// 1.1.35+
+	restrict.bitrate = branch.getIntPref("request.restrict.bitrate");
+	this.request.restrict = restrict;
+    },
+
+    /**
      * 動画説明の表示を設定する.
      */
     setVideoDetail: function(){
@@ -142,7 +184,14 @@ var Config = {
 	this.request.accept_played = branch.getBoolPref( "request.accept-playedvideo" );
 	// 何分前の再生済みを許可するか
 	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
+	// 何件までリクOKか
+	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
 
+	try{
+	    this.loadRestrictionSetting(branch);
+	} catch (x) {
+	    debugprint(x);
+	}
         this.loadCommentSettings(branch);
 	this.loadDisplaySettings(branch);
 

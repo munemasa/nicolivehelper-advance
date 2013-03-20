@@ -13,6 +13,23 @@ pref("extensions.nicolivehelperadvance.request.allow-duplicative", false); // �
 pref("extensions.nicolivehelperadvance.request.limit-newmovie", false); // 新着規制
 pref("extensions.nicolivehelperadvance.request.accept-playedvideo",false); // 再生済みのリク許可
 pref("extensions.nicolivehelperadvance.request.allow-req-n-min-ago",0); // 何分前以上の再生済みがOKか
+pref("extensions.nicolivehelperadvance.request.accept-nreq",0); // 1枠何リクまでok
+
+// リクエスト制限設定
+pref("extensions.nicolivehelperadvance.request.restrict.enabled",false);
+pref("extensions.nicolivehelperadvance.request.restrict.date-from","2007-08-31");
+pref("extensions.nicolivehelperadvance.request.restrict.date-to","2007-08-31");
+pref("extensions.nicolivehelperadvance.request.restrict.view-from",0);
+pref("extensions.nicolivehelperadvance.request.restrict.view-to",0);
+pref("extensions.nicolivehelperadvance.request.restrict.mylist-from",0);
+pref("extensions.nicolivehelperadvance.request.restrict.mylist-to",0);
+pref("extensions.nicolivehelperadvance.request.restrict.videolength-from",0);
+pref("extensions.nicolivehelperadvance.request.restrict.videolength-to",0);
+pref("extensions.nicolivehelperadvance.request.restrict.tag-include","");
+pref("extensions.nicolivehelperadvance.request.restrict.tag-exclude","");
+pref("extensions.nicolivehelperadvance.request.restrict.title-include","");
+pref("extensions.nicolivehelperadvance.request.restrict.title-exclude","");
+pref("extensions.nicolivehelperadvance.request.restrict.bitrate",0);
 
 pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイル(手動順次とか)
 pref("extensions.nicolivehelperadvance.play.interval", 8);

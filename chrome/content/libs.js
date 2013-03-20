@@ -29,12 +29,12 @@ const PLAY_RANDOM = 1;
 const PLAY_CONSUMPTION = 2;
 
 // リクエストを受け付けない理由コード
-const REASON_NOT_ACCEPT = 1;           // リクエストを受け付けていない
-const REASON_NO_LIVE_PLAY = 2;         // 生放送で引用できない
-const REASON_ALREADY_REQUESTED = 3;    // すでにリクエスト済み
-const REASON_ALREADY_PLAYED = 4;       // すでに再生済み
-const REASON_DISABLE_NEWMOVIE = 5;     // 新着動画の禁止
-
+const REASON_NOT_ACCEPT = 1;            // リクエストを受け付けていない
+const REASON_NO_LIVE_PLAY = 2;          // 生放送で引用できない
+const REASON_ALREADY_REQUESTED = 3;     // すでにリクエスト済み
+const REASON_ALREADY_PLAYED = 4;        // すでに再生済み
+const REASON_DISABLE_NEWMOVIE = 5;      // 新着動画の禁止
+const REASON_MAX_NUMBER_OF_REQUEST = 6; // リクエスト数が多い
 
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前
 const COMMENT_STATE_MOVIEINFO_BEGIN = 1;   // 動画情報を送信中
@@ -81,6 +81,13 @@ function IsCaster()
 function IsOffline()
 {
     return NicoLiveHelper.liveinfo.request_id=='lv0';
+}
+
+/**
+ * 生放送IDを返す
+ */
+function GetRequestId(){
+    return NicoLiveHelper.liveinfo.request_id;
 }
 
 var LibUserSessionCookie = "";
