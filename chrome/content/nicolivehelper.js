@@ -529,7 +529,7 @@ var NicoLiveHelper = {
 
 	    case 'comment_no':
 		// リク主のコメント番号
-		tmp = info.comment_no || "";
+		tmp = info.comment_no || 0;
 		break;
 
 	    case 'requestnum': // リク残数.
@@ -1180,9 +1180,11 @@ var NicoLiveHelper = {
 		    info.tags = new Object();
 		}
 		if( !info.tags[domain] ) info.tags[domain] = new Array();
+		if( !info.tags_array ) info.tags_array = new Array();
 		for(let i=0,item;item=tag[i];i++){
 		    let tag = restorehtmlspecialchars(ZenToHan(item.textContent));
-		    info.tags[domain].push(tag);
+		    info.tags[domain].push( tag );
+		    info.tags_array.push( tag );
 		}
 		break;
 	    case "size_high":
@@ -1257,8 +1259,6 @@ var NicoLiveHelper = {
      * @throws RequestException (datastruct.js)
      */
     checkRequest: function( videoinfo ){
-	// TODO NG動画のチェック
-
 	if( videoinfo.no_live_play ){
 	    // 生拒否
 	    videoinfo.errno = REASON_NO_LIVE_PLAY;
@@ -1270,6 +1270,13 @@ var NicoLiveHelper = {
 	    // リクエスト不可
 	    videoinfo.errno = REASON_NOT_ACCEPT;
 	    videoinfo.errmsg = Config.msg.notaccept;
+	    throw videoinfo;
+	}
+
+	if( Config.isNGVideo( videoinfo.video_id ) ){
+	    // NG動画
+	    videoinfo.errno = REASON_NG_VIDEO;
+	    videoinfo.errmsg = Config.msg.ngvideo;
 	    throw videoinfo;
 	}
 
@@ -1321,8 +1328,159 @@ var NicoLiveHelper = {
 	    }
 	}
 
+	// リクエスト制限のチェック.
+	if( Config.request.restrict.dorestrict ){
+	    let r = this.checkRequestCondition( videoinfo );
+	    if( r ){
+		videoinfo.errno = REASON_REQUEST_CONDITION;
+		videoinfo.errmsg = r;
+		throw videoinfo;
+	    }
+	}
+
 	return true;
     },
+
+    /**
+     * リクエスト制限のチェック.
+     * @param videoinfo 動画情報
+     * @return 制限に引っかかると、エラーメッセージを返す
+     */
+    checkRequestCondition:function(videoinfo){
+	let restrict = Config.request.restrict;
+
+	if(restrict.mylist_from>0){
+	    if( videoinfo.mylist_counter<restrict.mylist_from ){
+		return Config.msg.lessmylists;
+	    }
+	}
+	if(restrict.mylist_to>0){
+	    if( videoinfo.mylist_counter>restrict.mylist_to ){
+		return Config.msg.greatermylists;
+	    }
+	}
+	if(restrict.view_from>0){
+	    if( videoinfo.view_counter<restrict.view_from ){
+		return Config.msg.lessviews;
+	    }
+	}
+	if(restrict.view_to>0){
+	    if( videoinfo.view_counter>restrict.view_to ){
+		return Config.msg.greaterviews;
+	    }
+	}
+
+	if(restrict.videolength_from>0){
+	    // 指定秒数以上かどうか.
+	    if( videoinfo.length_ms/1000 < restrict.videolength_from ){
+		return Config.msg.shortertime;
+	    }
+	}
+
+	if(restrict.videolength_to>0){
+	    // 指定秒数以下かどうか.
+	    if( videoinfo.length_ms/1000 > restrict.videolength_to ){
+		return Config.msg.longertime;
+	    }
+	}
+
+	let date_from,date_to;
+	date_from = restrict.date_from.match(/\d+/g);
+	date_to   = restrict.date_to.match(/\d+/g);
+	date_from = new Date(date_from[0],date_from[1]-1,date_from[2]);
+	date_to   = new Date(date_to[0],date_to[1]-1,date_to[2],23,59,59);
+	if( date_to-date_from >= 86400000 ){ /* 86400000は1日のミリ秒数 */
+	    // 投稿日チェック
+	    let posted = videoinfo.first_retrieve*1000;
+	    if( date_from <= posted && posted <= date_to ){
+		// OK
+	    }else{
+		return Config.msg.outofdaterange;
+	    }
+	}
+
+	// タグにキーワードが含まれていればOK
+	if(restrict.tag_include.length>0){
+	    let tagstr = videoinfo.tags_array.join(' ');
+	    let flg = false;
+	    for(let i=0,tag;tag=restrict.tag_include[i];i++){
+		let reg = new RegExp(tag,"i");
+		if( tagstr.match(reg) ){
+		    // 含まれている
+		    flg = true;
+		}
+	    }
+	    if( !flg ){
+		restrict.requiredkeyword = restrict.tag_include.join(',');
+		return Config.msg.requiredkeyword;
+	    }
+	}
+
+	// タグにキーワードが含まれていなければOK
+	if(restrict.tag_exclude.length>0){
+	    let tagstr = videoinfo.tags_array.join(' ');
+	    let flg = true;
+	    let tag;
+	    for(let i=0;tag=restrict.tag_exclude[i];i++){
+		let reg = new RegExp(tag,"i");
+		if( tagstr.match(reg) ){
+		    // 含まれている
+		    flg = false;
+		    break;
+		}
+	    }
+	    if( !flg ){
+		restrict.forbiddenkeyword = tag;
+		return Config.msg.forbiddenkeyword;
+	    }
+	}
+
+	// 1.1.35+
+	if( restrict.bitrate ){
+	    if( videoinfo.highbitrate > restrict.bitrate ){
+		return Config.msg.highbitrate;
+	    }
+	}
+
+	// 1.1.22+
+	// タイトルにキーワードが含まれていればOK
+	if(restrict.title_include.length>0){
+	    let tagstr = videoinfo.title;
+	    let flg = false;
+	    for(let i=0,tag;tag=restrict.title_include[i];i++){
+		let reg = new RegExp(tag,"i");
+		if( tagstr.match(reg) ){
+		    // 含まれている
+		    flg = true;
+		}
+	    }
+	    if( !flg ){
+		restrict.requiredkeyword = restrict.title_include.join(',');
+		return Config.msg.requiredkeyword_title;
+	    }
+	}
+
+	// タイトルにキーワードが含まれていなければOK
+	if(restrict.title_exclude.length>0){
+	    let tagstr = videoinfo.title;
+	    let flg = true;
+	    let tag;
+	    for(let i=0;tag=restrict.title_exclude[i];i++){
+		let reg = new RegExp(tag,"i");
+		if( tagstr.match(reg) ){
+		    // 含まれている
+		    flg = false;
+		    break;
+		}
+	    }
+	    if( !flg ){
+		restrict.forbiddenkeyword = tag;
+		return Config.msg.forbiddenkeyword_title;
+	    }
+	}
+	return null;
+    },
+
 
     /**
      * 動画情報を取ってきてリクエストに追加する
@@ -1390,6 +1548,7 @@ var NicoLiveHelper = {
 		    }
                 }
 	    } catch (x) {
+		debugprint(x);
 		if( videoinfo ){
 		    if( isstock ){
 			// ストックの場合は拒否する必要のないケースがあるので
@@ -1411,7 +1570,7 @@ var NicoLiveHelper = {
 			// リクエストはリジェクトされた
 			NicoLiveHelper.reject_list.push( videoinfo );
 			NicoLiveRejectRequest.addRejectRequest( videoinfo );
-			debugprint( x.errmsg );
+			debugprint( "msg: "+NicoLiveHelper.replaceMacros(x.errmsg, videoinfo) );
 			// 応答メッセージ
 			sendmsg = x.errmsg;
 		    }

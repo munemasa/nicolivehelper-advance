@@ -46,6 +46,21 @@ var NicoLiveComment = {
 	let tr = table.insertRow(0);
 	tr.setAttribute("tr_comment_by", comment.user_id);
 
+	// TODO スコアによる透過テスト
+	if( comment.score <= -10000 ){
+	    // なし
+	    tr.setAttribute("style","opacity: 20;");
+	}else if( comment.score <= -4800 ){
+	    // 弱
+	    tr.setAttribute("style","opacity: 40;");
+	}else if( comment.score <= -1000 ){
+	    // 中
+	    tr.setAttribute("style","opacity: 60;");
+	}else if( comment.score < 0 ){
+	    // 強
+	    tr.setAttribute("style","opacity: 80;");
+	}
+
 	// 背景色の決定
 	if(!this.colormap[comment.user_id]){
 	    let sel = GetRandomInt(1,8);

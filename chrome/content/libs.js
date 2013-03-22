@@ -35,6 +35,8 @@ const REASON_ALREADY_REQUESTED = 3;     // すでにリクエスト済み
 const REASON_ALREADY_PLAYED = 4;        // すでに再生済み
 const REASON_DISABLE_NEWMOVIE = 5;      // 新着動画の禁止
 const REASON_MAX_NUMBER_OF_REQUEST = 6; // リクエスト数が多い
+const REASON_NG_VIDEO = 7;              // NG動画
+const REASON_REQUEST_CONDITION = 8;     // リクエスト制限にかかった
 
 const COMMENT_STATE_NONE = 0;              // 動画情報を送信する前
 const COMMENT_STATE_MOVIEINFO_BEGIN = 1;   // 動画情報を送信中

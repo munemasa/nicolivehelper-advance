@@ -30,6 +30,7 @@ pref("extensions.nicolivehelperadvance.request.restrict.tag-exclude","");
 pref("extensions.nicolivehelperadvance.request.restrict.title-include","");
 pref("extensions.nicolivehelperadvance.request.restrict.title-exclude","");
 pref("extensions.nicolivehelperadvance.request.restrict.bitrate",0);
+pref("extensions.nicolivehelperadvance.request.restrict.ng-video","");
 
 pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイル(手動順次とか)
 pref("extensions.nicolivehelperadvance.play.interval", 8);

@@ -19,6 +19,14 @@ var Config = {
     },
     twitter: {},
 
+    /**
+     * NG動画かどうか判定する.
+     * @param video_id 動画ID
+     */
+    isNGVideo:function(video_id){
+	return this.request.ngvideos["_"+video_id];
+    },
+
     getBranch:function(){
 	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");
 	return prefs;
@@ -167,6 +175,22 @@ var Config = {
     },
 
     /**
+     * NG動画設定を読み込む.
+     */
+    loadNGVideosSetting:function(branch){
+	let str = branch.getUnicharPref("request.restrict.ng-video");
+	let videos = str.match(/(sm|nm)\d+/g);
+	this.request.ngvideos = new Object();
+	try{
+	    for(let i=0,v; v=videos[i]; i++){
+		this.request.ngvideos["_"+v] = true;
+	    }
+	} catch (x) {
+	    debugprint("No NG-video settings");
+	}
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -186,6 +210,8 @@ var Config = {
 	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
 	// 何件までリクOKか
 	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
+	// NG動画
+	this.loadNGVideosSetting(branch);
 
 	try{
 	    this.loadRestrictionSetting(branch);
