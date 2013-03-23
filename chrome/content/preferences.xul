@@ -351,8 +351,6 @@
 		  name="extensions.nicolivehelperadvance.msg.within-livespace" type="unichar"/>
       <preference id="pref-msg-limitnumberofrequests"
 		  name="extensions.nicolivehelperadvance.msg.limitnumberofrequests" type="unichar"/>
-      <preference id="pref-msg-ng-video"
-		  name="extensions.nicolivehelperadvance.msg.ng-video-reply-message" type="unichar"/>
 
       <!-- リクエスト可否切り替え -->
       <preference id="pref-msg-requestok"
@@ -365,6 +363,8 @@
 		  name="extensions.nicolivehelperadvance.msg.requestng-command" type="unichar"/>
 
       <!-- リクエスト制限時のメッセージ -->
+      <preference id="pref-msg-ng-video"
+		  name="extensions.nicolivehelperadvance.msg.ng-video-reply-message" type="unichar"/>
       <preference id="pref-msg-lessmylists"
 		  name="extensions.nicolivehelperadvance.msg.lessmylists" type="unichar"/>
       <preference id="pref-msg-greatermylists"
@@ -441,10 +441,6 @@
 		<hbox align="center"><label control="msg-within-livespace" value="放送枠内に収まらない時"/></hbox>
 		<textbox preference="pref-msg-within-livespace" id="msg-within-livespace" flex="1"/>
 	      </row>
-	      <row>
-		<hbox align="center"><label control="msg-ng-video" value="NG動画の時"/></hbox>
-		<textbox preference="pref-msg-ng-video" id="msg-ng-video" flex="1"/>
-	      </row>
 	    </rows>
 	  </grid>
 	</tabpanel>
@@ -456,6 +452,10 @@
 	      <column flex="1" />
 	    </columns>
 	    <rows>
+	      <row>
+		<hbox align="center"><label control="msg-ng-video" value="NG動画の時"/></hbox>
+		<textbox preference="pref-msg-ng-video" id="msg-ng-video" flex="1"/>
+	      </row>
 	      <row>
 		<hbox align="center"><label control="msg-limitnumberofrequests" value="リクエスト受付数上限を越えた時"/></hbox>
 		<textbox preference="pref-msg-limitnumberofrequests" id="msg-limitnumberofrequests" flex="1"/>
