@@ -820,7 +820,7 @@ var NicoLiveHelper = {
 	    + " postkey=\""+this.postkey+"\""
 	    + " mail=\""+mail+(Config.comment184?" 184\"":"\"")
 	    + " user_id=\""+this.userinfo.user_id+"\""
-	    + " premium=\""+this.userinfo.is_premium+"\" locale=\"jp\">"
+	    + " premium=\""+this.userinfo.is_premium+"\" locale=\""+this.userinfo.userLanguage+"\">"
 	    + htmlspecialchars(comment)
 	    + "</chat>\0";
 	//debugprint(str);
@@ -873,7 +873,11 @@ var NicoLiveHelper = {
 		}
 	    }
 	};
-	NicoApi.getpostkey( thread, block_no, f );
+	let uselc = 1;
+	let lang_flag = 1;
+	let locale_flag = null; 
+	let seat_flag = 1;
+	NicoApi.getpostkey( thread, block_no, uselc, lang_flag, locale_flag, seat_flag, f );
     },
 
     /**
