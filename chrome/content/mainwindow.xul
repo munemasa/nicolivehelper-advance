@@ -223,6 +223,7 @@
   </hbox>
 
   <tabbox id="mainwindow-tab" flex="1" persist="selectedIndex">
+      <arrowscrollbox allowevents="true" class="tabbrowser-arrowscrollbox" orient="horizontal">
     <tabs id="maintabs">
       <tab id="tabs-request"
 	   label="&tab.request;" linkedpanel="tab-request"/>
@@ -242,6 +243,7 @@
       <tab id="tabs-debug"
 	   label="&tab.debug;" linkedpanel="tab-debug"/>
     </tabs>
+      </arrowscrollbox>
 
     <tabpanels id="tabpanels" flex="1">
 

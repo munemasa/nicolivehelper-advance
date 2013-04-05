@@ -346,21 +346,20 @@ var NicoLiveHelper = {
 	return removeditem[0];
     },
 
-    _shuffle: function(list){
-	let i = list.length;
-	while(i){
-	    let j = Math.floor(Math.random()*i);
-	    let t = list[--i];
-	    list[i] = list[j];
-	    list[j] = t;
-	}
-    },
+    /**
+     * リクエストをシャッフルする.
+     * 画面の更新も行う.
+     */
     shuffleRequest: function(){
-	this._shuffle( this.request_list );
+	ShuffleArray( this.request_list );
 	NicoLiveRequest.updateView( this.request_list );
     },
+    /**
+     * ストックをシャッフルする.
+     * 画面の更新も行う.
+     */
     shuffleStock: function(){
-	this._shuffle( this.stock_list );
+	ShuffleArray( this.stock_list );
 	NicoLiveStock.updateView( this.stock_list );
     },
 
@@ -377,11 +376,20 @@ var NicoLiveHelper = {
 
 	this.play( request );
     },
+
+    /**
+     * ストックを再生する.
+     * @param n ストックの番号(0,1,2,...)
+     */
     playStock: function(n){
 	if( this.isOffline() || !this.iscaster ) return;
 	let item = this.stock_list[n];
 	this.play( item );
     },
+    /**
+     * 再生履歴から再生する.
+     * @param n 再生履歴の番号(0,1,2,...)
+     */
     playHistory: function(n){
 	if( this.isOffline() || !this.iscaster ) return;
 	let item = this.playlist_list[n];
@@ -2884,6 +2892,8 @@ var NicoLiveHelper = {
 	    NicoLiveHelper.preprocessConnectServer( NicoLiveHelper.liveinfo.request_id );
 
 	    NicoLiveComment.openFile( NicoLiveHelper.liveinfo.request_id, NicoLiveHelper.liveinfo.default_community );
+
+	    document.title = NicoLiveHelper.liveinfo.request_id+" "+NicoLiveHelper.liveinfo.title+" ("+NicoLiveHelper.liveinfo.owner_name+")";
 	};
 	NicoApi.getplayerstatus( request_id, f );
     },

@@ -60,12 +60,32 @@ function $$(tag){
     return document.getElementsByTagName(tag);
 }
 
+/**
+ * オブジェクトをマージする.
+ * @param a オブジェクト1
+ * @param b オブジェクト2
+ * @param aにbをマージしたオブジェクトを返す
+ */
 function MergeSimpleObject(a,b)
 {
     for(let k in b){
 	a[k] = b[k];
     }
     return a;
+}
+
+/**
+ * 配列をシャッフルする.
+ * @param list 配列
+ */
+function ShuffleArray( list ){
+    let i = list.length;
+    while(i){
+	let j = Math.floor(Math.random()*i);
+	let t = list[--i];
+	list[i] = list[j];
+	list[j] = t;
+    }
 }
 
 /**
