@@ -1,3 +1,7 @@
+#maintabs {
+    display: block ! important;
+}
+
 #tabpanels {
     padding: 4px;
 }
