@@ -11,6 +11,10 @@ textbox#textbox-comment {
 #mainwindow-tab{
 }
 
+#maintabs {
+    display:inline-block;
+}
+
 tabpanels {
     padding: 2px;
 }

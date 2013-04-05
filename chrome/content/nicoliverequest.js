@@ -245,6 +245,15 @@ var NicoLiveRequest = {
 	button.setAttribute('oncommand',"NicoLiveRequest.goBottomRequest(event);");
 	hbox.appendChild(button);
 
+	if( item.product_code ){
+	    let text = CreateElement('hbox');
+	    text.setAttribute("align","center");
+	    text.setAttribute("style","cursor:default;");
+	    text.setAttribute("context","popup-search-product-code");
+	    text.appendChild( document.createTextNode(item.product_code) );
+	    hbox.appendChild( text );
+	}
+
 	let spacer = CreateElement('spacer');
 	spacer.setAttribute('flex','1');
 	hbox.appendChild(spacer);
