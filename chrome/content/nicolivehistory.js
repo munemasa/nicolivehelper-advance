@@ -100,10 +100,22 @@ var NicoLiveHistory = {
 	this._addHistoryView( table, videoinfo );
     },
 
+    /**
+     * 指定のイベントの発生した行を返す.
+     * @param event DOMイベント
+     */
     getIndex: function(event){
 	let tr = FindParentElement(event.target,'html:tr');
 	let n = tr.sectionRowIndex;
 	return n;
+    },
+
+    // 詳細表示の内容でテキストを復元する.
+    restorePlaylistText:function(){
+	$('playlist-textbox').value = "";
+	for(let i=0,item;item=NicoLiveHelper.playlist_list[i];i++){
+	    $('playlist-textbox').value += item.video_id + " " + item.title + "\n";
+	}
     },
 
     /**
