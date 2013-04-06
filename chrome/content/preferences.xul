@@ -18,6 +18,12 @@
       <!-- 最大再生時間 -->
       <preference id="pref-max-movieplay-time"
 		  name="extensions.nicolivehelperadvance.play.maxtime" type="int"/>
+      <!-- 先読み -->
+      <preference id="pref-prepare"
+		  name="extensions.nicolivehelperadvance.play.prepare" type="bool"/>
+      <!-- 先読みタイミング -->
+      <preference id="pref-prepare-timing"
+		  name="extensions.nicolivehelperadvance.play.prepare-timing" type="int"/>
 
       <!-- リクエストへの自動応答 -->
       <preference id="pref-request-autoreply"
@@ -82,6 +88,16 @@
       <tabpanels>
 	<!-- 進行 -->
 	<tabpanel orient="vertical">
+	  <hbox align="center">
+	    <checkbox preference="pref-prepare" label="動画の先読み(/prepare)を行う"
+		      tooltiptext="次の動画の先読みを行います"/>
+	    <scale id="prepare-timing-bar" persist="value" value="60" min="40" max="600"
+		   onchange="$('pref-prepare-timing').value = (this.value);"/>
+	    <textbox id="prepare-timing" preference="pref-prepare-timing"
+		     type="number" value="60" min="40" max="600" size="5"
+		     onchange="$('prepare-timing-bar').value=this.value;"/>
+	    <label value="秒前"/>
+	  </hbox>
 	  <grid>
 	    <columns>
 	      <column/>

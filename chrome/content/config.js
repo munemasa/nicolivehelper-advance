@@ -5,6 +5,7 @@ var Config = {
     videoinfo_interval: 0,     // 動画情報コメントの送信間隔
 
     request:{}, // リクエスト設定
+    play:{},    // 再生設定
 
     max_playtime: 0,           // 最大再生時間(minute)
 
@@ -191,6 +192,17 @@ var Config = {
     },
 
     /**
+     * 再生時設定をロードする.
+     */
+    loadPlaySettings:function (branch) {
+        this.play_interval = branch.getIntPref("play.interval");
+        this.max_playtime = branch.getIntPref("play.maxtime");
+
+	this.play.do_prepare = branch.getBoolPref("play.prepare");
+	this.play.prepare_timing = branch.getIntPref("play.prepare-timing");
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -210,6 +222,9 @@ var Config = {
 	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
 	// 何件までリクOKか
 	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
+	// 静画リクエストOKか
+	this.allow_seiga    = branch.getBoolPref("request.seiga");
+
 	// NG動画
 	this.loadNGVideosSetting(branch);
 
@@ -234,12 +249,9 @@ var Config = {
 	    this.videoinfo[i].command = branch.getUnicharPref("videoinfo"+(i+1)+"-command");
 	}
 
-	this.play_interval  = branch.getIntPref("play.interval");
-	this.max_playtime   = branch.getIntPref("play.maxtime");
-
-	this.allow_seiga    = branch.getBoolPref("request.seiga");
-
-	// 各種応答メッセージ
+	// 再生時設定
+        this.loadPlaySettings(branch);
+        // 各種応答メッセージ
         this.loadReplyMessage(branch);
 
 	// Twitter設定

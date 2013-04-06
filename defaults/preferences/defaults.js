@@ -35,6 +35,8 @@ pref("extensions.nicolivehelperadvance.request.restrict.ng-video","");
 pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイル(手動順次とか)
 pref("extensions.nicolivehelperadvance.play.interval", 8);
 pref("extensions.nicolivehelperadvance.play.maxtime", 0);
+pref("extensions.nicolivehelperadvance.play.prepare",true);
+pref("extensions.nicolivehelperadvance.play.prepare-timing",60);
 
 pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画情報詳細表示
 pref("extensions.nicolivehelperadvance.display.font","");
