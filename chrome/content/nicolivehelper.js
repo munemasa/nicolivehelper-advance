@@ -245,29 +245,35 @@ var NicoLiveHelper = {
 	this.setupPlayNext( i, l, true ); // no prepare
     },
 
-    /**
-     * 次曲ボタンを押したときのアクション.
-     */
-    playNext: function(){
-	let request = this.request_list;
-	let stock = this.stock_list;
 
+    /**
+     * 指定の時間に収まる動画を返す.
+     * @param list フィルタリング対象のリスト
+     * @param length 時間(秒) 0 にするとフィルタリングしない
+     * @return フィルタリング結果のリストを返す
+     */
+    filterByLength: function( list, length ){
+	length *= 1000;
+	let r = new Array();
+	for( let i=0,item; item=list[i]; i++ ){
+	    if( item.length_ms <= length || length==0 ){
+		r.push( item );
+	    }
+	}
+	return r;
+    },
+
+    /**
+     * 次のリクエストを再生する.
+     * @return 再生したらtrueを返す
+     */
+    playNextRequest: function(){
+	let request = this.request_list;
 	switch( this.playstyle ){
 	case PLAY_SEQUENTIAL:
 	default:
-	    if( request.length ){
-		NicoLiveRequest.playRequest(0);
-		return;
-	    }else if( stock.length ){
-		for(let i=0,item; item=stock[i]; i++){
-		    if( !item.is_played && item.errno!=REASON_NO_LIVE_PLAY ){
-			NicoLiveStock.playStock( i );
-			return;
-		    }
-		}
-	    }
-	    ShowNotice("再生できる動画がありませんでした");
-	    break;
+	    NicoLiveRequest.playRequest(0);
+	    return true;
 
 	case PLAY_RANDOM:
 	    break;
@@ -275,6 +281,47 @@ var NicoLiveHelper = {
 	case PLAY_CONSUMPTION:
 	    break;
 	}
+	return false;
+    },
+
+    /**
+     * 次のストックを再生する.
+     * @return 再生したらtrueを返す
+     */
+    playNextStock: function(){
+	switch( this.playstyle ){
+	case PLAY_SEQUENTIAL:
+	default:
+	    for(let i=0,item; item=stock[i]; i++){
+		if( !item.is_played && item.errno!=REASON_NO_LIVE_PLAY ){
+		    NicoLiveStock.playStock( i );
+		    return true;
+		}
+	    }
+	    break;
+	case PLAY_RANDOM:
+	    break;
+
+	case PLAY_CONSUMPTION:
+	    break;
+	}
+	return false;
+    },
+
+    /**
+     * 次曲ボタンを押したときのアクション.
+     */
+    playNext: function(){
+	let stock = this.stock_list;
+
+	if( request.length ){
+	    if( this.playNextRequest() ) return;
+	}
+
+	if( stock.length ){
+	    if( this.playNextStock() ) return;
+	}
+	ShowNotice("再生できる動画がありませんでした");
     },
 
     /**
@@ -422,6 +469,22 @@ var NicoLiveHelper = {
 		return this.play_status[ n ].videoinfo;
 	    }else{
 		return this.play_status[ this.play_target ].videoinfo;
+	    }
+	} catch (x) {
+	    return null;
+	}
+    },
+
+    /**
+     * 現在の再生ステータスを返す
+     * @param n メインかサブかのターゲット指定。指定がなければ現在の再生ターゲット。
+     */
+    getCurrentPlayStatus: function(n){
+	try{
+	    if( n==MAIN || n==SUB ){
+		return this.play_status[ n ];
+	    }else{
+		return this.play_status[ this.play_target ];
 	    }
 	} catch (x) {
 	    return null;
@@ -3031,11 +3094,13 @@ var NicoLiveHelper = {
 	if( noprepare ) return;
 
 	// TODO 先読み開始タイマー
+	/*
 	let prepare_time = 1000;
 	this.play_status[target]._prepare = setTimeout(
 	    function(){
 		
 	    }, prepare_time );
+	 */
     },
 
     /**
@@ -3064,6 +3129,21 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 先読み処理を行うかチェックする.
+     * @param now 現在時刻(UNIX time)
+     */
+    checkForPrepare: function( now ){
+	let current = this.getCurrentPlayStatus();
+
+	if( Config.play.do_prepare ){
+	    let t = current.play_end - Config.play.prepare_timing;
+	    if( now > t ){
+		// TODO prepare
+	    }
+	}
+    },
+
+    /**
      * 毎秒呼び出される関数.
      */
     update: function(){
@@ -3072,6 +3152,7 @@ var NicoLiveHelper = {
 
 	this.updateStatusBar( now );
         this.checkForPublishStatus(p);
+	this.checkForPrepare( now );
     },
 
 
