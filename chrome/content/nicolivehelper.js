@@ -264,62 +264,25 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 次のリクエストを再生する.
-     * @return 再生したらtrueを返す
-     */
-    playNextRequest: function(){
-	let request = this.request_list;
-	switch( this.playstyle ){
-	case PLAY_SEQUENTIAL:
-	default:
-	    NicoLiveRequest.playRequest(0);
-	    return true;
-
-	case PLAY_RANDOM:
-	    break;
-
-	case PLAY_CONSUMPTION:
-	    break;
-	}
-	return false;
-    },
-
-    /**
-     * 次のストックを再生する.
-     * @return 再生したらtrueを返す
-     */
-    playNextStock: function(){
-	switch( this.playstyle ){
-	case PLAY_SEQUENTIAL:
-	default:
-	    for(let i=0,item; item=stock[i]; i++){
-		if( !item.is_played && item.errno!=REASON_NO_LIVE_PLAY ){
-		    NicoLiveStock.playStock( i );
-		    return true;
-		}
-	    }
-	    break;
-	case PLAY_RANDOM:
-	    break;
-
-	case PLAY_CONSUMPTION:
-	    break;
-	}
-	return false;
-    },
-
-    /**
      * 次曲ボタンを押したときのアクション.
      */
     playNext: function(){
-	let stock = this.stock_list;
+	let remain = GetLiveRemainTime();
 
-	if( request.length ){
-	    if( this.playNextRequest() ) return;
+	if( this.request_list.length ){
+	    let n = this.selectNextVideo( true, remain );
+	    if( n>=0 ){
+		NicoLiveRequest.playRequest( n );
+		return;
+	    }
 	}
 
-	if( stock.length ){
-	    if( this.playNextStock() ) return;
+	if( this.stock_list.length ){
+	    let n = this.selectNextVideo( false, remain );
+	    if( n>=0 ){
+		NicoLiveStock.playStock( n );
+		return;
+	    }
 	}
 	ShowNotice("再生できる動画がありませんでした");
     },
@@ -491,6 +454,12 @@ var NicoLiveHelper = {
 	}
     },
 
+    /**
+     * 再生時間の総計を返す.
+     * @param list 動画のリスト
+     * @param excludeplayed 再生済みを勘定に入れないならtrue
+     * @param checkmaxplay 最大再生時間を確認する
+     */
     getTotalPlayTime:function(list,excludeplayed,checkmaxplay){
 	let t=0;
 	let maxplay = parseInt(Config.max_playtime*60*1000);
@@ -513,7 +482,7 @@ var NicoLiveHelper = {
     },
 
     getTotalRequestTime: function(){
-	return this.getTotalPlayTime( this.request_list, true, true );
+	return this.getTotalPlayTime( this.request_list, false, true );
     },
     getTotalStockTime: function(){
 	return this.getTotalPlayTime( this.stock_list, true, true );
@@ -2075,6 +2044,13 @@ var NicoLiveHelper = {
 		NicoLiveHelper.play_status[ target ].play_end =
 		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
 		NicoLiveHelper.addPlaylist( videoinfo );
+
+		let sec = videoinfo.length_ms/1000;
+		if( Config.max_playtime ){
+		    sec = Config.max_playtime * 60; // seconds
+		}
+		this.setupPlayNext( target, sec );
+
 	    } catch (x) {
                 debugprint(x);
 	    }
@@ -2203,12 +2179,20 @@ var NicoLiveHelper = {
 		this.play_status[target].play_end = this.play_status[target].play_begin + current.length_ms/1000 + 1;
 		this.addPlaylistText( current );
 		this.sendVideoInfo( current );
-		this.setupPlayNext( target, current.length_ms/1000 );
+
+		let sec = current.length_ms/1000;
+		if( Config.max_playtime ){
+		    sec = Config.max_playtime * 60; // seconds
+		}
+		this.setupPlayNext( target, sec );
 	    }else{
 		this.play_status[ target ].play_begin = GetCurrentTime();
 		this.setCurrentPlayVideo(video_id, target);
 	    }
+	    this.setPlayFlagForStock( video_id );
+	    this._prepared = null;
 	}
+
 	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
 	    
 	}
@@ -3057,6 +3041,23 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ストックにある動画を再生済みにする.
+     * @param video_id 再生済みにしたい動画ID
+     */
+    setPlayFlagForStock: function(video_id){
+	let b = false;
+	for( let i=0,item; item=this.stock_list[i]; i++ ){
+	    if( item.video_id==video_id ){
+		item.is_played = true;
+		b = true;
+	    }
+	}
+	if( b ){
+	    NicoLiveStock.updatePlayedStatus( this.stock_list );
+	}
+    },
+
+    /**
      * 次曲自動再生タイマーをしかける.
      * @param target MAIN or SUB
      * @param duration 現在の動画の残り時間(秒)
@@ -3093,14 +3094,91 @@ var NicoLiveHelper = {
 
 	if( noprepare ) return;
 
-	// TODO 先読み開始タイマー
-	/*
-	let prepare_time = 1000;
+	// 先読み開始タイマー
+	let prepare_time = next_time - Config.play.prepare_timing*1000;
+	if( prepare_time<=0 ){
+	    debugprint("先読み時間が足りないため先読みは行いません");
+	    return;
+	}
+
 	this.play_status[target]._prepare = setTimeout(
 	    function(){
-		
+		NicoLiveHelper.prepareNextVideo(target);
 	    }, prepare_time );
-	 */
+    },
+
+    /**
+     * 次の動画を選択する.
+     * ランダム再生時、NicoLiveHelper._prepared が設定されていると、それを優先する.
+     * @param isrequest リクエストからならtrue, ストックからならfalse
+     * @param remain 枠の残り時間(秒) 0 なら残り時間を無視する
+     * @return リストのインデックスを返す(候補がなければ -1 を返す)
+     */
+    selectNextVideo: function(isrequest, remain){
+	remain *= 1000; // to milliseconds
+	let candidate = new Array();
+	let list = isrequest ? this.request_list : this.stock_list;
+	for( let i=0,item; item=list[i]; i++ ){
+	    if( item.length_ms <= remain || remain==0 ){
+		if( !isrequest && item.is_played ) continue; // ストックの再生済みは除外
+		candidate.push( i );
+	    }
+	}
+
+	if( candidate.length==0 ) return -1; // 候補なし
+
+	let playstyle = this.playstyle;
+	let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random
+	switch(stockplaystyle){
+	case 1: playstyle = PLAY_SEQUENTIAL; break;
+	case 2: playstyle = PLAY_RANDOM; break;
+	}
+
+	switch( playstyle ){
+	case PLAY_SEQUENTIAL:
+	default:
+	    return candidate[0];
+	    break;
+	case PLAY_RANDOM:
+	    if( this._prepared ){
+		// 先読み済みを優先する
+		for( let i=0,item; item=list[i]; i++ ){
+		    if( item.video_id==this._prepared ) return i;
+		}
+	    }
+	    let n = GetRandomIntLCG( 0, candidate.length-1 );
+	    return candidate[ n ];
+	    break;
+
+	case PLAY_CONSUMPTION:
+	    break;
+	}
+	return -1;
+    },
+
+    /**
+     * 次の動画を先読みする.
+     */
+    prepareNextVideo: function(target){
+	let remain = GetLiveRemainTime();
+	if( this.request_list.length ){
+	    let n = this.selectNextVideo( true, remain ); // isrequest=true
+	    if( n>=0 ){
+		let v = this.request_list[n];
+		this.postCasterComment("/prepare "+v.video_id, "");
+		this._prepared = v.video_id;
+		return;
+	    }
+	}
+	if( this.stock_list.length ){
+	    let n = this.selectNextVideo( false, remain ); // isrequest=false
+	    if( n>=0 ){
+		let v = this.stock_list[n];
+		this.postCasterComment("/prepare "+v.video_id, "");
+		this._prepared = v.video_id;
+		return;
+	    }
+	}	
     },
 
     /**
@@ -3129,21 +3207,6 @@ var NicoLiveHelper = {
     },
 
     /**
-     * 先読み処理を行うかチェックする.
-     * @param now 現在時刻(UNIX time)
-     */
-    checkForPrepare: function( now ){
-	let current = this.getCurrentPlayStatus();
-
-	if( Config.play.do_prepare ){
-	    let t = current.play_end - Config.play.prepare_timing;
-	    if( now > t ){
-		// TODO prepare
-	    }
-	}
-    },
-
-    /**
      * 毎秒呼び出される関数.
      */
     update: function(){
@@ -3152,7 +3215,6 @@ var NicoLiveHelper = {
 
 	this.updateStatusBar( now );
         this.checkForPublishStatus(p);
-	this.checkForPrepare( now );
     },
 
 

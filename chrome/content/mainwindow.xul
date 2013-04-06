@@ -107,13 +107,21 @@
 	<!-- auto/manual sequential/random playstyle -->
 	<toolbarbutton label="&playstyle.manual_sequential;" type="menu" id="toolbar-playstyle">
 	  <menupopup id="toolbar-popup-playstyle">
-	    <menuitem label="&playstyle.manual_sequential;" playstyle="0" oncommand="NicoLiveHelper.setPlayStyle(0);"/>
-	    <menuitem label="&playstyle.auto_sequential;" playstyle="1" oncommand="NicoLiveHelper.setPlayStyle(1);"/>
+	    <menuitem label="&playstyle.manual_sequential;"
+		      playstyle="0"
+		      oncommand="NicoLiveHelper.setPlayStyle(0);"/>
+	    <menuitem label="&playstyle.auto_sequential;"
+		      playstyle="1"
+		      oncommand="NicoLiveHelper.setPlayStyle(1);"/>
+	    <menuseparator/>
+	    <menuitem label="&playstyle.manual_random;" playstyle="2"
+		      tooltiptext="&playstyle.tooltip_random;"
+		      oncommand="NicoLiveHelper.setPlayStyle(2);"/>
+	    <menuitem label="&playstyle.auto_random;" playstyle="3"
+		      tooltiptext="&playstyle.tooltip_random;"
+		      oncommand="NicoLiveHelper.setPlayStyle(3);"/>
 	    <menuseparator/>
 	    <!-- TODO -->
-	    <menuitem disabled="true" label="&playstyle.manual_random;" playstyle="2" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(2);"/>
-	    <menuitem disabled="true" label="&playstyle.auto_random;" playstyle="3" tooltiptext="&playstyle.tooltip_random;" oncommand="NicoLiveHelper.setPlayStyle(3);"/>
-	    <menuseparator/>
 	    <menuitem disabled="true" label="&playstyle.manual_consumption;" playstyle="4" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(4);"/>
 	    <menuitem disabled="true" label="&playstyle.auto_consumption;" playstyle="5" tooltiptext="&playstyle.tooltip_consumption;" oncommand="NicoLiveHelper.setPlayStyle(5);"/>
 	  </menupopup>
@@ -820,7 +828,7 @@
     <!-- クッキー共有するブラウザ指定 -->
     <menupopup id="popup-select-browser" oncommand="NicoLiveWindow.changeBrowser();">
       <menuitem name="use-browser" id="use-firefox"
-		persist="checked" label="Firefox" type="radio" autocheck="true" tooltiptext=""/>
+		persist="checked" label="なし" type="radio" autocheck="true" tooltiptext=""/>
       <menuitem name="use-browser" id="use-google-chrome"
 		persist="checked" label="Google Chrome" type="radio" autocheck="true" tooltiptext="Win/Mac/LinuxのGoogle Chromeのクッキーを読み込みます。"/>
       <menuitem name="use-browser" id="use-protected-mode-ie"

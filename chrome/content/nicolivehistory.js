@@ -79,6 +79,7 @@ var NicoLiveHistory = {
     addRequestDirect:function(event){
 	let n = this.getIndex(event);
 	let videoinfo = NicoLiveHelper.getPlayedVideo( n );
+	videoinfo.is_played = false;
 	NicoLiveHelper.addRequestDirect( videoinfo );
     },
     /**
