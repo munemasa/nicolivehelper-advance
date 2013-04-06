@@ -112,6 +112,14 @@ function GetRequestId(){
     return NicoLiveHelper.liveinfo.request_id;
 }
 
+/**
+ * 生放送の残り時間を返す
+ * @return 枠の残り時間(秒)
+ */
+function GetLiveRemainTime(){
+    return NicoLiveHelper.liveinfo.end_time - GetCurrentTime();
+}
+
 var LibUserSessionCookie = "";
 var LibUserAgent = "";
 function SetUserAgent(s)
