@@ -2696,6 +2696,7 @@ var NicoLiveHelper = {
 	    
 	    live_info.twitter_tag = GetXmlText(xml,"/getplayerstatus/stream/twitter_tag");
 	    live_info.nd_token = GetXmlText(xml,"/getplayerstatus/stream/nd_token");
+	    live_info.broadcast_token = GetXmlText(xml,"/getplayerstatus/stream/broadcast_token");
 	    live_info.is_priority_prefecture = GetXmlText(xml,"/getplayerstatus/stream/is_priority_prefecture");
 	} catch (x) {
 	    debugprint(x);
@@ -2708,7 +2709,7 @@ var NicoLiveHelper = {
 	    user_info.is_premium = parseInt( GetXmlText(xml,"/getplayerstatus/user/is_premium") );
 	    user_info.userAge = GetXmlText(xml,"/getplayerstatus/user/userAge");
 	    user_info.userSex = GetXmlText(xml,"/getplayerstatus/user/userSex");
-	    user_info.userDomain = GetXmlText(xml,"/getplayerstatus/user/userDomain");
+	    user_info.userDomain = GetXmlText(xml,"/getplayerstatus/user/userDomain"); // アクセス元の国
 	    user_info.userPrefecture = GetXmlText(xml,"/getplayerstatus/user/userPrefecture");
 	    user_info.userLanguage = GetXmlText(xml,"/getplayerstatus/user/userLanguage");
 	    user_info.room_label = GetXmlText(xml,"/getplayerstatus/user/room_label");
