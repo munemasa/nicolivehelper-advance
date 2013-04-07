@@ -200,6 +200,8 @@ var Config = {
 
 	this.play.do_prepare = branch.getBoolPref("play.prepare");
 	this.play.prepare_timing = branch.getIntPref("play.prepare-timing");
+
+	this.play.in_time = branch.getBoolPref("play.in-time");
     },
 
     /**

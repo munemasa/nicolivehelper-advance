@@ -267,7 +267,7 @@ var NicoLiveHelper = {
      * 次曲ボタンを押したときのアクション.
      */
     playNext: function(){
-	let remain = GetLiveRemainTime();
+	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
 
 	if( this.request_list.length ){
 	    let n = this.selectNextVideo( true, remain );
@@ -3128,10 +3128,13 @@ var NicoLiveHelper = {
 	if( candidate.length==0 ) return -1; // 候補なし
 
 	let playstyle = this.playstyle;
-	let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random
-	switch(stockplaystyle){
-	case 1: playstyle = PLAY_SEQUENTIAL; break;
-	case 2: playstyle = PLAY_RANDOM; break;
+	if( !isrequest ){
+	    let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random
+	    switch(stockplaystyle){
+	    case '1': playstyle = PLAY_SEQUENTIAL; break;
+	    case '2': playstyle = PLAY_RANDOM; break;
+	    default: break;
+	    }
 	}
 
 	switch( playstyle ){
@@ -3160,7 +3163,8 @@ var NicoLiveHelper = {
      * 次の動画を先読みする.
      */
     prepareNextVideo: function(target){
-	let remain = GetLiveRemainTime();
+	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
+
 	if( this.request_list.length ){
 	    let n = this.selectNextVideo( true, remain ); // isrequest=true
 	    if( n>=0 ){
