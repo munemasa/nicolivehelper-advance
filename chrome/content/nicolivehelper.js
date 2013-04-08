@@ -20,6 +20,8 @@ var NicoLiveHelper = {
     iscaster: false,    // 主かどうか
     post_token: "",     // 主コメ用のトークン
 
+    isTimeshift: false, // タイムシフトかどうか
+
     connecttime: 0,     // 現在表示しているコメントサーバーへの接続時刻
     currentRoom: ARENA,
     connectioninfo: [], // ConnectionInfo 複数のコメントサーバ接続管理用。0:アリーナ 1:立ち見A 2:立ち見B 3:立ち見C
@@ -2942,6 +2944,12 @@ var NicoLiveHelper = {
 	    NicoLiveComment.openFile( NicoLiveHelper.liveinfo.request_id, NicoLiveHelper.liveinfo.default_community );
 
 	    document.title = NicoLiveHelper.liveinfo.request_id+" "+NicoLiveHelper.liveinfo.title+" ("+NicoLiveHelper.liveinfo.owner_name+")";
+
+	    if( evaluateXPath(xml,"//quesheet").length ){
+		// タイムシフトの場合プレイリストを再構築.
+		debugprint("この放送はタイムシフトです");
+		NicoLiveHelper.construct_playlist_for_timeshift(xml);
+	    }
 	};
 	NicoApi.getplayerstatus( request_id, f );
     },
@@ -3212,6 +3220,38 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ロスタイム突入をチェックする.
+     * @param now 現在時刻(UNIX時間)
+     */
+    checkForLosstime:function (now) {
+	if( this.isTimeshift ) return;
+	// 終了時刻を過ぎたら、ロスタイム突入かどうかをチェック
+	// 新しい終了時刻を取得して確認する
+        if (!this._losstime && this.liveinfo.end_time < now) {
+            this._losstime = now;
+            debugprint("get getplayerstatus to obtain end_time.");
+            let f = function (xml, req) {
+                if (req.readyState != 4 || req.status != 200) return;
+                let xml = req.responseXML;
+                try {
+                    NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('end_time')[0].textContent);
+                } catch (x) {
+                    NicoLiveHelper.liveinfo.end_time = 0;
+                }
+                debugprint("New end_time=" + NicoLiveHelper.liveinfo.end_time);
+                if (NicoLiveHelper.liveinfo.end_time < GetCurrentTime()) {
+                    // ロスタイム中である
+		    debugprint("ロスタイムに入りました");
+                } else {
+                    // 延長されている
+                    this._losstime = 0;
+                    // NicoLiveHelper.setLiveProgressBarTipText(); // TODO
+                }
+            };
+            NicoApi.getplayerstatus(req_id, f);
+        }
+    },
+    /**
      * 毎秒呼び出される関数.
      */
     update: function(){
@@ -3220,8 +3260,29 @@ var NicoLiveHelper = {
 
 	this.updateStatusBar( now );
         this.checkForPublishStatus(p);
+        this.checkForLosstime(now);
     },
 
+    /**
+     * タイムシフトでの再生リストを復元する.
+     * @param xml getplayerstatusのXML
+     */
+    construct_playlist_for_timeshift:function(xml){
+	this.isTimeshift = true;
+	let que = evaluateXPath(xml,"//quesheet/que");
+	let elem = $('playlist-textbox');
+	elem.value += this.liveinfo.title+" "+this.liveinfo.request_id+" ("+GetFormattedDateString("%Y/%m/%d %H:%M",this.liveinfo.start_time*1000)+"-)\n";
+	for(let i=0,item;item=que[i];i++){
+	    //debugprint(item.textContent);
+	    let dat = item.textContent.match(/^\s*\/play(sound)*\s*smile:(((sm|nm|ze|so)\d+)|\d+)\s*(main|sub)\s*\"?(.*)\"?$/);
+	    if(dat){
+		let vid = dat[2];
+		let title = dat[6];
+		elem.value += vid+" "+title+"\n";
+	    }
+	}
+	// this.getwaybackkey(this.request_id); // TODO
+    },
 
     /**
      * user_sessionクッキーを読み込む.
