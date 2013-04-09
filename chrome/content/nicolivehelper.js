@@ -2051,7 +2051,7 @@ var NicoLiveHelper = {
 		if( Config.max_playtime ){
 		    sec = Config.max_playtime * 60; // seconds
 		}
-		this.setupPlayNext( target, sec );
+		NicoLiveHelper.setupPlayNext( target, sec );
 
 	    } catch (x) {
                 debugprint(x);
