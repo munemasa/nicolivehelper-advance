@@ -543,8 +543,8 @@
 		  oncommand="TODO; NicoLiveHelper.playJingle();"/>
 	  <button label="動画情報の再送信"
 		  oncommand="NicoLiveHelper.sendVideoInfo( null );"/>
-	  <button disabled="true" label="リクエスト受付数リセット"
-		  oncommand="TODO; NicoLiveHelper.resetRequestCount();"/>
+	  <button label="リクエスト受付数リセット"
+		  oncommand="NicoLiveHelper.resetRequestCount();"/>
 	</hbox>
 	
 	<groupbox>

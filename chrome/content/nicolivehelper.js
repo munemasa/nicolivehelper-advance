@@ -2065,6 +2065,13 @@ var NicoLiveHelper = {
     },
 
     /**
+     * リクエスト受け付け数をリセット.
+     */
+    resetRequestCount:function(){
+	this.number_of_requests = new Object();
+    },
+
+    /**
      * 放送終了時の処理.
      */
     finishBroadcasting: function(){
@@ -3437,7 +3444,7 @@ var NicoLiveHelper = {
                     // NicoLiveHelper.setLiveProgressBarTipText(); // TODO
                 }
             };
-            NicoApi.getplayerstatus(req_id, f);
+            NicoApi.getplayerstatus( GetRequestId(), f);
         }
     },
     /**
