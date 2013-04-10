@@ -7,7 +7,8 @@
 
 
 var NicoLiveHelper = {
-    secofweek: 604800,    // 1週間の秒数(60*60*24*7).
+    secofweek: 604800, // 1週間の秒数(60*60*24*7).
+    remainpoint: 0,    // 所有ニコニコポイント
 
     // getplayerstatusの情報
     liveinfo: {},      // LiveInfo
@@ -910,6 +911,9 @@ var NicoLiveHelper = {
 			NicoLiveHelper.postkey = "";
 		    }
 		}else{
+		    // 通信失敗でリトライするときに
+		    // 減らしておかないと。
+		    NicoLiveHelper._getpostkeycounter++;
 		    ShowNotice("postkeyの取得に失敗しました");
 		    NicoLiveHelper.getpostkey();
 		}
@@ -3192,6 +3196,191 @@ var NicoLiveHelper = {
 		return;
 	    }
 	}	
+    },
+
+    /**
+     * コントロールパネルの延長メニューを更新.
+     * 残りポイントを取得、延長メニューを更新する。
+     */
+    updateExtendMenu:function(){
+	if( IsOffline() || !IsCaster() ) return;
+
+	$('btn-update-extend-menu').disabled = true;
+	let f = function(xml,req){
+	    if( req.readyState==4 ){
+		$('btn-update-extend-menu').disabled = false;
+		if( req.status==200 ){
+		    let remain = req.responseXML;
+		    try{
+			NicoLiveHelper.remainpoint = remain.getElementsByTagName("remain")[0].textContent;
+			debugprint("remain point="+NicoLiveHelper.remainpoint);
+			$('controlpanel-remain-point').value = ""+NicoLiveHelper.remainpoint;
+			NicoLiveHelper.getsalelist();
+		    } catch (x) {
+			NicoLiveHelper.remainpoint = 0;
+		    }
+		}
+	    }
+	};
+	// 残りポイント取得
+	NicoApi.getremainpoint( f );
+    },
+
+    /** 延長アイテムを取得し、必要があれば無料延長を行います.
+     * @param do_freeextend trueにすると無料延長を実行する.
+     */
+    getsalelist:function( do_freeextend ){
+	if( !IsCaster() || IsOffline() ) return;
+
+	let f = function( xml, req ){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    //debugprint(req.responseText);
+		    // price=0 で item=freeextend な item を得る.
+		    let freeitem = evaluateXPath(req.responseXML,"/getsalelist/item[item='freeextend' and price=0]");
+		    // 予約枠で無料延長特典があるなら、freeextendかつ0ポイントが 1個ある.
+		    if( freeitem.length==1 ){
+			debugprint("a free extendable item is found.");
+			let num = freeitem[0].getElementsByTagName('num')[0].textContent;
+			let code = freeitem[0].getElementsByTagName('code')[0].textContent;
+			debugprint("num="+num);
+			debugprint("code="+code);
+			if( do_freeextend ){
+			    // TODO
+			    //NicoLiveHelper.freeExtend(num, code);
+			}
+		    }else{
+			debugprint("無料延長メニューはありませんでした");
+		    }
+		    NicoLiveHelper.updateSaleListMenu(req.responseXML);
+		}
+	    }
+	};
+	NicoApi.getsalelist( GetRequestId(), f );
+    },
+
+    /**
+     * 延長メニューを更新.
+     * @param xml getsalelistで取得するXML
+     */
+    updateSaleListMenu:function(xml){
+	let controlpanel_menu = $('controlpanel-menu-live-extend');
+	let parentitems = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']");
+	let labels = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/label");
+	let prices = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/price");
+	let nums = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/num");
+	let codes = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/code");
+	let items = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/item");
+	let coupon_id = evaluateXPath(xml,"/getsalelist/item[item!='freeextend_guide']/coupon_id");
+
+	while(controlpanel_menu.childNodes[0]){
+	    controlpanel_menu.removeChild(controlpanel_menu.childNodes[0]);
+	}
+
+	for(let i=0;i<labels.length;i++){
+	    let menuitem = CreateMenuItem(labels[i].textContent,'');
+	    menuitem.setAttribute("nico-price", prices[i].textContent);
+	    menuitem.setAttribute("nico-num", nums[i].textContent);
+	    menuitem.setAttribute("nico-code", codes[i].textContent);
+	    menuitem.setAttribute("nico-item", items[i].textContent);
+	    try{
+		coupon_id = evaluateXPath(parentitems[i],"coupon_id");
+		menuitem.setAttribute("nico-coupon_id", coupon_id[0].textContent);
+		debugprint(i+":coupon_id="+coupon_id[0].textContent);
+	    } catch (x) {
+	    }
+	    controlpanel_menu.appendChild(menuitem);
+	}
+    },
+
+    /**
+     * 延長処理を行なう.
+     * ニコニコ生放送のサーバーと通信を行って、延長を行う。
+     * @param num 番号
+     * @param code コード
+     * @param item アイテム
+     * @param coupon クーポン
+     */
+    liveExtendMain:function(num, code, item, coupon){
+	return; // TODO
+
+	if( IsOffline() || !IsCaster() ) return;
+
+	$('btn-extend-live').disabled = true;
+	let f = function(xml, req){
+	    if( req.readyState==4 ){
+		$('btn-extend-live').disabled = false;
+		if( req.status==200 ){
+		    let xml = req.responseXML;
+		    try{
+			if( xml.getElementsByTagName('usepoint')[0].getAttribute('status')=='ok' ){
+			    NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('new_end_time')[0].textContent);
+			    debugprint("New endtime="+NicoLiveHelper.liveinfo.end_time);
+
+			    // TODO
+			    // 延長完了通知
+			    NicoLiveHelper._extendcnt = 0;
+			    let str = NicoLivePreference.getBranch().getUnicharPref('notice.extend');
+			    NicoLiveHelper.postCasterComment(str,"");
+			    ShowNotice(str);
+			}else{
+			    ShowNotice("延長に失敗しました");
+			}
+			// TODO
+			//NicoLiveHelper.setLiveProgressBarTipText();
+		    } catch (x) {
+			debugprint(x);
+			ShowNotice("延長に失敗しました");
+		    }
+		}else{
+		    ShowNotice("延長に失敗しました(HTTPエラー)");
+		}
+	    }
+	};
+
+	let data = new Array();
+	let now = GetCurrentTime();
+	let remain = this.endtime - now;
+	data.push("token="+this.token);
+	data.push("remain="+remain);  // 残り秒数
+	data.push("date="+now); // 現在日時
+	data.push("num="+num); // セールスリストの番号.
+	data.push("code="+code); // セールスリストのコード.
+	data.push("item="+item); // 延長.
+	data.push("v="+this.request_id);
+	if( coupon ){
+	    data.push("coupon_id="+coupon);
+	}
+	debugprint('extend:'+data.join(','));
+
+	NicoApi.usepoint( data, f );
+    },
+
+    /**
+     * 延長する.
+     * コントロールパネルの延長ボタンを押したときに呼び出される。
+     */
+    extendLive:function(){
+	let menu = $('controlpanel-menu-live-extend-menulist').selectedItem;
+	let price = menu.getAttribute("nico-price");
+	let num = menu.getAttribute("nico-num");
+	let code = menu.getAttribute("nico-code");
+	let item = menu.getAttribute("nico-item");
+	let coupon = menu.getAttribute("nico-coupon_id");
+	if( parseInt(this.remainpoint) < parseInt(price) ){
+	    debugalert('延長するにはポイントが足りません。\n所持ポイント:'+this.remainpoint);
+	    return;
+	}
+	let msg;
+	msg = "延長処理を行いますか？ (所持ポイント:"+this.remainpoint+")\n\n"
+	    + menu.label + "\n"
+	    + "使用するポイント:" + price + "\n";
+	if( ConfirmPrompt(msg,'延長処理') ){
+	    debugprint('延長処理を行います');
+	    this.liveExtendMain(num,code,item,coupon);
+	}else{
+	    debugprint("延長処理をキャンセルしました");
+	}
     },
 
     /**
