@@ -14,10 +14,10 @@ var CommandMenu = {
 	if(!req) return;
 
 	// TODO コントロールパネルの「放送中の番組に接続」の扱い
-	//$('btn-connect-to-current-broadcast').disabled = true;
+	$('btn-connect-to-current-broadcast').disabled = true;
 	req.onreadystatechange = function(){
 	    if( req.readyState==4 ){
-		//$('btn-connect-to-current-broadcast').disabled = false;
+		$('btn-connect-to-current-broadcast').disabled = false;
 		if( req.status==200 ){
 		    let str = req.responseText;
 		    try{
