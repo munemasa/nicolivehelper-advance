@@ -3233,8 +3233,19 @@ var NicoLiveHelper = {
 	NicoApi.getremainpoint( f );
     },
 
+    /**
+     * 無料延長を行う.
+     * @param num 無料延長のアイテム番号
+     * @param code コード
+     */
+    freeExtend:function(num, code){
+	if( IsOffline() || !IsCaster() ) return;
+
+	this.liveExtendMain( num, code, "freeextend" );
+    },
+
     /** 延長アイテムを取得し、必要があれば無料延長を行います.
-     * @param do_freeextend trueにすると無料延長を実行する.
+     * @param do_freeextend trueにすると、さらに無料延長を実行する.
      */
     getsalelist:function( do_freeextend ){
 	if( !IsCaster() || IsOffline() ) return;
@@ -3247,14 +3258,13 @@ var NicoLiveHelper = {
 		    let freeitem = evaluateXPath(req.responseXML,"/getsalelist/item[item='freeextend' and price=0]");
 		    // 予約枠で無料延長特典があるなら、freeextendかつ0ポイントが 1個ある.
 		    if( freeitem.length==1 ){
-			debugprint("a free extendable item is found.");
+			debugprint("a free extendable item has found.");
 			let num = freeitem[0].getElementsByTagName('num')[0].textContent;
 			let code = freeitem[0].getElementsByTagName('code')[0].textContent;
 			debugprint("num="+num);
 			debugprint("code="+code);
 			if( do_freeextend ){
-			    // TODO
-			    //NicoLiveHelper.freeExtend(num, code);
+			    NicoLiveHelper.freeExtend(num, code);
 			}
 		    }else{
 			debugprint("無料延長メニューはありませんでした");
@@ -3347,14 +3357,14 @@ var NicoLiveHelper = {
 
 	let data = new Array();
 	let now = GetCurrentTime();
-	let remain = this.endtime - now;
-	data.push("token="+this.token);
+	let remain = this.liveinfo.end_time - now;
+	data.push("token="+this.post_token);
 	data.push("remain="+remain);  // 残り秒数
 	data.push("date="+now); // 現在日時
 	data.push("num="+num); // セールスリストの番号.
 	data.push("code="+code); // セールスリストのコード.
 	data.push("item="+item); // 延長.
-	data.push("v="+this.request_id);
+	data.push("v="+GetRequestId());
 	if( coupon ){
 	    data.push("coupon_id="+coupon);
 	}

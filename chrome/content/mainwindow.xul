@@ -551,8 +551,8 @@
 	  <caption label="放送時間延長"/>
 	  <hbox>
 	    <button label="無料延長を行う"
-		    oncommand="TODO; NicoLiveHelper.getsalelist(true);"/>
-	    <checkbox id="controlpanel-auto-free-extend"
+		    oncommand="NicoLiveHelper.getsalelist(true);"/>
+	    <checkbox disabled="true" id="controlpanel-auto-free-extend"
 		      label="自動無料延長を行う" persist="checked" autocheck="true"
 		      oncommand="TODO; NicoLiveHelper.setAutoFreeExtend(this.hasAttribute('checked'));"/>
 	  </hbox>
