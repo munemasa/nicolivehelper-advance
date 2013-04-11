@@ -3320,8 +3320,6 @@ var NicoLiveHelper = {
      * @param coupon クーポン
      */
     liveExtendMain:function(num, code, item, coupon){
-	return; // TODO
-
 	if( IsOffline() || !IsCaster() ) return;
 
 	$('btn-extend-live').disabled = true;
