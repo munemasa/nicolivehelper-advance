@@ -3378,6 +3378,8 @@ var NicoLiveHelper = {
      * コントロールパネルの延長ボタンを押したときに呼び出される。
      */
     extendLive:function(){
+	if( IsOffline() || !IsCaster() ) return;
+
 	let menu = $('controlpanel-menu-live-extend-menulist').selectedItem;
 	let price = menu.getAttribute("nico-price");
 	let num = menu.getAttribute("nico-num");
