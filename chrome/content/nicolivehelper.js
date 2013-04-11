@@ -2,7 +2,7 @@
 
 
 //Components.utils.import("resource://nicolivehelperadvancemodules/usernamecache.jsm");
-//Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
+Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
 //Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
 
@@ -702,20 +702,26 @@ var NicoLiveHelper = {
 	if( !name ) name = "";
 
 	let f = function(xml, req){
-	    if( req.readyState==4 && req.status==200 ){
-		debugprint('castercomment: '+req.responseText);
-		// status=error&error=0
-		if( req.responseText.indexOf("status=error")!=-1 ){
-		    if( !retry ){
-			setTimeout( function(){
-					NicoLiveHelper.postCasterComment(comment,mail,name,type,true); // retry=true
-				    }, 3000 );
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    debugprint('castercomment: '+req.responseText);
+		    // status=error&error=0
+		    if( req.responseText.indexOf("status=error")!=-1 ){
+			if( !retry ){
+			    setTimeout( function(){
+					    NicoLiveHelper.postCasterComment(comment,mail,name,type,true); // retry=true
+					}, 3000 );
+			}else{
+			    // 世界の新着、生放送引用拒否動画は、/playコマンドはエラーになる.
+			    ShowNotice("コメント送信に失敗しました:"+comment);
+			}
 		    }else{
-			// 世界の新着、生放送引用拒否動画は、/playコマンドはエラーになる.
-			ShowNotice("コメント送信に失敗しました:"+comment);
+			// 運営コメント送信に成功
 		    }
 		}else{
-		    // 運営コメント送信に成功
+		    setTimeout( function(){
+				    NicoLiveHelper.postCasterComment(comment,mail,name,type,true); // retry=true
+				}, 2000 );
 		}
 	    }
 	};
@@ -3842,6 +3848,11 @@ var NicoLiveHelper = {
 
 	// 生放送に接続開始
 	this.openNewBroadcast( request_id, title, iscaster, community_id );
+
+	NicoLiveHttpObserver.init();
+	// TODO
+	NicoLiveHttpObserver.setLossTime( false );
+	NicoLiveHttpObserver._testCancelHeartbeat( false );
     },
 
     /**
@@ -3871,6 +3882,8 @@ var NicoLiveHelper = {
 
 	this.stopTimers();
 	this.closeAllConnection();
+
+	NicoLiveHttpObserver.destroy();
     }
 
 };
