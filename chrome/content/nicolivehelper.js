@@ -2956,8 +2956,10 @@ var NicoLiveHelper = {
 	    }
 
 	    NicoLiveHelper.preprocessConnectServer( NicoLiveHelper.liveinfo.request_id );
-
-	    NicoLiveComment.openFile( NicoLiveHelper.liveinfo.request_id, NicoLiveHelper.liveinfo.default_community );
+	    
+	    if( Config.comment.savefile ){
+		NicoLiveComment.openFile( NicoLiveHelper.liveinfo.request_id, NicoLiveHelper.liveinfo.default_community );
+	    }
 
 	    document.title = NicoLiveHelper.liveinfo.request_id+" "+NicoLiveHelper.liveinfo.title+" ("+NicoLiveHelper.liveinfo.owner_name+")";
 
