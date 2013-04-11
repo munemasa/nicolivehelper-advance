@@ -2848,8 +2848,7 @@ var NicoLiveHelper = {
 		let publishstatus = req.responseXML;
 		NicoLiveHelper.post_token = publishstatus.getElementsByTagName('token')[0].textContent;
 		NicoLiveHelper.beginLive( NicoLiveHelper.post_token );
-		// TODO
-		//NicoLiveHelper.setLiveProgressBarTipText();
+		NicoLiveHelper.setLiveProgressBarTipText();
 	    }
 	};
 	NicoApi.getpublishstatus( request_id, f );
@@ -2961,6 +2960,8 @@ var NicoLiveHelper = {
 		debugprint("この放送はタイムシフトです");
 		NicoLiveHelper.construct_playlist_for_timeshift(xml);
 	    }
+
+	    NicoLiveHelper.setLiveProgressBarTipText();
 	};
 	NicoApi.getplayerstatus( request_id, f );
     },
@@ -3343,8 +3344,7 @@ var NicoLiveHelper = {
 			}else{
 			    ShowNotice("延長に失敗しました");
 			}
-			// TODO
-			//NicoLiveHelper.setLiveProgressBarTipText();
+			NicoLiveHelper.setLiveProgressBarTipText();
 		    } catch (x) {
 			debugprint(x);
 			ShowNotice("延長に失敗しました");
@@ -3403,6 +3403,40 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ロスタイム時間を求める.
+     * @return 秒を返す
+     */
+    calcLossTime:function(){
+	return 60; // サーバー負荷によって安定しないので固定に
+
+	let tmp = 120 - (this.liveinfo.start_time % 60);
+	if( tmp>115 ) tmp = 60;
+	tmp = Math.floor(tmp/10)*10; // 10秒未満の端数は切り捨て.
+	return tmp;
+    },
+
+    /**
+     * 生放送の経過時間表示のツールチップテキストを設定する.
+     */
+    setLiveProgressBarTipText:function(){
+	let str;
+	str = 'ロスタイム:'+this.calcLossTime()+'秒';
+	if( this.liveinfo.end_time ){
+	    let date = new Date(this.liveinfo.end_time*1000);
+	    let y,m,d,h,min,sec;
+	    y = date.getFullYear();
+	    m = date.getMonth() + 1;
+	    d = date.getDate();
+	    h = date.getHours();
+	    min = date.getMinutes();
+	    sec = date.getSeconds();
+	    str += "\n" + "放送終了時刻:" + y + "/" + m + "/" + d;
+	    str += " " + h + ":" + (min<10?"0"+min:min) + ":" + (sec<10?"0"+sec:sec);
+	}
+	$('statusbar-live-progress').setAttribute("tooltiptext",str);
+    },
+
+    /**
      * 配信状態を確認する.
      * テストから本放送に切り替わったのを検査するため。
      * @param p 経過時間
@@ -3453,7 +3487,7 @@ var NicoLiveHelper = {
                 } else {
                     // 延長されている
                     this._losstime = 0;
-                    // NicoLiveHelper.setLiveProgressBarTipText(); // TODO
+                    NicoLiveHelper.setLiveProgressBarTipText();
                 }
             };
             NicoApi.getplayerstatus( GetRequestId(), f);
