@@ -180,6 +180,27 @@ var NicoLiveWindow = {
 	}
     },
 
+    /**
+     * 生放送ページをプレイヤーの位置までスクロールする.
+     * 設定にチェックがなければスクロールしない。
+     */
+    scrollLivePage: function(){
+	let prefs = Config.getBranch();
+	if( prefs.getBoolPref("window.autoscroll") ){
+	    try{
+		let tab = this.findTab(GetRequestId()) || this.findTab(NicoLiveHelper.liveinfo.default_community);
+		let player;
+		if(tab){
+		    // watch_player_top_box for ニコニコ動画Zero
+		    player = tab.linkedBrowser.contentDocument.getElementById('watch_player_top_box').wrappedJSObject
+			|| tab.linkedBrowser.contentDocument.getElementById('WatchPlayer').wrappedJSObject; // for 原宿
+		    tab.linkedBrowser.contentWindow.scroll(0,player.offsetTop-32);
+		}
+	    } catch (x) {
+	    }
+	}	
+    },
+
     init: function(){
 	this.initBrowserIcon();
     }

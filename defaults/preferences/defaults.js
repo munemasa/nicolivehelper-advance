@@ -44,6 +44,27 @@ pref("extensions.nicolivehelperadvance.display.font","");
 pref("extensions.nicolivehelperadvance.display.font-color","");
 pref("extensions.nicolivehelperadvance.display.font-scale",9);
 
+// 詳細設定→ウィンドウ
+pref("extensions.nicolivehelperadvance.window.auto-open",false);
+pref("extensions.nicolivehelperadvance.window.auto-close",false);
+pref("extensions.nicolivehelperadvance.window.auto-open-listener",false);
+pref("extensions.nicolivehelperadvance.window.auto-close-listener",false);
+pref("extensions.nicolivehelperadvance.window.auto-close-tab",false);
+pref("extensions.nicolivehelperadvance.window.autoscroll",false);
+
+// 詳細設定→通知
+pref("extensions.nicolivehelperadvance.notice.time",3);
+pref("extensions.nicolivehelperadvance.notice.area",false);
+pref("extensions.nicolivehelperadvance.notice.dialog",false);
+pref("extensions.nicolivehelperadvance.notice.comment",false);
+pref("extensions.nicolivehelperadvance.notice.popup",false);
+pref("extensions.nicolivehelperadvance.notice.sound",false);
+pref("extensions.nicolivehelperadvance.notice.infobar",false);
+pref("extensions.nicolivehelperadvance.notice.message","放送時間残り {pref:min-ago} 分になりました");
+pref("extensions.nicolivehelperadvance.notice.extend","延長を行いました。新しい終了時刻は {end-time} です");
+pref("extensions.nicolivehelperadvance.notice.soundfile","");
+
+
 // Twitter
 pref("extensions.nicolivehelperadvance.twitter.use-api","self");
 pref("extensions.nicolivehelperadvance.twitter.when-beginlive",false);

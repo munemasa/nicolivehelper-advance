@@ -541,7 +541,7 @@
 		  oncommand="NicoLiveHelper.startBroadcasting();"/>
 	  <button disabled="true" label="ジングル再生"
 		  oncommand="TODO; NicoLiveHelper.playJingle();"/>
-	  <button label="動画情報の再送信"
+	  <button label="動画情報の送信"
 		  oncommand="NicoLiveHelper.sendVideoInfo( null );"/>
 	  <button label="リクエスト受付数リセット"
 		  oncommand="NicoLiveHelper.resetRequestCount();"/>

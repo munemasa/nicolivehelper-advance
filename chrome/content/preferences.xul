@@ -327,6 +327,7 @@
 	    <label control="userdefined-uri" value="JSONファイルのあるURI(URL)"/>
 	    <textbox preference="pref-userdefined-uri" id="userdefined-uri" flex="1"/>
 	  </hbox>
+	  -->
 	  <hbox>
 	    <button label="デフォルトに戻す" oncommand="NLHPreference.resetMovieInfo();" tooltiptext="動画情報を初期値に戻します。"/>
 	    <spacer flex="1"/>
@@ -337,7 +338,6 @@
 	    <html:div id="preview-videoinfo" style="font-family:Arial; font-weight: bold; font-size:11pt; background-color: black; color:white;">
 	    </html:div>
 	  </vbox>
-	  -->
 
 	</tabpanel>
 	<tabpanel orient="vertical">
@@ -764,6 +764,202 @@
       <checkbox label="マイリスト登録した時につぶやく" preference="twitter-tweet-when-addmylist"/>
       <label value="プレビュー:"/>
       <description id="tweet-preview" style="height: 2.5em;"/>
+    </vbox>
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-advance"
+	    label="詳細設定" image="chrome://nicolivehelperadvance/content/data/advancedsettings.png">
+    <preferences>
+      <preference id="pref-auto-open"
+		  name="extensions.nicolivehelperadvance.window.auto-open" type="bool"/>
+      <preference id="pref-auto-close"
+		  name="extensions.nicolivehelperadvance.window.auto-close" type="bool"/>
+      <preference id="pref-auto-open-listener"
+		  name="extensions.nicolivehelperadvance.window.auto-open-listener" type="bool"/>
+      <preference id="pref-auto-close-listener"
+		  name="extensions.nicolivehelperadvance.window.auto-close-listener" type="bool"/>
+      <preference id="pref-auto-close-tab"
+		  name="extensions.nicolivehelperadvance.window.auto-close-tab" type="bool"/>
+      <preference id="pref-autoscroll"
+		  name="extensions.nicolivehelperadvance.window.autoscroll" type="bool"/>
+
+      <preference id="pref-notice-time"
+		  name="extensions.nicolivehelperadvance.notice.time" type="int"/>
+      <preference id="pref-notice-area"
+		  name="extensions.nicolivehelperadvance.notice.area" type="bool"/>
+      <preference id="pref-notice-dialog"
+		  name="extensions.nicolivehelperadvance.notice.dialog" type="bool"/>
+      <preference id="pref-notice-comment"
+		  name="extensions.nicolivehelperadvance.notice.comment" type="bool"/>
+      <preference id="pref-notice-popup"
+		  name="extensions.nicolivehelperadvance.notice.popup" type="bool"/>
+      <preference id="pref-notice-sound"
+		  name="extensions.nicolivehelperadvance.notice.sound" type="bool"/>
+      <preference id="pref-notice-infobar"
+		  name="extensions.nicolivehelperadvance.notice.infobar" type="bool"/>
+      <preference id="pref-notice-message"
+		  name="extensions.nicolivehelperadvance.notice.message" type="unichar"/>
+      <preference id="pref-notice-extend"
+		  name="extensions.nicolivehelperadvance.notice.extend" type="unichar"/>
+      <preference id="pref-notice-soundfile"
+		  name="extensions.nicolivehelperadvance.notice.soundfile" type="unichar"/>
+
+    </preferences>
+    <vbox>
+      <tabbox flex="1" persist="selectedIndex" id="prefwindow-others">
+	<tabs>
+	  <tab label="ウィンドウ"/>
+	  <tab label="動画分類"/>
+	  <tab label="スクリプト"/>
+	  <tab label="通知"/>
+	</tabs>
+
+	<tabpanels flex="1">
+	  <tabpanel orient="vertical">
+	    <!-- window -->
+	    <hbox>
+	      <checkbox disabled="true" preference="pref-singlewindowmode" label="シングルウィンドウモード"/>
+	    </hbox>
+	    <separator/>
+
+	    <label value="表示方法:"/>
+	    <vbox style="margin-left: 1em;">
+	      <label value="生放送のページを開いた時、放送終了した時、自動でNicoLive Helperを"/>
+	      <grid>
+		<columns>
+		  <column/>
+		  <column/>
+		  <column/>
+		</columns>
+		<rows>
+		  <row>
+		    <hbox align="center"><label value="放送者:"/></hbox>
+		    <checkbox preference="pref-auto-open" label="開く"/>
+		    <checkbox preference="pref-auto-close" label="閉じる"/>
+		  </row>
+		  <row>
+		    <hbox align="center"><label value="視聴者:"/></hbox>
+		    <checkbox preference="pref-auto-open-listener" label="開く"/>
+		    <checkbox preference="pref-auto-close-listener" label="閉じる"/>
+		  </row>
+		</rows>
+	      </grid>
+	      <hbox><checkbox preference="pref-auto-close-tab" label="生放送終了時に、生放送のページも自動で閉じる"/></hbox>
+	      <hbox><checkbox preference="pref-autoscroll" label="NicoLive Helperを開いたとき、自動で生放送プレイヤーの位置までスクロールする"/></hbox>
+	    </vbox>
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- movie classifier -->
+	    <!--
+	    <hbox><checkbox label="動画を分類し、ラベルの貼り付けを行う" preference="pref-do-classify"/></hbox>
+	    <listbox id="list-class" flex="1" context="popup-classifier">
+	      <listcols>
+		<listcol flex="1" />
+		<listcol flex="1" />
+	      </listcols>
+	      <listhead>
+		<listheader label="分類名" />
+		<listheader label="ラベル" />
+	      </listhead>
+	    </listbox>
+
+	    <hbox align="center" flex="1">
+	      <label value="分類名" control="class-name"/>
+	      <textbox id="class-name" flex="1" size="10"/>
+	      <label value="ラベル" control="class-label"/>
+	      <textbox id="class-label" flex="1" size="10"/>
+	      <colorpicker id="class-color" type="button"/>
+	      <button label="登録" oncommand="NLHPreference.addClass();"/>
+	    </hbox>
+	    -->
+
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- custom script -->
+	    <!--
+	    <hbox>
+	      <menulist id="id-custom-script-menu" oncommand="NLHPreference.changeScriptMenu(this);">
+		<menupopup>
+		  <menuitem label="リクエストチェック" tooltiptext="リクエスト受付のチェックを行うJavascriptコードを記述します。" value="RequestChecker"/>
+		  <menuitem label="コメントフィルタ" tooltiptext="コメントを処理するJavascriptコードを記述します。" value="CommentFilter"/>
+		</menupopup>
+	      </menulist>
+	      <checkbox label="スクリプトを実行する" preference="pref-do-custom-script" tooltiptext=""/>
+	    </hbox>
+	    <textbox id="custom-script"
+		     emptytext="任意のJavascriptステートメントを入力してください"
+		     multiline="true" flex="1" disabled="true"/>
+	    <hbox>
+	      <button label="保存"
+		      oncommand="NLHPreference.saveScript();"
+		      tooltiptext="入力した内容を保存します"/>
+	      <checkbox label="編集する" oncommand="document.getElementById('custom-script').disabled=!this.checked;"/>
+	    </hbox>
+	    <label value="※保存した後、NicoLive Helperを開き直してください"/>
+	    -->
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- notification -->
+	    <vbox flex="1">
+	      <hbox align="center">
+		<label value="放送終了前の通知:"/>
+		<textbox preference="pref-notice-time" value="3" type="number" min="1" max="10" size="3"/>
+		<label value="分前"/>
+	      </hbox>
+	      <vbox style="margin-left: 1em;">
+		<hbox>
+		  <checkbox preference="pref-notice-area" label="通知領域" tooltiptext="ウインドウ下の通知領域を使用して警告します。" flex="0"/>
+		  <checkbox preference="pref-notice-dialog" label="ダイアログ" tooltiptext="ダイアログボックスを使用して警告します。"/>
+		  <checkbox preference="pref-notice-comment" label="運営コメント" tooltiptext="運営コメントを使用して警告します。"/>
+		  <checkbox preference="pref-notice-popup" label="ポップアップ" tooltiptext="ポップアップする通知ウィンドウを使用して警告します。"/>
+		  <checkbox preference="pref-notice-sound" label="サウンド" tooltiptext="サウンド再生を使用して警告します。"/>
+		  <checkbox preference="pref-notice-infobar" label="情報バー" tooltiptext="ニコニコ生放送の情報バーを使用して警告します。"/>
+		</hbox>
+		<grid>
+		  <columns>
+		    <column/>
+		    <column flex="1"/>
+		    <column/>
+		  </columns>
+		  <rows>
+		    <row>
+		      <hbox align="center"><label value="通知メッセージ"/></hbox>
+		      <textbox flex="1" preference="pref-notice-message"/>
+		    </row>
+		    <row>
+		      <hbox align="center"><label value="サウンドファイル"/></hbox>
+		      <textbox flex="1" preference="pref-notice-soundfile" id="notice-soundfile"/>
+		      <button label="参照..." oncommand="NLHPreference.refSoundFileToNotice();"/>
+		    </row>
+		  </rows>
+		</grid>
+	      </vbox>
+	      <separator/>
+	      <hbox align="center">
+		<label value="延長時メッセージ:"/>
+		<textbox flex="1" preference="pref-notice-extend"/>
+	      </hbox>
+	      <!--
+	      <separator/>
+	      <hbox align="center">
+		<label value="動画DBファイル:"/>
+		<textbox flex="1" preference="pref-video-db-path" id="select-video-db"/>
+		<button label="参照..." oncommand="NLHPreference.refDatabase();"/>
+		<button label="リセット" oncommand="NLHPreference.resetDatabasePath();"/>
+	      </hbox>
+	      <description style="color:#ff0000;">
+		※動画DBファイルを変更した場合は、Firefoxを再起動してください。
+	      </description>
+	      -->
+
+	    </vbox>
+	  </tabpanel>
+	</tabpanels>
+
+      </tabbox>
     </vbox>
   </prefpane>
 

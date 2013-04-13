@@ -706,6 +706,10 @@ var NLHPreference = {
 	}
     },
 
+    /**
+     * 動画情報設定をエクスポートする.
+     * 保存先指定ダイアログを表示して、そこに動画情報設定を保存する。
+     */
     exportMovieInfo:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
@@ -736,6 +740,10 @@ var NLHPreference = {
 	    cos.close();
 	}
     },
+    /**
+     * 動画情報設定をインポートする.
+     * ダイアログでファイルを選択し、指定の動画情報をインポートする。
+     */
     importMovieInfo:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);

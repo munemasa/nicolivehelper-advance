@@ -28,6 +28,21 @@ var Config = {
 	return this.request.ngvideos["_"+video_id];
     },
 
+    isAutoWindowClose:function(){
+	let iscaster = IsCaster();
+	let prefs = this.getBranch();
+	if( (iscaster && prefs.getBoolPref("window.auto-close")) ||
+	    (!iscaster && prefs.getBoolPref("window.auto-close-listener")) ){
+	    return true;
+	}
+	return false;
+    },
+
+    isAutoTabClose:function(){
+	let prefs = this.getBranch();
+	return prefs.getBoolPref("window.auto-close-tab");
+    },
+
     getBranch:function(){
 	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");
 	return prefs;
