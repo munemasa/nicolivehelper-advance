@@ -36,7 +36,7 @@ pref("extensions.nicolivehelperadvance.play.style", 0);    // プレイスタイ
 pref("extensions.nicolivehelperadvance.play.interval", 8);
 pref("extensions.nicolivehelperadvance.play.maxtime", 0);
 pref("extensions.nicolivehelperadvance.play.prepare",true);
-pref("extensions.nicolivehelperadvance.play.prepare-timing",60);
+pref("extensions.nicolivehelperadvance.play.prepare-timing",75);
 pref("extensions.nicolivehelperadvance.play.in-time",false);
 
 pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画情報詳細表示

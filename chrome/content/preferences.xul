@@ -809,9 +809,9 @@
       <tabbox flex="1" persist="selectedIndex" id="prefwindow-others">
 	<tabs>
 	  <tab label="ウィンドウ"/>
+	  <tab label="通知"/>
 	  <tab label="動画分類"/>
 	  <tab label="スクリプト"/>
-	  <tab label="通知"/>
 	</tabs>
 
 	<tabpanels flex="1">
@@ -847,58 +847,6 @@
 	      <hbox><checkbox preference="pref-auto-close-tab" label="生放送終了時に、生放送のページも自動で閉じる"/></hbox>
 	      <hbox><checkbox preference="pref-autoscroll" label="NicoLive Helperを開いたとき、自動で生放送プレイヤーの位置までスクロールする"/></hbox>
 	    </vbox>
-	  </tabpanel>
-
-	  <tabpanel orient="vertical">
-	    <!-- movie classifier -->
-	    <!--
-	    <hbox><checkbox label="動画を分類し、ラベルの貼り付けを行う" preference="pref-do-classify"/></hbox>
-	    <listbox id="list-class" flex="1" context="popup-classifier">
-	      <listcols>
-		<listcol flex="1" />
-		<listcol flex="1" />
-	      </listcols>
-	      <listhead>
-		<listheader label="分類名" />
-		<listheader label="ラベル" />
-	      </listhead>
-	    </listbox>
-
-	    <hbox align="center" flex="1">
-	      <label value="分類名" control="class-name"/>
-	      <textbox id="class-name" flex="1" size="10"/>
-	      <label value="ラベル" control="class-label"/>
-	      <textbox id="class-label" flex="1" size="10"/>
-	      <colorpicker id="class-color" type="button"/>
-	      <button label="登録" oncommand="NLHPreference.addClass();"/>
-	    </hbox>
-	    -->
-
-	  </tabpanel>
-
-	  <tabpanel orient="vertical">
-	    <!-- custom script -->
-	    <!--
-	    <hbox>
-	      <menulist id="id-custom-script-menu" oncommand="NLHPreference.changeScriptMenu(this);">
-		<menupopup>
-		  <menuitem label="リクエストチェック" tooltiptext="リクエスト受付のチェックを行うJavascriptコードを記述します。" value="RequestChecker"/>
-		  <menuitem label="コメントフィルタ" tooltiptext="コメントを処理するJavascriptコードを記述します。" value="CommentFilter"/>
-		</menupopup>
-	      </menulist>
-	      <checkbox label="スクリプトを実行する" preference="pref-do-custom-script" tooltiptext=""/>
-	    </hbox>
-	    <textbox id="custom-script"
-		     emptytext="任意のJavascriptステートメントを入力してください"
-		     multiline="true" flex="1" disabled="true"/>
-	    <hbox>
-	      <button label="保存"
-		      oncommand="NLHPreference.saveScript();"
-		      tooltiptext="入力した内容を保存します"/>
-	      <checkbox label="編集する" oncommand="document.getElementById('custom-script').disabled=!this.checked;"/>
-	    </hbox>
-	    <label value="※保存した後、NicoLive Helperを開き直してください"/>
-	    -->
 	  </tabpanel>
 
 	  <tabpanel orient="vertical">
@@ -962,6 +910,59 @@
 
 	    </vbox>
 	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- movie classifier -->
+	    <!--
+	    <hbox><checkbox label="動画を分類し、ラベルの貼り付けを行う" preference="pref-do-classify"/></hbox>
+	    <listbox id="list-class" flex="1" context="popup-classifier">
+	      <listcols>
+		<listcol flex="1" />
+		<listcol flex="1" />
+	      </listcols>
+	      <listhead>
+		<listheader label="分類名" />
+		<listheader label="ラベル" />
+	      </listhead>
+	    </listbox>
+
+	    <hbox align="center" flex="1">
+	      <label value="分類名" control="class-name"/>
+	      <textbox id="class-name" flex="1" size="10"/>
+	      <label value="ラベル" control="class-label"/>
+	      <textbox id="class-label" flex="1" size="10"/>
+	      <colorpicker id="class-color" type="button"/>
+	      <button label="登録" oncommand="NLHPreference.addClass();"/>
+	    </hbox>
+	    -->
+
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- custom script -->
+	    <!--
+	    <hbox>
+	      <menulist id="id-custom-script-menu" oncommand="NLHPreference.changeScriptMenu(this);">
+		<menupopup>
+		  <menuitem label="リクエストチェック" tooltiptext="リクエスト受付のチェックを行うJavascriptコードを記述します。" value="RequestChecker"/>
+		  <menuitem label="コメントフィルタ" tooltiptext="コメントを処理するJavascriptコードを記述します。" value="CommentFilter"/>
+		</menupopup>
+	      </menulist>
+	      <checkbox label="スクリプトを実行する" preference="pref-do-custom-script" tooltiptext=""/>
+	    </hbox>
+	    <textbox id="custom-script"
+		     emptytext="任意のJavascriptステートメントを入力してください"
+		     multiline="true" flex="1" disabled="true"/>
+	    <hbox>
+	      <button label="保存"
+		      oncommand="NLHPreference.saveScript();"
+		      tooltiptext="入力した内容を保存します"/>
+	      <checkbox label="編集する" oncommand="document.getElementById('custom-script').disabled=!this.checked;"/>
+	    </hbox>
+	    <label value="※保存した後、NicoLive Helperを開き直してください"/>
+	    -->
+	  </tabpanel>
+
 	</tabpanels>
 
       </tabbox>
