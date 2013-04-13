@@ -412,7 +412,7 @@
       <preference id="pref-msg-high-bitrate"
 		  name="extensions.nicolivehelperadvance.msg.high-bitrate" type="unichar"/>
       <!-- スタートアップ -->
-      <preference id="pref-startup-comment" name="extensions.nicolivehelperadvance.startup-comment" type="unichar"/>
+      <preference id="pref-startup-comment" name="extensions.nicolivehelperadvance.msg.startup-comment" type="unichar"/>
 
     </preferences>
 

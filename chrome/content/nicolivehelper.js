@@ -2696,6 +2696,8 @@ var NicoLiveHelper = {
 		    lines
 		);
 		NicoLiveHelper.connectioninfo[ARENA] = tmp;
+
+		NicoLiveHelper.sendStartupComment();
 	    }
 	};
 	NicoApi.getpublishstatus( request_id, f );
@@ -3037,6 +3039,37 @@ var NicoLiveHelper = {
 	    NicoLiveWindow.scrollLivePage();
 	};
 	NicoApi.getplayerstatus( request_id, f );
+    },
+
+    /**
+     * スタートアップコメントを送信開始する.
+     */
+    sendStartupComment:function(){
+	if( !IsCaster() ) return;
+	if( GetCurrentTime()-this.liveinfo.start_time > 180 ) return;
+
+	// TODO
+	//if( this.inplay ) return; // 何か再生中はスタートアップコメントを行わない.
+
+	let pref = Config.getBranch();
+	try{
+	    this._startup_comments = pref.getUnicharPref("msg.startup-comment").split(/\n|\r|\r\n/);
+	    if(this._startup_comments.length){
+		this._startupcomment_timer = setInterval( function(){
+							NicoLiveHelper._sendStartupComment();
+						    }, 5000);
+	    }
+	} catch (x) {
+	    debugprint(x);
+	}
+    },
+    _sendStartupComment:function(){
+	if( this._startup_comments.length ){
+	    let str = this._startup_comments.shift();
+	    this.postCasterComment(str,"");
+	}else{
+	    clearInterval(this._startupcomment_timer);
+	}
     },
 
     /**
@@ -4006,6 +4039,7 @@ var NicoLiveHelper = {
 	clearInterval( this._sendclstimer );
 	clearInterval( this._revertcommenttimer );
 	clearInterval( this._commentstatetimer );
+	clearInterval( this._startupcomment_timer );
 
 	clearTimeout( this.play_status[MAIN]._playend );
 	clearTimeout( this.play_status[MAIN]._playnext );
