@@ -87,6 +87,9 @@ pref("extensions.nicolivehelperadvance.videoinfo2-command","");
 pref("extensions.nicolivehelperadvance.videoinfo3-command","");
 pref("extensions.nicolivehelperadvance.videoinfo4-command","");
 
+// スタートアップコメント
+pref("extensions.nicolivehelperadvance.msg.startup-comment","");
+
 // リクエストへの応答
 pref("extensions.nicolivehelperadvance.msg.notaccept",">>{comment_no} 現在リクエストを受け付けていません");
 pref("extensions.nicolivehelperadvance.msg.deleted",">>{comment_no} その動画は削除されているか、見つかりません");
