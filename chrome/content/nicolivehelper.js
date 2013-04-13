@@ -1274,11 +1274,11 @@ var NicoLiveHelper = {
 
     /**
      * すでにリクエスト済みかどうかチェックする.
-     * 重複許可なら常にtrueを返す。
+     * 重複許可なら常にリクエスト済みでないとしてfalseを返す。
      * @param video_id 動画ID
      */
     isAlreadyRequested: function( video_id ){
-	if( Config.request.allow_duplicative ) return true;
+	if( Config.request.allow_duplicative ) return false;
 
 	for( let i=0,item; item=this.request_list[i]; i++ ){
 	    if( item.video_id==video_id ){
@@ -1817,6 +1817,29 @@ var NicoLiveHelper = {
 	}else{
 	    ShowNotice( videoinfo.video_id+"はすでにストックに存在しています" );
 	}
+    },
+
+    /**
+     * リクエストのコンパクションを行う.
+     * 表示のアップデートは行わない。
+     * @param idx リクエストリスト配列のインデックス(0,1,2,3,...,n)
+     */
+    compactRequest:function(idx){
+	let newarray = new Array();
+	let indexlist = new Object();
+	let len = this.request_list.length;
+
+	for(let i=idx; i<idx+len; i++){
+	    let n = i % len;
+	    let vinfo = this.request_list[n];
+	    if( indexlist["_"+vinfo.video_id]!=undefined ){
+		newarray[ indexlist["_"+vinfo.video_id] ].cno += ", "+vinfo.cno;
+	    }else{
+		indexlist["_"+vinfo.video_id] = newarray.length;
+		newarray.push( vinfo );
+	    }
+	}
+	this.request_list = newarray;
     },
 
     /**

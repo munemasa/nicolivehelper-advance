@@ -665,6 +665,9 @@
 	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
 	</menupopup>
       </menu>
+      <menuitem label="コンパクション"
+		tooltiptext="この動画を基準に重複したリクエストを圧縮します"
+		oncommand="NicoLiveRequest.compactRequest($('popup-request').triggerNode);"/>
       <menuseparator/>
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
