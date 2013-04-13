@@ -266,6 +266,17 @@ var Config = {
 	    this.videoinfo[i].command = branch.getUnicharPref("videoinfo"+(i+1)+"-command");
 	}
 
+	// 放送終了通知の設定.
+	this.notice = {};
+	this.notice.area      = branch.getBoolPref("notice.area");
+	this.notice.dialog    = branch.getBoolPref("notice.dialog");
+	this.notice.comment   = branch.getBoolPref("notice.comment");
+	this.notice.popup     = branch.getBoolPref("notice.popup");
+	this.notice.sound     = branch.getBoolPref("notice.sound");
+	this.notice.infobar   = branch.getBoolPref("notice.infobar");
+	this.notice.soundfile = branch.getUnicharPref("notice.soundfile");
+	this.notice.time      = branch.getIntPref("notice.time");
+
 	// 再生時設定
         this.loadPlaySettings(branch);
         // 各種応答メッセージ
