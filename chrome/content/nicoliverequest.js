@@ -424,6 +424,18 @@ var NicoLiveRequest = {
 	this._summation_time = t;
     },
 
+    // リクエストのコンパクションを行う.
+    compactRequest:function(node){
+	try{
+	    let tr = FindParentElement(node,'html:tr');
+	    let n = tr.sectionRowIndex;
+	    NicoLiveHelper.compactRequest(n);
+	    this.updateView(NicoLiveHelper.request_list);
+	} catch (x) {
+	    debugprint(x);
+	}
+    },
+
     /**
      * リクエストセットを切り替える.
      * @param n セット番号
