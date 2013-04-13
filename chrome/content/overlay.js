@@ -233,8 +233,8 @@ var NicoLiveHelperAdvanceOverlay = {
 	}
 
 	let prefs = this.getPref();
-	if( prefs.getBoolPref("autowindowopen") && iscaster ||
-	    prefs.getBoolPref("autowindowopen-listener") && !iscaster ){
+	if( prefs.getBoolPref("window.auto-open") && iscaster ||
+	    prefs.getBoolPref("window.auto-open-listener") && !iscaster ){
 		let title;
 		try{
 		    let doc = e.target;

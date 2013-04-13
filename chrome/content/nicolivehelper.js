@@ -2037,16 +2037,17 @@ var NicoLiveHelper = {
      * あらかじめtargetのplay_beginをセットしておくこと.
      * @param video_id 動画ID
      * @param target MAIN or SUB
+     * @param settimer 自動再生タイマーをしかける
      * @param retry リトライフラグ
      */
-    setCurrentPlayVideo: function(video_id, target, retry){
+    setCurrentPlayVideo: function(video_id, target, settimer, retry){
         let f = function (xml, req) {
             if (req.status != 200) {
                 if (retry) {
                     // リトライ失敗
                     return;
                 }
-		NicoLiveHelper.setCurrentPlayVideo( video_id, target, true ); // retry=true
+		NicoLiveHelper.setCurrentPlayVideo( video_id, target, settimer, true ); // retry=true
                 return;
             }
 
@@ -2057,12 +2058,13 @@ var NicoLiveHelper = {
 		    NicoLiveHelper.play_status[target].play_begin + videoinfo.length_ms/1000+1;
 		NicoLiveHelper.addPlaylist( videoinfo );
 
-		let sec = videoinfo.length_ms/1000;
-		if( Config.max_playtime ){
-		    sec = Config.max_playtime * 60; // seconds
+		if( settimer ){
+		    let sec = videoinfo.length_ms/1000;
+		    if( Config.max_playtime ){
+			sec = Config.max_playtime * 60; // seconds
+		    }
+		    NicoLiveHelper.setupPlayNext( target, sec );
 		}
-		NicoLiveHelper.setupPlayNext( target, sec );
-
 	    } catch (x) {
                 debugprint(x);
 	    }
@@ -2078,6 +2080,65 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ウィンドウを閉じるか確認して閉じる.
+     */
+    checkForCloseWindow: function(){
+	if( Config.isAutoWindowClose() ){
+	    this.closeWindow();
+	}
+    },
+
+    /**
+     * 生放送のページのタブを閉じる.
+     * @param request_id 放送ID
+     * @param community_id コミュニティID
+     */
+    closeBroadcastingTab:function(request_id, community_id){
+	let wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+	let browserEnumerator = wm.getEnumerator("navigator:browser");
+	let url1 = "http://live.nicovideo.jp/watch/"+request_id;
+	let url2 = "http://live.nicovideo.jp/watch/"+community_id;
+
+	while(browserEnumerator.hasMoreElements()) {
+	    let browserInstance = browserEnumerator.getNext().gBrowser;
+	    // browser インスタンスの全てのタブを確認する.
+	    let numTabs = browserInstance.tabContainer.childNodes.length;
+	    for(let index=0; index<numTabs; index++) {
+		let currentBrowser = browserInstance.getBrowserAtIndex(index);
+		if (currentBrowser.currentURI.spec.match(url1) || currentBrowser.currentURI.spec.match(url2)) {
+		    try{
+			window.opener.gBrowser.removeTab( browserInstance.tabContainer.childNodes[index] );
+		    } catch (x) {
+		    }
+		    return;
+		}
+	    }
+	}
+    },
+
+    /**
+     * ウィンドウを閉じる.
+     */
+    closeWindow:function(){
+	let prefs = Config.getBranch();
+	let delay = 0;
+	try {
+	    delay = prefs.getIntPref("closing-delay");
+	    debugprint(delay);
+	} catch (x) {
+	    delay = 1;
+	}
+	setTimeout(function(){
+		       if( Config.isAutoTabClose() ){
+			   NicoLiveHelper.closeBroadcastingTab(GetRequestId(),
+							       NicoLiveHelper.liveinfo.default_community);
+		       }
+		       NicoLiveHelper._donotshowdisconnectalert = true;
+		       window.close();
+		   },delay);
+    },
+
+    /**
      * 放送終了時の処理.
      */
     finishBroadcasting: function(){
@@ -2089,6 +2150,8 @@ var NicoLiveHelper = {
 	let msg = this.liveinfo.request_id+' '+this.liveinfo.title+' は終了しました';
 	syslog(msg);
 	ShowNotice(msg,true);
+
+	checkForCloseWindow();
     },
 
     /** コントロールパネルの再生状態の更新処理
@@ -2206,7 +2269,7 @@ var NicoLiveHelper = {
 		this.setupPlayNext( target, sec );
 	    }else{
 		this.play_status[ target ].play_begin = GetCurrentTime();
-		this.setCurrentPlayVideo(video_id, target);
+		this.setCurrentPlayVideo(video_id, target, true); // settimer=true
 	    }
 	    this.setPlayFlagForStock( video_id );
 	    this._prepared = null;
@@ -2922,7 +2985,7 @@ var NicoLiveHelper = {
 		    if(tmp){
 			NicoLiveHelper.play_status[target].play_begin = st;
 			NicoLiveHelper.play_status[target].play_end = st+du+1;
-			NicoLiveHelper.setCurrentPlayVideo( tmp[0], target );
+			NicoLiveHelper.setCurrentPlayVideo( tmp[0], target, false ); // settimer=false
 		    }
 
 		    if( NicoLiveHelper.liveinfo.is_owner ){
@@ -2970,6 +3033,8 @@ var NicoLiveHelper = {
 	    }
 
 	    NicoLiveHelper.setLiveProgressBarTipText();
+
+	    NicoLiveWindow.scrollLivePage();
 	};
 	NicoApi.getplayerstatus( request_id, f );
     },
