@@ -3318,6 +3318,24 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ニコニコ生放送の情報バーを用いて通知する.
+     * @param str 表示する文字列
+     */
+    addInformationBar:function(str){
+	try{
+	    let tab = NicoLiveWindow.findTab(GetRequestId()) || NicoLiveWindow.findTab(this.liveinfo.default_community);
+	    let Nicolive = tab.linkedBrowser._contentWindow.wrappedJSObject.Nicolive;
+	    Nicolive.Liveinfo.prototype._infoTypes[100] = "nlh";
+	    Nicolive.Liveinfo.prototype._infoTypesInverted["nlh"] = 100;
+	    Nicolive.Liveinfo.prototype._infoTypeHeaders["nlh"] = "【NicoLive Helper】";
+	    Nicolive.Liveinfo.prototype._infoTypesBackGroundColors["nlh"] = "yellow";
+	    Nicolive.Liveinfo.liveinfoArea._defaultLiveinfoConf.infoTypeEnableFlags["nlh"] = true;
+	    Nicolive.Liveinfo.liveinfoArea.addInfo(100,str);
+	} catch (x) {
+	}
+    },
+
+    /**
      * コントロールパネルの延長メニューを更新.
      * 残りポイントを取得、延長メニューを更新する。
      */
