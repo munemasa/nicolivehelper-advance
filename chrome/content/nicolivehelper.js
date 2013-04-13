@@ -615,8 +615,8 @@ var NicoLiveHelper = {
 		break;
 
 	    case 'pref:min-ago':
-		// TODO 枠終了 n 分前通知の設定値.
-		tmp = NicoLivePreference.notice.time;
+		// 枠終了 n 分前通知の設定値.
+		tmp = Config.notice.time;
 		break;
 
 	    case 'end-time':
@@ -2151,7 +2151,7 @@ var NicoLiveHelper = {
 	syslog(msg);
 	ShowNotice(msg,true);
 
-	checkForCloseWindow();
+	this.checkForCloseWindow();
     },
 
     /** コントロールパネルの再生状態の更新処理
@@ -3286,7 +3286,7 @@ var NicoLiveHelper = {
 	let str;
 	str = Config.getBranch().getUnicharPref('notice.message');
 	str = this.replaceMacros(str, this.getCurrentVideoInfo() );
-	if( NicoLivePreference.notice.area ){
+	if( Config.notice.area ){
 	    ShowNotice(str);
 	}
 	if( Config.notice.comment ){
