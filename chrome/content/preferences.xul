@@ -232,6 +232,8 @@
 		  name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
       <preference id="pref-revert-videoinfo"
 		  name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
+      <preference id="pref-no-autopname"
+		  name="extensions.nicolivehelperadvance.no-auto-pname" type="bool"/>
       <!-- 再生に失敗した時 -->
       <preference id="pref-videoinfo-playfailed"
 		  name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
@@ -322,7 +324,9 @@
 	  </groupbox>
 	  <!--
 	  <hbox><checkbox preference="pref-nocomment-for-directplay" label="動画IDをコメント欄に直接入力して再生した場合、その動画情報を運営コメントしない" tooltiptext="コメントタブの入力欄から動画IDを入力して動画を再生した場合、動画情報を送信しなくなります。"/></hbox>
+	  -->
 	  <hbox><checkbox preference="pref-no-autopname" label="P名D名を自動認識しない" tooltiptext="タグの末尾にP,DがあるものをP名として自動認識しなくなり、P名ホワイトリストのみを頼りにP名を付けます。"/></hbox>
+	  <!--
 	  <hbox align="center">
 	    <label control="userdefined-uri" value="JSONファイルのあるURI(URL)"/>
 	    <textbox preference="pref-userdefined-uri" id="userdefined-uri" flex="1"/>

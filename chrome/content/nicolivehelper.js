@@ -6,6 +6,8 @@ Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm
 //Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
 
+var pname_whitelist = {};
+
 var NicoLiveHelper = {
     secofweek: 604800, // 1週間の秒数(60*60*24*7).
     remainpoint: 0,    // 所有ニコニコポイント
@@ -1070,12 +1072,11 @@ var NicoLiveHelper = {
      *  与えられたstrがP名かどうか.
      */
     isPName:function(str){
-	/*
 	if( pname_whitelist["_"+str] ){
 	    return true;
 	}
-	if( NicoLivePreference.no_auto_pname ) return false;
-	 */
+
+	if( Config.no_auto_pname ) return false;
 	if(str.match(/(PSP|アイドルマスターSP|m[a@]shup|drop|step|overlap|vocaloid_map|mikunopop|mikupop|ship|dump|sleep)$/i)) return false;
 	if(str.match(/(M[A@]D|joysound|MMD|HD|2D|3D|4D|vocaloud|world|頭文字D|イニシャルD|(吸血鬼|バンパイア)ハンターD|TOD|oid|clannad|2nd|3rd|second|third|append|CD|DVD|solid|vivid|hard)$/i)) return false;
 	let t = str.match(/.*([^jO][pP]|jP)[)]?$/);
@@ -1095,6 +1096,7 @@ var NicoLiveHelper = {
      */
     getPName: function(item){
 	// DBに設定してあるP名があればそれを優先.
+	// TODO
 	let pname = null; //NicoLiveDatabase.getPName(item.video_id);
 	if(!pname){
 	    pname = new Array();
@@ -3924,6 +3926,19 @@ var NicoLiveHelper = {
     },
 
     /**
+     * P名リストを更新する.
+     */
+    updatePNameWhitelist:function(){
+	let pnames = Storage.readObject('nicolive_pnamewhitelist','');
+	pnames = pnames.split(/[\r\n]/gm);
+	for(let i=0,pname;pname=pnames[i];i++){
+	    if(pname){
+		pname_whitelist["_"+ZenToHan(pname)] = true;
+	    }
+	}
+    },
+
+    /**
      * 変数の初期化を行う.
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
@@ -3962,6 +3977,7 @@ var NicoLiveHelper = {
 	this.initVars();
 	this.setPlayTarget( $('do-subdisplay').checked );
 	this.setupCookie();
+	this.updatePNameWhitelist();
 
 	// 以下、生放送への接続処理など
 	let request_id, title, iscaster, community_id;

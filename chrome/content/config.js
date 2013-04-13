@@ -241,6 +241,8 @@ var Config = {
 	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
 	// 静画リクエストOKか
 	this.allow_seiga    = branch.getBoolPref("request.seiga");
+	// 自動でP名を抽出しない
+	this.no_auto_pname  = branch.getBoolPref("no-auto-pname");
 
 	// NG動画
 	this.loadNGVideosSetting(branch);
