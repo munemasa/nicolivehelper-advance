@@ -1575,7 +1575,7 @@ var NicoLiveHelper = {
 		// 動画情報にリク主の情報を追加
 		videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
 		videoinfo.comment_no = request.comment_no;
-		videoinfo.cno = request.comment_no;
+		videoinfo.cno = request.comment_no;    // 過去との互換性のため
 		videoinfo.request_user_id = request.user_id;
 		videoinfo.request_time = GetCurrentTime();
 		videoinfo.is_self_request = request.is_self_request;
@@ -1833,7 +1833,7 @@ var NicoLiveHelper = {
 	    let n = i % len;
 	    let vinfo = this.request_list[n];
 	    if( indexlist["_"+vinfo.video_id]!=undefined ){
-		newarray[ indexlist["_"+vinfo.video_id] ].cno += ", "+vinfo.cno;
+		newarray[ indexlist["_"+vinfo.video_id] ].comment_no += ", "+vinfo.comment_no;
 	    }else{
 		indexlist["_"+vinfo.video_id] = newarray.length;
 		newarray.push( vinfo );
