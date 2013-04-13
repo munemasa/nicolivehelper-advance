@@ -3280,6 +3280,44 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 残り時間が n 分 になったときの通知処理.
+     */
+    showNoticeLeft:function(){
+	let str;
+	str = Config.getBranch().getUnicharPref('notice.message');
+	str = this.replaceMacros(str, this.getCurrentVideoInfo() );
+	if( NicoLivePreference.notice.area ){
+	    ShowNotice(str);
+	}
+	if( Config.notice.comment ){
+	    this.postCasterComment(str,"");
+	}
+	if( Config.notice.dialog ){
+	    AlertPrompt(str, GetRequestId()+" "+this.liveinfo.title);
+	}
+
+	if( Config.notice.popup ){
+	    ShowPopupNotification("http://icon.nimg.jp/community/"+this.liveinfo.default_community,
+				  this.liveinfo.title, str, GetRequestId() );
+	}
+	if( Config.notice.sound ){
+	    try{
+		let IOService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+		let localFile = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
+		let sound = Cc["@mozilla.org/sound;1"].createInstance(Ci.nsISound);
+		let url = Config.notice.soundfile;
+		localFile.initWithPath(url);
+		sound.play(IOService.newFileURI(localFile));
+	    } catch (x) {
+		debugprint("failed to play sound:"+x);
+	    }
+	}
+	if( Config.notice.infobar ){
+	    this.addInformationBar(str);
+	}
+    },
+
+    /**
      * コントロールパネルの延長メニューを更新.
      * 残りポイントを取得、延長メニューを更新する。
      */
@@ -3570,10 +3608,24 @@ var NicoLiveHelper = {
     update: function(){
 	let now = GetCurrentTime();
 	let p = now - this.liveinfo.start_time;  // Progress
+	let remaintime = this.liveinfo.end_time - now;
+	let n = Math.floor(p/(30*60)); // 30分単位に0,1,2,...
 
-	this.updateStatusBar( now );
+	this.updateStatusBar(now);
         this.checkForPublishStatus(p);
         this.checkForLosstime(now);
+
+	// 残り時間の通知
+	let nt = Config.notice.time;
+	if( (this.liveinfo.end_time && remaintime>0 && remaintime < nt*60) ||
+	    (!this.liveinfo.end_time && n>=0 && p > (30-nt)*60 + 30*60*n) ){
+	    // 終了時刻が分かっているのであれば終了時刻から残り3分未満を見る.
+	    // 分からないときは 27分+30分*n(n=0,1,2,...)越えたら.
+	    if(!this._isnotified[n]){
+		this.showNoticeLeft();
+		this._isnotified[n] = true;
+	    }
+	}
     },
 
     /**
@@ -3841,6 +3893,9 @@ var NicoLiveHelper = {
 	this.connectioninfo = new Array();
 
 	this._first_play = false;
+	this._isnotified = new Array();
+
+	this.resetRequestCount();
     },
 
     /**
