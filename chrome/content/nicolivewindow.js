@@ -64,6 +64,28 @@ var NicoLiveWindow = {
 	return win;
     },
 
+    setWindowList:function(){
+	this.winlist = WindowEnumerator();
+
+	while(1){
+	    let removetarget = document.getElementsByClassName("menu-window-list");
+	    if( removetarget.length ){
+		$('popup-windowlist').removeChild( removetarget[0] );
+	    }else break;
+	}
+
+	let endmarker = $('window-list-end-marker');
+	for(let i=0,win;win=this.winlist[i];i++){
+	    let menuitem;
+	    let title = win.document.title;
+	    menuitem = CreateMenuItem(title,i);
+	    menuitem.setAttribute("class","menu-window-list");
+	    menuitem.setAttribute("oncommand","NicoLiveWindow.winlist[event.target.value].focus();");
+	    $('popup-windowlist').insertBefore(menuitem, endmarker);
+	}
+	return true;
+    },
+
     /**
      * ウィンドウを移動する
      * @param x X座標
