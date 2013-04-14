@@ -5,7 +5,12 @@ var Property = {
     accept: function(){
 	let newstr = $('additional_info').value;
 	if( newstr != this.old_additional_info ){
-	    window.opener.Database.setAdditional(this.vinfo.video_id,newstr);
+	    window.opener.Database.setAdditional( this.vinfo.video_id, newstr );
+	}
+
+	newstr = $('pname').value;
+	if( newstr != this.old_pname ){
+	    window.opener.Database.setPName( this.vinfo.video_id, newstr );
 	}
 	return true;
     },
@@ -42,6 +47,8 @@ var Property = {
 
 	this.old_additional_info = window.opener.Database.getAdditional( this.vinfo.video_id );
 	$('additional_info').value = this.old_additional_info;
+	this.old_pname = window.opener.Database.getPName( this.vinfo.video_id );
+	$('pname').value = this.old_pname;
 
 	let text = "";
 	for(domain in this.vinfo.tags){

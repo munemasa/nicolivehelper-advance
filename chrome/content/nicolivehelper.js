@@ -1108,8 +1108,7 @@ var NicoLiveHelper = {
      */
     getPName: function(item){
 	// DBに設定してあるP名があればそれを優先.
-	// TODO
-	let pname = null; //NicoLiveDatabase.getPName(item.video_id);
+	let pname = Database.getPName(item.video_id);
 	if(!pname){
 	    pname = new Array();
 	    let i,j,tag;

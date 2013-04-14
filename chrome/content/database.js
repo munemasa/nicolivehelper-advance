@@ -207,7 +207,10 @@ var Database = {
 	st.executeAsync(callback);
     },
 
-    // 動画IDから検索.
+    /**
+     * 動画DB内にデータがあるかどうか.
+     * @param sm 動画ID
+     */
     isInDB:function(sm){
 	let st = this.dbconnect.createStatement('SELECT * FROM nicovideo WHERE video_id = ?1');
 	let isexist = false;
@@ -497,13 +500,16 @@ var Database = {
 	td.innerHTML = str;
     },
 
-    // 行からmusicinfoに変換.
+    /**
+     * テーブルの行を動画情報に変換.
+     * @param row SQLクエリのリザルト行
+     */
     rowToMusicInfo:function(row){
-	let info ={};
+	let info = new Object();
 	// innerHTMLで流し込むのでhtmlspecialcharsを使う.
-	info.video_id = row.getResultByName('video_id');
-	info.title    = htmlspecialchars(row.getResultByName('title'));
-	info.description = htmlspecialchars(row.getResultByName('description'));
+	info.video_id       = row.getResultByName('video_id');
+	info.title          = htmlspecialchars(row.getResultByName('title'));
+	info.description    = htmlspecialchars(row.getResultByName('description'));
 	info.thumbnail_url  = row.getResultByName('thumbnail_url');
 	info.first_retrieve = row.getResultByName('first_retrieve');
 	info.length         = row.getResultByName('length');
@@ -515,11 +521,12 @@ var Database = {
 	let tags            = htmlspecialchars(row.getResultByName('tags'));
 	info.tags           = tags.split(/,/);
 	//info.pname          = row.getResultByName('pname');
-	info.update_date = row.getResultByName('update_date');
-	info.favorite = row.getResultByName('favorite');
+	info.update_date    = row.getResultByName('update_date');
+	info.favorite       = row.getResultByName('favorite');
 	return info;
     },
 
+    // 動画DBに登録済みの数を表示する.
     setRegisterdVideoNumber:function(){
 	let st = this.dbconnect.createStatement('SELECT count(video_id) FROM nicovideo');
 	let n = 0;
@@ -569,32 +576,33 @@ var Database = {
 	ShowNotice('検索結果にある動画を全てDBから削除しました');
     },
 
-    /** P名設定
+    /**
+     * P名設定
+     * @param video_id 動画ID
+     * @param pname P名
      */
-    setPName:function(node){
-	let elem = FindParentElement(node,'vbox');
-	let video_id = elem.getAttribute('nicovideo_id');
-	let oldpname = this.getPName(video_id);
-	let pname = InputPrompt( LoadFormattedString('STR_TEXT_DB_SET_PNAME',[video_id]),
-				 LoadString("STR_CAPTION_DB_SET_PNAME"), oldpname);
-	if(pname!=null){
-	    let st;
-	    try{
-		st = this.dbconnect.createStatement('insert into pname(video_id,pname) values(?1,?2)');
-		st.bindUTF8StringParameter(0,video_id);
+    setPName:function(video_id, pname){
+	let st;
+	try{
+	    st = this.dbconnect.createStatement('insert into pname(video_id,pname) values(?1,?2)');
+	    st.bindUTF8StringParameter(0,video_id);
 		st.bindUTF8StringParameter(1,pname);
-		st.execute();
-		st.finalize();
-	    } catch (x) {
-		st = this.dbconnect.createStatement('update pname set pname=?1 where video_id=?2');
-		st.bindUTF8StringParameter(0,pname);
-		st.bindUTF8StringParameter(1,video_id);
-		st.execute();
-		st.finalize();
-	    }
-	    this.pnamecache["_"+video_id] = pname;
+	    st.execute();
+	    st.finalize();
+	} catch (x) {
+	    st = this.dbconnect.createStatement('update pname set pname=?1 where video_id=?2');
+	    st.bindUTF8StringParameter(0,pname);
+	    st.bindUTF8StringParameter(1,video_id);
+	    st.execute();
+	    st.finalize();
 	}
+	this.pnamecache["_"+video_id] = pname;
     },
+
+    /**
+     * P名を取得する.
+     * @param video_id 動画ID
+     */
     getPName:function(video_id){
 	if( this.pnamecache["_"+video_id] ) return this.pnamecache["_"+video_id];
 	let pname = "";
@@ -616,8 +624,10 @@ var Database = {
 	return pname;
     },
 
-    /** 追加情報の記入.
-     * @param node メニューがポップアップしたノード
+    /**
+     * 追加情報の記入.
+     * @param video_id 動画ID
+     * @param additional 追加情報(text)
      */
     setAdditional:function(video_id, additional){
 	let st;
@@ -635,6 +645,11 @@ var Database = {
 	    st.finalize();
 	}
     },
+
+    /**
+     * 追加情報の取得.
+     * @param video_id 動画ID
+     */
     getAdditional:function(video_id){
 	let st = this.dbconnect.createStatement('SELECT additional FROM pname WHERE video_id = ?1');
 	let additional;
@@ -647,7 +662,8 @@ var Database = {
 	return additional;
     },
 
-    /** レート(お気に入り度)をセット.
+    /**
+     * レート(お気に入り度)をセット.
      * @param e eventオブジェクト
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
      * @param vid 動画ID
@@ -693,6 +709,11 @@ var Database = {
 	}
 	this.ratecache["_"+video_id] = rate;
     },
+
+    /**
+     * スターレーティングの値を取得.
+     * @param video_id 動画ID
+     */
     getFavorite:function(video_id){
 	if( "undefined"!=typeof this.ratecache["_"+video_id] ) return this.ratecache["_"+video_id];
 
@@ -735,7 +756,13 @@ var Database = {
 	return true;
     },
 
-    // 汎用ストレージにname,JavascriptオブジェクトをJSON形式で保存.
+    /**
+     * 汎用ストレージにname,JavascriptオブジェクトをJSON形式で保存.
+     * NicoLive Helper Advanceではデータ保存領域として使用しない。
+     * Storageを使う。
+     * @param name キー
+     * @param obj バリュー
+     */
     saveGPStorage:function(name,obj){
 	let st;
 	let value = JSON.stringify(obj);
@@ -755,7 +782,11 @@ var Database = {
 	}
     },
 
-    // 汎用ストレージからJSON形式のJavascriptオブジェクトを読み込む.
+    /**
+     * 汎用ストレージからJSON形式のJavascriptオブジェクトを読み込む.
+     * @param name キー
+     * @param defitem キーがなかったときのデフォルト値
+     */
     loadGPStorage:function(name,defitem){
 	let item;
 	debugprint('load '+name);
@@ -786,7 +817,9 @@ var Database = {
 	return item;
     },
 
-    // 動画情報を記録するDB
+    /**
+     * 動画情報を保存するテーブルを作成.
+     */
     createVideoDB:function(){
 	if(!this.dbconnect.tableExists('nicovideo')){
 	    // テーブルなければ作成.
@@ -795,20 +828,27 @@ var Database = {
     },
 
     // リク制限を保存するDB
+    // NicoLiveHelper Advanceでは未使用
     createRequestCondDB:function(){
+	return;
 	if(!this.dbconnect.tableExists('requestcond')){
 	    this.dbconnect.createTable('requestcond','presetname character primary key, value character');
 	}
     },
 
     // 汎用(General-Purpose)で使うDB
+    // NicoLive Helper Advanceでは未使用
     createGPStorageDB:function(){
+	return;
 	if(!this.dbconnect.tableExists('gpstorage')){
 	    this.dbconnect.createTable('gpstorage','key character primary key, value character');
 	}
     },
 
     // P名、追加情報DB(0.8+)
+    /**
+     * P名、追加情報テーブルを作成する.
+     */
     createPnameDB:function(){
 	if(!this.dbconnect.tableExists('pname')){
 	    this.dbconnect.createTable('pname','video_id character primary key, pname character, additional character');
@@ -816,6 +856,9 @@ var Database = {
     },
 
     // フォルダDB(1.1.1+)
+    /**
+     * 動画DBのフォルダ管理用テーブルを作成する.
+     */
     createFolderDB:function(){
 	if(!this.dbconnect.tableExists('folder')){
 	    this.dbconnect.createTable('folder','id integer primary key, type integer, parent integer, name character, video_id character, foreign key(video_id) references nicovideo(video_id)');
