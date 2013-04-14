@@ -1349,6 +1349,17 @@ var NicoLiveHelper = {
      * @throws RequestException (datastruct.js)
      */
     checkRequest: function( videoinfo ){
+	if( Config.do_classify /* || NicoLivePreference.isMikuOnly() */ ){
+	    let str = new Array();
+	    // 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
+	    for( k in videoinfo.tags ){
+		for(let i=0,tag; tag=videoinfo.tags[k][i];i++){
+		    str.push(ZenToHan(tag.toLowerCase()));
+		}
+	    }
+	    videoinfo.classify = NicoLiveClassifier.classify(str);
+	}
+
 	if( videoinfo.no_live_play ){
 	    // 生拒否
 	    videoinfo.errno = REASON_NO_LIVE_PLAY;

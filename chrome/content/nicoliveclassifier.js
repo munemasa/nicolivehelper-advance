@@ -188,10 +188,14 @@ var NicoLiveClassifier = {
 
     init:function(){
 	// DBに保存されている学習データを引き継ぐように
-	let old = Database.loadGPStorage("nico_live_classifier",null);
 	let current = Storage.readObject("nico_live_classifier",null);
+	let old;
+	if( current ) this.data = current;
+	else{
+	    old = Database.loadGPStorage("nico_live_classifier",null);
+	    this.data = old;
+	}
 
-	this.data = current || old;
 	if( this.data==null ){
 	    this.create();
 	}

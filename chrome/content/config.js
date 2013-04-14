@@ -224,6 +224,44 @@ var Config = {
     },
 
     /**
+     * 分類器のデフォルトをセットする.
+     */
+    setDefaultClass:function(){
+	this.classes = new Array();
+	this.classes.push({"name":"初音ミク","label":"Miku","color":"#7fffbf"});
+	this.classes.push({"name":"鏡音リン・レン","label":"RinLen","color":"#ffff00"});
+	this.classes.push({"name":"巡音ルカ","label":"Luka","color":"#ffb2d3"});
+	this.classes.push({"name":"その他","label":"Other","color":"#ffeeee"});
+	this.classes.push({"name":"NG","label":"NG","color":"#888888"});
+    },
+
+    // 動画分類設定を読みこむ.
+    loadClasses:function(){
+	let branch = this.getBranch();
+	this.do_classify = branch.getBoolPref("ml.do-classify");
+	try{
+	    this.classes = eval(branch.getUnicharPref("ml.classes-value"));
+	} catch (x) {
+	    this.classes = new Array();
+	}
+	if( !this.classes || this.classes.length<=0 ) this.setDefaultClass();
+	for(let i=0;i<this.classes.length;i++){
+	    this.classes["_"+this.classes[i].label] = this.classes[i].color;
+	}
+
+	// TODO
+	/*
+	let menus = evaluateXPath(document,"//*[@class='training-menu']");
+	for(let i=0,menu; menu=menus[i];i++){
+	    while(menu.firstChild) RemoveElement(menu.firstChild);
+	    for(let j=0,cls; cls=this.classes[j]; j++){
+		menu.appendChild( CreateMenuItem(cls['name'],cls['label']) );
+	    }
+	}
+	 */
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -296,6 +334,8 @@ var Config = {
         this.loadTwitterSettings(branch);
 
         this.setVideoDetail();
+
+	this.loadClasses();
     },
 
     /**
