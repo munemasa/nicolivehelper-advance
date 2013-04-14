@@ -693,6 +693,12 @@
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-request').triggerNode);"/>
+      <menuitem label="&menu.comment_reflection;"
+		tooltiptext="&menu.tooltip_comment_reflection;"
+		oncommand="NicoLiveRequest.addToCommentReflector($('popup-request').triggerNode);"/>
+      <menuitem id="id-release-reflection-from-request"
+		label="&comment.menu_release_reflection_all;"
+		oncommand="NicoLiveComment.releaseReflector();"/>
 
       <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
 
@@ -774,6 +780,16 @@
 
       <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
       <menuseparator/>
+      <menu label="&classify.menu;">
+	<menupopup>
+	  <menu label="&classify.train;">
+	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-stock').triggerNode);">
+	    </menupopup>
+	  </menu>
+	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-stock').triggerNode);"/>
+	</menupopup>
+      </menu>
+
       <menuitem label="&menu.stock_savefile;" oncommand="NicoLiveStock.saveStockToFile();"/>
 
       <menuseparator/>
@@ -800,6 +816,17 @@
 		label="&menu.copy_video_id;"
 		oncommand="MenuControl.copyVideoIdToClipboard($('popup-playlist').triggerNode);"/>
       <!-- マイリストに追加を追加するためのマーカー -->
+
+      <menuseparator/>
+      <menu label="&classify.menu;">
+	<menupopup>
+	  <menu label="&classify.train;">
+	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-playlist').triggerNode);">
+	    </menupopup>
+	  </menu>
+	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-playlist').triggerNode);"/>
+	</menupopup>
+      </menu>
 
       <menuseparator/>
       <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-playlist').triggerNode);"/>

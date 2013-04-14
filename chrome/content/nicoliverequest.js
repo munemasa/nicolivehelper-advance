@@ -445,6 +445,20 @@ var NicoLiveRequest = {
 	CopyToClipboard(str);
     },
 
+    // リク主をコメントリフレクタに登録する.
+    addToCommentReflector:function(node){
+	try{
+	    let tr = FindParentElement(node,'html:tr');
+	    let n = tr.sectionRowIndex;
+	    let item = NicoLiveHelper.request_list[n];
+	    if( item.comment_no ){
+		NicoLiveComment.showCommentReflectorDialog(item.request_user_id, item.cno, item.pname);
+	    }
+	} catch (x) {
+	    debugprint(x);
+	}
+    },
+
     /**
      * リクエストセットを切り替える.
      * @param n セット番号
