@@ -71,10 +71,6 @@ var NLHPreference = {
 	$('tweet-preview').textContent = str;
     },
 
-    initDB:function(){
-	this.dbconnect = opener.NicoLiveDatabase.dbconnect;
-    },
-
     // 運営コメントプリセット.
     createPresetCommentMenu:function(){
 	this.presetcomment = opener.Storage.readObject('nico_live_commentpreset',{});
@@ -840,31 +836,16 @@ var NLHPreference = {
 
 	$('prepare-timing-bar').value = $('pref-prepare-timing').value;
 
-	/*
 	let data = opener.Storage.readObject('nico_live_customscript',{});
 	this.script = data;
 	if( data.requestchecker ){
 	    $('custom-script').value = data.requestchecker;
 	}
-
-	try{
-	    this.classes = eval( $('pref-classes-value').value );
-	} catch (x) {
-	    this.classes = new Array();
-	}
-	if( !this.classes || this.classes.length<=0 ){
-	    this.setDefaultClass();
-	}else{
-	    this.setExistClasses();
-	}
-
-	 */
     },
     destroy:function(){
 	//Application.console.log('close advanced setting');
     }
 };
 
-//NLHPreference.initDB();
 window.addEventListener("load", function(e){ NLHPreference.init(); }, false);
 window.addEventListener("unload", function(e){ NLHPreference.destroy(); }, false);
