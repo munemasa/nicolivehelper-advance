@@ -189,6 +189,25 @@
 	    <menuseparator/>
 	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
+
+	    <menu label="その他">
+	      <menupopup>
+		<menuitem id="get-extratime" persist="checked"
+			  label="ロスタイム作成"
+			  oncommand="NicoLiveHelper.setLossTime(true);"
+			  tooltiptext="動画を視聴したままロスタイムに突入します。"
+			  type="checkbox" autocheck="true"/>
+		<menuitem id="cancel-heartbeat" persist="checked"
+			  label="ハートビートをキャンセル(Experimental)"
+			  type="checkbox" autocheck="true"
+			  oncommand="NicoLiveHelper.setCancelHeartbeat();"/>
+		<menuseparator/>
+		<menuitem label="&toolbar.forcecastermode;"
+			  tooltiptext="&toolbar.tooltip_forcecastermode;"
+			  oncommand="NicoLiveHelper.iscaster=true;"/>
+	      </menupopup>
+	    </menu>
+	    <menuseparator/>
 	    <menuitem label="&toolbar.open_preference;" accesskey="O" oncommand="OpenSettingsDialog();"/>
 	  </menupopup>
 	</toolbarbutton>

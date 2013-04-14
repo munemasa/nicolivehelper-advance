@@ -3962,6 +3962,25 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ロスタイムを設定する.
+     * @param show_msg 設定したことを通知出すならtrue
+     */
+    setLossTime:function(show_msg){
+	let b = $('get-extratime').hasAttribute('checked');
+	if( show_msg ) ShowNotice(b?'ロスタイムを有効にしました':'ロスタイムを無効にしました');	
+	NicoLiveHttpObserver.setLossTime( b );
+    },
+
+    /**
+     * ハートビートをキャンセルする.
+     * Experimental Function.
+     */
+    setCancelHeartbeat:function(){
+	let b = $('cancel-heartbeat').hasAttribute('checked');
+	NicoLiveHttpObserver._testCancelHeartbeat( b );
+    },
+
+    /**
      * 変数の初期化を行う.
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
@@ -4062,9 +4081,8 @@ var NicoLiveHelper = {
 	this.openNewBroadcast( request_id, title, iscaster, community_id );
 
 	NicoLiveHttpObserver.init();
-	// TODO
-	NicoLiveHttpObserver.setLossTime( false );
-	NicoLiveHttpObserver._testCancelHeartbeat( false );
+	this.setLossTime( false );
+	this.setCancelHeartbeat();
     },
 
     /**
