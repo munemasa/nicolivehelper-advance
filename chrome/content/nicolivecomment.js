@@ -548,7 +548,7 @@ var NicoLiveComment = {
      * @param defstring デフォルト名
      */
     showCommentReflectorDialog:function(userid, comment_no, defstring){
-	if( ! IsCaster() ) return;
+	if( IsOffline() || !IsCaster() ) return;
 	if( !userid ) return;
 	if( !defstring ) defstring = "★";
 	let param = {
