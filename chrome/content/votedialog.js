@@ -35,6 +35,16 @@ var VoteDialog = {
 	}
     },
 
+    setRecent4Videos: function(){
+	let playlist = window.opener.NicoLiveHelper.playlist_list;
+	let n = playlist.length-1;
+	let texts = document.getElementsByTagName('textbox');
+	for( let i=0; i<4; i++ ){
+	    let item = playlist[n-i];
+	    texts[4-i].value = item.title;
+	}
+    },
+
     init:function(){
 
 	this.recent = Storage.readObject("nico_live_recent_enquete",[]);

@@ -21,24 +21,36 @@
     <hbox align="center">
       <label value="選択肢1"/>
       <textbox id="answer1" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢2"/>
       <textbox id="answer2" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢3"/>
       <textbox id="answer3" flex="1"/>
     </hbox>
     <hbox align="center">
       <label value="選択肢4"/>
       <textbox id="answer4" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢5"/>
       <textbox id="answer5" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢6"/>
       <textbox id="answer6" flex="1"/>
     </hbox>
     <hbox align="center">
       <label value="選択肢7"/>
       <textbox id="answer7" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢8"/>
       <textbox id="answer8" flex="1"/>
+    </hbox>
+    <hbox align="center">
       <label value="選択肢9"/>
       <textbox id="answer9" flex="1"/>
     </hbox>
@@ -57,6 +69,8 @@
 	</menupopup>
       </menulist>
     </hbox>
+    <button label="再生履歴の最新4つをアンケート項目に設定する"
+	    oncommand="VoteDialog.setRecent4Videos();"/>
   </vbox>
 
 </dialog>
