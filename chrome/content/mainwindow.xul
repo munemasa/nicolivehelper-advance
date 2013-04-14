@@ -572,9 +572,9 @@
 	  <hbox>
 	    <button label="無料延長を行う"
 		    oncommand="NicoLiveHelper.getsalelist(true);"/>
-	    <checkbox disabled="true" id="controlpanel-auto-free-extend"
+	    <checkbox id="controlpanel-auto-free-extend"
 		      label="自動無料延長を行う" persist="checked" autocheck="true"
-		      oncommand="TODO; NicoLiveHelper.setAutoFreeExtend(this.hasAttribute('checked'));"/>
+		      oncommand=""/>
 	  </hbox>
 	  <hbox>
 	    <label value="所持ニコニコポイント:"/>

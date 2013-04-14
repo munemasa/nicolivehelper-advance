@@ -3520,10 +3520,9 @@ var NicoLiveHelper = {
 			    NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('new_end_time')[0].textContent);
 			    debugprint("New endtime="+NicoLiveHelper.liveinfo.end_time);
 
-			    // TODO
 			    // 延長完了通知
 			    NicoLiveHelper._extendcnt = 0;
-			    let str = NicoLivePreference.getBranch().getUnicharPref('notice.extend');
+			    let str = Config.getBranch().getUnicharPref('notice.extend');
 			    NicoLiveHelper.postCasterComment(str,"");
 			    ShowNotice(str);
 			}else{
@@ -3678,6 +3677,30 @@ var NicoLiveHelper = {
             NicoApi.getplayerstatus( GetRequestId(), f);
         }
     },
+
+    /**
+     * 自動無料延長(freeextend)を行う.
+     * @param remaintime 残り時間(秒)
+     */
+    checkForAutoFreeExtend:function (remaintime) {
+        // 自動無料延長処理
+        if (this.iscaster && this.liveinfo.end_time) {
+            // 残り時間3分を切ると、15秒ごとに自動無料延長を試みる.
+            if (remaintime > 0 && remaintime <= 180) {
+                if ($('controlpanel-auto-free-extend').hasAttribute('checked')) {
+                    if (180 - remaintime > this._extendcnt * 15) {
+                        this._extendcnt = parseInt((180 - remaintime) / 15 + 1);
+                        // 15*10=150=2分半=30秒前までネバる
+                        if (this._extendcnt <= 10) {
+                            debugprint("自動無料延長を行います");
+                            this.getsalelist(true);
+                        }
+                    }
+                }
+            }
+        }
+    },
+
     /**
      * 毎秒呼び出される関数.
      */
@@ -3690,8 +3713,9 @@ var NicoLiveHelper = {
 	this.updateStatusBar(now);
         this.checkForPublishStatus(p);
         this.checkForLosstime(now);
+        this.checkForAutoFreeExtend(remaintime);
 
-	// 残り時間の通知
+        // 残り時間の通知
 	let nt = Config.notice.time;
 	if( (this.liveinfo.end_time && remaintime>0 && remaintime < nt*60) ||
 	    (!this.liveinfo.end_time && n>=0 && p > (30-nt)*60 + 30*60*n) ){
