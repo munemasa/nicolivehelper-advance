@@ -103,7 +103,7 @@ var NicoLiveRequest = {
 	    // 動画情報に分類情報があれば、タグの前にラベルを付ける.
 	    let text = CreateHTMLElement('span');
 	    //text.className = item.classify.class;
-	    text.style.backgroundColor = NicoLivePreference.classes["_"+item.classify['class']];
+	    text.style.backgroundColor = Config.classes["_"+item.classify['class']];
 	    text.appendChild(document.createTextNode('['+item.classify['class']+']'));
 	    label.appendChild(text);
 	}
@@ -434,6 +434,15 @@ var NicoLiveRequest = {
 	} catch (x) {
 	    debugprint(x);
 	}
+    },
+
+    copyAll: function(){
+	let str = "";
+
+	for( let i=0,item; item=NicoLiveHelper.request_list[i]; i++ ){
+	    str += item.video_id+"\n";
+	}
+	CopyToClipboard(str);
     },
 
     /**

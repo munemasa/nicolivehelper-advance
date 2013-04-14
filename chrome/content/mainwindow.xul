@@ -688,15 +688,19 @@
 	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
 	</menupopup>
       </menu>
-      <menuitem label="コンパクション"
-		tooltiptext="この動画を基準に重複したリクエストを圧縮します"
-		oncommand="NicoLiveRequest.compactRequest($('popup-request').triggerNode);"/>
       <menuseparator/>
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-request').triggerNode);"/>
 
       <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
+
+      <menuseparator/>
+      <menuitem label="コンパクション"
+		tooltiptext="この動画を基準に重複したリクエストを圧縮します"
+		oncommand="NicoLiveRequest.compactRequest($('popup-request').triggerNode);"/>
+      <menuitem label="全ての動画IDをコピー"
+		oncommand="NicoLiveRequest.copyAll();"/>
 
       <menuseparator/>
       <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-request').triggerNode);"/>
