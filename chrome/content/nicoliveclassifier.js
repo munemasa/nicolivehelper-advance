@@ -210,7 +210,50 @@ var NicoLiveClassifier = {
 	    this.create();
 	}else{
 	}
+    },
+
+    /**
+     * 学習を行う.
+     * メニューから呼ばれる。
+     * @param e DOMイベント
+     * @param node メニューの表示されたノード
+     */
+    doTrain:function(e,node){
+	let vbox = FindParentElement(node,'vbox');
+	let vid = vbox.getAttribute('nicovideo_id');
+	let item = NicoLiveHelper.findVideoInfoFromMemory(vid);
+	if(item==null) return;
+
+	// 半角小文字で正規化して学習させる.
+	let str = new Array();
+	for(let i=0,tag; tag=item.tags['jp'][i];i++){
+	    str.push(ZenToHan(tag.toLowerCase()));
+	}
+	this.train(str,e.target.value);
+    },
+
+    /**
+     * 分類を行う.
+     * メニューから呼ばれる。
+     * @param e DOMイベント
+     * @param node メニューの表示されたノード
+     */
+    doClassify:function(e,node){
+	let vbox = FindParentElement(node,'vbox');
+	let vid = vbox.getAttribute('nicovideo_id');
+	let item = NicoLiveHelper.findVideoInfoFromMemory(vid);
+	if(item==null) return;
+
+	let str = new Array();
+	// 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
+	for( k in item.tags ){
+	    for(let i=0,tag; tag=item.tags[k][i];i++){
+		str.push(ZenToHan(tag.toLowerCase()));
+	    }
+	}
+	AlertPrompt('分類:'+this.classify(str)['class'],"分類チェック");
     }
+
 };
 
 window.addEventListener("load", function(e){ NicoLiveClassifier.init(); }, false);
