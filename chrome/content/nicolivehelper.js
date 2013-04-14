@@ -80,6 +80,18 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 何かしら再生中かどうかを返す.
+     */
+    isInplay: function(){
+	let main = this.getCurrentPlayStatus( MAIN );
+	let sub  = this.getCurrentPlayStatus( SUB );
+	let now = GetCurrentTime();
+	if( main.play_begin <= now && now <= main.play_end ) return true;
+	if( sub.play_begin  <= now && now <= sub.play_end  ) return true;
+	return false;
+    },
+
+    /**
      * リクエストセット番号を返す
      */
     getRequestSetNo: function(){
@@ -2769,6 +2781,7 @@ var NicoLiveHelper = {
 		NicoLiveHelper.connectioninfo[ARENA] = tmp;
 
 		NicoLiveHelper.sendStartupComment();
+		if( Config.play_jingle ) NicoLiveHelper.playJingle();
 	    }
 	};
 	NicoApi.getpublishstatus( request_id, f );
@@ -3110,6 +3123,89 @@ var NicoLiveHelper = {
 	    NicoLiveWindow.scrollLivePage();
 	};
 	NicoApi.getplayerstatus( request_id, f );
+    },
+
+    /**
+     * ジングルを再生する.
+     * 放送開始から3分未満にコメントサーバーに接続したとき、
+     * ジングル動画を再生する。
+     */
+    playJingle:function(){
+	// コメントサーバ接続時、
+	// 放送開始から3分未満、
+	// 何も再生していないときに、ジングルを再生開始する.
+	let jingle = Config.jinglemovie;
+	if( !jingle ) return;
+
+	// sm0 sm1/co154 sm3/co154 sm2/co13879
+	let jingles = jingle.split(/\s+/);
+	let candidates = new Array();
+	let all = new Array();
+	for(let i=0,s;s=jingles[i];i++){
+	    let tmp;
+	    tmp = s.split(/\//);
+	    if(tmp.length==2){
+		if(tmp[1]==this.liveinfo.default_community){
+		    candidates.push(tmp[0]);
+		}
+	    }else if(tmp.length==1){
+		all.push(tmp[0]);
+	    }
+	}
+	if(candidates.length<=0){
+	    let n = GetRandomInt(0,all.length-1);
+	    jingle = all[n];
+	}else{
+	    let n = GetRandomInt(0,candidates.length-1);
+	    jingle = candidates[n];
+	}
+	debugprint('jingle:'+jingle);
+
+	if( !IsCaster() ) return;
+
+	if(!jingle){
+	    // TODO 自動放送
+	    /*
+	    if( $('automatic-broadcasting').hasAttribute('checked') ){
+		// Automatic Broadcastingのときはジングルなしに次曲を再生開始可に.
+		if( !this.isInplay() ) NicoLiveHelper.setupPlayNextMusic(20*1000);
+	    }
+	     */
+	    return;
+	}
+
+	if( GetCurrentTime()-this.liveinfo.start_time < 180 ){
+	    if( !this.isInplay() ){ // 何も動画が再生されてなければジングル再生.
+		debugprint("play jingle.");
+		setTimeout(
+		    function(){
+			// TODO 自動放送
+			/*
+			 if( $('automatic-broadcasting').hasAttribute('checked') ){
+			 // Automatic Broadcastingのときはジングル再生に失敗しても
+			 // 継続できるように.
+			 NicoLiveHelper.setupPlayNextMusic(60*1000);
+			 }
+			 */
+			NicoLiveHelper.postCasterComment(jingle,"");
+		    }, 5*1000);
+	    }else{
+		debugprint("すでに動画が再生されているためジングルは再生しません");
+	    }
+	}else{
+	    if( !this.isInplay() ){
+		// TODO 自動放送
+		/*
+		// 最近は枠取れたあとにしばらく入場できない場合があるため、
+		// 3分経過後に入場となったときにジングル再生が行なわれない.
+		// その場合にはジングル流さずに次を再生するようにして
+		// 自動配信を継続できるようにする.
+		if( $('automatic-broadcasting').hasAttribute('checked') ){
+		    NicoLiveHelper.setupPlayNextMusic(10*1000);
+		}
+		 */
+	    }
+	}
     },
 
     /**

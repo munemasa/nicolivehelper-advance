@@ -217,6 +217,10 @@ var Config = {
 	this.play.prepare_timing = branch.getIntPref("play.prepare-timing");
 
 	this.play.in_time = branch.getBoolPref("play.in-time");
+
+	// ジングル動画設定
+	this.play_jingle = branch.getBoolPref("play.jingle");
+	this.jinglemovie = branch.getCharPref("play.jingle-movie");
     },
 
     /**
