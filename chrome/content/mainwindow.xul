@@ -192,7 +192,7 @@
 	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
 
-	    <menu label="実験的な機能">
+	    <menu label="特殊な機能">
 	      <menupopup>
 		<menuitem id="get-extratime" persist="checked"
 			  label="ロスタイム作成"
@@ -561,8 +561,9 @@
 		  oncommand="CommandMenu.openCurrentBroadcasting();"/>
 	  <button label="&toolbar.beginbroadcasting;"
 		  oncommand="NicoLiveHelper.startBroadcasting();"/>
-	  <button disabled="true" label="ジングル再生"
-		  oncommand="TODO; NicoLiveHelper.playJingle();"/>
+	  <button label="ジングル再生"
+		  tooltiptext="放送開始して3分未満だったら、指定のジングル動画を再生します。"
+		  oncommand="NicoLiveHelper.playJingle();"/>
 	  <button label="動画情報の送信"
 		  oncommand="NicoLiveHelper.sendVideoInfo( null );"/>
 	  <button label="リクエスト受付数リセット"

@@ -12,6 +12,12 @@
   <prefpane id="nicolivehelper-prefpane-basic"
 	    label="基本設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
     <preferences>
+      <!-- ジングル再生フラグ -->
+      <preference id="pref-jingle"
+		  name="extensions.nicolivehelperadvance.play.jingle" type="bool"/>
+      <!-- ジングル動画IDリスト -->
+      <preference id="pref-jingle-movie"
+		  name="extensions.nicolivehelperadvance.play.jingle-movie" type="string"/>
       <!-- 再生インターバル -->
       <preference id="pref-nextplay-interval"
 		  name="extensions.nicolivehelperadvance.play.interval" type="int"/>
@@ -92,7 +98,16 @@
 	<!-- 進行 -->
 	<tabpanel orient="vertical">
 	  <hbox>
-	    <checkbox preference="pref-limit30min" label="次の動画を再生する時、放送枠内に収まるように再生する動画を選択する" tooltiptext="放送枠内(放送終了時刻)に収まるように動画を選択します。"/>
+	    <checkbox preference="pref-jingle" label="接続時にジングルを再生する"/>
+	    <textbox preference="pref-jingle-movie" emptytext="ジングルとなる動画IDを入力してください" flex="1"/>
+	    <button label="再生"
+		    oncommand="opener.NicoLiveHelper.playJingle();"
+		    tooltiptext="生放送を開始して3分以内で、何も動画が再生されていない時に、ボタンを押して5秒後にジングル動画を再生します。"/>
+	  </hbox>
+	  <hbox>
+	    <checkbox preference="pref-limit30min"
+		      label="次の動画を再生する時、放送枠内に収まるように再生する動画を選択する"
+		      tooltiptext="放送枠内(放送終了時刻)に収まるように動画を選択します。"/>
 	  </hbox>
 	  <hbox align="center">
 	    <checkbox preference="pref-prepare" label="動画の先読み(/prepare)を行う"
