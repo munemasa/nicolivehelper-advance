@@ -575,9 +575,9 @@ var NicoLiveHelper = {
 		tmp = NicoLiveHelper.getPName(info);
 		break;
 	    case 'additional':
-		// TODO 動画DBに登録してある追加情報
+		// 動画DBに登録してある追加情報
 		if(info.video_id==null) break;
-		tmp = NicoLiveDatabase.getAdditional(info.video_id);
+		tmp = Database.getAdditional(info.video_id);
 		break;
 	    case 'description':
 		// 詳細を40文字まで(世界の新着と同じ)
@@ -3209,13 +3209,11 @@ var NicoLiveHelper = {
 
     /**
      * スタートアップコメントを送信開始する.
+     * 放送開始して2分以下の場合に送信する。
      */
     sendStartupComment:function(){
 	if( !IsCaster() ) return;
-	if( GetCurrentTime()-this.liveinfo.start_time > 180 ) return;
-
-	// TODO
-	//if( this.inplay ) return; // 何か再生中はスタートアップコメントを行わない.
+	if( GetCurrentTime()-this.liveinfo.start_time > 120 ) return;
 
 	let pref = Config.getBranch();
 	try{
