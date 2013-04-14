@@ -663,6 +663,7 @@
 	</menupopup>
       </menu>
 
+      <menuseparator/>
       <menuitem label="&sort.comment_no;" oncommand="NicoLiveHelper.sortRequestByCommentNo();"/>
       <menu label="&sort.ascend_order;">
 	<menupopup>
@@ -702,6 +703,16 @@
       <menuitem label="全ての動画IDをコピー"
 		oncommand="NicoLiveRequest.copyAll();"/>
 
+      <menu label="&classify.menu;">
+	<menupopup>
+	  <menu label="&classify.train;">
+	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-request').triggerNode);">
+	    </menupopup>
+	  </menu>
+	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-request').triggerNode);"/>
+	</menupopup>
+      </menu>
+
       <menuseparator/>
       <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-request').triggerNode);"/>
       <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-request').triggerNode);"/>
@@ -725,6 +736,7 @@
 	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
+      <menuseparator/>
       <menu label="&sort.ascend_order;">
 	<menupopup>
 	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
