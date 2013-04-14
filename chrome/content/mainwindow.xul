@@ -67,6 +67,8 @@
 	  src="chrome://nicolivehelperadvance/content/nicolivetweet.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoliverights.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicoliveclassifier.js" />
 
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
@@ -190,7 +192,7 @@
 	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
 
-	    <menu label="その他">
+	    <menu label="実験的な機能">
 	      <menupopup>
 		<menuitem id="get-extratime" persist="checked"
 			  label="ロスタイム作成"
@@ -198,7 +200,7 @@
 			  tooltiptext="動画を視聴したままロスタイムに突入します。"
 			  type="checkbox" autocheck="true"/>
 		<menuitem id="cancel-heartbeat" persist="checked"
-			  label="ハートビートをキャンセル(Experimental)"
+			  label="ハートビートをキャンセル"
 			  type="checkbox" autocheck="true"
 			  oncommand="NicoLiveHelper.setCancelHeartbeat();"/>
 		<menuseparator/>

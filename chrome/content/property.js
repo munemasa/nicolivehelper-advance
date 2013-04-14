@@ -5,7 +5,7 @@ var Property = {
     accept: function(){
 	let newstr = $('additional_info').value;
 	if( newstr != this.old_additional_info ){
-	    // TODO window.opener.NicoLiveDatabase.setAdditional(this.vinfo.video_id,newstr);
+	    window.opener.Database.setAdditional(this.vinfo.video_id,newstr);
 	}
 	return true;
     },
@@ -40,7 +40,7 @@ var Property = {
 	$('video_highbitrate').innerHTML = this.vinfo.highbitrate + " kbps";
 	$('video_description').innerHTML = htmlspecialchars(this.vinfo.description);
 
-	this.old_additional_info = ""; // TODO window.opener.NicoLiveDatabase.getAdditional( this.vinfo.video_id );
+	this.old_additional_info = window.opener.Database.getAdditional( this.vinfo.video_id );
 	$('additional_info').value = this.old_additional_info;
 
 	let text = "";

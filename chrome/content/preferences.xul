@@ -570,10 +570,9 @@
       </tabpanels>
     </tabbox>
     <hbox align="center">
-      <!-- <button label="全てデフォルトに戻す" oncommand="NLHPreference.resetAutoReply();"/> -->
       <button type="menu" label="プリセット読み込み">
 	<menupopup id="id-menu-comment-preset">
-	  <menuitem label="全てデフォルトに戻す" oncommand="NLHPreference.resetAutoReply();"/>
+	  <menuitem label="デフォルト" oncommand="NLHPreference.resetAutoReply();"/>
 	</menupopup>
       </button>
       <textbox id="id-comment-preset-name" emptytext="プリセット名を入力してください" flex="1"/>
@@ -808,6 +807,14 @@
       <preference id="pref-notice-soundfile"
 		  name="extensions.nicolivehelperadvance.notice.soundfile" type="unichar"/>
 
+      <preference id="pref-do-custom-script"
+		  name="extensions.nicolivehelperadvance.custom-script" type="bool"/>
+
+      <preference id="pref-do-classify"
+		  name="extensions.nicolivehelperadvance.ml.do-classify" type="bool"/>
+      <preference id="pref-classes-value"
+		  name="extensions.nicolivehelperadvance.mlclasses-value" type="unichar"/>
+
     </preferences>
     <vbox>
       <tabbox flex="1" persist="selectedIndex" id="prefwindow-others">
@@ -917,7 +924,6 @@
 
 	  <tabpanel orient="vertical">
 	    <!-- movie classifier -->
-	    <!--
 	    <hbox><checkbox label="動画を分類し、ラベルの貼り付けを行う" preference="pref-do-classify"/></hbox>
 	    <listbox id="list-class" flex="1" context="popup-classifier">
 	      <listcols>
@@ -938,7 +944,6 @@
 	      <colorpicker id="class-color" type="button"/>
 	      <button label="登録" oncommand="NLHPreference.addClass();"/>
 	    </hbox>
-	    -->
 
 	  </tabpanel>
 

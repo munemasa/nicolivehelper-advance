@@ -827,6 +827,19 @@ var NLHPreference = {
 	this.getSavedTwitterToken();
 	this.loadPNameWhitelist();
 
+	try{
+	    this.classes = eval( $('pref-classes-value').value );
+	} catch (x) {
+	    this.classes = new Array();
+	}
+	if( !this.classes || this.classes.length<=0 ){
+	    this.setDefaultClass();
+	}else{
+	    this.setExistClasses();
+	}
+
+	$('prepare-timing-bar').value = $('pref-prepare-timing').value;
+
 	/*
 	let data = opener.Storage.readObject('nico_live_customscript',{});
 	this.script = data;
@@ -845,7 +858,6 @@ var NLHPreference = {
 	    this.setExistClasses();
 	}
 
-	$('prepare-timing-bar').value = $('pref-prepare-timing').value;
 	 */
     },
     destroy:function(){
