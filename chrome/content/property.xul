@@ -69,6 +69,10 @@
 	  <html:div style="-moz-user-select:text; width:40em;" id="video_tags" value=""/>
 	</row>
 	<row>
+	  <label value="&menu.set_pname;"/>
+	  <textbox id="pname" flex="1"/>
+	</row>
+	<row>
 	  <label value="&menu.set_additional;"/>
 	  <textbox id="additional_info" flex="1"/>
 	</row>
