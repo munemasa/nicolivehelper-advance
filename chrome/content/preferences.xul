@@ -136,7 +136,7 @@
 	<!-- リクエスト -->
 	<tabpanel orient="vertical">
 	  <checkbox preference="pref-request-autoreply" label="リクエストに対して自動で運営コメントを返す"/>
-	  <checkbox preference="pref-allow-seiga-request" label="静画のリクエストを受け付ける"
+	  <checkbox preference="pref-allow-seiga-request" label="ニコニコ静画のリクエストを受け付ける"
 		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
 	  <checkbox preference="pref-allow-duplicative" label="リクエストの重複を許可する"/>
 	  <checkbox preference="pref-limitnewmovie" label="リクエストの新着(7日)規制を行う" tooltiptext="投稿して7日以内の動画のリクエストを受け付けなくなります。"/>
