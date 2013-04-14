@@ -1312,6 +1312,27 @@ var NicoLiveHelper = {
     },
 
     /**
+     * リクエストチェックスクリプトを走らせる.
+     * @param info 動画情報
+     * @return リクエスト拒否メッセージを返す. 何も返さないとチェックはパスしたものとする.
+     */
+    runRequestCheckerScript:function(info){
+	if( Config.do_customscript && Config.customscript.requestchecker ){
+	    let r;
+	    try{
+		r = eval( Config.customscript.requestchecker );
+	    } catch (x) {
+		// eval失敗時はチェックをパスしたものとする.
+		r = null;
+	    }
+	    if('string'==typeof r){
+		return r;
+	    }
+	}
+	return null;
+    },
+
+    /**
      * リクエストをチェックして可否を返す.
      * リクエストを拒否する場合は例外を投げる.
      * @throws RequestException (datastruct.js)
@@ -1394,6 +1415,14 @@ var NicoLiveHelper = {
 		videoinfo.errmsg = r;
 		throw videoinfo;
 	    }
+	}
+
+	// ユーザースクリプトによる最終チェック.
+	let r = this.runRequestCheckerScript( videoinfo );
+	if( r ){
+	    videoinfo.errno = REASON_USER_SCRIPT;
+	    videoinfo.errmsg = r;
+	    throw videoinfo;
 	}
 
 	return true;
@@ -2179,6 +2208,19 @@ var NicoLiveHelper = {
 	this.checkForCloseWindow();
     },
 
+    /**
+     * ユーザーカスタムコメントフィルタを実行する.
+     * @param chat コメント
+     */
+    filterComment:function(chat){
+	if( Config.do_customscript && Config.customscript.commentfilter ){
+	    try{
+		eval( Config.customscript.commentfilter );
+	    } catch (x) {
+	    }
+	}
+    },
+
     /** コントロールパネルの再生状態の更新処理
      * @param text コメントテキスト
      */
@@ -2397,6 +2439,10 @@ var NicoLiveHelper = {
 	}
 	NicoLiveComment.addComment( chat, target_room );
 	NicoLiveTalker.talkComment( chat );
+
+	if( chat.date >= NicoLiveHelper.connecttime ){
+	    this.filterComment( chat );
+	}
 
 	switch(chat.premium){
 	case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ

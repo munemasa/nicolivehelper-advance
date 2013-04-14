@@ -243,10 +243,14 @@ var Config = {
 	this.allow_seiga    = branch.getBoolPref("request.seiga");
 	// 自動でP名を抽出しない
 	this.no_auto_pname  = branch.getBoolPref("no-auto-pname");
+	// カスタムスクリプト
+	this.do_customscript = branch.getBoolPref("custom-script");
+	this.customscript = Storage.readObject('nico_live_customscript',{});
 
 	// NG動画
 	this.loadNGVideosSetting(branch);
 
+	// リクエスト制限
 	try{
 	    this.loadRestrictionSetting(branch);
 	} catch (x) {
