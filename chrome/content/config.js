@@ -249,8 +249,7 @@ var Config = {
 	    this.classes["_"+this.classes[i].label] = this.classes[i].color;
 	}
 
-	// TODO
-	/*
+	// 学習メニューを作成
 	let menus = evaluateXPath(document,"//*[@class='training-menu']");
 	for(let i=0,menu; menu=menus[i];i++){
 	    while(menu.firstChild) RemoveElement(menu.firstChild);
@@ -258,7 +257,6 @@ var Config = {
 		menu.appendChild( CreateMenuItem(cls['name'],cls['label']) );
 	    }
 	}
-	 */
     },
 
     /**
