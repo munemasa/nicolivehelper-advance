@@ -665,28 +665,32 @@
 
       <menuseparator/>
       <menuitem label="&sort.comment_no;" oncommand="NicoLiveHelper.sortRequestByCommentNo();"/>
-      <menu label="&sort.ascend_order;">
+      <menu label="並べ替え">
 	<menupopup>
-	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,1)"/>
-	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,1)"/>
-	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,1)"/>
-	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,1)"/>
-	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,1)"/>
-	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,1)"/>
-	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,1)"/>
-	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,1)"/>
-	</menupopup>
-      </menu>
-      <menu label="&sort.descend_order;">
-	<menupopup>
-	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,-1)"/>
-	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,-1)"/>
-	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,-1)"/>
-	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,-1)"/>
-	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,-1)"/>
-	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,-1)"/>
-	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,-1)"/>
-	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
+	  <menu label="&sort.ascend_order;">
+	    <menupopup>
+	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,1)"/>
+	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,1)"/>
+	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,1)"/>
+	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,1)"/>
+	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,1)"/>
+	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,1)"/>
+	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,1)"/>
+	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,1)"/>
+	    </menupopup>
+	  </menu>
+	  <menu label="&sort.descend_order;">
+	    <menupopup>
+	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortRequest(0,-1)"/>
+	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortRequest(1,-1)"/>
+	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortRequest(2,-1)"/>
+	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortRequest(3,-1)"/>
+	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortRequest(4,-1)"/>
+	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortRequest(5,-1)"/>
+	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortRequest(6,-1)"/>
+	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortRequest(9,-1)"/>
+	    </menupopup>
+	  </menu>
 	</menupopup>
       </menu>
       <menuseparator/>
@@ -743,32 +747,36 @@
 	</menupopup>
       </menu>
       <menuseparator/>
-      <menu label="&sort.ascend_order;">
+      <menu label="並べ替え">
 	<menupopup>
-	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
-	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,1)"/>
-	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,1)"/>
-	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,1)"/>
-	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,1)"/>
-	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,1)"/>
-	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,1)"/>
-	  <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,1)"/>
-	  <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,1)"/>
-	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,1)"/>
-	</menupopup>
-      </menu>
-      <menu label="&sort.descend_order;">
-	<menupopup>
-	  <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,-1)"/>
-	  <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,-1)"/>
-	  <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,-1)"/>
-	  <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,-1)"/>
-	  <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,-1)"/>
-	  <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,-1)"/>
-	  <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,-1)"/>
-	  <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,-1)"/>
-	  <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,-1)"/>
-	  <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,-1)"/>
+	  <menu label="&sort.ascend_order;">
+	    <menupopup>
+	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
+	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,1)"/>
+	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,1)"/>
+	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,1)"/>
+	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,1)"/>
+	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,1)"/>
+	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,1)"/>
+	      <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,1)"/>
+	      <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,1)"/>
+	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,1)"/>
+	    </menupopup>
+	  </menu>
+	  <menu label="&sort.descend_order;">
+	    <menupopup>
+	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,-1)"/>
+	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,-1)"/>
+	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,-1)"/>
+	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,-1)"/>
+	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,-1)"/>
+	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,-1)"/>
+	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,-1)"/>
+	      <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,-1)"/>
+	      <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,-1)"/>
+	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,-1)"/>
+	    </menupopup>
+	  </menu>
 	</menupopup>
       </menu>
       <menuseparator/>
