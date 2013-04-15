@@ -16,6 +16,18 @@ var NicoLiveComment = {
     colormap: {},      // 配色マップ
     namemap: {},       // コテハンマップ
 
+    getScrollBox:function(){
+	if( this._comment_box ) return this._comment_box;
+	this._comment_box = $('comment-box').boxObject.QueryInterface(Components.interfaces.nsIScrollBoxObject);
+	return this._comment_box;
+    },
+    getPosition:function(){
+	let y = new Object();
+	let x = new Object();
+	this.getScrollBox().getPosition(x,y);
+	return y.value;
+    },
+
     /**
      * コメントの表示のみをクリアする.
      */
@@ -129,6 +141,14 @@ var NicoLiveComment = {
 	td.textContent = GetFormattedDateString("%H:%M:%S",comment.date*1000);
 
 	this.autoKotehan( comment, target_room );
+
+	// TODO コメントの表示位置の保持が意外と重い
+	if( comment.date>=NicoLiveHelper.connecttime ){
+	    let y = this.getPosition();
+	    if( y!=0 ){
+		this.getScrollBox().scrollTo( 0, y+tr.clientHeight);
+	    }
+	}
     },
 
     /**
