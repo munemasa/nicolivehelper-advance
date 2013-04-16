@@ -565,7 +565,7 @@
 		  tooltiptext="放送開始して3分未満だったら、指定のジングル動画を再生します。"
 		  oncommand="NicoLiveHelper.playJingle();"/>
 	  <button label="動画情報の送信"
-		  oncommand="NicoLiveHelper.sendVideoInfo( null );"/>
+		  oncommand="NicoLiveHelper.sendVideoInfo( null, true );"/>
 	  <button label="リクエスト受付数リセット"
 		  oncommand="NicoLiveHelper.resetRequestCount();"/>
 	</hbox>
