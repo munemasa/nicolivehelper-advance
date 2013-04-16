@@ -373,6 +373,144 @@ var NicoLiveStock = {
 	}
     },
 
+    /**
+     * ファイルからストックに登録する.
+     * @file file nsIFileオブジェクト
+     */
+    readFileToStock:function(file){
+	// file は nsIFile
+	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
+	istream.init(file, 0x01, 0444, 0);
+	istream.QueryInterface(Components.interfaces.nsILineInputStream);
+
+	// 行を配列に読み込む
+	let line = {}, hasmore;
+	let first = true;
+	do {
+	    hasmore = istream.readLine(line);
+	    if( line.value.match(/(sm|nm)\d+|\d{10}/) ){
+		if(first){
+		    //NicoLiveHelper.clearStock();
+		    first = false;
+		}
+		this.addStock(line.value);
+	    }
+	} while(hasmore);
+
+	istream.close();
+    },
+
+    /* ファイルをドロップしたとき
+     * application/x-moz-file
+     * text/x-moz-url
+     * 
+     * Firefoxからリンクをドロップしたとき
+     * text/x-moz-url
+     * text/x-moz-url-data
+     * text/x-moz-url-desc
+     * text/uri-list
+     * text/_moz_htmlcontext
+     * text/_moz_htmlinfo
+     * text/html
+     * text/plain
+     * 
+     * Firefoxからタブをドロップしたとき
+     * application/x-moz-tabbrowser-tab
+     * text/x-moz-text-internal
+     */
+    checkDrag:function(event){
+	//let b = event.dataTransfer.types.contains("application/x-moz-file");
+	/*
+	debugprint("--");
+	for(let i=0;i<event.dataTransfer.types.length;i++){
+	    debugprint('dragging:'+event.dataTransfer.types.item(i));
+	}
+	 */
+	event.preventDefault();
+	return true;
+    },
+
+    /**
+     * ストックタブに何かドロップされたときの処理.
+     */
+    drop:function(event){
+	//this.dataTransfer = event.dataTransfer;
+
+	// ファイル(*.txt)をドロップしたとき.
+	var file = event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
+	if (file instanceof Components.interfaces.nsIFile){
+	    if( !file.leafName.match(/\.txt$/) ) return;
+	    debugprint("file dropped:"+file.path);
+	    // TODO
+	    this.readFileToStock(file);
+	    return;
+	}
+	// テキストをドロップしたとき.
+	if( event.dataTransfer.types.contains('text/plain') ){
+	    let txt = event.dataTransfer.mozGetDataAt("text/plain",0);
+	    this.addStock(txt);
+	    return;
+	}
+	// アンカー<a>をドロップしたとき.
+	if( event.dataTransfer.types.contains("text/uri-list") ){
+	    let uri = event.dataTransfer.mozGetDataAt("text/uri-list",0);
+	    debugprint("uri dropped:"+uri);
+	    this.addStock(uri);
+	    return;
+	}
+	// ブラウザのタブをドロップしたとき.
+	if( event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
+	    //this._debug = event;
+	    debugprint("tab dropped");
+	    let str = "";
+	    let tab = event.dataTransfer.mozGetDataAt("application/x-moz-tabbrowser-tab",0);
+	    let doc = tab.linkedBrowser.contentDocument;
+	    // 検索ページ.
+	    let items = evaluateXPath(doc,"//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href");
+	    for(let i=0,item; item=items[i]; i++){
+		//debugprint(item.textContent);
+		str += item.textContent + " ";
+	    }
+	    // ランキングページ.
+	    items = evaluateXPath(doc,"//div/p/a[@class='watch']/@href");
+	    for(let i=0,item; item=items[i]; i++){
+		//debugprint(item.textContent);
+		str += item.textContent + " ";
+	    }
+	    // コミュニティ動画
+	    items = evaluateXPath(doc,"//a[@class='def']/@href");
+	    for(let i=0,item; item=items[i]; i++){
+		//debugprint(item.textContent);
+		str += item.textContent + " ";
+	    }
+	    // ユーザーページの投稿動画
+	    if( doc.location.href.match(/user\/\d+\/video$/) ){
+		items = evaluateXPath(doc,"//*[@class='mylistVideo']/h4/a/@href");
+		for(let i=0,item; item=items[i]; i++){
+		    //debugprint(item.textContent);
+		    str += item.textContent + " ";
+		}
+	    }
+
+	    str += event.dataTransfer.mozGetDataAt("text/x-moz-text-internal",0);
+	    this.addStock(str);
+
+	    // 検索ページの場合、広告ポイントを取得する
+	    let uadp = evaluateXPath(doc,"//*[@class='vinfo_uadp']");
+	    let vids = evaluateXPath(doc,"//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href");
+	    for(let i=0,item; item=vids[i]; i++){
+		let d = item.textContent.match(/.+\/(.*?)$/);
+		let info = { "vid": d[1], "uadp": uadp[i].textContent.replace(/,/g,'') };
+		info.uadp = parseInt(info.uadp);
+		if( NicoLiveHelper._uadp==undefined ){
+		    NicoLiveHelper._uadp = new Object();
+		}
+		NicoLiveHelper._uadp[ "_"+info.vid ] = info.uadp;
+	    }
+	    return;
+	}
+    },
+
     init:function(){
 	debugprint("NicoLiveStock.init");
     }

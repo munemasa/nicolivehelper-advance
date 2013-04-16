@@ -1075,8 +1075,26 @@ var NicoLiveHelper = {
 	    for(let i=0,item; (item=this.request_q[i]) && i<10; i++){
 		processlist += item.video_id + " ";
 	    }
-	    $('request-progress-label').value = processlist;
+	    let str = LoadFormattedString('STR_REMAIN',[ this.request_q.length ]);
+	    $('request-progress').setAttribute( "tooltiptext", str );
+	    $('request-progress-label').value = str+processlist;
 	    $('request-progress').style.display = '';
+	}
+    },
+    /**
+     *  リクエストの処理状況を表示する.
+     */
+    setupStockProgress:function(){
+	if( this.stock_q.length==0 ){
+	    $('stock-progress').style.display = 'none';
+	}else{
+	    let processlist = "";
+	    for(let i=0,item; (item=this.stock_q[i]) && i<10; i++){
+		processlist += item.video_id + " ";
+	    }
+	    let str = LoadFormattedString('STR_REMAIN',[ this.stock_q.length ]);
+	    $('stock-progress-label').value = str+processlist;
+	    $('stock-progress').style.display = '';
 	}
     },
 
@@ -1606,6 +1624,8 @@ var NicoLiveHelper = {
                     ShowNotice(LoadString('STR_FAILED_TO_GET_VIDEOINFO'));
                     q.shift();
                     if (!isstock) NicoLiveHelper.setupRequestProgress();
+		    else NicoLiveHelper.setupStockProgress();
+
                     // 動画情報取得失敗は無視して次へ
                     if (q.length) {
                         NicoLiveHelper.runAddRequest(isstock);
@@ -1708,6 +1728,7 @@ var NicoLiveHelper = {
 
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
+	    else NicoLiveHelper.setupStockProgress();
 
             if (q.length) {
                 NicoLiveHelper.runAddRequest(isstock);
@@ -1736,6 +1757,7 @@ var NicoLiveHelper = {
                 debugprint(" getting seiga info failed.");
                 q.shift();
                 if (!isstock) NicoLiveHelper.setupRequestProgress();
+		else NicoLiveHelper.setupStockProgress();
                 // 動画情報取得失敗は無視して次へ
                 if (q.length) {
                     NicoLiveHelper.runAddRequest(isstock);
@@ -1768,6 +1790,7 @@ var NicoLiveHelper = {
 	    }
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
+	    else NicoLiveHelper.setupStockProgress();
 
             if (q.length) {
                 NicoLiveHelper.runAddRequest(isstock);
@@ -1818,7 +1841,7 @@ var NicoLiveHelper = {
 	req.product_code = code; // JWIDの作品コード
 
 	this.request_q.push( req );
-	this.setupRequestProgress();	
+	this.setupRequestProgress();
 
 	if( n==0 ){
 	    this.runAddRequest( false ); // isstock=false
@@ -1838,6 +1861,7 @@ var NicoLiveHelper = {
 	req.is_self_request = false;
 
 	this.stock_q.push( req );
+	this.setupStockProgress();
 
 	if( n==0 ){
 	    this.runAddRequest( true ); // isstock=true

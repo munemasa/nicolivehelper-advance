@@ -330,7 +330,11 @@
       </vbox>
 
       <!-- stock tab -->
-      <vbox id="tab-stock">
+      <vbox id="tab-stock"
+	    ondragenter="return NicoLiveStock.checkDrag(event)"
+	    ondragover="return NicoLiveStock.checkDrag(event)"
+	    ondrop="NicoLiveStock.drop(event)">
+
 	<hbox align="center">
 	  <menulist class="select-setlist" id="stock-set-no" sizetopopup="none" persist="value"
 		    onclick="NicoLiveRequest.changeSetName(this,event);"
@@ -381,6 +385,10 @@
 	  <html:table id="stock-table" class="requestview">
 	  </html:table>
 	</vbox>
+	<stack id="stock-progress" style="display:none;">
+	  <progressmeter mode="undetermined" value="0" flex="1"/>
+	  <label id="stock-progress-label" value="sm1340413" crop="end" flex="1"/>
+	</stack>
       </vbox>
       
       <!-- reject tab リジェクト -->
