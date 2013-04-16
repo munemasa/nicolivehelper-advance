@@ -2013,8 +2013,9 @@ var NicoLiveHelper = {
     /**
      * 動画情報を送信開始する.
      * @param videoinfo 動画情報(現在は未使用) 指定しないと現在の再生動画にする
+     * @param resend 動画情報の手動送信時にtrue
      */
-    sendVideoInfo: function(videoinfo){
+    sendVideoInfo: function(videoinfo, resend){
 	if( !videoinfo ) videoinfo = this.getCurrentVideoInfo();
 	let func = function(){
 	    clearInterval( NicoLiveHelper._sendvideoinfo_timer );
@@ -2027,6 +2028,24 @@ var NicoLiveHelper = {
 	    NicoLiveHelper._sendVideoInfo(videoinfo);
 	};
 	this.clearCasterCommentAndRun(func);
+
+	if( !resend ){
+	    if( Config.twitter.when_playmovie && IsCaster() ){
+		let msg = this.replaceMacros(Config.twitter.play, videoinfo);
+		NicoLiveTweet.tweet(msg);
+	    }
+
+	    /*
+	    try{
+		if( 0 && this.community=="co154" ){
+		    let msg = this.liveinfo.default_community + " " + this.liveinfo.title + " " + this.liveinfo.request_id +" で紹介されました。";
+		    NicoLiveMylist.addDeflist( videoinfo.video_id, msg );
+		}
+	    } catch (x) {
+		debugprint(x);
+	    }
+	     */
+	}
     },
 
     /**
@@ -2977,17 +2996,17 @@ var NicoLiveHelper = {
 		if( req.status==200 ){
 		    let confstatus = req.responseXML.getElementsByTagName('response_configurestream')[0];
 		    if( confstatus.getAttribute('status')=='ok' ){
-			// 放送開始をツイート
-			if( Config.twitter.when_beginlive ){
-			    let vinfo = NicoLiveHelper.getCurrentVideoInfo();
-			    let msg = NicoLiveHelper.replaceMacros( Config.twitter.beginlive, vinfo );
-			    NicoLiveTweet.tweet(msg);
-			}
 			try{
 			    NicoLiveHelper.liveinfo.start_time = parseInt(req.responseXML.getElementsByTagName('start_time')[0].textContent);
 			    NicoLiveHelper.liveinfo.end_time = parseInt(req.responseXML.getElementsByTagName('end_time')[0].textContent);
 			} catch (x) {
 			    debugprint(x);
+			}
+			// 放送開始をツイート
+			if( Config.twitter.when_beginlive ){
+			    let vinfo = NicoLiveHelper.getCurrentVideoInfo();
+			    let msg = NicoLiveHelper.replaceMacros( Config.twitter.beginlive, vinfo );
+			    NicoLiveTweet.tweet(msg);
 			}
 		    }else{
 			debugalert(LoadString('STR_FAILED_TO_START_BROADCASTING'));

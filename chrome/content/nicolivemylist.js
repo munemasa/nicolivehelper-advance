@@ -9,12 +9,10 @@ var NicoLiveMylist = {
      * @param additional_msg マイリストコメント
      */
     tweet:function(video_id, additional_msg){
-	// TODO
-	return;
-	let video = NicoLiveHelper.findVideoInfo(video_id);
+	let video = NicoLiveHelper.findVideoInfoFromMemory(video_id);
 	if( video==null ) return;
 
-	if( NicoLivePreference.twitter.when_addmylist ){
+	if( Config.twitter.when_addmylist ){
 	    NicoLiveTweet.tweet(additional_msg+" 【マイリスト】"+video.title+" http://nico.ms/"+video.video_id+" #"+video.video_id);
 	}
     },
