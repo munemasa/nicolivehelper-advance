@@ -1677,8 +1677,8 @@ var NicoLiveHelper = {
 		    }
                 }
 	    } catch (x) {
-		debugprint(x);
 		if( videoinfo ){
+		    debugprint("error code:"+x.errno);
 		    if( isstock ){
 			// ストックの場合は拒否する必要のないケースがあるので
 			switch( x.errno ){

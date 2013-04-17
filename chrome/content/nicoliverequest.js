@@ -248,6 +248,16 @@ var NicoLiveRequest = {
 	button.setAttribute('oncommand',"NicoLiveRequest.goBottomRequest(event);");
 	hbox.appendChild(button);
 
+	/*
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('type','menu');
+	button.setAttribute('label','追加');
+	button.setAttribute('popup','video-add-panel');
+	button.setAttribute('image','data/add.png');
+	button.setAttribute('class','command-button');
+	hbox.appendChild(button);
+	 */
+
 	if( item.product_code ){
 	    let text = CreateElement('hbox');
 	    text.setAttribute("align","center");
