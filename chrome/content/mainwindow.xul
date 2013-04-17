@@ -705,6 +705,8 @@
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-request').triggerNode);"/>
+      <menuitem label="自貼りON/OFF切り替え" tooltiptext="自貼りフラグのオン/オフを切り替えます"
+		oncommand="NicoLiveRequest.changeSelfRequestFlag($('popup-request').triggerNode);"/>
       <menuitem label="&menu.comment_reflection;"
 		tooltiptext="&menu.tooltip_comment_reflection;"
 		oncommand="NicoLiveRequest.addToCommentReflector($('popup-request').triggerNode);"/>
