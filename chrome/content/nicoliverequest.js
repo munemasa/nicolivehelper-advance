@@ -298,6 +298,11 @@ var NicoLiveRequest = {
 	let n = tr.sectionRowIndex;
 	return n;
     },
+    getIndexFromNode: function(node){
+	let tr = FindParentElement(node,'html:tr');
+	let n = tr.sectionRowIndex;
+	return n;
+    },
 
     /**
      * リクエストを再生する
@@ -427,11 +432,30 @@ var NicoLiveRequest = {
 	this._summation_time = t;
     },
 
-    // リクエストのコンパクションを行う.
+    /**
+     * 自貼りフラグのON/OFF切り替え
+     * @param node コンテキストメニューを表示したノード
+     */
+    changeSelfRequestFlag: function(node){
+	let n = this.getIndexFromNode(node);
+	let tr = FindParentElement(node,'html:tr');
+	let item = NicoLiveHelper.request_list[n];
+	if( tr.className=="table_selfreq"){
+	    tr.className = n%2?"table_evenrow":"table_oddrow";
+	    item.selfrequest = false;
+	}else{
+	    tr.className = "table_selfreq";
+	    item.selfrequest = true;
+	}
+    },
+
+    /**
+     * リクエストのコンパクションを行う.
+     * @param node コンテキストメニューを表示したノード
+     */
     compactRequest:function(node){
 	try{
-	    let tr = FindParentElement(node,'html:tr');
-	    let n = tr.sectionRowIndex;
+	    let n = this.getIndexFromNode(node);
 	    NicoLiveHelper.compactRequest(n);
 	    this.updateView(NicoLiveHelper.request_list);
 	} catch (x) {
@@ -451,8 +475,7 @@ var NicoLiveRequest = {
     // リク主をコメントリフレクタに登録する.
     addToCommentReflector:function(node){
 	try{
-	    let tr = FindParentElement(node,'html:tr');
-	    let n = tr.sectionRowIndex;
+	    let n = this.getIndexFromNode(node);
 	    let item = NicoLiveHelper.request_list[n];
 	    if( item.comment_no ){
 		NicoLiveComment.showCommentReflectorDialog(item.request_user_id, item.cno, item.pname);
