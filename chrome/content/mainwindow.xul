@@ -704,7 +704,10 @@
       <menuseparator/>
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
-		oncommand="MenuControl.prepare($('popup-request').triggerNode);"/>
+		oncommand="MenuControl.prepare($('popup-request').triggerNode);"
+		id="popup-request-marker"
+		/>
+      <menuseparator/>
       <menuitem label="自貼りON/OFF切り替え" tooltiptext="自貼りフラグのオン/オフを切り替えます"
 		oncommand="NicoLiveRequest.changeSelfRequestFlag($('popup-request').triggerNode);"/>
       <menuitem label="&menu.comment_reflection;"
@@ -714,7 +717,6 @@
 		label="&comment.menu_release_reflection_all;"
 		oncommand="NicoLiveComment.releaseReflector();"/>
 
-      <menuseparator id="popup-request-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
 
       <menuseparator/>
       <menuitem label="コンパクション"
@@ -792,11 +794,11 @@
       <menuseparator/>
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-stock').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
-		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"/>
+		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"
+		id="popup-stock-marker"/>
 
       <menuitem label="&menu.turnoff_playedflag;" oncommand="NicoLiveStock.turnoffPlayedStatus($('popup-stock').triggerNode);"/>
 
-      <menuseparator id="popup-stock-marker"/> <!-- マイリストに追加を追加するためのマーカー -->
       <menuseparator/>
       <menu label="&classify.menu;">
 	<menupopup>
@@ -931,6 +933,12 @@
     </menupopup>
 
   </popupset>
+
+  <!-- さすがに通常のメニュー項目のアピアランスにならない -->
+  <panel id="video-add-panel" position="end_before">
+    <menuitem label="リクエストに追加" oncommand="alert('a');"/>
+    <menuitem label="ストックに追加" oncommand="alert('b');"/>
+  </panel>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="string-bundle" src="chrome://nicolivehelperadvance/locale/nicolivehelper.properties"/>
