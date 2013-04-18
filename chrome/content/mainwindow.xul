@@ -71,6 +71,8 @@
 	  src="chrome://nicolivehelperadvance/content/nicoliveclassifier.js" />
 
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/backup.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/commandmenu.js" />
@@ -163,10 +165,10 @@
 		      tooltiptext="&toolbar.tooltip_beginbroadcasting;"
 		      oncommand="NicoLiveHelper.startBroadcasting();"/>
 	    <menuseparator/>
-	    <!-- TODO -->
-	    <menu disabled="true" label="&toolbar.backuprestore;" tooltiptext="&toolbar.backuprestore.help;"><!-- バックアップと復元 -->
+	    <!-- バックアップと復元 -->
+	    <menu label="&toolbar.backuprestore;" tooltiptext="&toolbar.backuprestore.help;">
 	      <menupopup>
-		<menuitem label="&toolbar.backup;" oncommand="NicoLiveWindow.inputBackupName();"/>
+		<menuitem label="&toolbar.backup;" oncommand="Backup.inputBackupName();"/>
 		<menu label="&toolbar.restore;">
 		  <menupopup id="toolbar-restore">
 		  </menupopup>

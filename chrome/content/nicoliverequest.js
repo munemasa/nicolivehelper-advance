@@ -248,6 +248,14 @@ var NicoLiveRequest = {
 	button.setAttribute('oncommand',"NicoLiveRequest.goBottomRequest(event);");
 	hbox.appendChild(button);
 
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/add.png');
+	button.setAttribute('class','command-button');
+	button.setAttribute('label','ストック');
+	button.setAttribute('tooltiptext','リクエストからストックに追加します');
+	button.setAttribute('oncommand',"NicoLiveRequest.addStockDirect(event);");
+	hbox.appendChild(button);
+
 	/*
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('type','menu');
@@ -411,6 +419,10 @@ var NicoLiveRequest = {
 	}
     },
 
+    addStockDirect: function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.addStockDirect( NicoLiveHelper.request_list[n] );
+    },
 
     /**
      * リクエストの番号表記と背景色を1から付け直す。
