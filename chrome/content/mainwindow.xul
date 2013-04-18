@@ -206,6 +206,8 @@
 			  type="checkbox" autocheck="true"
 			  oncommand="NicoLiveHelper.setCancelHeartbeat();"/>
 		<menuseparator/>
+		<menuitem label="&toolbar.downloadjson;"
+			  oncommand="NicoLiveHelper.retrieveUserDefinedValue();"/>
 		<menuitem label="&toolbar.forcecastermode;"
 			  tooltiptext="&toolbar.tooltip_forcecastermode;"
 			  oncommand="NicoLiveHelper.iscaster=true;"/>
