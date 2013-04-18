@@ -357,6 +357,20 @@ var Config = {
 	}
     },
 
+    /**
+     * ユーザー定義値の場所を取得.
+     */
+    getUserDefinedValueURI:function(){
+	let branch = this.getBranch();
+	let uri;
+	try{
+	    uri = branch.getCharPref("videoinfo.userdefined-data-uri");
+	} catch (x) {
+	    uri = "";
+	}
+	return uri;
+    },
+
     register:function(){
 	let prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 	this._branch = prefService.getBranch("extensions.nicolivehelperadvance.");

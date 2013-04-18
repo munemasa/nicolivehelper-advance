@@ -55,6 +55,7 @@ var NicoLiveHelper = {
 
     product_code: {},        // JWID作品コード
     number_of_requests: {},  // ユーザー一人一人のリクエスト数
+    userdefinedvalue: {},    // ユーザー定義値
 
     // リクエスト、ストックを順番通りに処理するためのキュー
     request_q: [],
@@ -610,7 +611,7 @@ var NicoLiveHelper = {
 		
 	    case 'json':
 		try {
-		    // TODO ユーザー定義値
+		    // ユーザー定義値
 		    let t = NicoLiveHelper.userdefinedvalue[info.video_id];
 		    if( t ){
 			tmp = t;
@@ -4198,6 +4199,36 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ユーザー定義値を取得する.
+     */
+    retrieveUserDefinedValue:function(){
+	let req = new XMLHttpRequest();
+	if( !req ) return;
+	let url = Config.getUserDefinedValueURI();
+	if( !url ) return;
+	if( !url.match(/^file:/) ){
+	    req.onreadystatechange = function(){
+		if( req.readyState==4 && req.status==200 ){
+		    let txt = req.responseText;
+		    // JSON.parseの方がいいのだけどミクノ度jsonファイルに余計なデータが付いているので.
+		    NicoLiveHelper.userdefinedvalue = eval('('+txt+')');
+		}
+	    };
+	    req.open('GET', url );
+	    debugprint("Retrieving User-Defined Value from URI:"+url);
+	}else{
+	    req.open('GET', url, false );
+	    debugprint("Retrieving User-Defined Value from FILE:"+url);
+	}
+	req.send("");
+	if( url.match(/^file:/) ){
+	    if(req.status == 0){
+		this.userdefinedvalue = eval('('+req.responseText+')');
+	    }
+	}
+    },
+
+    /**
      * 変数の初期化を行う.
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
@@ -4300,6 +4331,10 @@ var NicoLiveHelper = {
 	NicoLiveHttpObserver.init();
 	this.setLossTime( false );
 	this.setCancelHeartbeat();
+
+	if( iscaster ){
+	    this.retrieveUserDefinedValue();
+	}
     },
 
     /**

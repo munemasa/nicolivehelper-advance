@@ -96,6 +96,8 @@ pref("extensions.nicolivehelperadvance.videoinfo2-command","");
 pref("extensions.nicolivehelperadvance.videoinfo3-command","");
 pref("extensions.nicolivehelperadvance.videoinfo4-command","");
 
+pref("extensions.nicolivehelperadvance.videoinfo.userdefined-data-uri",""); // JSON
+
 // スタートアップコメント
 pref("extensions.nicolivehelperadvance.msg.startup-comment","");
 
