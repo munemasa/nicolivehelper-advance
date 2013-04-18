@@ -1385,17 +1385,17 @@ var NicoLiveHelper = {
 	    throw videoinfo;
 	}
 
-	if( !this.allowrequest ){
-	    // リクエスト不可
-	    videoinfo.errno = REASON_NOT_ACCEPT;
-	    videoinfo.errmsg = Config.msg.notaccept;
-	    throw videoinfo;
-	}
-
 	if( Config.isNGVideo( videoinfo.video_id ) ){
 	    // NG動画
 	    videoinfo.errno = REASON_NG_VIDEO;
 	    videoinfo.errmsg = Config.msg.ngvideo;
+	    throw videoinfo;
+	}
+
+	if( !this.allowrequest ){
+	    // リクエスト不可
+	    videoinfo.errno = REASON_NOT_ACCEPT;
+	    videoinfo.errmsg = Config.msg.notaccept;
 	    throw videoinfo;
 	}
 
