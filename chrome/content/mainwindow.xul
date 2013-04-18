@@ -84,6 +84,8 @@
     <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
     <!-- CTRL+T: Tweet by Twitter -->
     <key id="tweeting" key="t" modifiers="accel" oncommand="NicoLiveTweet.inputTweet();"/>
+    <!-- CTRL+B: Back stage pass comment(using only caster) -->
+    <key id="postbsp" key="b" modifiers="accel" oncommand="NicoLiveHelper.postBSPComment();"/>
 
     <!-- CTRL+Num: Change the tab -->
     <key id="tab-move-0" key="0" modifiers="accel" oncommand="NicoLiveWindow.changeTab(0);"/>
@@ -182,7 +184,6 @@
 	    <menuseparator/>
 	    <!-- 連続コメント -->
 	    <menuitem label="&toolbar.continuouscomment;" oncommand="OpenContinuousCommentWindow();"/>
-	    <menuseparator/>
 	    <!-- アンケート関係 -->
 	    <menuitem label="&toolbar.votestart;" tooltiptext="&toolbar.tooltip_votestart;"
 		      oncommand="OpenVoteDialog();"/>
