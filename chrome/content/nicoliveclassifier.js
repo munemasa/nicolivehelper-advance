@@ -204,6 +204,9 @@ var NicoLiveClassifier = {
 	Storage.writeObject("nico_live_classifier",this.data);
     },
 
+    /**
+     * 学習結果を忘れる.
+     */
     forget:function(){
 	if(ConfirmPrompt(LoadString('STR_CLASS_WARN_INITIALIZE'),LoadString('STR_CLASS_WARN_INIT_TITLE'))){
 	    debugprint('forget larning data.');

@@ -113,6 +113,14 @@ var NicoLiveStock = {
 	button.setAttribute("oncommand","NicoLiveStock.goBottomStock(event);");
 	hbox.appendChild(button);
 
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/add.png');
+	button.setAttribute('label','リクエスト');
+	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','リクエストを送信します');
+	button.setAttribute('oncommand','NicoLiveStock.addRequestDirect(event);');
+	hbox.appendChild(button);
+
 	let spacer = CreateElement('spacer');
 	spacer.setAttribute('flex','1');
 	hbox.appendChild(spacer);
@@ -266,6 +274,15 @@ var NicoLiveStock = {
 	    NicoLiveHelper.goBottomRequest( n, NicoLiveHelper.stock_list );
 	    this.resetStockIndex();
 	}
+    },
+
+    /**
+     * ストックからリクエストに追加する.
+     * @param event ボタンの押下イベント
+     */
+    addRequestDirect: function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.addRequestDirect( NicoLiveHelper.stock_list[n] );
     },
 
     /**

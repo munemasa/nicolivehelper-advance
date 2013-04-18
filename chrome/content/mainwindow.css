@@ -263,7 +263,7 @@ toolbox{
 
 toolbarbutton{
     vertical-align: text-top;
-    margin-right: 2px;
+    margin-right: 1px;
 }
 
 #folder-listbox listitem:-moz-drag-over {
