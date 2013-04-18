@@ -985,6 +985,31 @@ var NicoLiveHelper = {
     },
 
     /**
+     * /pressコマンドでBSPコメントする(放送主のみ).
+     * 入力ダイアログも表示する。
+     */
+    postBSPComment:function(){
+	if( IsOffline() || !IsCaster() ) return;
+
+	let param = {
+	    "name": NicoLiveHelper.userinfo.nickname,
+	    "msg": "",
+	    "color": "white"
+	};
+	let f = "chrome,dialog,centerscreen,modal";
+	window.openDialog("chrome://nicolivehelperadvance/content/postbspdialog.xul","postbspdialog",f,param);
+	let name = param['name'];
+	let msg = param['msg'];
+	let color = param['color'];
+
+	if( msg ){
+	    debugprint(name+msg+color);
+	    let str = "/press show "+color+" \""+msg+"\" \""+name+"\"";
+	    this.postCasterComment(str,'');
+	}
+    },
+
+    /**
      * ニコ生API経由でツイートする.
      * @param tweet つぶやくメッセージ
      */
