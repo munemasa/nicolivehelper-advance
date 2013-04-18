@@ -207,6 +207,9 @@
 		<menuitem label="&toolbar.forcecastermode;"
 			  tooltiptext="&toolbar.tooltip_forcecastermode;"
 			  oncommand="NicoLiveHelper.iscaster=true;"/>
+		<menuseparator/>
+		<menuitem label="&toolbar.forget_learning;"
+			  oncommand="NicoLiveClassifier.forget();"/>
 	      </menupopup>
 	    </menu>
 	    <menuseparator/>
