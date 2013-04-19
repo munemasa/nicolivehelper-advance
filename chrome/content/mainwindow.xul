@@ -195,6 +195,7 @@
 	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
 	    <menuseparator/>
 
+	    <!-- special -->
 	    <menu label="特殊な機能">
 	      <menupopup>
 		<menuitem id="get-extratime" persist="checked"
@@ -212,6 +213,9 @@
 		<menuitem label="&toolbar.forcecastermode;"
 			  tooltiptext="&toolbar.tooltip_forcecastermode;"
 			  oncommand="NicoLiveHelper.iscaster=true;"/>
+		<menuitem label="処理中のリクエスト、ストックを破棄"
+			  tooltiptext="&toolbar.clear.req.queue.help;"
+			  oncommand="NicoLiveHelper.clearProcessingQueue();"/>
 		<menuseparator/>
 		<menuitem label="&toolbar.forget_learning;"
 			  oncommand="NicoLiveClassifier.forget();"/>
