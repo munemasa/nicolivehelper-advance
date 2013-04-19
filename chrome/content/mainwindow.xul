@@ -541,6 +541,7 @@
 
 	    <checkbox persist="checked bsp_color" id="use_presscomment"
 		      bsp_color="green"
+		      context="popup-bsp-color"
 		      label="BSP"
 		      tooltiptext="バックステージからコメントする(バックステージパス所有の視聴者用)"/>
 	    <checkbox persist="checked" id="auto-kotehan"
@@ -920,6 +921,30 @@
 		oncommand="NicoLiveComment.setSelfRequest($('popup-copycomment').triggerNode);"/>
       <menuitem label="&comment.menu_moverequest_to_top;"
 		oncommand="NicoLiveComment.moveRequestToTop($('popup-copycomment').triggerNode);"/>
+    </menupopup>
+
+    <!-- BSPコメントの色 -->
+    <menupopup id="popup-bsp-color">
+      <menuitem value="green" label="green" type="radio" persist="checked" id="bspcolor-green" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="white" label="white" type="radio" persist="checked" id="bspcolor-white" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="niconicowhite" label="niconicowhite" type="radio" persist="checked" id="bspcolor-niconicowhite" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="red" label="red" type="radio" persist="checked" id="bspcolor-red" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="blue" label="blue" type="radio" persist="checked" id="bspcolor-blue" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="cyan" label="cyan" type="radio" persist="checked" id="bspcolor-cyan" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="yellow" label="yellow" type="radio" persist="checked" id="bspcolor-yellow" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="purple" label="purple" type="radio" persist="checked" id="bspcolor-purple" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="pink" label="pink" type="radio" persist="checked" id="bspcolor-pink" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+      <menuitem value="orange" label="orange" type="radio" persist="checked" id="bspcolor-orange" autoCheck="true"
+		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->
