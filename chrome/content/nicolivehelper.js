@@ -1725,6 +1725,7 @@ var NicoLiveHelper = {
 		    }
                 }
 	    } catch (x) {
+		debugprint(x);
 		if( videoinfo ){
 		    debugprint("error code:"+x.errno);
 		    if( isstock ){
@@ -1978,6 +1979,16 @@ var NicoLiveHelper = {
      */
     getPlayedVideo: function(n){
 	return this.playlist_list[n];
+    },
+
+    /**
+     * 処理キューをクリアする.
+     */
+    clearProcessingQueue: function(){
+	this.stock_q = new Array();
+	this.request_q = new Array();
+	this.setupRequestProgress();
+	this.setupStockProgress();
     },
 
     /**

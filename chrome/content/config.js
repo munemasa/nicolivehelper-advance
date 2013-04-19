@@ -280,7 +280,7 @@ var Config = {
 	// 何件までリクOKか
 	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
 	// 枠内までリクOK
-	this.request.within_livepsave = branch.getIntPref( "request.accept-within-livespace" );
+	this.request.within_livepsave = branch.getBoolPref( "request.accept-within-livespace" );
 	// 静画リクエストOKか
 	this.allow_seiga    = branch.getBoolPref("request.seiga");
 	// 自動でP名を抽出しない
