@@ -53,7 +53,11 @@
       <preference id="pref-allow-req-n-min-ago"
 		  name="extensions.nicolivehelperadvance.request.allow-req-n-min-ago" type="int"/>
       <!-- 一人頭のリク受け付け数 -->
-      <preference id="pref-accept-nreq" name="extensions.nicolivehelperadvance.request.accept-nreq" type="int"/>
+      <preference id="pref-accept-nreq"
+		  name="extensions.nicolivehelperadvance.request.accept-nreq" type="int"/>
+      <!-- 枠に収まる範囲でリク受付 -->
+      <preference id="pref-accept-within-livespace"
+		  name="extensions.nicolivehelperadvance.request.accept-within-livespace" type="bool"/>
 
       <!-- 投稿者名取得 -->
       <preference id="pref-get-username" name="extensions.nicolivehelperadvance.getusername" type="bool"/>
@@ -156,6 +160,7 @@
 	  <checkbox preference="pref-request-autoreply" label="リクエストに対して自動で運営コメントを返す"/>
 	  <checkbox preference="pref-allow-seiga-request" label="ニコニコ静画のリクエストを受け付ける"
 		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
+	  <checkbox preference="pref-accept-within-livespace" label="枠に収まる範囲でリクエストを受け付ける" tooltiptext="生放送の枠に収まる範囲でリクエストを受け付けます。この際、枠の残り時間としてはロスタイムの分は含まれません。"/>
 	  <checkbox preference="pref-allow-duplicative" label="リクエストの重複を許可する"/>
 	  <checkbox preference="pref-limitnewmovie" label="リクエストの新着(7日)規制を行う" tooltiptext="投稿して7日以内の動画のリクエストを受け付けなくなります。"/>
 	  <hbox align="center">

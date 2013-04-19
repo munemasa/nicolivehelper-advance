@@ -21,6 +21,7 @@ pref("extensions.nicolivehelperadvance.request.limit-newmovie", false); // 新�
 pref("extensions.nicolivehelperadvance.request.accept-playedvideo",false); // 再生済みのリク許可
 pref("extensions.nicolivehelperadvance.request.allow-req-n-min-ago",0); // 何分前以上の再生済みがOKか
 pref("extensions.nicolivehelperadvance.request.accept-nreq",0); // 1枠何リクまでok
+pref("extensions.nicolivehelperadvance.request.accept-within-livespace",false); // 枠に収まる範囲でOK
 
 // リクエスト制限設定
 pref("extensions.nicolivehelperadvance.request.restrict.enabled",false);

@@ -1390,9 +1390,11 @@ var NicoLiveHelper = {
     /**
      * リクエストをチェックして可否を返す.
      * リクエストを拒否する場合は例外を投げる.
-     * @throws RequestException (datastruct.js)
+     * @param videoinfo 動画情報
+     * @param isrequest リクエストならtrue
+     * @throws videoinfo
      */
-    checkRequest: function( videoinfo ){
+    checkRequest: function( videoinfo, isrequest ){
 	if( Config.do_classify /* || NicoLivePreference.isMikuOnly() */ ){
 	    let str = new Array();
 	    // 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
@@ -1469,6 +1471,20 @@ var NicoLiveHelper = {
 	    if( n >= Config.request.accept_nreq ){
 		videoinfo.errno = REASON_MAX_NUMBER_OF_REQUEST;
 		videoinfo.errmsg = Config.msg.limitnumberofrequests;
+		throw videoinfo;
+	    }
+	}
+
+	// 残り時間のチェック
+	if( Config.request.within_livepsave && isrequest ){
+	    let t = this.getTotalRequestTime();
+	    let sec = t.min*60 + t.sec; // リクの残り時間.
+	    let cur = this.getCurrentPlayStatus();
+	    let remain = this.liveinfo.end_time - cur.play_end - sec; // 枠の残り時間.
+
+	    if( remain < videoinfo.length_ms/1000 ){
+		videoinfo.errno = REASON_NO_REMAINTIME;
+		videoinfo.errmsg = Config.msg.within_livespace;
 		throw videoinfo;
 	    }
 	}
@@ -1683,7 +1699,7 @@ var NicoLiveHelper = {
 		videoinfo.restrict = Config.request.restrict;
 
 		// リクエストチェックでリクエストを拒否する場合は例外を投げる
-                NicoLiveHelper.checkRequest( videoinfo );
+                NicoLiveHelper.checkRequest( videoinfo, !isstock );
                 if ( !isstock ) {
 		    // リクエスト
 		    NicoLiveHelper.request_list.push( videoinfo );

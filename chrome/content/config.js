@@ -279,10 +279,14 @@ var Config = {
 	this.request.allow_n_min_ago = branch.getIntPref( "request.allow-req-n-min-ago" );
 	// 何件までリクOKか
 	this.request.accept_nreq = branch.getIntPref( "request.accept-nreq" );
+	// 枠内までリクOK
+	this.request.within_livepsave = branch.getIntPref( "request.accept-within-livespace" );
 	// 静画リクエストOKか
 	this.allow_seiga    = branch.getBoolPref("request.seiga");
 	// 自動でP名を抽出しない
 	this.no_auto_pname  = branch.getBoolPref("no-auto-pname");
+	// 動画投稿者のユーザー名取得
+	this.getusername  = branch.getBoolPref("getusername");
 	// カスタムスクリプト
 	this.do_customscript = branch.getBoolPref("custom-script");
 	this.customscript = Storage.readObject('nico_live_customscript',{});
