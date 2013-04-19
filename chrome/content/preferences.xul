@@ -55,6 +55,9 @@
       <!-- 一人頭のリク受け付け数 -->
       <preference id="pref-accept-nreq" name="extensions.nicolivehelperadvance.request.accept-nreq" type="int"/>
 
+      <!-- 投稿者名取得 -->
+      <preference id="pref-get-username" name="extensions.nicolivehelperadvance.getusername" type="bool"/>
+
       <!-- 詳細表示 -->
       <preference id="pref-show-details"
 		  name="extensions.nicolivehelperadvance.display.show_detail" type="bool"/>
@@ -163,6 +166,10 @@
 	    <label value="1枠1人あたりのリクエスト受付数(0-99件)" tooltiptext="1枠のうち、1人あたり最大いくつのリクエストを受け付けるかを指定します。0の場合は無制限です。"/>
 	    <textbox preference="pref-accept-nreq" type="number" min="0" max="99" size="3"/>
 	    <label value="件"/>
+	  </hbox>
+	  <hbox>
+	  <checkbox preference="pref-get-username" label="投稿者名を取得する"
+		    tooltiptext="放送中にリクエストのあった動画の投稿者名を取得します。"/>
 	  </hbox>
 
 	</tabpanel>
