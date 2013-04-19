@@ -3590,6 +3590,27 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 次枠を取得するページにジャンプする.
+     * @param manually 手動次枠ならtrue
+     */
+    nextBroadcasting:function(manually){
+	let id = this.liveinfo.request_id.match(/lv(\d+)/)[1];
+	let tab;
+	let url;
+	if( id==0 || !IsCaster() ){
+	    url = 'http://live.nicovideo.jp/editstream';
+	    NicoLiveWindow.openDefaultBrowser(url, true);
+	}else{
+	    url = 'http://live.nicovideo.jp/editstream?reuseid='+id;
+	    if( manually ){
+		NicoLiveWindow.openDefaultBrowser(url, true);
+	    }else{
+		// TODO AutoCreateLive.create( url );
+	    }
+	}
+    },
+
+    /**
      * 指定ユーザーIDの名前を取得
      * http:/ext.nicovideo.jp/thumb_user/... から登録(こちら優先)
      * @param user_id ユーザーID
