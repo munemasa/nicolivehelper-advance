@@ -1,7 +1,7 @@
 /* NicoLive Helper Advance for Firefox/XULRunner */
 
 
-//Components.utils.import("resource://nicolivehelperadvancemodules/usernamecache.jsm");
+Components.utils.import("resource://nicolivehelperadvancemodules/usernamecache.jsm");
 Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
 //Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
@@ -568,8 +568,8 @@ var NicoLiveHelper = {
 		tmp = tmp.replace(/(.{35,}?)　/g,"$1<br>");
 		break;
 	    case 'username':
-		// TODO 動画の投稿者名
-		//tmp = UserNameCache[info.user_id] || "";
+		// 動画の投稿者名
+		tmp = UserNameCache[info.user_id] || "";
 		break;
 	    case 'pname':
 		if(info.video_id==null || info.tags['jp']==null) break;
@@ -1694,6 +1694,12 @@ var NicoLiveHelper = {
 			NicoLiveHelper.number_of_requests[request.user_id] = 0;
 		    }
 		    NicoLiveHelper.number_of_requests[request.user_id]++;
+
+		    if( IsCaster() && Config.getusername ){
+			// 投稿者名の取得
+			NicoLiveHelper.getUserName( videoinfo.user_id );
+		    }
+
                 } else {
 		    // ストック
 		    if( !NicoLiveHelper.hasStock(videoinfo.video_id) ){
@@ -3554,6 +3560,40 @@ var NicoLiveHelper = {
 		return;
 	    }
 	}	
+    },
+
+    /**
+     * 指定ユーザーIDの名前を取得
+     * http:/ext.nicovideo.jp/thumb_user/... から登録(こちら優先)
+     * @param user_id ユーザーID
+     */
+    getUserName:function(user_id){
+	if( UserNameCache[user_id]!=undefined ){ // すでに設定済み.
+	    return;
+	}
+
+	let req = new XMLHttpRequest();
+	if( !req ) return;
+	req.onreadystatechange = function(){
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    try{
+			let text = req.responseText;
+			let name = text.match(/><strong>(.*)<\/strong>/)[1];
+			if( name ){
+			    UserNameCache[user_id] = name;
+			}
+		    } catch (x) {
+			UserNameCache[user_id] = undefined;
+		    }
+		}else{
+		    UserNameCache[user_id] = undefined;
+		}
+	    }
+	};
+	req.open('GET', 'http://ext.nicovideo.jp/thumb_user/'+user_id );
+	req.send("");
+	UserNameCache[user_id] = "";
     },
 
     /**
