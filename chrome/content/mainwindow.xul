@@ -618,7 +618,7 @@
 	  </hbox>
 	</groupbox>
 	<hbox>
-	  <button disabled="true" label="&toolbar.nextlive_manually;" oncommand="TODO; NicoLiveHelper.nextBroadcasting(true);"/>
+	  <button label="&toolbar.nextlive_manually;" oncommand="NicoLiveHelper.nextBroadcasting(true);"/>
 	  <button disabled="true" label="&toolbar.nextlive;" oncommand="TODO; NicoLiveHelper.nextBroadcasting();"/>
 	  <button label="マイページ" oncommand="NicoLiveWindow.openDefaultBrowser('http://live.nicovideo.jp/my',true);"/>
 	</hbox>
