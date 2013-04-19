@@ -805,6 +805,42 @@ var NicoLiveComment = {
 	}
     },
 
+    /**
+     * BSPカラーの初期化.
+     */
+    initBSPColor: function(){
+	if( $('bspcolor-green').getAttribute('checked') ){
+	    debugprint('bsp green');
+	}
+	if( $('bspcolor-white').getAttribute('checked') ){
+	    debugprint('bsp white');
+	}
+	if( $('bspcolor-niconicowhite').getAttribute('checked') ){
+	    debugprint('bsp niconicowhite');
+	}
+	if( $('bspcolor-red').getAttribute('checked') ){
+	    debugprint('bsp red');
+	}
+	if( $('bspcolor-blue').getAttribute('checked') ){
+	    debugprint('bsp blue');
+	}
+	if( $('bspcolor-cyan').getAttribute('checked') ){
+	    debugprint('bsp cyan');
+	}
+	if( $('bspcolor-yellow').getAttribute('checked') ){
+	    debugprint('bsp yellow');
+	}
+	if( $('bspcolor-purple').getAttribute('checked') ){
+	    debugprint('bsp purple');
+	}
+	if( $('bspcolor-pink').getAttribute('checked') ){
+	    debugprint('bsp pink');
+	}
+	if( $('bspcolor-orange').getAttribute('checked') ){
+	    debugprint('bsp orange');
+	}
+    },
+
     init: function(){
 	debugprint("NicoLiveComment.init");
 	this.comment_table = $('comment-table');
@@ -822,6 +858,8 @@ var NicoLiveComment = {
 
 	// コメントリフレクターの登録状況復帰.
 	this.initReflector();
+
+	this.initBSPColor();
     },
     destroy: function(){
 	Storage.writeObject( "nico_namemap", this.namemap );
