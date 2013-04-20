@@ -371,9 +371,80 @@ var NicoLiveWindow = {
 	$('mainwindow-tab').selectedIndex = tabindex;
     },
 
+    /**
+     * セットリスト名を保存する.
+     */
+    saveSetListName:function(){
+	let elems = evaluateXPath2(document,"//xul:menulist[@class='select-setlist']//xul:menuitem");
+	let data = new Array();
+	for each( let item in elems ){
+	    let value = item.getAttribute("label2") || item.value;
+	    data.push( value );
+	}
+	Storage.writeObject("nico-live-setlist-name", data );
+    },
+
+    /**
+     * セットリストの名前を変更する.
+     * @param elem ノード
+     * @param event DOMイベント
+     */
+    changeSetName:function(elem,event){
+	if ('object' == typeof event){
+	    let btnCode = event.button;
+	    switch (btnCode){
+	    case 2: // right
+                break;
+	    case 1: // middle
+	    case 0: // left
+	    default: // unknown
+		return;
+	    }
+	}
+	let n = elem.value;
+	let items = elem.getElementsByTagName("menuitem");
+	let oldname = items[ n ].getAttribute("label2") || items[ n ].value;
+	let name = InputPrompt( "セットリストの名前を入力してください", "セットリスト名入力", oldname );
+	if( name ){
+	    items[ n ].setAttribute("label2",name);
+	    this.saveSetListName();
+	}
+    },
+
+    /**
+     * セットリスト名を表示する.
+     */
+    showSetListMenu:function(elem){
+	let items = elem.getElementsByTagName("menuitem");
+	for each (let item in items ){
+	    let label = item.getAttribute("label2");
+	    if( label ){ item.label = label; }
+	}
+    },
+    /**
+     * セットリスト名を非表示にする.
+     */
+    hideSetListMenu:function(elem){
+	let items = elem.getElementsByTagName("menuitem");
+	for each (let item in items ){
+	    item.label = item.value;
+	}
+    },
+    /**
+     * 保存したセットリスト名を読み込む.
+     */
+    loadSetListName:function(){
+	let elems = evaluateXPath2(document,"//xul:menulist[@class='select-setlist']//xul:menuitem");
+	let items = Storage.readObject("nico-live-setlist-name", [] );
+	for( let i=0,item; item=items[i]; i++ ){
+	    elems[i].setAttribute("label2", item );
+	}
+    },
+
     init: function(){
 	this.initBrowserIcon();
 	this.restoreTabPositions();
+	this.loadSetListName();
     }
 };
 
