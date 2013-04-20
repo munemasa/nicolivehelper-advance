@@ -780,6 +780,9 @@ var NLHPreference = {
 	}
     },
 
+    /**
+     * サウンド通知用のサウンドファイル選択.
+     */
     refSoundFileToNotice:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
@@ -795,6 +798,9 @@ var NLHPreference = {
 	}
     },
 
+    /**
+     * DBファイルを指定.
+     */
     refDatabase:function(){
 	const nsIFilePicker = Components.interfaces.nsIFilePicker;
 	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
@@ -810,9 +816,37 @@ var NLHPreference = {
 	}
     },
 
+    /**
+     * DBファイルパスをリセット.
+     */
     resetDatabasePath:function(){
 	let file = window.opener.Database.getDefaultPath();
 	$('pref-video-db-path').value = file.path;
+    },
+
+    /**
+     * データ保存先ディレクトリの指定.
+     */
+    refStoragePath:function(){
+	const nsIFilePicker = Components.interfaces.nsIFilePicker;
+	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+	fp.init(window, "データ保存先の指定", nsIFilePicker.modeGetFolder);
+	let rv = fp.show();
+	if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+	    let file = fp.file;
+	    let path = fp.file.path;
+	    this.debugprint("「"+path+"」をデータ保存に使用します");
+
+	    $('pref-storage-path').value = path;
+	}
+    },
+
+    /**
+     * データ保存パスをリセット.
+     */
+    resetStoragePath:function(){
+	let file = window.opener.Storage.getDefaultSaveDir();
+	$('pref-storage-path').value = file.path;
     },
 
     init:function(){
