@@ -260,7 +260,7 @@ var NicoLiveHelper = {
 	// 正常に /play を受信できれば、その時に改めて再設定される
 	let l = request.length_ms/1000;
 	if( l > 60) l = 60;
-	this.setupPlayNext( i, l, true ); // no prepare
+	this.setupPlayNext( i, l, true ); // no prepare=true
     },
 
 
@@ -2229,7 +2229,7 @@ var NicoLiveHelper = {
 	default:
 	    break;
 	}
-	// revertMusicInfoが直接呼ばれた場合タイマー動作は不要になるので.
+	// revertVideoInfoが直接呼ばれた場合タイマー動作は不要になるので.
 	clearInterval( this._revertcommenttimer );
 	let ismovieinfo = COMMENT_MSG_TYPE_MOVIEINFO;
 	this.postCasterComment( sendstr, cmd, "", ismovieinfo );
@@ -2519,6 +2519,47 @@ var NicoLiveHelper = {
 	if( chat.text_notag.match(/^\/koukoku\s*show\d*\s*(.*)$/) ){
 	    let info = RegExp.$1;
 	    syslog(info);
+	    return;
+	}
+
+	// アンケート開始.
+	if( chat.text_notag.match(/^\/vote\s+start\s+(.*)/) ){
+	    let str = RegExp.$1;
+	    let qa = CSVToArray(str,"\s+");
+	    qa[0] = "Q/"+qa[0];
+	    for(let i=1,s;s=qa[i];i++){
+		qa[i] = "A"+i+"/" + s;
+	    }
+	    NicoLiveHelper.postCasterComment(qa.join(","),"");
+	    NicoLiveHelper._officialvote = qa;
+	    return;
+	}
+
+	// アンケート結果表示.
+	if( chat.text.match(/^\/vote\s+showresult\s+(.*)/) ){
+	    let str = RegExp.$1;
+	    let result = str.match(/\d+/g);
+	    let graph = "";
+	    let color = ["#ff0000","#00ff00","#0000ff",
+			 "#ffffff","#ffff00","#00ffff",
+			 "#ff00ff","#888888","#ffff88"];
+	    str = "";
+	    for(let i=1,a;a=NicoLiveHelper._officialvote[i];i++){
+		str += NicoLiveHelper._officialvote[i] + "(" + (result[i-1]/10).toFixed(1) + "%) ";
+		graph += "<font color=\""+color[i-1]+"\">";
+		for(let j=0;j<result[i-1]/10;j++){
+		    graph += "|";
+		}
+		graph += "</font>";
+	    }
+	    NicoLiveHelper.postCasterComment("/perm "+NicoLiveHelper._officialvote[0]+"<br>"+graph,"hidden");
+	    NicoLiveHelper.postCasterComment(str,"");
+	    return;
+	}
+	
+	if( chat.text.indexOf("/vote stop")==0 ){
+	    // /vote stopをすると運営コメントが消されるので、動画情報を復元.
+	    NicoLiveHelper.revertVideoInfo();
 	    return;
 	}
 

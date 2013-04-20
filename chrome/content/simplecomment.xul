@@ -20,6 +20,7 @@
 
         if( $('use-listener-comment').hasAttribute('checked') ){
 	    window.opener.NicoLiveHelper.postListenerComment(str,'');
+	    textbox.value = '';
 	}else{
   	    window.opener.NicoLiveComment.postComment(textbox,ev);
 	}
