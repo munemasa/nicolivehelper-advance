@@ -35,6 +35,12 @@ var NicoLiveComment = {
 	clearTable( this.comment_table );
     },
 
+    clearAll: function(){
+	clearTable( $('comment-table') );
+	this.commentlog = new Array();
+	this.viewlog = new Array();
+    },
+
     /**
      * コメント表示に追加する.
      * @param comment コメント
