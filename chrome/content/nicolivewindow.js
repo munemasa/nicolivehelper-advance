@@ -355,8 +355,25 @@ var NicoLiveWindow = {
 
     },
 
+    /**
+     * タブの位置を復元する.
+     */
+    restoreTabPositions:function(){
+	let tabs = Storage.readObject("nico_live_tab_position", [] );
+	let maintabs = $('maintabs');
+	let tabindex = $('mainwindow-tab').selectedIndex;
+	for(let i=0,item; item=tabs[i]; i++){
+	    let elem = document.getElementById( item );
+	    if( elem ){
+		maintabs.insertBefore( elem, maintabs.firstChild );
+	    }
+	}
+	$('mainwindow-tab').selectedIndex = tabindex;
+    },
+
     init: function(){
 	this.initBrowserIcon();
+	this.restoreTabPositions();
     }
 };
 

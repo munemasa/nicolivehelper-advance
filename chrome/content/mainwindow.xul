@@ -44,6 +44,8 @@
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/database.js" />
   <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivetabs.js" />
+  <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicolivehelper.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoliverequest.js" />
@@ -272,7 +274,11 @@
 
   <tabbox id="mainwindow-tab" flex="1" persist="selectedIndex">
       <arrowscrollbox allowevents="true" class="tabbrowser-arrowscrollbox" orient="horizontal">
-    <tabs id="maintabs">
+    <tabs id="maintabs"
+	  ondragstart="NicoLiveTabs.startDragging(event);"
+	  ondragenter="NicoLiveTabs.checkDrag(event);"
+	  ondragover="NicoLiveTabs.checkDrag(event);"
+	  ondrop="NicoLiveTabs.dropTab(event);">
       <tab id="tabs-request"
 	   label="&tab.request;" linkedpanel="tab-request"/>
       <tab id="tabs-stock"
