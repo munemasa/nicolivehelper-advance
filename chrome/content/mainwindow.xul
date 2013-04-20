@@ -86,6 +86,9 @@
     <key id="postbsp" key="b" modifiers="accel" oncommand="NicoLiveHelper.postBSPComment();"/>
     <!-- CTRL+F: Find a movie in a request or a stock tab -->
     <key id="search-stock" key="f" modifiers="accel" oncommand="NicoLiveWindow.find();"/>
+    <!-- CTRL+M: Add a currently playing movie to Toriaezu-mylist -->
+    <key id="addto-defaultmylist" key="m" modifiers="accel"
+	 oncommand="NicoLiveMylist.addDeflist(NicoLiveHelper.getCurrentVideoInfo().video_id, NicoLiveMylist.getDefaultMylistComment());"/>
     <!-- CTRL+N: New Comment -->
     <key id="new-comment" key="n" modifiers="accel" oncommand="OpenSimpleCommentWindow();"/>
     <!-- CTRL+O: Open a broadcasting -->
