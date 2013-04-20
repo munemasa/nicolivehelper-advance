@@ -65,10 +65,46 @@ var Storage = {
      * データの保存先を返す
      * @return データ保存先をnsIFileで返す
      */
-    getSaveDir: function(){
+    getDefaultSaveDir: function(){
 	let profdir = this.getProfileDir();
 	profdir.append( this.dirname );
 	return profdir;
+    },
+
+    /**
+     * preferenceを取得.
+     * 初期化の段階でConfigオブジェクトは読めないので直に.
+     */
+    getBranch:function(){
+	var prefs = new PrefsWrapper1("extensions.nicolivehelperadvance.");
+	return prefs;
+    },
+
+    getSaveDir: function(){
+	let path;
+	let retval;
+
+	/* パスをキャッシュしないと設定の変更の影響を受けて、
+	 * 現在の状態を新しいパスに向けて保存してしまうため。
+	 * 保存先にすでにデータがあったときに上書きされてしまう。
+	 */
+	if( this._path ){
+	    path = this._path;
+	}else{
+	    path = this.getBranch().getUnicharPref("storage-path");
+	    this._path = path;
+	}
+
+	if( path ){
+	    let localFile = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
+	    localFile.initWithPath( path );
+	    retval = localFile;
+	}else{
+	    retval = this.getDefaultSaveDir();
+	}
+
+	//Application.console.log("Storage Path="+this._path.path);
+	return retval;
     },
 
     /**
