@@ -856,6 +856,9 @@
       <preference id="pref-classes-value"
 		  name="extensions.nicolivehelperadvance.mlclasses-value" type="unichar"/>
 
+      <preference id="pref-video-db-path"
+		  name="extensions.nicolivehelperadvance.db-path" type="unichar"/>
+
     </preferences>
     <vbox>
       <tabbox flex="1" persist="selectedIndex" id="prefwindow-others">
@@ -865,6 +868,7 @@
 	  <tab label="視聴者コマンド"/>
 	  <tab label="動画分類"/>
 	  <tab label="スクリプト"/>
+	  <tab label="その他"/>
 	</tabs>
 
 	<tabpanels flex="1">
@@ -915,12 +919,18 @@
 		</caption>
 		<vbox style="margin-left: 1em;">
 		  <hbox>
-		    <checkbox preference="pref-notice-area" label="通知領域" tooltiptext="ウインドウ下の通知領域を使用して警告します。" flex="0"/>
-		    <checkbox preference="pref-notice-dialog" label="ダイアログ" tooltiptext="ダイアログボックスを使用して警告します。"/>
-		    <checkbox preference="pref-notice-comment" label="運営コメント" tooltiptext="運営コメントを使用して警告します。"/>
-		    <checkbox preference="pref-notice-popup" label="ポップアップ" tooltiptext="ポップアップする通知ウィンドウを使用して警告します。"/>
-		    <checkbox preference="pref-notice-sound" label="サウンド" tooltiptext="サウンド再生を使用して警告します。"/>
-		    <checkbox preference="pref-notice-infobar" label="情報バー" tooltiptext="ニコニコ生放送の情報バーを使用して警告します。"/>
+		    <checkbox preference="pref-notice-area"
+			      label="通知領域" tooltiptext="ウインドウ下の通知領域を使用して警告します。" flex="0"/>
+		    <checkbox preference="pref-notice-dialog"
+			      label="ダイアログ" tooltiptext="ダイアログボックスを使用して警告します。"/>
+		    <checkbox preference="pref-notice-comment"
+			      label="運営コメント" tooltiptext="運営コメントを使用して警告します。"/>
+		    <checkbox preference="pref-notice-popup"
+			      label="ポップアップ" tooltiptext="ポップアップする通知ウィンドウを使用して警告します。"/>
+		    <checkbox preference="pref-notice-sound"
+			      label="サウンド" tooltiptext="サウンド再生を使用して警告します。"/>
+		    <checkbox preference="pref-notice-infobar"
+			      label="情報バー" tooltiptext="ニコニコ生放送の情報バーを使用して警告します。"/>
 		  </hbox>
 		  <grid>
 		    <columns>
@@ -1039,6 +1049,20 @@
 	      <checkbox label="編集する" oncommand="document.getElementById('custom-script').disabled=!this.checked;"/>
 	    </hbox>
 	    <label value="※保存した後、NicoLive Helperを開き直してください"/>
+
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- other -->
+	      <hbox align="center">
+		<label value="動画DBファイル:"/>
+		<textbox flex="1" preference="pref-video-db-path" id="select-video-db"/>
+		<button label="参照..." oncommand="NLHPreference.refDatabase();"/>
+		<button label="リセット" oncommand="NLHPreference.resetDatabasePath();"/>
+	      </hbox>
+	      <description style="color:#ff0000;">
+		※動画DBファイルを変更した場合は、Firefoxを再起動してください。
+	      </description>
 
 	  </tabpanel>
 

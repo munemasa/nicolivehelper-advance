@@ -223,6 +223,138 @@ var NicoLiveWindow = {
 	}	
     },
 
+    // ストック、リクエスト、再生履歴を検索.
+    findRequestStock:function(){
+	let tr;
+	let tabindex = $('tabpanels').selectedIndex;
+
+	switch( tabindex ){
+	case 0:
+	    tr = $('request-table').getElementsByTagName('html:tr');
+	    break;
+	case 1:
+	    tr = $('stock-table').getElementsByTagName('html:tr');
+	    break;
+	case 3:
+	    tr = $('playlist-table').getElementsByTagName('html:tr');
+	    break;
+	default:
+	    return;
+	}
+
+	let searchword = InputPrompt(LoadString('STR_FIND_STRING'),LoadString('STR_FIND'),'');
+	if(searchword==null) return;
+
+	this.searchword = searchword;
+	this.searchfoundidx = 0;
+	this.searchtab = tabindex;
+
+	for(let i=0,row;row=tr[i];i++){
+	    if(row.innerHTML.match(searchword)){
+		row.scrollIntoView(true);
+		this.searchfoundidx = i;
+		break;
+	    }
+	}
+    },
+
+    // 次を検索.
+    findNextRequestStock:function(){
+	let tr;
+	let tabindex = $('tabpanels').selectedIndex;
+	if( this.searchtab!=tabindex ) return;
+
+	switch( tabindex ){
+	case 0:
+	    tr = $('request-table').getElementsByTagName('html:tr');
+	    break;
+	case 1:
+	    tr = $('stock-table').getElementsByTagName('html:tr');
+	    break;
+	case 3:
+	    tr = $('playlist-table').getElementsByTagName('html:tr');
+	    break;
+	default:
+	    return;
+	}
+
+	let searchword = this.searchword;
+
+	for(let i=this.searchfoundidx+1,row;row=tr[i];i++){
+	    if(row.innerHTML.match(searchword)){
+		row.scrollIntoView(true);
+		this.searchfoundidx = i;
+		break;
+	    }
+	}
+    },
+
+    /**
+     * テキスト検索を開始する.
+     */
+    find:function(){
+	let tr;
+	let tabindex = $('tabpanels').selectedIndex;
+	switch( tabindex ){
+	case 0:// request
+	case 1:// stock
+	case 3:// playlist
+	    this.findRequestStock();
+	    return;
+
+	case 4:// comment
+	    tr = $('comment-table').getElementsByTagName('html:tr');
+	    break;
+	default:
+	    return;
+	}
+
+	let searchword = InputPrompt(LoadString('STR_FIND_STRING'),LoadString('STR_FIND'),'');
+	if(searchword==null) return;
+
+	this.searchword = searchword;
+	this.searchfoundidx = 0;
+	this.searchtab = tabindex;
+
+	for(let i=0,row;row=tr[i];i++){
+	    if(row.innerHTML.match(searchword)){
+		row.scrollIntoView(true);
+		this.searchfoundidx = i;
+		break;
+	    }
+	}
+    },
+    findNext:function(){
+	let tr;
+	let tabindex = $('tabpanels').selectedIndex;
+
+	switch( tabindex ){
+	case 0:// request
+	case 1:// stock
+	case 3:// playlist
+	    this.findNextRequestStock();
+	    return;
+
+	case 4:// comment
+	    tr = $('comment-table').getElementsByTagName('html:tr');
+	    break;
+	default:
+	    return;
+	}
+
+	if( this.searchtab!=tabindex ) return;
+	let searchword = this.searchword;
+
+	for(let i=this.searchfoundidx+1,row;row=tr[i];i++){
+	    if(row.innerHTML.match(searchword)){
+		row.scrollIntoView(true);
+		this.searchfoundidx = i;
+		break;
+	    }
+	}
+
+    },
+
     init: function(){
 	this.initBrowserIcon();
     }
