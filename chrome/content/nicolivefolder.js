@@ -25,7 +25,8 @@ var NicoLiveFolderDB = {
 	return Database.dbconnect;
     },
 
-    /** 指定のリストIDに指定の動画IDが存在しているかどうか.
+    /**
+     * 指定のリストIDに指定の動画IDが存在しているかどうか.
      * @param list_id リストID
      * @param video_id 動画ID(ひとつ)
      */
@@ -124,7 +125,7 @@ var NicoLiveFolderDB = {
 
     /**
      * 動画情報を表示しているリストアイテム要素を作成.
-     * @param item 動画情報のオブジェクト
+     * @param item 動画情報のデータ(row)
      */
     createListItemElement:function(item){
 	let posteddate = GetDateString(item.first_retrieve*1000);
@@ -136,7 +137,7 @@ var NicoLiveFolderDB = {
 	let hbox = CreateElement('hbox');
 	let image = CreateElement('image');
 	image.setAttribute('src',item.thumbnail_url);
-	image.setAttribute('style','width:65px;height:50px;margin-right:8px;');
+	image.setAttribute('style','-moz-box-align:center;width:65px;height:50px;margin-right:4px;');
 	image.setAttribute('validate','never');
 	let div = CreateHTMLElement('div');
 
@@ -151,7 +152,9 @@ var NicoLiveFolderDB = {
 	    + " マイリスト:"+FormatCommas(item.mylist_counter)
 	    + " レート:"+rate;
 
-	hbox.appendChild(image);
+	let vbox = CreateElement('vbox');
+	vbox.appendChild(image);
+	hbox.appendChild(vbox);
 	hbox.appendChild(div);
 	listitem.appendChild(hbox);
 	return listitem;
@@ -256,31 +259,35 @@ var NicoLiveFolderDB = {
     },
 
     /**
+     * リストに動画を追加する.
      * @param id リストID
      * @param vids 動画ID(複数含む文字列可)
      */
     _appendVideos:function(id, vids){
 	if( !vids ) return;
-	// TODO
-	//Database.addVideos(vids);
 
-	let db = this.getDatabase();
-	let l = vids.match(/(sm|nm)\d+/g);
-	if(l){
-	    for(let i=0,video_id;video_id=l[i];i++){
-		if( this.checkExistItem(id,video_id) ) continue;
-
-		let st = db.createStatement('INSERT INTO folder(type,parent,video_id) VALUES(1,?1,?2)');
-		st.bindInt32Parameter(0,id);
-		st.bindUTF8StringParameter(1,video_id);
-		st.execute();
-		st.finalize();
+	let f = function(){
+	    let db = NicoLiveFolderDB.getDatabase();
+	    let l = vids.match(/(sm|nm)\d+/g);
+	    if(l){
+		for(let i=0,video_id;video_id=l[i];i++){
+		    if( NicoLiveFolderDB.checkExistItem(id,video_id) ) continue;
+		    
+		    let st = db.createStatement('INSERT INTO folder(type,parent,video_id) VALUES(1,?1,?2)');
+		    st.bindInt32Parameter(0,id);
+		    st.bindUTF8StringParameter(1,video_id);
+		    st.execute();
+		    st.finalize();
+		}
+		NicoLiveFolderDB.sort( $('folder-item-sortmenu') );
 	    }
-	    this.sort( $('folder-item-sortmenu') );
-	}
+	};
+
+	Database.addVideos(vids, f);
     },
 
-    /** 動画IDを入力して追加.
+    /**
+     * 動画IDを入力して追加.
      */
     appendVideos:function(){
 	if( !$('folder-listbox').selectedItem ) return;
@@ -561,7 +568,6 @@ var NicoLiveFolderDB = {
 		    let playprogress = $('statusbar-music-progressmeter');
 		    let progress = parseInt(flv.ext_getPlayheadTime()/flv.ext_getTotalTime()*100,10);
 		    playprogress.value = progress;
-		    $('statusbar-music-name').label = NicoLiveHelper.stock_list[this.playlist_start].title;
 		    //debugprint(flv.ext_getVideoSize());
 		    this._screensize = flv.ext_getVideoSize();
 		    break;
