@@ -3277,6 +3277,18 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 再接続する.
+     */
+    reconnect:function(){
+	if( IsOffline() ) return;
+	if( ConfirmPrompt('再接続を行いますか?','再接続') ){
+	    this.openNewBroadcast(
+		this.liveinfo.request_id, this.liveinfo.title,
+		IsCaster(), this.liveinfo.default_community );
+	}
+    },
+
+    /**
      * 生放送に接続する.
      * @param request_id 放送ID
      * @param title 番組のタイトル(事前に分かっていれば)
@@ -3388,7 +3400,14 @@ var NicoLiveHelper = {
 	    NicoLiveHelper.setLiveProgressBarTipText();
 
 	    NicoLiveWindow.scrollLivePage();
+	    this._donotshowdisconnectalert = false;
 	};
+
+	this._donotshowdisconnectalert = true;
+	this.stopTimers();
+	this.closeAllConnection();
+	NicoLiveComment.clearAll();
+
 	NicoApi.getplayerstatus( request_id, f );
     },
 
