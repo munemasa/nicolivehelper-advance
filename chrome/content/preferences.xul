@@ -91,6 +91,8 @@
       <!-- コメントログの保存先 -->
       <preference id="pref-commentlogDir"
 		  name="extensions.nicolivehelperadvance.comment.commentlogDir" type="file"/>
+      <preference id="pref-preset-autocomplete"
+		  name="extensions.nicolivehelperadvance.comment.preset-autocomplete" type="unichar"/>
 
     </preferences>
 
@@ -228,7 +230,10 @@
 	      <button label="参照..." oncommand="NLHPreference.selectCommentLogDirectory();"/>
 	    </hbox>
 	  </groupbox>
-
+	  <label value="コメント入力補完プリセット:"/>
+	  <vbox flex="1">
+	    <textbox preference="pref-preset-autocomplete" emptytext="1行に1つずつ、文字列(カンマ)コメント と入力します。例:/play sm7113282,初音ミクのライブOP1" tooltiptext="1行に1つずつ、文字列(カンマ)コメント と入力します。例:/play sm7113282,初音ミクのライブOP1" multiline="true" flex="1" rows="5"/>
+	  </vbox>
 	</tabpanel>
       </tabpanels>
     </tabbox>
