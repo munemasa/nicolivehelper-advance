@@ -9,8 +9,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	_persist="screenX screenY width height sizemode"
 	persist="screenX screenY sizemode"
-	width="640"
-	height="480"
+	width="640" height="480"
 	windowtype="NicoLiveHelperAdvanceMainWindow"
 	title="NicoLive Helper Advance">
 
@@ -78,8 +77,13 @@
 	  src="chrome://nicolivehelperadvance/content/commandmenu.js" />
 
   <keyset>
+    <!-- F3: Find next -->
+    <key id="findnext-stock" keycode="VK_F3" oncommand="NicoLiveWindow.findNext();"/>
+
     <!-- CTRL+B: Back stage pass comment(using only caster) -->
     <key id="postbsp" key="b" modifiers="accel" oncommand="NicoLiveHelper.postBSPComment();"/>
+    <!-- CTRL+F: Find a movie in a request or a stock tab -->
+    <key id="search-stock" key="f" modifiers="accel" oncommand="NicoLiveWindow.find();"/>
     <!-- CTRL+N: New Comment -->
     <key id="new-comment" key="n" modifiers="accel" oncommand="OpenSimpleCommentWindow();"/>
     <!-- CTRL+O: Open a broadcasting -->

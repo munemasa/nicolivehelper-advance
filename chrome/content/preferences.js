@@ -811,7 +811,7 @@ var NLHPreference = {
     },
 
     resetDatabasePath:function(){
-	let file = window.opener.NicoLiveDatabase.getDefaultPath();
+	let file = window.opener.Database.getDefaultPath();
 	$('pref-video-db-path').value = file.path;
     },
 
