@@ -158,6 +158,9 @@ var Config = {
         this.comment184 = branch.getBoolPref("comment.184comment");
         this.comment.backlogs = branch.getIntPref("comment.backlog");
 	this.comment.view_lines = branch.getIntPref("comment.viewlines");
+
+	// オートコンプリートはNicoLiveCommentの初期化で読んでる
+	//this.comment.preset_autocomplete = branch.getUnicharPref("comment.preset-autocomplete");
     },
 
     /**
