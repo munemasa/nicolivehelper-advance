@@ -15,6 +15,8 @@ pref("extensions.nicolivehelperadvance.comment.backlog", 50);
 pref("extensions.nicolivehelperadvance.comment.viewlines", 500);
 pref("extensions.nicolivehelperadvance.comment.184comment", true);
 pref("extensions.nicolivehelperadvance.comment.preset-autocomplete",""); // オートコンプリートプリセット
+pref("extensions.nicolivehelperadvance.comment.new-logfile",false);
+pref("extensions.nicolivehelperadvance.comment.logfile-name","{request_id}");
 
 pref("extensions.nicolivehelperadvance.request.autoreply", true);  // リクエストへの自動応答
 pref("extensions.nicolivehelperadvance.request.allow", true);  // リクエスト可否

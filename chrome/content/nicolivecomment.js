@@ -709,6 +709,55 @@ var NicoLiveComment = {
 	}
     },
 
+    getLogfileName:function(str){
+	var date = new Date();
+	var y,m,d;
+	var h,min,sec;
+	y = date.getFullYear();
+	m = date.getMonth() + 1;
+	d = date.getDate();
+	h = date.getHours();
+	min = date.getMinutes();
+	sec = date.getSeconds();
+	m = (m<10)?"0"+m:m;
+	d = (d<10)?"0"+d:d;
+	h = (h<10)?"0"+h:h;
+	min = (min<10)?"0"+min:min;
+	sec = (sec<10)?"0"+sec:sec;
+
+	let replacefunc = function(s,p){
+	    var tmp = s;
+	    switch(p){
+	    case 'request_id':
+		tmp = NicoLiveHelper.liveinfo.request_id;
+		break;
+	    case 'title':
+		tmp = NicoLiveHelper.liveinfo.title;
+		break;
+	    case 'year':
+		tmp = y;
+		break;
+	    case 'month':
+		tmp = m;
+		break;
+	    case 'date':
+		tmp = d;
+		break;
+	    case 'hour':
+		tmp = h;
+		break;
+	    case 'min':
+		tmp = min;
+		break;
+	    case 'sec':
+		tmp = sec;
+		break;
+	    }
+	    return tmp;
+	};
+	return str.replace(/{(.*?)}/g,replacefunc);
+    },
+
     /**
      * ログファイルを開く
      */
@@ -719,26 +768,21 @@ var NicoLiveComment = {
 	    f.append(community);
 	    CreateFolder(f.path);
 	}
-	// TODO
-	//let fname = NicoLivePreference.getUnichar("logfile-name");
-	//fname = this.getLogfileName(fname);
-	let fname = request_id;
+	let fname = Config.getUnichar("comment.logfile-name");
+	fname = this.getLogfileName(fname);
 	f.append(fname+'.txt');
 	let file;
 	let os;
 	this.closeFile();
 
-	// TODO
-	/*
 	var cnt=2;
-	if( NicoLivePreference.getBool("new-logfile") ){
+	if( Config.getBool("comment.new-logfile") ){
 	    while( f.exists() ){
 		debugprint("already exists comment log file:"+f.path);
 		f.leafName = fname+"_"+cnt+".txt";
 		cnt++;
 	    }
 	}
-	 */
 
 	try{
 	    file = OpenFile(f.path);

@@ -53,6 +53,27 @@ var Config = {
 	return prefs;
     },
 
+    getBool:function(path){
+	var branch = this.getBranch();
+	var b;
+	try{
+	    b = branch.getBoolPref(path);	    
+	} catch (x) {
+	    b = false;
+	}
+	return b;
+    },
+    getUnichar:function(path){
+	var branch = this.getBranch();
+	var b;
+	try{
+	    b = branch.getUnicharPref(path);	    
+	} catch (x) {
+	    b = "";
+	}
+	return b;
+    },
+
     /**
      * 応答メッセージのロード.
      * @param branch 設定のブランチ
