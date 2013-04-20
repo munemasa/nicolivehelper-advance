@@ -764,7 +764,7 @@ var NicoLiveHelper = {
 			    if( video_id ){
 				let str = Config.videoinfo_playfailed;
 				NicoLiveHelper.postCasterComment(str,"");
-				if( NicoLiveHelper.autoplay ){
+				if( NicoLiveHelper.autoplay && NicoLiveHelper._losstime ){
 				    setTimeout( function(){
 						    NicoLiveHelper.checkPlayNext();
 						}, 3000 );
