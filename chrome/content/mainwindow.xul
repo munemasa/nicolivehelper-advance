@@ -305,9 +305,9 @@
       <vbox id="tab-request">
 	<hbox align="center">
 	  <menulist id="request-set-no" persist="value"
-		    onclick="NicoLiveRequest.changeSetName(this,event);"
-		    onpopupshowing="NicoLiveRequest.showSetListMenu(this);"
-		    onpopuphiding="NicoLiveRequest.hideSetListMenu(this);"
+		    onclick="NicoLiveWindow.changeSetName(this,event);"
+		    onpopupshowing="NicoLiveWindow.showSetListMenu(this);"
+		    onpopuphiding="NicoLiveWindow.hideSetListMenu(this);"
 		    oncommand="NicoLiveRequest.changeRequestSet(this.value);">
 	    <menupopup>
 	      <menuitem label="0" value="0"/>
@@ -361,9 +361,9 @@
 
 	<hbox align="center">
 	  <menulist class="select-setlist" id="stock-set-no" sizetopopup="none" persist="value"
-		    onclick="NicoLiveRequest.changeSetName(this,event);"
-		    onpopupshowing="NicoLiveRequest.showSetListMenu(this);"
-		    onpopuphiding="NicoLiveRequest.hideSetListMenu(this);"
+		    onclick="NicoLiveWindow.changeSetName(this,event);"
+		    onpopupshowing="NicoLiveWindow.showSetListMenu(this);"
+		    onpopuphiding="NicoLiveWindow.hideSetListMenu(this);"
 		    oncommand="NicoLiveStock.changeStockSet(this.value);">
 	    <menupopup>
 	      <menuitem label="0" value="0"/>
