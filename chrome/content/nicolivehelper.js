@@ -2549,6 +2549,69 @@ var NicoLiveHelper = {
 	}
     },
 
+    processListenersCommand:function(chat){
+	if( !Config.listenercommand.enable ) return;
+
+	let command = chat.text.match(/^\/(\w+)\s*(.*)/);
+	if(command){
+	    let tmp,n,str;
+	    switch(command[1]){
+	    case 's':
+		str = this.replaceMacros(Config.listenercommand.s,chat);
+		if(str) this.postCasterComment(str,"");
+		break;
+
+	    case 'dice':
+		// 2d+3 とか 4D+2 とか 3D10-2 とか.
+		tmp = command[2].match(/(\d+)[Dd](\d*)([+-])?(\d*)/);
+		if(tmp){
+		    n = parseInt(tmp[1]);
+		    let face = parseInt(tmp[2]);
+		    let sign = tmp[3];
+		    let offset = parseInt(tmp[4]);
+		    if( !face || face<0 ) face = 6;
+		    if( !sign ) sign = "+";
+		    if( !offset ) offset = 0;
+
+		    let result = 0;
+		    let resultstr = new Array();
+		    for(let i=0; i<n && i<30; i++){
+			let dice = GetRandomInt(1,face);
+			resultstr.push(dice);
+			result += dice;
+		    }
+		    result = eval("result "+sign+" offset;");
+		    resultstr = "["+result + "] = (" + resultstr.join("+")+")" + sign + offset;
+		    this.postCasterComment(">>"+chat.comment_no+" "+resultstr,"");
+		}
+		break;
+
+	    case 'del':
+		let target;
+		if(!command[2]) break;
+		let cancelnum = -1;
+
+		if(command[2]=='all'){
+		    target = null;
+		    cancelnum = this.cancelRequest(chat.user_id, target);
+		}
+		tmp = command[2].match(/(sm|nm)\d+/);
+		if(tmp){
+		    target = tmp[0];
+		    cancelnum = this.cancelRequest(chat.user_id, target);
+		}
+		if(cancelnum<0) break;
+		chat.cancelnum = cancelnum;
+		str = this.replaceMacros(Config.listenercommand.del,chat);
+		if(str) this.postCasterComment(str,"");
+		// リクエスト削除した分、減らさないとネ.
+		this.request_per_ppl[chat.user_id] -= cancelnum;
+		if(this.request_per_ppl[chat.user_id]<0) this.request_per_ppl[chat.user_id] = 0;
+		break;
+	    }
+	}
+    },
+
     /**
      * コメントを処理する本体.
      */
