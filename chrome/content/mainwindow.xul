@@ -318,7 +318,7 @@
 	    </menupopup>
 	  </button>
 	  -->
-	  <textbox id="input-request" emptytext="&request.emptytext_add_from_mylist;"
+	  <textbox id="input-request" placeholder="&request.emptytext_add_from_mylist;"
 		   flex="1" type="search" searchbutton="true" oncommand="NicoLiveRequest.addRequest(this.value);"/>
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
@@ -381,7 +381,7 @@
 	    </menupopup>
 	  </button>
 
-	  <textbox id="input-stock" emptytext="&stock.emptytext_add_from_mylist;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveStock.addStock(this.value);"/>
+	  <textbox id="input-stock" placeholder="&stock.emptytext_add_from_mylist;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveStock.addStock(this.value);"/>
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
@@ -433,7 +433,7 @@
 	  </menulist>
 	</hbox>
 	<deck id="playlist-deck" persist="selectedIndex" flex="1">
-	  <textbox id="playlist-textbox" emptytext="&playlist.emptytext_textlog;" multiline="true" flex="1" />
+	  <textbox id="playlist-textbox" placeholder="&playlist.emptytext_textlog;" multiline="true" flex="1" />
 	  <vbox flex="1" style="overflow:auto">
 	    <html:table id="playlist-table" class="historyview">
 	    </html:table>
@@ -473,7 +473,7 @@
 		     autocompletesearch="simple-autocomplete"
 		     enablehistory="true"
 		     showcommentcolumn="true" 
-		     emptytext="&comment.emptytext_input;"
+		     placeholder="&comment.emptytext_input;"
 		     onkeypress="NicoLiveComment.postComment(this,event);"
 		     ontextreverted="this.select();"
 		     />
@@ -634,8 +634,8 @@
 	  </menupopup>
 	</menulist>
 	<deck id="debug-deck" persist="selectedIndex" flex="1">
-	  <textbox id="debug-textbox" emptytext="for debugging." multiline="true" flex="1" />
-	  <textbox id="syslog-textbox" emptytext="System Logging." multiline="true" flex="1" />
+	  <textbox id="debug-textbox" placeholder="for debugging." multiline="true" flex="1" />
+	  <textbox id="syslog-textbox" placeholder="System Logging." multiline="true" flex="1" />
 	</deck>
       </vbox>
 
