@@ -754,6 +754,20 @@ var NicoLiveHelper = {
 			}else{
 			    // 世界の新着、生放送引用拒否動画は、/playコマンドはエラーになる.
 			    ShowNotice("コメント送信に失敗しました:"+comment);
+
+			    let video_id;
+			    try{
+				video_id = comment.match(/^\/play(sound)*\s+((sm|nm|so)\d+)/)[1];
+			    } catch (x) {
+				video_id = "";
+			    }
+			    if( video_id ){
+				let str = Config.videoinfo_playfailed;
+				NicoLiveHelper.postCasterComment(str,"");
+				if( NicoLiveHelper.autoplay ){
+				    NicoLiveHelper.checkPlayNext();
+				}
+			    }
 			}
 		    }else{
 			// 運営コメント送信に成功
