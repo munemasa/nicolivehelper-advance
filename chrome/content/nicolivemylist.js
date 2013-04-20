@@ -341,6 +341,29 @@ var NicoLiveMylist = {
     },
 
     /**
+     * マイリストからDBに登録する.
+     * @param mylist_id マイリストID
+     * @param mylist_name マイリスト名(未使用)
+     */
+    addDatabase:function(mylist_id,mylist_name){
+	let f = function(xml,req){
+	    if( req.readyState==4 && req.status==200 ){
+		let xml = req.responseXML;
+		let link = xml.getElementsByTagName('link');
+		let videos = new Array();
+		for(let i=0,item;item=link[i];i++){
+		    let video_id = item.textContent.match(/(sm|nm)\d+/);
+		    if(video_id){
+			videos.push(video_id[0]);
+		    }
+		}
+		Database.addVideos(videos.join(','));
+	    }
+	};
+	NicoApi.mylistRSS( mylist_id, f );
+    },
+
+    /**
      * マイリストグループを読み込む.
      */
     readMylistGroup: function(){

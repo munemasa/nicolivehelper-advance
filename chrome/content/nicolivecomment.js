@@ -159,7 +159,7 @@ var NicoLiveComment = {
 
     /**
      * アリーナ席のコメントログに追加する.
-     * TODO ファイルに保存も行う。
+     * ファイルに保存も行う。
      * @param chat コメント
      * @param target_room コメントのルーム(未使用)
      */
