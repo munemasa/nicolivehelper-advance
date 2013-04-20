@@ -10,7 +10,7 @@
 
   <!-- 基本設定 -->
   <prefpane id="nicolivehelper-prefpane-basic"
-	    label="基本設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
+	    label="標準設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
     <preferences>
       <!-- ジングル再生フラグ -->
       <preference id="pref-jingle"
@@ -744,6 +744,41 @@
       </tabbox>
     </vbox>
 
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-listenercommand" label="視聴者コマンド" image="chrome://nicolivehelper/content/data/listenercommand.png">
+    <preferences>
+      <preference id="pref-enable-listenercommand"
+		  name="extensions.nicolivehelperadvance.listenercommand.enable" type="bool"/>
+      <preference id="pref-cmd-s"
+		  name="extensions.nicolivehelperadvance.listenercommand.s" type="unichar"/>
+      <preference id="pref-cmd-del"
+		  name="extensions.nicolivehelperadvance.listenercommand.del" type="unichar"/>
+      <preference id="pref-cmd-custom"
+		  name="extensions.nicolivehelperadvance.listenercommand.custom" type="unichar"/>
+    </preferences>
+    <vbox flex="1">
+      <hbox><checkbox preference="pref-enable-listenercommand" label="視聴者コマンドを有効にする"/></hbox>
+      <grid>
+	<columns>
+	  <column/>
+	  <column flex="1"/>
+	</columns>
+	<rows>
+	  <row>
+	    <label control="cmd-s" value="リクエストの確認(/s)"/><textbox id="cmd-s" preference="pref-cmd-s" emptytext="応答コメントを入力してください" flex="1"/>
+	  </row>
+	  <row>
+	    <label control="cmd-del" value="リクエストの削除(/del)"/><textbox id="cmd-del" preference="pref-cmd-del" emptytext="応答コメントを入力してください" flex="1"/>
+	  </row>
+	</rows>
+      </grid>
+<!--
+      <label value="カスタムコマンド:"/>
+      <textbox disabled="true" multiline="true" emptytext="好きな視聴者コマンドを作成してください(未実装)" flex="1"/>
+-->
+      <hbox><button label="デフォルトに戻す" oncommand="NLHPreference.resetListenerCommand();"/></hbox>
+    </vbox>
   </prefpane>
 
   <prefpane id="nicolivehelper-prefpane-twitter"

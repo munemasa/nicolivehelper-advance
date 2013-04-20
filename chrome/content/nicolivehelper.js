@@ -375,6 +375,31 @@ var NicoLiveHelper = {
     },
 
     /**
+     * リクエストをキャンセルする.
+     * 視聴者コマンド用。
+     * @param user_id リク主のユーザーID
+     * @param vid 動画ID
+     */
+    cancelRequest:function(user_id,vid){
+	let tmp = new Array();
+	let cnt=0;
+	// 単純なループの中で単純にspliceで取るわけにはいかないので
+	// 削除しない動画リスト作って取り替えることに
+	for(let i=0,item;item=this.request_list[i];i++){
+	    if(item.user_id==user_id){
+		if( !vid || item.video_id==vid ){
+		    cnt++;
+		    continue;
+		}
+	    }
+	    tmp.push(item);
+	}
+	this.request_list = tmp;
+	NicoLiveRequest.updateView(this.request_list);
+	return cnt;
+    },
+
+    /**
      * リクエストをシャッフルする.
      * 画面の更新も行う.
      */
@@ -2418,6 +2443,12 @@ var NicoLiveHelper = {
 	    this.play_status[MAIN].videoinfo = null;
 	    this.play_status[MAIN].play_begin = 0;
 	    this.play_status[MAIN].play_end = 0;
+
+	    // カメラに切り替えたら自動再生を止める.
+	    debugprint("カメラ映像に切り替えたので自動再生を停止します。");
+	    clearTimeout( this.play_status[MAIN]._playend );
+	    clearTimeout( this.play_status[MAIN]._playnext );
+	    clearTimeout( this.play_status[MAIN]._prepare );
 	    return;
 	}
 	if( text.match(/^\/soundonly (on|off)\s*(.*)/) ){
@@ -2543,9 +2574,13 @@ var NicoLiveHelper = {
 	    return;
 	}
 
-	if( chat.text.match(/\/ver$/) ){
+	switch( chat.text ){
+	case "/ver":
+	case "/version":
 	    let str = "NicoLive Helper Advance version "+GetAddonVersion();
 	    this.postCasterComment( str, "" );
+	default:
+	    this.processListenersCommand(chat);
 	}
     },
 
@@ -2605,8 +2640,8 @@ var NicoLiveHelper = {
 		str = this.replaceMacros(Config.listenercommand.del,chat);
 		if(str) this.postCasterComment(str,"");
 		// リクエスト削除した分、減らさないとネ.
-		this.request_per_ppl[chat.user_id] -= cancelnum;
-		if(this.request_per_ppl[chat.user_id]<0) this.request_per_ppl[chat.user_id] = 0;
+		this.number_of_requests[chat.user_id] -= cancelnum;
+		if(this.number_of_requests[chat.user_id]<0) this.number_of_requests[chat.user_id] = 0;
 		break;
 	    }
 	}

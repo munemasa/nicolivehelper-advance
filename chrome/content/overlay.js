@@ -90,6 +90,10 @@ var NicoLiveHelperAdvanceOverlay = {
 	//Application.console.log(url+' '+title);
     },
 
+    /**
+     * Nsenの放送IDを取得する.
+     * @param ch Nsenのチャンネル名
+     */
     getNsenId:function(ch){
 	let url = "http://live.nicovideo.jp/nsen/"+ch+"?mode=getvid";
 	let req = new XMLHttpRequest();
@@ -108,7 +112,10 @@ var NicoLiveHelperAdvanceOverlay = {
 	req.send("");
     },
 
-    // メニューからopenする.
+    /**
+     * メニューからopenする.
+     * @param url URL
+     */
     openNicoLiveWindow:function(url){
 	let unsafeWin = window.content.wrappedJSObject;
 	let request_id;
@@ -165,6 +172,9 @@ var NicoLiveHelperAdvanceOverlay = {
 		// 生主コンソールがないならリスナ.
 		iscaster = false;
 	    }
+	    if( window.content.document.body.innerHTML.match(/nicolivebroadcaster\.swf/) ){
+		iscaster = true;
+	    }
 	    if( window.content.document.getElementById("utility_container") ){
 		// 新バージョンではutility_containerがあれば生主.
 		iscaster = true;
@@ -179,6 +189,10 @@ var NicoLiveHelperAdvanceOverlay = {
 	this.open(request_id,title,iscaster,community_id);
     },
 
+    /**
+     * ページロード時の自動処理.
+     * @param e DOMイベント
+     */
     onPageLoad:function(e){
 	let unsafeWin = e.target.defaultView.wrappedJSObject;
 	let url = e.target.location.href;
@@ -226,6 +240,9 @@ var NicoLiveHelperAdvanceOverlay = {
 		// 新バージョン用のチェック.
 		iscaster = true;
 		this.debugprint("utility_container is found.");
+	    }
+	    if( e.target.getElementById('nicolivebroadcaster_container') ){
+		iscaster = true;
 	    }
 	} catch (x) {
 	    this.debugprint(x);
