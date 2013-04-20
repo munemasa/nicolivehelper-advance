@@ -70,6 +70,8 @@
 	  src="chrome://nicolivehelperadvance/content/nicoliverights.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/nicoliveclassifier.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/nicolivefolder.js" />
 
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/backup.js" />
@@ -587,8 +589,115 @@
       </vbox>
 -->
 
-      <vbox id="tab-database">
-	<label value="Database"/>
+      <vbox id="tab-database"
+	    ondragenter="TODO return NicoLiveDatabase.checkDrag(event)"
+	    ondragover="TODO return NicoLiveDatabase.checkDrag(event)"
+	    ondrop="TODO NicoLiveDatabase.dropToDatabase(event)">
+	<deck id="db-deck" flex="1" persist="selectedIndex">
+	  <vbox>
+	    <label value="改修中"/>
+	    <hbox align="center">
+	      <button label="&general.folder;" oncommand="$('db-deck').selectedIndex=1;"/>
+	      <button type="menu" label="&db.add_from_mylist_to_db;">
+		<menupopup id="menupopup-from-mylist-to-db">
+		  <menuitem label="&toriaezu_mylist;" oncommand="NicoLiveMylist.addToDatabaseFromDeflist();"/>
+		</menupopup>
+	      </button>
+	      <textbox id="input-db" emptytext="&db.emptytext_input;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveDatabase.addVideos(this.value);"/>
+	      <spacer flex="1"/>
+	      <label id="db-label"/>
+	    </hbox>
+	    <groupbox style="max-height:8em;">
+	      <vbox id="search-condition" flex="1" style="overflow:auto;">
+	      </vbox>
+	    </groupbox>
+	    
+	    <hbox style="display:inline-block;">
+	      <menulist id="db-search-max" value="100" oncommand="NicoLiveDatabase.search();">
+		<menupopup>
+		  <menuitem label="&db.result_10;" value="10"/>
+		  <menuitem label="&db.result_20;" value="20"/>
+		  <menuitem label="&db.result_50;" value="50"/>
+		  <menuitem label="&db.result_100;" value="100"/>
+		  <menuitem label="&db.result_200;" value="200"/>
+		  <menuitem label="&db.result_500;" value="500"/>
+		  <menuitem label="&db.result_1000;" value="1000"/>
+		</menupopup>
+	      </menulist>
+	      <menulist id="db-search-orderby" oncommand="NicoLiveDatabase.search();">
+		<menupopup>
+		  <menuitem label="&sort.title;" value="title"/>
+		  <menuitem label="&sort.playtime;" value="length"/>
+		  <menuitem label="&sort.view_counter;" value="view_counter"/>
+		  <menuitem label="&sort.comment_num;" value="comment_num"/>
+		  <menuitem label="&sort.mylist_counter;" value="mylist_counter"/>
+		  <menuitem label="&sort.posteddate;" value="first_retrieve"/>
+		  <menuitem label="&sort.mylist_rate;" value="mylist_rate"/>
+		  <menuitem label="&rate.name;" value="favorite"/>
+		</menupopup>
+	      </menulist>
+	      <menulist id="db-search-order" oncommand="NicoLiveDatabase.search();">
+		<menupopup>
+		  <menuitem label="&sort.ascend_order;" value="asc"/>
+		  <menuitem label="&sort.descend_order;" value="desc"/>
+		  <menuitem label="&general.random;" value="random"/>
+		</menupopup>
+	      </menulist>
+	      <button label="&db.do_search;" oncommand="NicoLiveDatabase.search();"/>
+	      <button label="&db.add_stock;" oncommand="NicoLiveDatabase.addStockAll();"/>
+	      <spacer flex="1"/>
+	      <button label="&db.update;" tooltiptext="&db.tooltip_update;" oncommand="NicoLiveDatabase.updateDatabase(NicoLiveDatabase._searchresult);"/>
+	    </hbox>
+	    
+	    <!-- 検索結果表示 -->
+	    <vbox flex="1" style="overflow:auto">
+	      <html:table id="database-table" class="requestview">
+	      </html:table>
+	    </vbox>
+	  </vbox>
+	  <!-- folder DB -->
+	  <hbox flex="1">
+	    <listbox id="folder-listbox" context="folder-list-menu"
+		     style="width: 15em;"
+		     onselect="NicoLiveFolderDB.selectFolder(this);"
+		     ondragenter="NicoLiveFolderDB.checkDragOnList(event);"
+		     ondragover="NicoLiveFolderDB.checkDragOnList(event);"
+		     ondrop="NicoLiveFolderDB.dropItemOnList(event);">
+	    </listbox>
+	    <vbox flex="1">
+	      <hbox>
+		<button label="DB検索" oncommand="$('db-deck').selectedIndex=0;"/>
+		<menulist id="folder-item-sortmenu" oncommand="NicoLiveFolderDB.sort(this);">
+		  <menupopup>
+		    <menuitem value="1" label="タイトル昇順"/>
+		    <menuitem value="2" label="タイトル降順"/>
+		    <menuitem value="3" label="投稿が新しい順"/>
+		    <menuitem value="4" label="投稿が古い順"/>
+		    <menuitem value="5" label="再生が多い順"/>
+		    <menuitem value="6" label="再生が少ない順"/>
+		    <menuitem value="7" label="コメントが多い順"/>
+		    <menuitem value="8" label="コメントが少ない順"/>
+		    <menuitem value="9" label="マイリスト登録が多い順"/>
+		    <menuitem value="10" label="マイリスト登録が少ない順"/>
+		    <menuitem value="11" label="時間が長い順"/>
+		    <menuitem value="12" label="時間が短い順"/>
+		  </menupopup>
+		</menulist>
+		<hbox align="center">
+		  <label id="folder-listitem-num" value="0件"/>
+		</hbox>
+	      </hbox>
+	      <listbox flex="1" id="folder-item-listbox" seltype="multiple" context="folder-item-menu"
+		       ondragstart="NicoLiveFolderDB.startDraggingItem(event);"
+		       ondragenter="NicoLiveFolderDB.checkDragOnItemList(event);"
+		       ondragover="NicoLiveFolderDB.checkDragOnItemList(event);"
+		       ondrop="NicoLiveFolderDB.dropToItemList(event);"
+		       onkeydown="return NicoLiveFolderDB.onkeydown(event);"
+		       ondblclick="return NicoLiveFolderDB.playVideo();">
+	      </listbox>
+	    </vbox>
+	  </hbox>
+	</deck>
       </vbox>
 
       <!-- コントロールパネル -->
@@ -603,8 +712,10 @@
 		  tooltiptext="放送開始して3分未満だったら、指定のジングル動画を再生します。"
 		  oncommand="NicoLiveHelper.playJingle();"/>
 	  <button label="動画情報の送信"
+		  tooltiptext="動画情報を再度送信します。"
 		  oncommand="NicoLiveHelper.sendVideoInfo( null, true );"/>
 	  <button label="リクエスト受付数リセット"
+		  tooltiptext="視聴者ごとのリクエスト受け付け数をリセットします。"
 		  oncommand="NicoLiveHelper.resetRequestCount();"/>
 	</hbox>
 	
@@ -635,7 +746,9 @@
 	  </hbox>
 	</groupbox>
 	<hbox>
-	  <button label="&toolbar.nextlive_manually;" oncommand="NicoLiveHelper.nextBroadcasting(true);"/>
+	  <button label="&toolbar.nextlive_manually;"
+		  tooltiptext="次枠を取得するために、番組の新規作成ページにジャンプします。"
+		  oncommand="NicoLiveHelper.nextBroadcasting(true);"/>
 	  <button disabled="true" label="&toolbar.nextlive;" oncommand="TODO; NicoLiveHelper.nextBroadcasting();"/>
 	  <button label="マイページ" oncommand="NicoLiveWindow.openDefaultBrowser('http://live.nicovideo.jp/my',true);"/>
 	</hbox>
@@ -737,6 +850,18 @@
 		oncommand="MenuControl.prepare($('popup-request').triggerNode);"
 		id="popup-request-marker"
 		/>
+      <menu label="&rate.name;">
+	<menupopup oncommand="TODO NicoLiveDatabase.setFavorite(event,$('popup-request').triggerNode);"
+		   onpopupshowing="TODO return NicoLiveDatabase.showingRateMenu(event,$('popup-request').triggerNode);">
+	  <menuitem label="&rate.none;" value="0" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.1;" value="10" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.2;" value="20" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.3;" value="30" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.4;" value="40" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
+	</menupopup>
+      </menu>
+
       <menuseparator/>
       <menuitem label="自貼りON/OFF切り替え" tooltiptext="自貼りフラグのオン/オフを切り替えます"
 		oncommand="NicoLiveRequest.changeSelfRequestFlag($('popup-request').triggerNode);"/>
@@ -966,6 +1091,26 @@
 		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
       <menuitem value="orange" label="orange" type="radio" persist="checked" id="bspcolor-orange" autoCheck="true"
 		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
+    </menupopup>
+
+    <!-- DBフォルダ用のポップアップメニュー -->
+    <menupopup id="folder-list-menu">
+      <menuitem label="&folder.new;" oncommand="NicoLiveFolderDB.newList();" tooltiptext="&folder.new.help;"/>
+      <menuitem label="&folder.rename;" oncommand="NicoLiveFolderDB.renameList();" tooltiptext="&folder.rename.help;"/>
+      <menuitem label="&folder.delete;" oncommand="NicoLiveFolderDB.deleteList();" tooltiptext="&folder.delete.help;"/>
+      <menuseparator/>
+      <menuitem label="&folder.addvideo;" oncommand="NicoLiveFolderDB.appendVideos();" tooltiptext="&folder.addvideo.help;"/>
+    </menupopup>
+
+    <menupopup id="folder-item-menu">
+      <menuitem label="&folderitem.play;" oncommand="NicoLiveFolderDB.playVideo();" tooltiptext="&folderitem.play.help;"/>
+      <menuitem label="&folderitem.openpage;" oncommand="NicoLiveFolderDB.openVideoPage();" tooltiptext="&folderitem.openpage.help;"/>
+      <menuitem label="&menu.copy_video_id;" oncommand="NicoLiveFolderDB.copyVideoId();" tooltiptext="&folderitem.copy.help;"/>
+      <menuseparator/>
+      <menuitem label="&menu.db_addtostock;" oncommand="NicoLiveFolderDB.addToStock();" tooltiptext="&folderitem.addtostock.help;"/>
+      <menuitem label="&menu.db_sendrequest;" oncommand="NicoLiveFolderDB.sendRequest();" tooltiptext="&folderitem.sendrequest.help;"/>
+      <menuseparator/>
+      <menuitem label="&folderitem.deletevideo;" oncommand="NicoLiveFolderDB.deleteVideo();" tooltiptext="&folderitem.deletevideo.help;"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->

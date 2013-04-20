@@ -63,15 +63,20 @@ THE SOFTWARE.
  */
 
 var Database = {
+    pnamecache: {},
+    ratecache: {},
+
     numvideos: 0,
     addcounter: 0,
     updatecounter: 0,
     searchtarget: ["title","length","view_counter","comment_num","mylist_counter","tags","first_retrieve","video_id","description"],
     searchcond: ["include","exclude","gte","equal","lte"],
 
+    /**
+     * 現在再生中の曲をDBに登録.
+     */
     addCurrentPlayedVideo:function(){
-	// 現在再生中の曲をDBに登録.
-	this.addVideos(NicoLiveHelper.musicinfo.video_id);
+	this.addVideos(NicoLiveHelper.getCurrentVideoInfo().video_id);
     },
 
     addVideos:function(sm){
@@ -133,6 +138,12 @@ var Database = {
     },
 
     // DBにinsert to する.
+    /**
+     * DBに動画情報を追加する.
+     * 非同期処理で行う場合、insertに失敗したらupdateを行う。
+     * @param music 動画情報
+     * @param dosync trueのとき同期処理
+     */
     addDatabase:function(music,dosync){
 	// xmlToMovieInfoが作る構造でmusicを渡す.
 	let st;
@@ -177,6 +188,11 @@ var Database = {
 	}
     },
 
+    /**
+     * DBを更新する.
+     * @param music 動画情報
+     * @param nomessage trueならメッセージ表示なし
+     */
     updateRow:function(music,nomessage){
 	let st = this.dbconnect.createStatement('update nicovideo set title=?1,description=?2,thumbnail_url=?3,first_retrieve=?4,length=?5,view_counter=?6,comment_num=?7,mylist_counter=?8,tags=?9,update_date=?10 where video_id=?11');
 	st.bindUTF8StringParameter(0,music.title);
@@ -210,6 +226,7 @@ var Database = {
     /**
      * 動画DB内にデータがあるかどうか.
      * @param sm 動画ID
+     * @return DBにデータがあればtrueを返す
      */
     isInDB:function(sm){
 	let st = this.dbconnect.createStatement('SELECT * FROM nicovideo WHERE video_id = ?1');
@@ -227,12 +244,14 @@ var Database = {
 	return isexist;
     },
 
+    // TODO
     removeSearchLine:function(e){
 	let hbox = $('search-condition').getElementsByTagName('hbox');
 	if(hbox.length<=1) return;
 	$('search-condition').removeChild(e.target.parentNode);
     },
 
+    // TODO
     addSearchLine:function(){
 	let menulist;
 	let elem;
@@ -289,6 +308,7 @@ var Database = {
 	$('search-condition').appendChild(hbox);
     },
 
+    // TODO
     // 検索本体.
     search:function(){
 	clearInterval(this._updatehandle);
@@ -398,8 +418,10 @@ var Database = {
 	st.executeAsync(callback);
     },
 
-    // データベースを更新する.
-    // movies : 現在の動画情報の配列.
+    /**
+     *  データベースを更新する.
+     * @param movies 動画情報の配列
+     */
     updateDatabase:function(movies){
 	clearInterval(this._updatehandle);
 	if(!movies) return;
@@ -409,7 +431,6 @@ var Database = {
 		Database.delayedUpdate(movies);
 	    }, 10*1000 );
     },
-
     delayedUpdate:function(movies){
 	let now = GetCurrentTime();
 	let cnt=0;
@@ -428,45 +449,54 @@ var Database = {
     },
 
 
-    // 検索結果を全部ストックに追加する.
+    /**
+     * 検索結果を全部ストックに追加する.
+     */
     addStockAll:function(){
 	let str = "";
 	for(let i=0,item;item=this._searchresult[i];i++){
 	    str += item.video_id + ",";
 	}
-	NicoLiveRequest.addStock(str);
+	NicoLiveStock.addStock(str);
     },
 
+    /**
+     * 検索結果の動画IDを全てクリップボードにコピーする.
+     */
     copyAllToClipboard:function(){
 	let str = "";
 	for(let i=0,item;item=this._searchresult[i];i++){
-	    str += item.video_id + ",";
+	    str += item.video_id + "\n";
 	}
 	CopyToClipboard(str);
     },
 
-    /** 選択した1つをストックに追加.
+    /**
+     * 選択した1つをストックに追加.
      * @param node メニューがポップアップしたノード.
      */
     addStockOne:function(node){
 	let elem = FindParentElement(node,'vbox');
-	NicoLiveRequest.addStock(elem.getAttribute('nicovideo_id'));
+	NicoLiveStock.addStock(elem.getAttribute('nicovideo_id'));
     },
 
-    /** 選択した1つをリクエスト送信.
+    /**
+     * 選択した1つをリクエスト送信.
      * @param node メニューがポップアップしたノード.
      */
     sendRequestOne:function(node){
 	let elem = FindParentElement(node,'vbox');
 	let video_id = elem.getAttribute('nicovideo_id');
-	if(NicoLiveHelper.iscaster || NicoLiveHelper.isOffline()){
+	if( IsCaster() || IsOffline() ){
 	    NicoLiveRequest.addRequest(video_id);
 	}else{
 	    NicoLiveHelper.postListenerComment(video_id,"");
 	}
     },
 
-    // 検索結果テーブルに行を追加する.
+    /**
+     * 検索結果を表示する<table>に行を追加する.
+     */
     addSearchResult:function(item){
 	let table = $('database-table');
 	if(!table){ return; }
@@ -526,7 +556,9 @@ var Database = {
 	return info;
     },
 
-    // 動画DBに登録済みの数を表示する.
+    /**
+     * 動画DBに登録済みの数を表示する.
+     */
     setRegisterdVideoNumber:function(){
 	let st = this.dbconnect.createStatement('SELECT count(video_id) FROM nicovideo');
 	let n = 0;
@@ -537,7 +569,8 @@ var Database = {
 	$('db-label').value = LoadFormattedString('STR_DB_REGISTERED_NUM',[n]);
     },
 
-    /** 現在のvbox内の動画IDをコピーする(リク、ストック、DBで共通利用可)
+    /**
+     * 現在のvbox内の動画IDをコピーする(リク、ストック、DBで共通利用可)
      * @paran node メニューがポップアップしたノード
      */
     copyVideoIdToClipboard:function(node){
@@ -545,6 +578,10 @@ var Database = {
 	CopyToClipboard(elem.getAttribute('nicovideo_id')); // 動画IDを取れる.
     },
 
+    /**
+     * DBから動画情報を削除する.
+     * @param video_id 動画ID
+     */
     deleteMovieByVideoId:function(video_id){
 	let st;
 	try{
@@ -557,6 +594,10 @@ var Database = {
 	}
     },
 
+    /**
+     * 動画を削除する.
+     * @param node メニューを出したノード
+     */
     deleteMovie:function(node){
 	let elem = FindParentElement(node,'vbox');
 	let video_id = elem.getAttribute('nicovideo_id');
@@ -564,7 +605,9 @@ var Database = {
 	ShowNotice(video_id+"をDBから削除しました");
     },
 
-    // サーチ結果にある動画を全て削除する.
+    /**
+     * サーチ結果にある動画を全て削除する.
+     */
     deleteSearchResults:function(){
 	if( !ConfirmPrompt('検索結果にある動画を全てDBから削除しますか？','動画の削除') ) return;
 
@@ -677,7 +720,7 @@ var Database = {
 	    video_id = elem.getAttribute('nicovideo_id');
 	}
 	let rate = e.target.value;
-	let videolist = evaluateXPath(document,"//html:table[@class='requestview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
+	let videolist = evaluateXPath(document,"//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
 
 	for(let i=0,item; item=videolist[i]; i++){
 	    if( video_id==item.getAttribute('nicovideo_id') ){
@@ -694,8 +737,8 @@ var Database = {
 	if( this.getFavorite(video_id)<0 ){
 	    // 動画DBにデータがないので追加した通知.
 	    ShowNotice( LoadFormattedString('STR_ERR_RATE_NOT_SAVED',[video_id]) );
-	    let music = NicoLiveHelper.findVideoInfo(video_id);
-	    this.addDatabase(music,true);// do synchronized operation.
+	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory(video_id);
+	    // TODO this.addDatabase(videoinfo,true);// do synchronized operation.
 	}
 
 	let st;
@@ -715,7 +758,7 @@ var Database = {
      * @param video_id 動画ID
      */
     getFavorite:function(video_id){
-	if( "undefined"!=typeof this.ratecache["_"+video_id] ) return this.ratecache["_"+video_id];
+	if( this.ratecache["_"+video_id] ) return this.ratecache["_"+video_id];
 
 	let rate = -1;
 	try{
@@ -733,7 +776,8 @@ var Database = {
 	return rate;
     },
 
-    /** レート設定メニューが開かれるとき.
+    /**
+     * レート設定メニューが開かれるとき.
      * @param e eventオブジェクト
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
      * @param vid 動画ID
@@ -870,7 +914,10 @@ var Database = {
 	return true;
     },
 
-    // ファイルからストックに登録する.
+    /**
+     * ファイルからDBに登録する.
+     * @param file nsIFile
+     */
     readFileToDatabase:function(file){
 	// file は nsIFile
 	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
@@ -891,6 +938,10 @@ var Database = {
 	istream.close();
     },
 
+    /**
+     * DBタブにドロップしたとき.
+     * @param event DOMイベント
+     */
     dropToDatabase:function(event){
 	//this.dataTransfer = event.dataTransfer;
 
@@ -989,14 +1040,16 @@ var Database = {
 	debugprint('Database.init');
 	if( this._corrupt ){
 	    setTimeout( function(){
-			    AlertPrompt("DBファイルが破損しているようです。\n「"+Database._filename+"」\nを修復するか、削除する必要があります。","DBファイルの破損");
+			    AlertPrompt("DBファイルが破損しているようです。\n「" +
+					Database._filename + 
+					"」\nを修復するか、削除する必要があります。","DBファイルの破損");
 			}, 2000 );
 	}
 	debugprint("DB file:"+this._filename);
 	this.pnamecache = new Object();
 	this.ratecache  = new Object();
 	//this.addSearchLine();
-	//this.setRegisterdVideoNumber();
+	this.setRegisterdVideoNumber();
     },
     destroy:function(){
 	// This call will not be successful

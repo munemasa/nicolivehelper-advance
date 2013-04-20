@@ -406,6 +406,7 @@ var NicoLiveStock = {
 	} catch (x) {
 	    let tab = window.opener.getBrowser().addTab('http://www.nicovideo.jp/watch/'+video_id);
 	    this._tab = window.opener.getBrowser().getBrowserForTab(tab);
+	    window.opener.getBrowser().selectedTab = tab;
 	}
 	return this._tab;
     },
@@ -451,7 +452,7 @@ var NicoLiveStock = {
 		    }
 		    //flv.ext_setVideoSize("full");
 		    this.playlist_first--;
-		    let flvcontainer = this.opentab.contentDocument.getElementById('external_nicoplayer').wrappedJSObject.__proto__;
+		    let flvcontainer = this.opentab.contentDocument.getElementById('playerContainerWrapper').wrappedJSObject.__proto__;
 		    this.opentab.contentWindow.scroll(0,flvcontainer.offsetTop-32);
 
 		    let vid = NicoLiveHelper.stock_list[this.playlist_start].video_id;
