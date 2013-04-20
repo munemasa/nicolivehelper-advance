@@ -296,7 +296,6 @@
 	   label="&tab.playlist;" linkedpanel="tab-playlist"/>
       <tab id="tabs-comment"
 	   label="&tab.comment;" linkedpanel="tab-comment"/>
-<!--      <tab id="tabs-talk" label="&tab.talk;" linkedpanel="tab-talk"/> -->
       <tab id="tabs-db"
 	   label="&tab.database;" linkedpanel="tab-database"/>
       <tab id="tabs-controlpanel"
@@ -590,12 +589,11 @@
 -->
 
       <vbox id="tab-database"
-	    ondragenter="TODO return NicoLiveDatabase.checkDrag(event)"
-	    ondragover="TODO return NicoLiveDatabase.checkDrag(event)"
-	    ondrop="TODO NicoLiveDatabase.dropToDatabase(event)">
+	    ondragenter="return Database.checkDrag(event)"
+	    ondragover="return Database.checkDrag(event)"
+	    ondrop="Database.dropToDatabase(event)">
 	<deck id="db-deck" flex="1" persist="selectedIndex">
 	  <vbox>
-	    <label value="改修中"/>
 	    <hbox align="center">
 	      <button label="&general.folder;" oncommand="$('db-deck').selectedIndex=1;"/>
 	      <button type="menu" label="&db.add_from_mylist_to_db;">
@@ -607,13 +605,9 @@
 	      <spacer flex="1"/>
 	      <label id="db-label"/>
 	    </hbox>
-	    <groupbox style="max-height:8em;">
-	      <vbox id="search-condition" flex="1" style="overflow:auto;">
-	      </vbox>
-	    </groupbox>
-	    
 	    <hbox style="display:inline-block;">
-	      <menulist id="db-search-max" value="100" oncommand="NicoLiveDatabase.search();">
+	      <button popup="search-condition-panel" label="検索条件"/>
+	      <menulist id="db-search-max" value="100" oncommand="Database.search();">
 		<menupopup>
 		  <menuitem label="&db.result_10;" value="10"/>
 		  <menuitem label="&db.result_20;" value="20"/>
@@ -624,7 +618,7 @@
 		  <menuitem label="&db.result_1000;" value="1000"/>
 		</menupopup>
 	      </menulist>
-	      <menulist id="db-search-orderby" oncommand="NicoLiveDatabase.search();">
+	      <menulist id="db-search-orderby" oncommand="Database.search();">
 		<menupopup>
 		  <menuitem label="&sort.title;" value="title"/>
 		  <menuitem label="&sort.playtime;" value="length"/>
@@ -636,24 +630,22 @@
 		  <menuitem label="&rate.name;" value="favorite"/>
 		</menupopup>
 	      </menulist>
-	      <menulist id="db-search-order" oncommand="NicoLiveDatabase.search();">
+	      <menulist id="db-search-order" oncommand="Database.search();">
 		<menupopup>
 		  <menuitem label="&sort.ascend_order;" value="asc"/>
 		  <menuitem label="&sort.descend_order;" value="desc"/>
 		  <menuitem label="&general.random;" value="random"/>
 		</menupopup>
 	      </menulist>
-	      <button label="&db.do_search;" oncommand="NicoLiveDatabase.search();"/>
-	      <button label="&db.add_stock;" oncommand="NicoLiveDatabase.addStockAll();"/>
+	      <button label="&db.do_search;" oncommand="Database.search();"/>
+	      <!-- <button label="&db.add_stock;" oncommand="NicoLiveDatabase.addStockAll();"/> -->
 	      <spacer flex="1"/>
 	      <button label="&db.update;" tooltiptext="&db.tooltip_update;" oncommand="NicoLiveDatabase.updateDatabase(NicoLiveDatabase._searchresult);"/>
 	    </hbox>
 	    
 	    <!-- 検索結果表示 -->
-	    <vbox flex="1" style="overflow:auto">
-	      <html:table id="database-table" class="requestview">
-	      </html:table>
-	    </vbox>
+	    <listbox flex="1" id="db-search-result" seltype="multiple" context="">
+	    </listbox>
 	  </vbox>
 	  <!-- folder DB -->
 	  <hbox flex="1">
@@ -1133,10 +1125,16 @@
 
   </popupset>
 
-  <!-- さすがに通常のメニュー項目のアピアランスにならない -->
+  <!-- not used さすがに通常のメニュー項目のアピアランスにならない -->
   <panel id="video-add-panel" position="end_before">
     <menuitem label="リクエストに追加" oncommand="alert('a');"/>
     <menuitem label="ストックに追加" oncommand="alert('b');"/>
+  </panel>
+
+  <!-- 動画DBで使用する検索条件入力パネル -->
+  <panel id="search-condition-panel" position="after_start">
+    <vbox id="search-condition" flex="1" style="overflow:auto;">
+    </vbox>
   </panel>
 
   <stringbundleset id="stringbundleset">

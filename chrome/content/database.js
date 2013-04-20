@@ -34,7 +34,7 @@ THE SOFTWARE.
  * view_counter   : integer 再生数
  * comment_num    : integer コメント数
  * mylist_counter : integer マイリスト数
- * tags           : character タグ(カンマ区切りの文字列)
+ * tags           : character タグ(カンマ区切りの文字列, jpタグのみ)
  * update_date    : integer DB情報の更新日時
  * favorite       : integer (0.7.3+) お気に入り度
  * 
@@ -63,16 +63,31 @@ THE SOFTWARE.
  */
 
 var Database = {
+    dbconnect: null, // DBへの接続オブジェクト
+    jobs: {},        // DB追加・更新ジョブリスト. 動画IDをキーにしたObjectで.
+    
+    searchresult: [],
+    searchresult_node: null,
+
     pnamecache: {},
     ratecache: {},
-
-    jobs: {}, // DB追加ジョブリスト. 動画IDをキーにしたObjectで.
 
     numvideos: 0,
     addcounter: 0,
     updatecounter: 0,
     searchtarget: ["title","length","view_counter","comment_num","mylist_counter","tags","first_retrieve","video_id","description"],
     searchcond: ["include","exclude","gte","equal","lte"],
+
+    /**
+     * 残りのジョブ数を返す.
+     */
+    getRemainJobs: function(){
+	let n = 0;
+	for( k in this.jobs ){
+	    n++;
+	}
+	return n;
+    },
 
     /**
      * 現在再生中の曲をDBに登録.
@@ -83,23 +98,27 @@ var Database = {
 
     /**
      * 動画をDBに追加する.
-     * 非同期処理。
-     * このメソッドでは10桁IDは取り込まない。
+     * 非同期処理。このメソッドでは10桁IDは取り込まない。
+     * 処理残りをDBのラベルに表示しつつ、ジョブが空になるとコールバックを呼び出す。
      * @param sm 動画ID(sm,nm)やマイリスト
+     * @param callback 全ての追加処理が終わったときに呼ばれるコールバック関数
      */
-    addVideos:function(sm){
+    addVideos:function(sm, callback){
 	// sm/nm番号のテキストで渡す.
 	if(sm.length<3) return;
 	$('db-label').value="";
 	$('input-db').value="";
 
+	this.jobs = new Object();
 	try{
 	    let l;
 	    l = sm.match(/mylist\/\d+/g);
 	    if(l){
+		// マイリスト
 		for(let i=0,mylist;mylist=l[i];i++){
 		    let id = mylist.match(/mylist\/(\d+)/)[1];
-		    NicoLiveMylist.addDatabase(id,"");
+		    // マイリストからsm,nmを拾って再びaddVideos()する
+		    NicoLiveMylist.addDatabase(id,"",callback);
 		}
 		return;
 	    }
@@ -108,14 +127,32 @@ var Database = {
 	    this.addcounter = 0;
 	    this.updatecounter = 0;
 	    for(let i=0,id;id=l[i];i++){
+		this.jobs[id] = true; // ジョブに追加
 		this.addOneVideoAsync(id);
 	    }
+	    let str = "処理残り:"+Database.getRemainJobs();
+	    $('db-label').value = str;
+	    $('folder-listitem-num').value = str;
+
+	    this._callback = setInterval(
+		function(){
+		    let str = "処理残り:"+Database.getRemainJobs();
+		    $('db-label').value = str;
+		    $('folder-listitem-num').value = str;
+		    if( Database.getRemainJobs()==0 ){
+			if( 'function'==typeof callback){
+			    callback();
+			}
+			clearInterval( Database._callback );
+		    }
+		}, 1000 );
 	} catch (x) {
 	}
     },
 
     /**
      * DBに動画を1件追加する.
+     * 動画情報を取得し、追加もしくは更新を行う。
      * 非同期処理で行う.
      * @param id 動画ID
      */
@@ -123,13 +160,22 @@ var Database = {
 	// 動画IDで渡す.
 	if(id.length<3) return;
 	let f = function(xml,req){
-	    if( req.readyState==4 && req.status==200 ){
-		try{
-		    let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
-		    if( music ){
-			Database.addDatabase(music);
+	    if( req.readyState==4 ){
+		if( req.status==200 ){
+		    try{
+			let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
+			if( music ){
+			    Database.addDatabase(music);
+			}
+		    } catch (x) {
+			// XML内容の異常とか
+			debugprint(x);
+			delete Database.jobs[id];
 		    }
-		} catch (x) {
+		}else{
+		    // 通信失敗
+		    debugprint("DB http status="+req.status);
+		    delete delete Database.jobs[id];
 		}
 	    }
 	};
@@ -184,13 +230,14 @@ var Database = {
 	st.bindInt32Parameter(6,music.view_counter);
 	st.bindInt32Parameter(7,music.comment_num);
 	st.bindInt32Parameter(8,music.mylist_counter);
-	st.bindUTF8StringParameter(9,music.tags.join(','));
+	st.bindUTF8StringParameter(9,music.tags['jp'].join(',')); // タグは日本語タグのみで
 	st.bindInt32Parameter(10,GetCurrentTime());
 
 	let callback = {
 	    handleCompletion:function(reason){
 		if(!this.error){
 		    // 追加に成功
+		    delete Database.jobs[music.video_id];
 		    Database.ratecache["_"+music.video_id] = 0;
 		}
 	    },
@@ -226,12 +273,13 @@ var Database = {
 	st.bindInt32Parameter(5,music.view_counter);
 	st.bindInt32Parameter(6,music.comment_num);
 	st.bindInt32Parameter(7,music.mylist_counter);
-	st.bindUTF8StringParameter(8,music.tags.join(','));
+	st.bindUTF8StringParameter(8,music.tags['jp'].join(','));
 	st.bindInt32Parameter(9,GetCurrentTime());
 	st.bindUTF8StringParameter(10,music.video_id);
 	//debugprint('update '+music.video_id);
 	let callback = {
 	    handleCompletion:function(reason){
+		delete Database.jobs[music.video_id];
 	    },
 	    handleError:function(error){
 		debugprint('update error'+error.result+'/'+error.message);
@@ -270,7 +318,9 @@ var Database = {
 	$('search-condition').removeChild(e.target.parentNode);
     },
 
-    // TODO
+    /**
+     * 検索条件入力行を追加する.
+     */
     addSearchLine:function(){
 	let menulist;
 	let elem;
@@ -306,7 +356,7 @@ var Database = {
 	elem.setAttribute('type','search');
 	//elem.setAttribute('autocompletesearch','form-history');
 	elem.setAttribute("oncommand","Database.search();");
-	elem.setAttribute('timeout','1000');
+	elem.setAttribute('timeout','2000');
 	hbox.appendChild(elem);
 
 	//elem = CreateButton('+');
@@ -327,8 +377,9 @@ var Database = {
 	$('search-condition').appendChild(hbox);
     },
 
-    // TODO
-    // 検索本体.
+    /**
+     * 検索を実行する.
+     */
     search:function(){
 	clearInterval(this._updatehandle);
 
@@ -417,8 +468,8 @@ var Database = {
 
 	let callback = {
 	    handleCompletion:function(reason){
-		$('db-label').value = LoadFormattedString('STR_DBRESULT',[Database._searchresult.length]);
-		//Database.updateDatabase( Database._searchresult );
+		$('db-label').value = LoadFormattedString('STR_DBRESULT',[Database.searchresult.length]);
+		//Database.updateDatabase( Database.searchresult );
 	    },
 	    handleError:function(error){
 		//debugprint('search error/'+error.result+'/'+error.message);
@@ -426,14 +477,16 @@ var Database = {
 	    handleResult:function(result){
 		let row;
 		while(row = result.getNextRow()){
-		    let music=Database.rowToMusicInfo(row);
+		    let music=Database.rowToVideoInfo(row);
 		    Database.addSearchResult(music);
-		    Database._searchresult.push(music);
+		    Database.searchresult.push(music);
 		}
 	    }
 	};
-	this._searchresult = new Array();
-	clearTable($('database-table'));
+
+	RemoveChildren( this.searchresult_node );
+
+	this.searchresult = new Array();
 	st.executeAsync(callback);
     },
 
@@ -473,7 +526,7 @@ var Database = {
      */
     addStockAll:function(){
 	let str = "";
-	for(let i=0,item;item=this._searchresult[i];i++){
+	for(let i=0,item;item=this.searchresult[i];i++){
 	    str += item.video_id + ",";
 	}
 	NicoLiveStock.addStock(str);
@@ -484,7 +537,7 @@ var Database = {
      */
     copyAllToClipboard:function(){
 	let str = "";
-	for(let i=0,item;item=this._searchresult[i];i++){
+	for(let i=0,item;item=this.searchresult[i];i++){
 	    str += item.video_id + "\n";
 	}
 	CopyToClipboard(str);
@@ -514,46 +567,55 @@ var Database = {
     },
 
     /**
-     * 検索結果を表示する<table>に行を追加する.
+     * 動画情報を表示するリストアイテム要素を作成.
+     * @param item 動画情報(VideoInfo)
+     */
+    createListItemElement:function(item){
+	let posteddate = GetDateString(item.first_retrieve*1000);
+
+	let listitem = CreateElement('listitem');
+	listitem.setAttribute('vid',item.video_id);
+	let str = item.title + "\nタグ: " + item.tags.join(' ');
+	listitem.setAttribute("tooltiptext",str);
+
+	let hbox = CreateElement('hbox');
+	let image = CreateElement('image');
+	image.setAttribute('src',item.thumbnail_url);
+	image.setAttribute('style','-moz-box-align:center;width:98px;height:75px;margin-right:4px;');
+	image.setAttribute('validate','never');
+	let div = CreateHTMLElement('div');
+	let rate = GetFavRateString(item.favorite);
+	div.innerHTML = item.video_id + " "+htmlspecialchars(item.title)+"<br/>"
+	    + "投稿日:"+posteddate+" 時間:"+item.length+"<br/>"
+	    + "再生:"+FormatCommas(item.view_counter)
+	    + " コメント:"+FormatCommas(item.comment_num)
+	    + " マイリスト:"+FormatCommas(item.mylist_counter)
+	    + " レート:"+rate +"<br/>"
+	    + "タグ:"+item.tags.join(' ');
+
+	let vbox = CreateElement('vbox');
+	vbox.appendChild(image);
+	hbox.appendChild(vbox);
+	hbox.appendChild(div);
+	listitem.appendChild(hbox);
+	return listitem;
+    },
+
+    /**
+     * 検索結果を表示する<listbox>に1つ追加する.
+     * 
      */
     addSearchResult:function(item){
-	let table = $('database-table');
-	if(!table){ return; }
-
-	let tr = table.insertRow(table.rows.length);
-	tr.className = table.rows.length%2?"table_oddrow":"table_evenrow";
-
-	let td;
-	td = tr.insertCell(tr.cells.length);
-	td.innerHTML = "#"+table.rows.length;
-
-	let n = table.rows.length;
-
-	td = tr.insertCell(tr.cells.length);
-
-	let tooltip = "レート:"+GetFavRateString(item.favorite);
-
-	let str;
-	str = "<vbox context=\"popup-db-result\" nicovideo_id=\""+item.video_id+"\" tooltiptext=\""+tooltip+"\">"
-	    + "<html:div>"
-	    + "<label crop=\"end\"><html:a onmouseover=\"NicoLiveComment.showThumbnail(event,'"+item.video_id+"');\" onmouseout=\"NicoLiveComment.hideThumbnail();\" onclick=\"NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/"+item.video_id+"');\">"+item.video_id+"</html:a>/"+item.title+" ("+tooltip+")</label><html:br/>";
-
-	let datestr = GetDateString(item.first_retrieve*1000);
-	str+= "<label value=\"投稿日:" + datestr +" "
-	    + "再生数:"+item.view_counter+" コメント:"+item.comment_num
-	    + " マイリスト:"+item.mylist_counter+" 時間:"+item.length+"\"/>"
-	    + "</html:div>"
-	    + "<label crop=\"end\" value=\"タグ:" + item.tags.join(",") + "\"/>"
-	    + "<html:div class=\"db-description\">"+htmlspecialchars(item.description)+"</html:div>"
-	    + "</vbox>";
-	td.innerHTML = str;
+	let listitem = this.createListItemElement(item);
+	this.searchresult_node.appendChild( listitem );
     },
 
     /**
      * テーブルの行を動画情報に変換.
+     * tagsはただの配列になっている
      * @param row SQLクエリのリザルト行
      */
-    rowToMusicInfo:function(row){
+    rowToVideoInfo:function(row){
 	let info = new Object();
 	// innerHTMLで流し込むのでhtmlspecialcharsを使う.
 	info.video_id       = row.getResultByName('video_id');
@@ -919,11 +981,6 @@ var Database = {
 	}
     },
 
-    checkDrag:function(event){
-	event.preventDefault();
-	return true;
-    },
-
     /**
      * ファイルからDBに登録する.
      * @param file nsIFile
@@ -946,6 +1003,11 @@ var Database = {
 
 	this.addVideos(str);
 	istream.close();
+    },
+
+    checkDrag:function(event){
+	event.preventDefault();
+	return true;
     },
 
     /**
@@ -1058,8 +1120,10 @@ var Database = {
 	debugprint("DB file:"+this._filename);
 	this.pnamecache = new Object();
 	this.ratecache  = new Object();
-	//this.addSearchLine();
+	this.addSearchLine();
 	this.setRegisterdVideoNumber();
+
+	this.searchresult_node = $('db-search-result');
     },
     destroy:function(){
 	// This call will not be successful
