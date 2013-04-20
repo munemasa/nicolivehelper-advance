@@ -263,6 +263,22 @@ var Config = {
     },
 
     /**
+     * リスナーコマンド設定を読み込む.
+     */
+    loadListenerCommandSettings:function (branch) {
+        this.listenercommand = new Object();
+        try {
+            this.listenercommand.enable = branch.getBoolPref("listenercommand.enable");
+            this.listenercommand.s = branch.getUnicharPref("listenercommand.s");
+            this.listenercommand.del = branch.getUnicharPref("listenercommand.del");
+        } catch (x) {
+            this.listenercommand.enable = false;
+            this.listenercommand.s = "";
+            this.listenercommand.del = "";
+        }
+    },
+
+    /**
      * 設定を全てロードする
      */
     loadPrefs: function(){
@@ -341,6 +357,7 @@ var Config = {
         this.setVideoDetail();
 
 	this.loadClasses();
+        this.loadListenerCommandSettings(branch);
     },
 
     /**

@@ -101,7 +101,6 @@ pref("extensions.nicolivehelperadvance.videoinfo.userdefined-data-uri",""); // J
 
 // スタートアップコメント
 pref("extensions.nicolivehelperadvance.msg.startup-comment","");
-
 // リクエストへの応答
 pref("extensions.nicolivehelperadvance.msg.notaccept",">>{comment_no} 現在リクエストを受け付けていません");
 pref("extensions.nicolivehelperadvance.msg.deleted",">>{comment_no} その動画は削除されているか、見つかりません");
@@ -129,3 +128,9 @@ pref("extensions.nicolivehelperadvance.msg.forbiddenkeyword-title",">>{comment_n
 pref("extensions.nicolivehelperadvance.msg.high-bitrate",">>{comment_no} ビットレートが高いです");
 pref("extensions.nicolivehelperadvance.msg.limitnumberofrequests",">>{comment_no} リクエストは1人{=info.restrict.numberofrequests.toString()}件までです");
 pref("extensions.nicolivehelperadvance.msg.ng-video-reply-message",">>{comment_no} その動画はNG動画です");
+
+// リスナーコマンド
+pref("extensions.nicolivehelperadvance.listenercommand.enable",false);
+pref("extensions.nicolivehelperadvance.listenercommand.s","リクエスト:{requestnum}件({requesttime}) ストック:{stocknum}件({stocktime})<br>現在:{=NicoLiveHelper.allowrequest?\"リクエスト受付中\":\"リクエスト受付停止中\"}");
+pref("extensions.nicolivehelperadvance.listenercommand.del",">>{=info.comment_no} {=info.cancelnum}件のリクエストを削除しました");
+pref("extensions.nicolivehelperadvance.listenercommand.custom","");
