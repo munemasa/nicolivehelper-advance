@@ -66,6 +66,8 @@ var Database = {
     pnamecache: {},
     ratecache: {},
 
+    jobs: {}, // DB追加ジョブリスト. 動画IDをキーにしたObjectで.
+
     numvideos: 0,
     addcounter: 0,
     updatecounter: 0,
@@ -76,9 +78,15 @@ var Database = {
      * 現在再生中の曲をDBに登録.
      */
     addCurrentPlayedVideo:function(){
-	this.addVideos(NicoLiveHelper.getCurrentVideoInfo().video_id);
+	Database.addDatabase( NicoLiveHelper.getCurrentVideoInfo() );
     },
 
+    /**
+     * 動画をDBに追加する.
+     * 非同期処理。
+     * このメソッドでは10桁IDは取り込まない。
+     * @param sm 動画ID(sm,nm)やマイリスト
+     */
     addVideos:function(sm){
 	// sm/nm番号のテキストで渡す.
 	if(sm.length<3) return;
@@ -100,52 +108,68 @@ var Database = {
 	    this.addcounter = 0;
 	    this.updatecounter = 0;
 	    for(let i=0,id;id=l[i];i++){
-		this.addOneVideo(id);
+		this.addOneVideoAsync(id);
 	    }
 	} catch (x) {
 	}
     },
 
-    addOneVideo:function(id){
+    /**
+     * DBに動画を1件追加する.
+     * 非同期処理で行う.
+     * @param id 動画ID
+     */
+    addOneVideoAsync:function(id){
 	// 動画IDで渡す.
 	if(id.length<3) return;
 	let f = function(xml,req){
 	    if( req.readyState==4 && req.status==200 ){
-		let music = NicoLiveHelper.xmlToMovieInfo(req.responseXML);
-		if( music ){
-		    Database.addDatabase(music);
+		try{
+		    let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
+		    if( music ){
+			Database.addDatabase(music);
+		    }
+		} catch (x) {
 		}
 	    }
 	};
 	NicoApi.getthumbinfo( id, f );
     },
 
-    updateOneVideo:function(id){
+    /**
+     * DBの情報を最新に更新する.
+     * 非同期処理
+     * @param id 動画ID
+     */
+    updateOneVideoAsync:function(id){
 	// 動画IDで渡す.
 	if(id.length<3) return;
 	let f = function(xml,req){
 	    if( req.readyState==4 && req.status==200 ){
-		let music = NicoLiveHelper.xmlToMovieInfo(req.responseXML);
-		if( music ){
-		    let nomessage = true;  // n件更新を表示しない.
-		    Database.updateRow(music,nomessage);
-		}else{
-		    debugprint(id+'は削除されています');
+		try{
+		    let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
+		    if( music ){
+			let nomessage = true;  // n件更新を表示しない.
+			Database.updateRowAsync(music,nomessage);
+		    }else{
+			debugprint(id+'は削除されています');
+		    }
+		} catch (x) {
 		}
 	    }
 	};
 	NicoApi.getthumbinfo( id, f );
     },
 
-    // DBにinsert to する.
     /**
      * DBに動画情報を追加する.
      * 非同期処理で行う場合、insertに失敗したらupdateを行う。
+     * 同期処理の場合、insert失敗したら、それまで。
      * @param music 動画情報
      * @param dosync trueのとき同期処理
      */
     addDatabase:function(music,dosync){
-	// xmlToMovieInfoが作る構造でmusicを渡す.
+	// NicoLiveHelper.extractVideoInfo()が作る構造でmusicを渡す.
 	let st;
 
 	// try insert
@@ -166,16 +190,14 @@ var Database = {
 	let callback = {
 	    handleCompletion:function(reason){
 		if(!this.error){
-		    Database.addcounter++;
-		    $('db-label').value = "追加:"+Database.addcounter +"件/"
-			+ "更新:"+Database.updatecounter + "件";
+		    // 追加に成功
 		    Database.ratecache["_"+music.video_id] = 0;
 		}
 	    },
 	    handleError:function(error){
 		// insertが失敗のときはすでに行があるのでupdateにする.
 		//debugprint('insert error/'+error.result+'/'+error.message);
-		Database.updateRow(music);
+		Database.updateRowAsync(music);
 		this.error = true;
 	    },
 	    handleResult:function(result){
@@ -190,10 +212,11 @@ var Database = {
 
     /**
      * DBを更新する.
+     * 非同期処理
      * @param music 動画情報
      * @param nomessage trueならメッセージ表示なし
      */
-    updateRow:function(music,nomessage){
+    updateRowAsync:function(music,nomessage){
 	let st = this.dbconnect.createStatement('update nicovideo set title=?1,description=?2,thumbnail_url=?3,first_retrieve=?4,length=?5,view_counter=?6,comment_num=?7,mylist_counter=?8,tags=?9,update_date=?10 where video_id=?11');
 	st.bindUTF8StringParameter(0,music.title);
 	st.bindUTF8StringParameter(1,music.description);
@@ -209,13 +232,9 @@ var Database = {
 	//debugprint('update '+music.video_id);
 	let callback = {
 	    handleCompletion:function(reason){
-		Database.updatecounter++;
-		if(nomessage) return;
-		$('db-label').value = "追加:"+Database.addcounter +"件/"
-		    + "更新:"+Database.updatecounter + "件";
 	    },
 	    handleError:function(error){
-		//debugprint('update error'+error.result+'/'+error.message);
+		debugprint('update error'+error.result+'/'+error.message);
 	    },
 	    handleResult:function(result){
 	    }
@@ -438,7 +457,7 @@ var Database = {
 	    if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
 		cnt++;
 		item.done = true;
-		this.updateOneVideo(item.video_id);
+		this.updateOneVideoAsync(item.video_id);
 	    }
 	}
 	debugprint('updating db...'+cnt);
@@ -567,15 +586,6 @@ var Database = {
 	}
 	st.finalize();
 	$('db-label').value = LoadFormattedString('STR_DB_REGISTERED_NUM',[n]);
-    },
-
-    /**
-     * 現在のvbox内の動画IDをコピーする(リク、ストック、DBで共通利用可)
-     * @paran node メニューがポップアップしたノード
-     */
-    copyVideoIdToClipboard:function(node){
-	let elem = FindParentElement(node,'vbox');
-	CopyToClipboard(elem.getAttribute('nicovideo_id')); // 動画IDを取れる.
     },
 
     /**
