@@ -62,6 +62,8 @@ var NicoLiveAlertModule = {
 	    if( !this.alerted( community_id, request_id ) ){
 		this.alerted_target[community_id] = request_id;
 		this.openDefaultBrowser("http://live.nicovideo.jp/watch/"+request_id);
+		// TODO
+		/*
 		try{
 		    d.closeBroadcastingTab( d.request_id, d.community );
 		    if( !d.isAutoWindowClose() ){
@@ -69,6 +71,7 @@ var NicoLiveAlertModule = {
 			d.connectNewBroadcasting(request_id,"",true,request_id);
 		    }
 		}catch(e){}
+		 */
 	    }
 	}
     },
