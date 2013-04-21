@@ -1,6 +1,9 @@
 
 var Backup = {
 
+    /**
+     * 現在の状態をsystem-backupに取る.
+     */
     backupCurrent:function(){
 	this.backup('system-backup');
 	this.createRestoreMenu();
@@ -25,6 +28,9 @@ var Backup = {
 	}
     },
 
+    /**
+     * バックアップと復元メニューを作成する.
+     */
     createRestoreMenu:function(){
 	let menu = $('toolbar-restore');
 	let deletemenu = $('toolbar-deletebackup');
