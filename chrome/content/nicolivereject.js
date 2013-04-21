@@ -48,11 +48,13 @@ var NicoLiveRejectRequest = {
 	hbox.setAttribute('tooltiptext','');
 	hbox.setAttribute('class','command-buttons');
 
+	/*
 	let button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/information.png');
 	//button.setAttribute('label','情報');
 	button.setAttribute('class','command-button');
 	hbox.appendChild(button);
+	 */
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/add.png');
