@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
-Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.jsm");
+var StarRateCache;
 
 /**
  * 動画データベースなど
@@ -710,6 +710,9 @@ var Database = {
 	    video_id = elem.getAttribute('nicovideo_id');
 	}
 	let rate = e.target.value;
+
+	// ツールチップのテキストを更新
+	// TODO
 	let videolist = evaluateXPath(document,"//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
 
 	for(let i=0,item; item=videolist[i]; i++){
@@ -728,7 +731,9 @@ var Database = {
 	    // 動画DBにデータがないので追加した通知.
 	    ShowNotice( LoadFormattedString('STR_ERR_RATE_NOT_SAVED',[video_id]) );
 	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory(video_id);
-	    // TODO this.addDatabase(videoinfo,true);// do synchronized operation.
+	    if( videoinfo ){
+		this.addDatabase(videoinfo,true);// do synchronized operation.
+	    }
 	}
 
 	let st;
@@ -782,6 +787,7 @@ var Database = {
 	}
 	let rate = this.getFavorite(video_id);
 	if(rate<0) rate = 0;
+	debugprint(video_id+" "+rate);
 	let menuitems = evaluateXPath(e.target,"*");
 	for(let i=0,item;item=menuitems[i];i++){
 	    if(item.value==rate) item.setAttribute('checked','true');
@@ -1139,6 +1145,7 @@ var Database = {
 	}
 	debugprint("DB file:"+this._filename);
 	this.pnamecache = new Object();
+	StarRateCache = new Object();
 
 	this.addSearchLine();
 	this.setRegisterdVideoNumber();
