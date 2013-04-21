@@ -640,7 +640,6 @@
 		</menupopup>
 	      </menulist>
 	      <button label="&db.do_search;" oncommand="Database.search();"/>
-	      <!-- <button label="&db.add_stock;" oncommand="NicoLiveDatabase.addStockAll();"/> -->
 	      <spacer flex="1"/>
 	      <button label="&db.update;" tooltiptext="&db.tooltip_update;" oncommand="Database.updateDatabase(Database.searchresult);"/>
 	    </hbox>
@@ -1109,8 +1108,6 @@
 	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
 	</menupopup>
       </menu>
-      <!-- <menuitem label="&menu.db_copy_result;"
-		oncommand="NicoLiveDatabase.copyAllToClipboard();"/> -->
       <menuseparator/>
       <menuitem label="&menu.db_delete;"
 		oncommand="Database.deleteMovie();"/>
