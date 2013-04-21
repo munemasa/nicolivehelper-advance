@@ -14,19 +14,30 @@ function debugprint(str){
 
 var NicoLiveAlertModule = {
     connected: false,
-    alert_target: {},
-    alerted_target: {},
+    alert_target: {},     // 通知対象
+    alerted_target: {},   // 通知済みフラグ
     use_external_browser: false,
 
-    isRegistered:function(community){
-	return this.alert_target[community];
+    /**
+     * 通知対象として登録済みか.
+     */
+    isRegistered:function(target){
+	return this.alert_target[target];
     },
 
-    registerTarget:function(community, instance){
-	this.alert_target[community] = instance;
+    /**
+     * 通知対象を登録する.
+     * @param target コミュニティID(coxxx,chxxx)か放送ID(lvxxx)を指定する
+     * @param instance 真になるオブジェクト
+     */
+    registerTarget:function(target, instance){
+	this.alert_target[target] = instance;
     },
-    unregisterTarget:function(community){
-	delete this.alert_target[community];
+    /**
+     * 通知対象から外す.
+     */
+    unregisterTarget:function(target){
+	delete this.alert_target[target];
     },
 
     /**
@@ -46,7 +57,7 @@ var NicoLiveAlertModule = {
 	default:
 	    break;
 	}
-	var d = this.alert_target[community_id];
+	var d = this.alert_target[community_id] || this.alert_target[request_id];
 	if( d ){
 	    if( !this.alerted( community_id, request_id ) ){
 		this.alerted_target[community_id] = request_id;

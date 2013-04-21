@@ -1,6 +1,8 @@
 
+var NicoLiveAlertModule = window.opener.NicoLiveAlertModule;
+
 function Init(){
-    var l = window.opener.NicoLiveAlertModule.alert_target;
+    var l = NicoLiveAlertModule.alert_target;
     for( k in l ){
 	$('manage-community').appendItem(k,k);
     }
@@ -9,7 +11,7 @@ function Init(){
 function Delete(){
     var item = $('manage-community').selectedItem;
     if( item ){
-	window.opener.NicoLiveAlertModule.unregisterTarget(item.value);
+	NicoLiveAlertModule.unregisterTarget(item.value);
 	RemoveElement(item);
 	window.opener.NicoLiveHelper.setAutoNextLiveIcon();
     }
