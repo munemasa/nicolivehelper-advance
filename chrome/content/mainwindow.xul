@@ -1118,19 +1118,19 @@
 		oncommand="Database.addToStock();"/>
       <!-- <menuitem label="&menu.set_pname;"
 		oncommand="NicoLiveDatabase.setPName($('popup-db-result').triggerNode);"/> -->
-      <!--
+
       <menu label="&rate.name;">
-	<menupopup oncommand="NicoLiveDatabase.setFavorite(event,$('popup-db-result').triggerNode);"
-		   onpopupshowing="return NicoLiveDatabase.showingRateMenu(event,$('popup-db-result').triggerNode);">
-	  <menuitem label="&rate.none;" value="0" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.1;" value="10" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.2;" value="20" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.3;" value="30" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.4;" value="40" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
+	<menupopup oncommand="Database.setFavoriteViaListitem(event);"
+		   onpopupshowing="return Database.showingRateMenuViaListitem(event);">
+	  <menuitem label="&rate.none;" value="0" type="checkbox" />
+	  <menuitem label="&rate.1;" value="10" type="checkbox" />
+	  <menuitem label="&rate.2;" value="20" type="checkbox" />
+	  <menuitem label="&rate.3;" value="30" type="checkbox" />
+	  <menuitem label="&rate.4;" value="40" type="checkbox" />
+	  <menuitem label="&rate.5;" value="50" type="checkbox" />
 	</menupopup>
       </menu>
-      -->
+
       <menuseparator/>
       <menuitem label="&menu.db_delete;"
 		oncommand="Database.deleteMovie();"/>
