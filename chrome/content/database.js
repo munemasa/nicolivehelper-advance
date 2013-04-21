@@ -534,7 +534,7 @@ var Database = {
 
 	let listitem = CreateElement('listitem');
 	listitem.setAttribute('vid',item.video_id);
-	let str = item.title + "\nタグ: " + item.tags.join(' ');
+	let str = restorehtmlspecialchars(item.title) + "\nタグ: " + item.tags.join(' ');
 	listitem.setAttribute("tooltiptext",str);
 
 	let hbox = CreateElement('hbox');
@@ -544,7 +544,7 @@ var Database = {
 	image.setAttribute('validate','never');
 	let div = CreateHTMLElement('div');
 	let rate = GetFavRateString(item.favorite);
-	div.innerHTML = item.video_id + " "+htmlspecialchars(item.title)+"<br/>"
+	div.innerHTML = item.video_id + " "+(item.title)+"<br/>"
 	    + "投稿日:"+posteddate+" 時間:"+item.length+"<br/>"
 	    + "再生:"+FormatCommas(item.view_counter)
 	    + " コメント:"+FormatCommas(item.comment_num)
@@ -772,6 +772,74 @@ var Database = {
     },
 
     /**
+     * レート(お気に入り度)をセット.
+     * 動画DBリザルトなどの<listitem>表示での使用。
+     * @param e eventオブジェクト
+     */
+    setFavoriteViaListitem:function(e){
+	let video_id = $('db-search-result').selectedItem.getAttribute('vid');
+	let rate = e.target.value;
+
+	// ツールチップのテキストを更新
+	// TODO
+	let videolist = evaluateXPath(document,"//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
+
+	for(let i=0,item; item=videolist[i]; i++){
+	    if( video_id==item.getAttribute('nicovideo_id') ){
+		try{
+		    let tooltip="レート:"+GetFavRateString(rate);
+		    let oldtooltip = item.getAttribute("tooltiptext");
+		    tooltip = oldtooltip.replace(/^レート:.*$/m,tooltip);
+		    item.setAttribute('tooltiptext',tooltip);
+		} catch (x) {
+		}
+	    }
+	}
+
+	if( this.getFavorite(video_id)<0 ){
+	    // 動画DBにデータがないので追加した通知.
+	    ShowNotice( LoadFormattedString('STR_ERR_RATE_NOT_SAVED',[video_id]) );
+	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory(video_id);
+	    if( videoinfo ){
+		this.addDatabase(videoinfo,true);// do synchronized operation.
+	    }
+	}
+
+	let st;
+	try{
+	    st = this.dbconnect.createStatement('update nicovideo set favorite=?1 where video_id=?2');
+	    st.bindUTF8StringParameter(0,rate);
+	    st.bindUTF8StringParameter(1,video_id);
+	    st.execute();
+	    st.finalize();
+	} catch (x) {
+	}
+	StarRateCache["_"+video_id] = rate;
+    },
+
+    /**
+     * レート設定メニューが開かれるとき.
+     * @param e eventオブジェクト
+     * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
+     * @param vid 動画ID
+     */
+    showingRateMenuViaListitem:function(e,node,vid){
+	try{
+	    let video_id = $('db-search-result').selectedItem.getAttribute('vid');
+	    let rate = this.getFavorite(video_id);
+	    if(rate<0) rate = 0;
+	    let menuitems = evaluateXPath(e.target,"*");
+	    for(let i=0,item;item=menuitems[i];i++){
+		if(item.value==rate) item.setAttribute('checked','true');
+		else item.setAttribute('checked','false');
+	    }
+	} catch (x) {
+	    debugprint(x);
+	}
+	return true;
+    },
+
+    /**
      * レート設定メニューが開かれるとき.
      * @param e eventオブジェクト
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
@@ -787,7 +855,6 @@ var Database = {
 	}
 	let rate = this.getFavorite(video_id);
 	if(rate<0) rate = 0;
-	debugprint(video_id+" "+rate);
 	let menuitems = evaluateXPath(e.target,"*");
 	for(let i=0,item;item=menuitems[i];i++){
 	    if(item.value==rate) item.setAttribute('checked','true');
