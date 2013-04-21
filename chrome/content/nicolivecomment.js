@@ -400,10 +400,9 @@ var NicoLiveComment = {
 		delete this.namemap[id];
 	    }
 	}
+	Storage.writeObject("nico_namemap",this.namemap);
 
-	// TODO
-	//this.addKotehanDatabase(userid,name);
-	//this.createNameList();
+	this.createNameList(); // update listbox
     },
 
     /**
@@ -816,6 +815,85 @@ var NicoLiveComment = {
     },
 
     /**
+     * 選択行のコテハン設定を削除.
+     */
+    deleteKotehanFromListbox:function(){
+	let n = $('kotehan-list').selectedIndex;
+	if(n>=0){
+	    let userid = $('kotehan-list').selectedItem.firstChild.value;
+	    $('kotehan-list').removeItemAt(n);
+	    delete this.namemap[userid];
+	    Storage.writeObject("nico_namemap",this.namemap);
+	    this.updateCommentsName(userid,"");
+	}
+    },
+
+    /**
+     * コテハン設定を全て削除.
+     */
+    deleteKotehanAll:function(){
+	let elem = $('kotehan-list');
+	while(elem.itemCount>0){
+	    elem.removeItemAt(0);
+	}
+	this.namemap = new Object();
+	Storage.writeObject("nico_namemap",this.namemap);
+    },
+
+    /**
+     * コテハンリストでキーを押したときの処理.
+     */
+    pressKeyOnNameList:function(e){
+	if( e && e.keyCode==46 ){
+	    // 46 は DELキー(Winで確認)
+	    this.deleteKotehanFromListbox();
+	}
+    },
+
+    /**
+     * コテハンリストを作成.
+     */
+    createNameList:function(){
+	let list = $('kotehan-list');
+	while( list.getRowCount() ){
+	    list.removeItemAt(0);
+	}
+
+	for (kotehan in this.namemap){
+	    let elem = CreateElement('listitem');
+	    elem.appendChild( CreateLabel(kotehan) );
+	    elem.appendChild( CreateLabel(this.namemap[kotehan].name) );
+	    list.appendChild(elem);
+	}
+    },
+
+    /**
+     * コテハンと色設定をファイルに保存.
+     */
+    saveKotehanToFile:function(){
+	let obj = new Object();
+	obj.namemap = this.namemap;
+	obj.colormap = this.colormap;
+	SaveObjectToFile(obj,"コテハン設定をファイルに保存");
+    },
+    /**
+     * コテハンと色設定をファイルから読む.
+     */
+    loadKotehanFromFile:function(){
+	let obj = LoadObjectFromFile("コテハン設定をファイルから読み込み");
+	if( obj ){
+	    this.namemap = obj.namemap;
+	    this.colormap = obj.colormap;
+
+	    Storage.writeObject("nico_namemap",this.namemap);
+	    Storage.writeObject("nico_colormap",this.colormap);
+
+	    this.createNameList();
+	    this.updateCommentViewer();
+	}
+    },
+
+    /**
      * オートコンプリートのプリセット設定をプリファレンスから読む.
      */
     loadPresetAutocomplete:function(){
@@ -908,8 +986,8 @@ var NicoLiveComment = {
 
 	// コメントリフレクターの登録状況復帰.
 	this.initReflector();
-
 	this.initBSPColor();
+	this.createNameList();
     },
     destroy: function(){
 	Storage.writeObject( "nico_namemap", this.namemap );

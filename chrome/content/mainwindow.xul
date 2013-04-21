@@ -517,16 +517,19 @@
 		  <row>
 		    <hbox align="center"><label value="&comment.comment_no;"/></hbox>
 		    <textbox id="comment_no_to_add_reflection"/>
-		    <button label="&comment.register_reflection;" oncommand=""/>
+		    <button label="&comment.register_reflection;"
+			    oncommand="NicoLiveComment.addReflectionFromCommentNo($('comment_no_to_add_reflection').value);"/>
 		  </row>
 		  <row>
 		    <hbox align="center"><label value="&comment.user_id;"/></hbox>
 		    <hbox><textbox id="comment-user-id"/></hbox>
 		    <button type="menu" label="&general.command;">
 		      <menupopup id="menupopup-comment-command">
-			<menuitem label="&comment.menu_setname;" oncommand=""/>
-			<menuitem label="&comment.menu_reflection;" oncommand=""/>
-			<menuitem label="&comment.del_nguser;" oncommand=""/>
+			<menuitem label="&comment.menu_setname;"
+				  oncommand="NicoLiveComment.addNameFromId($('comment-user-id').value);"/>
+			<menuitem label="&comment.menu_reflection;"
+				  oncommand="NicoLiveComment.showCommentReflectorDialog($('comment-user-id').value);"/>
+			<!-- <menuitem label="&comment.del_nguser;" oncommand="NicoLiveComment.delNGUser($('comment-user-id').value);"/> -->
 		      </menupopup>
 		    </button>
 		  </row>
@@ -536,7 +539,7 @@
 	      <button label="Open As Textbox"
 		      oncommand="NicoLiveComment.openCommentLogDialog();"/>
 	    </hbox>
-	    <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="">
+	    <listbox id="kotehan-list" rows="5" context="popup-comment-kotehan" onkeypress="NicoLiveComment.pressKeyOnNameList(event);">
 	      <listcols>
 		<listcol flex="1" />
 		<listcol flex="1" />
@@ -1167,6 +1170,15 @@
       <menuseparator/>
       <menuitem label="&folderitem.deletevideo;"
 		oncommand="NicoLiveFolderDB.deleteVideo();" tooltiptext="&folderitem.deletevideo.help;"/>
+    </menupopup>
+
+    <!-- コテハンリストのメニュー -->
+    <menupopup id="popup-comment-kotehan">
+      <menuitem label="&comment.menu_delname;" oncommand="NicoLiveComment.deleteKotehanFromListbox();"/>
+      <menuitem label="コテハン全削除" oncommand="NicoLiveComment.deleteKotehanAll();"/>
+      <menuseparator/>
+      <menuitem label="&general.savefile;" oncommand="NicoLiveComment.saveKotehanToFile();"/>
+      <menuitem label="&general.loadfile;" oncommand="NicoLiveComment.loadKotehanFromFile();"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->
