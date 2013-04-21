@@ -7,6 +7,11 @@ var NicoLiveHelperAdvanceOverlay = {
 	return new PrefsWrapper1("extensions.nicolivehelperadvance.");
     },
 
+    isSingleWindowMode:function(){
+	let pref = this.getPref();
+	return pref.getBoolPref("window.singlewindow");
+    },
+
     insertHistory:function(url,title){
 	if(url=="lv0") return;
 
@@ -65,11 +70,11 @@ var NicoLiveHelperAdvanceOverlay = {
 	this.debugprint("caster:"+iscaster);
 	this.debugprint("community:"+community_id);
 
-	if( 0 && this.isSingleWindowMode() ){
+	if( this.isSingleWindowMode() ){
 	    let win = this.findWindow();
 	    if(win){
 		this.debugprint("NicoLive Helper Window Exists.");
-		win.NicoLiveHelper.connectNewBroadcasting(url,title,iscaster,community_id);
+		win.NicoLiveHelper.openNewBroadcast(url,title,iscaster,community_id);
 		win.focus();
 	    }else{
 		let w = window.open("chrome://nicolivehelperadvance/content/mainwindow.xul","NLHADV_lv0",feature);

@@ -806,6 +806,8 @@
   <prefpane id="nicolivehelper-prefpane-advance"
 	    label="詳細設定" image="chrome://nicolivehelperadvance/content/data/advancedsettings.png">
     <preferences>
+      <preference id="pref-singlewindowmode"
+		  name="extensions.nicolivehelperadvance.window.singlewindow" type="bool"/>
       <preference id="pref-auto-open"
 		  name="extensions.nicolivehelperadvance.window.auto-open" type="bool"/>
       <preference id="pref-auto-close"
@@ -880,7 +882,7 @@
 	  <tabpanel orient="vertical">
 	    <!-- window -->
 	    <hbox>
-	      <checkbox disabled="true" preference="pref-singlewindowmode" label="シングルウィンドウモード"/>
+	      <checkbox preference="pref-singlewindowmode" label="シングルウィンドウモード"/>
 	    </hbox>
 	    <separator/>
 

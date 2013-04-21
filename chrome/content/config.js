@@ -38,6 +38,11 @@ var Config = {
 	return false;
     },
 
+    isSingleWindow: function(){
+	let prefs = this.getBranch();
+	return prefs.getBoolPref("window.singlewindow");
+    },
+
     isAutoTabClose:function(){
 	let prefs = this.getBranch();
 	return prefs.getBoolPref("window.auto-close-tab");
