@@ -330,13 +330,11 @@ var NicoLiveMylist = {
             elem.setAttribute("oncommand", "NicoLiveMylist.addStockFromMylist(event.target.value,event.target.label);");
             $('stock-from-mylist').appendChild(elem);
 
-            /*
              // マイリスト読み込み(db)
              elem = CreateMenuItem(tmp,item.id);
              elem.setAttribute("tooltiptext",item.name);
-             elem.setAttribute("oncommand","NicoLiveMylist.addDatabase(event.target.value,event.target.label);");
+             elem.setAttribute("oncommand","NicoLiveMylist.addDatabase(event.target.value, event.target.label);");
              $('menupopup-from-mylist-to-db').appendChild(elem);
-             */
         }
     },
 
@@ -344,9 +342,9 @@ var NicoLiveMylist = {
      * マイリストからDBに登録する.
      * @param mylist_id マイリストID
      * @param mylist_name マイリスト名(未使用)
-     * @param f DB追加後のコールバック関数
+     * @param callback DB追加後のコールバック関数
      */
-    addDatabase:function(mylist_id,mylist_name,f){
+    addDatabase:function(mylist_id,mylist_name,callback){
 	let f = function(xml,req){
 	    if( req.readyState==4 && req.status==200 ){
 		let xml = req.responseXML;
@@ -358,7 +356,7 @@ var NicoLiveMylist = {
 			videos.push(video_id[0]);
 		    }
 		}
-		Database.addVideos(videos.join(','), f);
+		Database.addVideos(videos.join(','), callback);
 	    }
 	};
 	NicoApi.mylistRSS( mylist_id, f );

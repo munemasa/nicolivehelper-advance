@@ -154,11 +154,11 @@
 
 <!ENTITY menu.stock_showdetail "詳細の表示/非表示">
 
-<!ENTITY menu.db_addtostock "ストック追加">
 <!ENTITY menu.db_sendrequest "リクエスト送信">
-<!ENTITY menu.db_delete "この動画をDBから削除">
-<!ENTITY menu.db_delete_result "検索結果を全てコピー">
-<!ENTITY menu.db_delete_all "検索結果をDBから削除">
+<!ENTITY menu.db_addtostock  "ストック追加">
+<!ENTITY menu.db_delete      "選択した動画をDBから削除">
+<!ENTITY menu.db_copy_result "動画IDを全てコピー">
+<!ENTITY menu.db_delete_all  "検索結果の全てをDBから削除">
 
 <!ENTITY menu.copy_selection "選択範囲のテキストをコピー">
 <!ENTITY menu.search_by_google "Googleで検索">

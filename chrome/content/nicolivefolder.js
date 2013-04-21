@@ -195,7 +195,7 @@ var NicoLiveFolderDB = {
 	let items = $('folder-item-listbox').selectedItems;
 	let str = "";
 	for(let i=0,item; item=items[i]; i++){
-	    str += item.getAttribute('vid') + " ";
+	    str += item.getAttribute('vid') + "\n";
 	}
 	CopyToClipboard(str);
     },
@@ -365,12 +365,14 @@ var NicoLiveFolderDB = {
 	// 行を配列に読み込む
 	let line = {}, hasmore;
 	let first = true;
+	let str = "";
 	do {
 	    hasmore = istream.readLine(line);
 	    if( line.value.match(/(sm|nm)\d+|\d{10}/) ){
-		this._appendVideos(id,line.value);
+		str += line.value +" ";
 	    }
 	} while(hasmore);
+	this._appendVideos(id, str);
 
 	istream.close();
     },
