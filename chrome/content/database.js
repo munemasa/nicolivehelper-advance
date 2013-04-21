@@ -510,8 +510,8 @@ var Database = {
 	let now = GetCurrentTime();
 	let cnt=0;
 	for(let i=0,item;item=movies[i];i++){
-	    //if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
-	    if (cnt<10 && !item.done ){
+	    if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
+	    //if (cnt<10 && !item.done ){
 		cnt++;
 		item.done = true;
 		this.updateOneVideoAsync(item.video_id);
@@ -522,52 +522,6 @@ var Database = {
 	    clearInterval(this._updatehandle);
 	    $('db-label').value = "更新終了しました";
 	    debugprint('updating done.');
-	}
-    },
-
-
-    /**
-     * 検索結果を全部ストックに追加する.
-     */
-    addStockAll:function(){
-	let str = "";
-	for(let i=0,item;item=this.searchresult[i];i++){
-	    str += item.video_id + ",";
-	}
-	NicoLiveStock.addStock(str);
-    },
-
-    /**
-     * 検索結果の動画IDを全てクリップボードにコピーする.
-     */
-    copyAllToClipboard:function(){
-	let str = "";
-	for(let i=0,item;item=this.searchresult[i];i++){
-	    str += item.video_id + "\n";
-	}
-	CopyToClipboard(str);
-    },
-
-    /**
-     * 選択した1つをストックに追加.
-     * @param node メニューがポップアップしたノード.
-     */
-    addStockOne:function(node){
-	let elem = FindParentElement(node,'vbox');
-	NicoLiveStock.addStock(elem.getAttribute('nicovideo_id'));
-    },
-
-    /**
-     * 選択した1つをリクエスト送信.
-     * @param node メニューがポップアップしたノード.
-     */
-    sendRequestOne:function(node){
-	let elem = FindParentElement(node,'vbox');
-	let video_id = elem.getAttribute('nicovideo_id');
-	if( IsCaster() || IsOffline() ){
-	    NicoLiveRequest.addRequest(video_id);
-	}else{
-	    NicoLiveHelper.postListenerComment(video_id,"");
 	}
     },
 
@@ -617,7 +571,7 @@ var Database = {
 
     /**
      * テーブルの行を動画情報に変換.
-     * tagsはただの配列になっている
+     * tagsはただの配列になっているのに注意
      * @param row SQLクエリのリザルト行
      */
     rowToVideoInfo:function(row){
