@@ -355,6 +355,28 @@ var NicoLiveWindow = {
 
     },
 
+    openNicoAlertManager:function(){
+	var value = null;
+	var f = "chrome,resizable=yes,centerscreen";
+	var w = window.openDialog("chrome://nicolivehelperadvance/content/nicoalertmanager.xul","nicoalert",
+				  f,value);
+	w.focus();
+    },
+
+    /**
+     * ニコ生アラートの接続状態チェック.
+     * ニコ生アラートに接続しているかどうかを確認してメニューの表示、非表示を変更する。
+     */
+    checkNicoAlertConnected:function(){
+	if( NicoLiveAlertModule.connected ){
+	    $('nicoalert-disconnect').hidden = false;
+	    $('nicoalert-connect').hidden = true;
+	}else{
+	    $('nicoalert-disconnect').hidden = true;
+	    $('nicoalert-connect').hidden = false;
+	}
+    },
+
     /**
      * タブの位置を復元する.
      */

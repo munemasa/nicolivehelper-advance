@@ -784,11 +784,10 @@
     <statusbarpanel id="statusbar-n-of-listeners" label="&live.watcher;"/>
     <statusbarpanel id="statusbar-live-progress" label="0:00"
 		    onclick="NicoLiveHelper.changeLiveTimeFormat(event);"/>
-<!-- TODO
     <statusbarpanel id="statusbar-autonext" context="popup-nicolive-alert"
-		    class="statusbarpanel-iconic" src="data/next-mono.png"
+		    style="margin-left:1px; margin-right:1px;"
+		    class="statusbarpanel-iconic" src="data/bell-mono.png"
 		    onclick=""/>
--->
     <statusbarpanel id="status-bar-browser"
 		    class="statusbarpanel-iconic" src="data/firefox.png"
 		    context="popup-select-browser"/>
@@ -1197,6 +1196,16 @@
 		persist="checked" label="Internet Explorer(標準モード)" type="radio" autocheck="true"/>
       <menuitem name="use-browser" id="use-mac-safari"
 		persist="checked" label="Safari(Mac OS X)" type="radio" autocheck="true"/>
+    </menupopup>
+
+    <!-- ニコ生アラート用 -->
+    <menupopup id="popup-nicolive-alert" onpopupshowing="NicoLiveWindow.checkNicoAlertConnected();">
+      <menuitem label="アラート管理"
+		oncommand="NicoLiveWindow.openNicoAlertManager();"/>
+      <menuitem id="nicoalert-connect" label="ニコ生アラート接続"
+		oncommand="NicoLiveAlertModule.connect( new XMLHttpRequest() );"/>
+      <menuitem id="nicoalert-disconnect" label="ニコ生アラート切断"
+		oncommand="NicoLiveAlertModule.closeConnection();"/>
     </menupopup>
 
   </popupset>
