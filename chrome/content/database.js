@@ -1142,7 +1142,7 @@ var Database = {
 	//this._data = event;
 	switch( event.keyCode ){
 	case 65: // A
-	    if( event.ctrlKey ){
+	    if( event.ctrlKey || event.metaKey ){
 		$('db-search-result').selectAll();
 		event.stopPropagation();
 		return false;
