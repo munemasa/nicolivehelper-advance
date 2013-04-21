@@ -227,7 +227,7 @@
 			  oncommand="NicoLiveHelper.retrieveUserDefinedValue();"/>
 		<menuitem label="&toolbar.forcecastermode;"
 			  tooltiptext="&toolbar.tooltip_forcecastermode;"
-			  oncommand="NicoLiveHelper.iscaster=true;"/>
+			  oncommand="NicoLiveHelper.toCasterMode();"/>
 		<menuitem label="処理待ちのリクエスト、ストックを破棄"
 			  tooltiptext="現在処理待ちしているリクエスト、ストックを破棄します。"
 			  oncommand="NicoLiveHelper.clearProcessingQueue();"/>
