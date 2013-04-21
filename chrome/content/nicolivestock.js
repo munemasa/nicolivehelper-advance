@@ -556,7 +556,6 @@ var NicoLiveStock = {
 	if (file instanceof Components.interfaces.nsIFile){
 	    if( !file.leafName.match(/\.txt$/) ) return;
 	    debugprint("file dropped:"+file.path);
-	    // TODO
 	    this.readFileToStock(file);
 	    return;
 	}

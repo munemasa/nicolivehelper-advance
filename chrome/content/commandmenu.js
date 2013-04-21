@@ -13,7 +13,7 @@ var CommandMenu = {
 	let req = CreateXHR("GET",url);
 	if(!req) return;
 
-	// TODO コントロールパネルの「放送中の番組に接続」の扱い
+	// コントロールパネルの「放送中の番組に接続」の扱い
 	$('btn-connect-to-current-broadcast').disabled = true;
 	req.onreadystatechange = function(){
 	    if( req.readyState==4 ){
