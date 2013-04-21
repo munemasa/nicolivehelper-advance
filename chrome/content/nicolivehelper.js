@@ -3572,6 +3572,46 @@ var NicoLiveHelper = {
 	}
     },
 
+    // プログレスバーの現在の動画の再生時間表示で、progressとremainの表示を切り替え.
+    changeDisplayProgressTime:function(event){
+	event = event || window.event;
+	let btnCode;
+	if ('object' == typeof event){
+	    btnCode = event.button;
+	    switch (btnCode){
+	    case 0: // left
+                break;
+	    case 1: // middle
+	    case 2: // right
+	    default: // unknown
+		return;
+	    }
+	}
+	this._flg_displayprogresstime = !this._flg_displayprogresstime;
+	this.updateStatusBar( GetCurrentTime() );
+    },
+
+    // 生放送時間表示の変更
+    changeLiveTimeFormat:function(event){
+	event = event || window.event;
+	let btnCode;
+	if ('object' == typeof event){
+	    btnCode = event.button;
+	    switch (btnCode){
+	    case 0: // left
+                break;
+	    case 1: // middle
+	    case 2: // right
+	    default: // unknown
+		return;
+	    }
+	}
+	if( this._type_of_live_time_format==undefined ) this._type_of_live_time_format = 0;
+	this._type_of_live_time_format++;
+	this._type_of_live_time_format %= 2;
+	this.updateStatusBar( GetCurrentTime() );
+    },
+
     /**
      * ステータスバーの表示更新.
      * @paran now 現在の時刻をUNIXタイムで
@@ -3584,7 +3624,21 @@ var NicoLiveHelper = {
 	let currentvideo = this.getCurrentVideoInfo();
 	let liveprogressmeter = $('statusbar-live-progress');
 
-	liveprogressmeter.label = GetTimeString(liveprogress);
+	switch( this._type_of_live_time_format ){
+	case 0:
+	    liveprogressmeter.label = GetTimeString(liveprogress);
+	    break;
+	case 1:
+	    if( liveremain<0 ){
+		liveprogressmeter.label = GetTimeString( -1*liveremain );
+	    }else{
+		liveprogressmeter.label = "-"+GetTimeString(liveremain);
+	    }
+	    break;
+	default:
+	    liveprogressmeter.label = GetTimeString(liveprogress);
+	    break;
+	}
 
 	let videoname = $('statusbar-music-name');
 	if( !currentvideo ){
@@ -3603,7 +3657,8 @@ var NicoLiveHelper = {
 
 	let videoremain = videolength - videoprogress;
 	if( videoremain<0 ) videoremain = 0;
-	videoname.label = currentvideo.title + '('+'-'+GetTimeString(videoremain)+'/'+currentvideo.length+')';
+	videoname.label = currentvideo.title
+	    + '('+ (this._flg_displayprogresstime?GetTimeString(videoprogress):'-'+GetTimeString(videoremain) ) + '/' + currentvideo.length+')';
 
 	// プログレスバーの長さ制限
 	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
