@@ -1034,8 +1034,6 @@
       </hbox>
       <menuitem id="popup-comment-openprofile" label="&comment.menu_openprofile;"
 		oncommand="NicoLiveComment.openProfile($('popup-comment-user').triggerNode);"/>
-      <menuitem id="" label="トラッキング"
-		oncommand="NicoLiveComment.trackComment($('popup-comment-user').triggerNode);"/>
       <menuseparator/>
       <!-- コテハン設定 -->
       <menuitem label="&comment.menu_setname;"
@@ -1050,6 +1048,8 @@
       </menu>
       <menuitem label="&comment.menu_reflection;" tooltiptext="&comment.tooltip_reflection;"
 		oncommand="NicoLiveComment.addCommentReflector($('popup-comment-user').triggerNode);"/>
+      <menuitem id="" label="トラッキング"
+		oncommand="NicoLiveComment.trackComment($('popup-comment-user').triggerNode);"/>
       <menuseparator/>
       <menuitem id="id-release-reflection" label="&comment.menu_release_reflection_all;"
 		oncommand="NicoLiveComment.releaseReflector();"/>
