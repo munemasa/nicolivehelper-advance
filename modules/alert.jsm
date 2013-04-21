@@ -8,6 +8,10 @@ function debugprint(str){
     aConsoleService.logStringMessage(str);
 }
 
+/**
+ * anonymousでニコ生アラートを使用する.
+ */
+
 var NicoLiveAlertModule = {
     connected: false,
     alert_target: {},
@@ -99,6 +103,12 @@ var NicoLiveAlertModule = {
 	}
     },
 
+    /**
+     * XPathの評価をする.
+     * @param aNode ノード
+     * @param aExpr 式
+     * @return 式を評価した結果を配列で返す
+     */
     evaluateXPath:function(aNode, aExpr) {
 	var xpe = Components.classes["@mozilla.org/dom/xpath-evaluator;1"]
             .createInstance(Components.interfaces.nsIDOMXPathEvaluator);
@@ -112,6 +122,9 @@ var NicoLiveAlertModule = {
 	return found;
     },
 
+    /**
+     * ニコ生アラートサーバーから切断する.
+     */
     closeConnection:function(){
 	if( this.oStream ){
 	    this.oStream.close();
@@ -120,11 +133,17 @@ var NicoLiveAlertModule = {
 	if( this.ciStream ){
 	    this.ciStream.close();
 	    delete this.ciStream;
+	    debugprint('disconnected from nico alert server.');
 	}
-	debugprint('disconnected from nico alert server.');
 	this.connected = false;
     },
 
+    /**
+     * ニコ生アラートサーバーに接続する.
+     * @param server 接続するホスト
+     * @param port ポート番号
+     * @param thread スレッド
+     */
     connectCommentServer: function(server,port,thread){
 	debugprint(server+":"+port+":"+thread);
 
@@ -174,11 +193,19 @@ var NicoLiveAlertModule = {
 	this.connected = true;
     },
 
+    /**
+     * 通信が切断されないようにキープアライブ処理.
+     */
     keepalive:function(){
 	let str = "<thread thread=\""+this.thread+"\" res_from=\"-1\" version=\"20061206\"/>\0";
 	this.coStream.writeString(str);
     },
 
+    /**
+     * ニコ生アラートサーバーに接続する.
+     * なぜ呼び出し元からXMLHttpRequestをもらう必要があるのか覚えてない.
+     * @param req XMLHttpRequestオブジェクト
+     */
     connect:function( req ){
 	if( this.connected ) return;
 

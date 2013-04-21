@@ -3,7 +3,7 @@
 
 Components.utils.import("resource://nicolivehelperadvancemodules/usernamecache.jsm");
 Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
-//Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
+Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
 
 var pname_whitelist = {};
