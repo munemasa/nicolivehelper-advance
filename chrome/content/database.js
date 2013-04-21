@@ -311,7 +311,6 @@ var Database = {
 	return isexist;
     },
 
-    // TODO
     removeSearchLine:function(e){
 	let hbox = $('search-condition').getElementsByTagName('hbox');
 	if(hbox.length<=1) return;

@@ -439,7 +439,6 @@
 	<hbox>
 	  <button label="&button.clearall;" tooltiptext="&playlist.tooltip_clearall;"
 		  oncommand="NicoLiveHelper.clearPlayList();"/>
-	  <!-- TODO -->
 	  <button label="&playlist.recover_text;" tooltiptext="&playlist.tooltip_recover_text;"
 		  oncommand="NicoLiveHistory.restorePlaylistText();"/>
 	  <spacer flex="1"/>
