@@ -101,12 +101,15 @@ var Database = {
      * 動画(複数)をDBに追加する.
      * 非同期処理。このメソッドでは10桁IDは取り込まない。
      * 処理残りをDBのラベルに表示しつつ、ジョブが空になるとコールバックを呼び出す。
+     * 処理が完了するまでは、続けて呼び出せない。
      * @param sm 動画ID(sm,nm)やマイリスト
      * @param callback 全ての追加処理が終わったときに呼ばれるコールバック関数
      */
     addVideos:function(sm, callback){
 	// sm/nm番号のテキストで渡す.
 	if(sm.length<3) return;
+	if( this._callback ) return;
+
 	$('db-label').value="";
 	$('input-db').value="";
 
@@ -145,6 +148,7 @@ var Database = {
 			    callback();
 			}
 			clearInterval( Database._callback );
+			Database._callback = null;
 		    }
 		}, 1000 );
 	} catch (x) {
@@ -195,13 +199,9 @@ var Database = {
 	    if( req.readyState==4 && req.status==200 ){
 		try{
 		    let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
-		    if( music ){
-			let nomessage = true;  // n件更新を表示しない.
-			Database.updateRowAsync(music,nomessage);
-		    }else{
-			debugprint(id+'は削除されています');
-		    }
+		    Database.updateRowAsync(music);
 		} catch (x) {
+		    debugprint(id+'は削除されています(x='+x+')');
 		}
 	    }
 	};
@@ -262,9 +262,8 @@ var Database = {
      * DBを更新する.
      * 非同期処理
      * @param music 動画情報
-     * @param nomessage trueならメッセージ表示なし
      */
-    updateRowAsync:function(music,nomessage){
+    updateRowAsync:function(music){
 	let st = this.dbconnect.createStatement('update nicovideo set title=?1,description=?2,thumbnail_url=?3,first_retrieve=?4,length=?5,view_counter=?6,comment_num=?7,mylist_counter=?8,tags=?9,update_date=?10 where video_id=?11');
 	st.bindUTF8StringParameter(0,music.title);
 	st.bindUTF8StringParameter(1,music.description);
@@ -470,6 +469,7 @@ var Database = {
 	let callback = {
 	    handleCompletion:function(reason){
 		$('db-label').value = LoadFormattedString('STR_DBRESULT',[Database.searchresult.length]);
+		// 検索した動画を即時更新は重そうなので今のところはやめておく
 		//Database.updateDatabase( Database.searchresult );
 	    },
 	    handleError:function(error){
@@ -498,6 +498,8 @@ var Database = {
     updateDatabase:function(movies){
 	clearInterval(this._updatehandle);
 	if(!movies) return;
+
+	$('db-label').value = "検索結果の動画情報を更新しています...";
 	this.delayedUpdate(movies);
 	this._updatehandle = setInterval(
 	    function(){
@@ -508,7 +510,8 @@ var Database = {
 	let now = GetCurrentTime();
 	let cnt=0;
 	for(let i=0,item;item=movies[i];i++){
-	    if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
+	    //if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
+	    if (cnt<10 && !item.done ){
 		cnt++;
 		item.done = true;
 		this.updateOneVideoAsync(item.video_id);
@@ -517,6 +520,7 @@ var Database = {
 	debugprint('updating db...'+cnt);
 	if(cnt==0){
 	    clearInterval(this._updatehandle);
+	    $('db-label').value = "更新終了しました";
 	    debugprint('updating done.');
 	}
     },
@@ -649,47 +653,6 @@ var Database = {
 	}
 	st.finalize();
 	$('db-label').value = LoadFormattedString('STR_DB_REGISTERED_NUM',[n]);
-    },
-
-    /**
-     * DBから動画情報を削除する.
-     * @param video_id 動画ID
-     */
-    deleteMovieByVideoId:function(video_id){
-	let st;
-	try{
-	    st = this.dbconnect.createStatement('delete from nicovideo where video_id=?1');
-	    st.bindUTF8StringParameter(0,video_id);
-	    st.execute();
-	    st.finalize();
-	    StarRateCache["_"+video_id] = -1;
-	} catch (x) {
-	}
-    },
-
-    /**
-     * 動画を削除する.
-     * @param node メニューを出したノード
-     */
-    deleteMovie:function(node){
-	let elem = FindParentElement(node,'vbox');
-	let video_id = elem.getAttribute('nicovideo_id');
-	this.deleteMovieByVideoId(video_id);
-	ShowNotice(video_id+"をDBから削除しました");
-    },
-
-    /**
-     * サーチ結果にある動画を全て削除する.
-     */
-    deleteSearchResults:function(){
-	if( !ConfirmPrompt('検索結果にある動画を全てDBから削除しますか？','動画の削除') ) return;
-
-	let videos = evaluateXPath(document,"//html:table[@id='database-table']//*[@nicovideo_id]");
-	for(let i=0,item; item=videos[i];i++){
-	    let video_id = item.getAttribute("nicovideo_id");
-	    this.deleteMovieByVideoId(video_id);
-	}
-	ShowNotice('検索結果にある動画を全てDBから削除しました');
     },
 
     /**
@@ -984,6 +947,7 @@ var Database = {
 
     /**
      * ファイルからDBに登録する.
+     * 現在はsm|nmのみに対応。
      * @param file nsIFile
      */
     readFileToDatabase:function(file){
@@ -998,7 +962,7 @@ var Database = {
 	do {
 	    hasmore = istream.readLine(line);
 	    if( line.value.match(/(sm|nm)\d+/) ){
-		str += line.value;
+		str += line.value + " ";
 	    }
 	} while(hasmore);
 
@@ -1061,6 +1025,107 @@ var Database = {
 	    this.addVideos(str);
 	    return;
 	}
+    },
+
+    /**
+     * 検索結果の動画IDをコピーする.
+     */
+    copyVideoId:function(){
+	let items = $('db-search-result').selectedItems;
+	let str = "";
+	for(let i=0,item; item=items[i]; i++){
+	    str += item.getAttribute('vid') + "\n";
+	}
+	CopyToClipboard(str);
+    },
+    /**
+     * 検索結果をストックに追加する.
+     */
+    addToStock:function(){
+	let items = $('db-search-result').selectedItems;
+	let str = "";
+	for(let i=0,item; item=items[i]; i++){
+	    str += item.getAttribute('vid') + " ";
+	}
+	NicoLiveStock.addStock(str);
+    },
+    /**
+     * 検索結果からリクエストする.
+     */
+    sendRequest:function(){
+	if( IsCaster() || IsOffline() ){
+	    // リクエストリストに放り込むときは複数可
+	    let items = $('db-search-result').selectedItems;
+	    let str = "";
+	    for(let i=0,item; item=items[i]; i++){
+		str += item.getAttribute('vid') + " ";
+	    }
+	    NicoLiveRequest.addRequest(str);
+	}else{
+	    // リクエスト送信は1つのみ.
+	    let video_id = $('db-search-result').selectedItem.getAttribute('vid');
+	    NicoLiveHelper.postListenerComment(video_id,"");
+	}
+    },
+
+    /**
+     * DBから動画情報を削除する.
+     * @param video_id 動画ID
+     */
+    deleteMovieByVideoId:function(video_id){
+	let st;
+	try{
+	    st = this.dbconnect.createStatement('delete from nicovideo where video_id=?1');
+	    st.bindUTF8StringParameter(0,video_id);
+	    st.execute();
+	    st.finalize();
+	    StarRateCache["_"+video_id] = -1;
+	} catch (x) {
+	}
+    },
+
+    /**
+     * 動画を削除する.
+     * @param node メニューを出したノード
+     */
+    deleteMovie:function(){
+	let items = $('db-search-result').selectedItems;
+	for(let i=0,item; item=items[i]; i++){
+	    this.deleteMovieByVideoId( item.getAttribute('vid') );
+	}
+	ShowNotice("選択した動画をDBから削除しました");
+    },
+
+    /**
+     * サーチ結果にある動画を全て削除する.
+     */
+    deleteSearchResults:function(){
+	if( !ConfirmPrompt('検索結果にある動画を全てDBから削除しますか？','動画の削除') ) return;
+
+	let videos = $('db-search-result').getElementsByTagName('listitem');
+	for(let i=0,item; item=videos[i];i++){
+	    let video_id = item.getAttribute("vid");
+	    this.deleteMovieByVideoId(video_id);
+	}
+	ShowNotice('検索結果にある動画を全てDBから削除しました');
+    },
+
+    onkeydown:function(event){
+	//debugprint(event);
+	//this._data = event;
+	switch( event.keyCode ){
+	case 65: // A
+	    if( event.ctrlKey ){
+		$('db-search-result').selectAll();
+		event.stopPropagation();
+		return false;
+	    }
+	    break;
+	case 46: // DEL
+	    this.deleteMovie();
+	    break;
+	}
+	return true;
     },
 
     /**

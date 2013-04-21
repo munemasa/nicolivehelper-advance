@@ -601,7 +601,9 @@
 		  <menuitem label="&toriaezu_mylist;" oncommand="NicoLiveMylist.addToDatabaseFromDeflist();"/>
 		</menupopup>
 	      </button>
-	      <textbox id="input-db" emptytext="&db.emptytext_input;" flex="1" type="search" searchbutton="true" oncommand="NicoLiveDatabase.addVideos(this.value);"/>
+	      <textbox id="input-db" emptytext="&db.emptytext_input;" flex="1"
+		       type="search" searchbutton="true"
+		       oncommand="Database.addVideos(this.value);"/>
 	      <spacer flex="1"/>
 	      <label id="db-label"/>
 	    </hbox>
@@ -640,11 +642,12 @@
 	      <button label="&db.do_search;" oncommand="Database.search();"/>
 	      <!-- <button label="&db.add_stock;" oncommand="NicoLiveDatabase.addStockAll();"/> -->
 	      <spacer flex="1"/>
-	      <button label="&db.update;" tooltiptext="&db.tooltip_update;" oncommand="NicoLiveDatabase.updateDatabase(NicoLiveDatabase._searchresult);"/>
+	      <button label="&db.update;" tooltiptext="&db.tooltip_update;" oncommand="Database.updateDatabase(Database.searchresult);"/>
 	    </hbox>
 	    
 	    <!-- 検索結果表示 -->
-	    <listbox flex="1" id="db-search-result" seltype="multiple" context="">
+	    <listbox flex="1" id="db-search-result" seltype="multiple" context="popup-db-result"
+		     onkeydown="return Database.onkeydown(event);">
 	    </listbox>
 	  </vbox>
 	  <!-- folder DB -->
@@ -1085,24 +1088,65 @@
 		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
     </menupopup>
 
+    <!-- DB検索結果リスト用メニュー for database -->
+    <menupopup id="popup-db-result">
+      <menuitem label="&menu.copy_video_id;"
+		oncommand="Database.copyVideoId();"/>
+      <menuitem label="&menu.db_sendrequest;"
+		oncommand="Database.sendRequest();"/>
+      <menuitem label="&menu.db_addtostock;"
+		oncommand="Database.addToStock();"/>
+      <!-- <menuitem label="&menu.set_pname;"
+		oncommand="NicoLiveDatabase.setPName($('popup-db-result').triggerNode);"/> -->
+      <menu label="&rate.name;">
+	<menupopup oncommand="NicoLiveDatabase.setFavorite(event,$('popup-db-result').triggerNode);"
+		   onpopupshowing="return NicoLiveDatabase.showingRateMenu(event,$('popup-db-result').triggerNode);">
+	  <menuitem label="&rate.none;" value="0" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.1;" value="10" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.2;" value="20" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.3;" value="30" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.4;" value="40" type="radio" autoCheck="true"/>
+	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
+	</menupopup>
+      </menu>
+      <!-- <menuitem label="&menu.db_copy_result;"
+		oncommand="NicoLiveDatabase.copyAllToClipboard();"/> -->
+      <menuseparator/>
+      <menuitem label="&menu.db_delete;"
+		oncommand="Database.deleteMovie();"/>
+      <menuseparator/>
+      <menuitem label="&menu.db_delete_all;"
+		oncommand="Database.deleteSearchResults();"/>
+    </menupopup>
+
     <!-- DBフォルダ用のポップアップメニュー -->
     <menupopup id="folder-list-menu">
-      <menuitem label="&folder.new;" oncommand="NicoLiveFolderDB.newList();" tooltiptext="&folder.new.help;"/>
-      <menuitem label="&folder.rename;" oncommand="NicoLiveFolderDB.renameList();" tooltiptext="&folder.rename.help;"/>
-      <menuitem label="&folder.delete;" oncommand="NicoLiveFolderDB.deleteList();" tooltiptext="&folder.delete.help;"/>
+      <menuitem label="&folder.new;"
+		oncommand="NicoLiveFolderDB.newList();" tooltiptext="&folder.new.help;"/>
+      <menuitem label="&folder.rename;"
+		oncommand="NicoLiveFolderDB.renameList();" tooltiptext="&folder.rename.help;"/>
+      <menuitem label="&folder.delete;"
+		oncommand="NicoLiveFolderDB.deleteList();" tooltiptext="&folder.delete.help;"/>
       <menuseparator/>
-      <menuitem label="&folder.addvideo;" oncommand="NicoLiveFolderDB.appendVideos();" tooltiptext="&folder.addvideo.help;"/>
+      <menuitem label="&folder.addvideo;"
+		oncommand="NicoLiveFolderDB.appendVideos();" tooltiptext="&folder.addvideo.help;"/>
     </menupopup>
 
     <menupopup id="folder-item-menu">
-      <menuitem label="&folderitem.play;" oncommand="NicoLiveFolderDB.playVideo();" tooltiptext="&folderitem.play.help;"/>
-      <menuitem label="&folderitem.openpage;" oncommand="NicoLiveFolderDB.openVideoPage();" tooltiptext="&folderitem.openpage.help;"/>
-      <menuitem label="&menu.copy_video_id;" oncommand="NicoLiveFolderDB.copyVideoId();" tooltiptext="&folderitem.copy.help;"/>
+      <menuitem label="&folderitem.play;"
+		oncommand="NicoLiveFolderDB.playVideo();" tooltiptext="&folderitem.play.help;"/>
+      <menuitem label="&folderitem.openpage;"
+		oncommand="NicoLiveFolderDB.openVideoPage();" tooltiptext="&folderitem.openpage.help;"/>
+      <menuitem label="&menu.copy_video_id;"
+		oncommand="NicoLiveFolderDB.copyVideoId();" tooltiptext="&folderitem.copy.help;"/>
       <menuseparator/>
-      <menuitem label="&menu.db_addtostock;" oncommand="NicoLiveFolderDB.addToStock();" tooltiptext="&folderitem.addtostock.help;"/>
-      <menuitem label="&menu.db_sendrequest;" oncommand="NicoLiveFolderDB.sendRequest();" tooltiptext="&folderitem.sendrequest.help;"/>
+      <menuitem label="&menu.db_addtostock;"
+		oncommand="NicoLiveFolderDB.addToStock();" tooltiptext="&folderitem.addtostock.help;"/>
+      <menuitem label="&menu.db_sendrequest;"
+		oncommand="NicoLiveFolderDB.sendRequest();" tooltiptext="&folderitem.sendrequest.help;"/>
       <menuseparator/>
-      <menuitem label="&folderitem.deletevideo;" oncommand="NicoLiveFolderDB.deleteVideo();" tooltiptext="&folderitem.deletevideo.help;"/>
+      <menuitem label="&folderitem.deletevideo;"
+		oncommand="NicoLiveFolderDB.deleteVideo();" tooltiptext="&folderitem.deletevideo.help;"/>
     </menupopup>
 
     <!-- マイリストに追加しかないメニュー -->
