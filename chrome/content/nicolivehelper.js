@@ -3296,6 +3296,8 @@ var NicoLiveHelper = {
      * @param community_id 放送しているコミュニティID
      */
     openNewBroadcast: function(request_id, title, iscaster, community_id){
+	$('debug-textbox').value = '';
+
 	if( request_id=="lv0" ){
 	    debugprint("Now offline.");
 	    return;
@@ -3393,6 +3395,9 @@ var NicoLiveHelper = {
 	    }
 
 	    document.title = NicoLiveHelper.liveinfo.request_id+" "+NicoLiveHelper.liveinfo.title+" ("+NicoLiveHelper.liveinfo.owner_name+")";
+	    if( Config.isSingleWindow() ){
+		document.title += "/SingleWindow";
+	    }
 
 	    if( evaluateXPath(xml,"//quesheet").length ){
 		// タイムシフトの場合プレイリストを再構築.
@@ -4430,8 +4435,10 @@ var NicoLiveHelper = {
      */
     saveRequest:function(){
 	// 視聴者ではリクエストは保存しない.
-	if(!this.iscaster && !this.isOffline()) return;
-	Storage.writeObject( "nico_request_setno"+this.request_setno, this.request_list );
+	// シングルウィンドウのときは常に保存する.
+	if( IsCaster() || IsOffline() || Config.isSingleWindow() ){
+	    Storage.writeObject( "nico_request_setno"+this.request_setno, this.request_list );
+	}
     },
     /**
      * ストックをセーブする
@@ -4444,9 +4451,11 @@ var NicoLiveHelper = {
      */
     savePlaylist:function(){
 	// 視聴者ではプレイリストは保存しない.
-	if(!this.iscaster && !this.isOffline()) return;
-	Storage.writeObject( "nico_playlist", this.playlist_list );
-	Storage.writeObject( "nico_playlist_txt", $('playlist-textbox').value );
+	// シングルウィンドウのときは常に保存する.
+	if( IsCaster() || IsOffline() || Config.isSingleWindow() ){
+	    Storage.writeObject( "nico_playlist", this.playlist_list );
+	    Storage.writeObject( "nico_playlist_txt", $('playlist-textbox').value );
+	}
     },
     /**
      * リクエスト、ストック、プレイリストを保存する
@@ -4561,6 +4570,9 @@ var NicoLiveHelper = {
     init: function(){
 	debugprint('Initializing NicoLive Helper Advance '+GetAddonVersion()+'...');
 	document.title = "NicoLive Helper Advance " + GetAddonVersion();
+	if( Config.isSingleWindow() ){
+	    document.title += "/SingleWindow";
+	}
 	srand( GetCurrentTime() );
 
 	SetUserAgent("NicoLiveHelperAdvance/"+GetAddonVersion());
@@ -4612,7 +4624,7 @@ var NicoLiveHelper = {
 
 	if( request_id && request_id!="lv0" ){
 	    // オンライン
-	    if( iscaster ){
+	    if( iscaster || Config.isSingleWindow() ){
 		this.request_list = this.loadRequest( this.request_setno );
 		NicoLiveRequest.updateView( this.request_list );
 		this.loadPlaylist();

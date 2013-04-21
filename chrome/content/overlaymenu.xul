@@ -2,6 +2,7 @@
 
 <overlay id="NicoLiveHelperAdvance" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/prefutils.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/overlay.js" />
 
   <menupopup id="goPopup">

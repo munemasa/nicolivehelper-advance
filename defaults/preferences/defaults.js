@@ -60,6 +60,7 @@ pref("extensions.nicolivehelperadvance.display.font-color","");
 pref("extensions.nicolivehelperadvance.display.font-scale",9);
 
 // 詳細設定→ウィンドウ
+pref("extensions.nicolivehelperadvance.window.singlewindow",false);
 pref("extensions.nicolivehelperadvance.window.auto-open",false);
 pref("extensions.nicolivehelperadvance.window.auto-close",false);
 pref("extensions.nicolivehelperadvance.window.auto-open-listener",false);
