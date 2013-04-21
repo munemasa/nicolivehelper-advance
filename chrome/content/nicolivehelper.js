@@ -3406,6 +3406,7 @@ var NicoLiveHelper = {
 	    }
 
 	    NicoLiveHelper.setLiveProgressBarTipText();
+	    NicoLiveHelper.setAutoNextLiveIcon();
 
 	    NicoLiveWindow.scrollLivePage();
 	    this._donotshowdisconnectalert = false;
@@ -4551,6 +4552,51 @@ var NicoLiveHelper = {
     setCancelHeartbeat:function(){
 	let b = $('cancel-heartbeat').hasAttribute('checked');
 	NicoLiveHttpObserver._testCancelHeartbeat( b );
+    },
+
+    /**
+     * 次枠自動追跡の切り替え.
+     * @param event onclickイベント
+     */
+    changeAutoNextLiveSetting:function(event){
+	if( IsOffline() ) return;
+	if( !this.liveinfo.default_community ) return;
+	event = event || window.event;
+	let btnCode;
+	if ('object' == typeof event){
+	    btnCode = event.button;
+	    switch (btnCode){
+	    case 0: // left
+                break;
+	    case 1: // middle
+	    case 2: // right
+	    default: // unknown
+		return;
+	    }
+	}
+
+	if( NicoLiveAlertModule.isRegistered( this.liveinfo.default_community ) ){
+	    NicoLiveAlertModule.unregisterTarget( this.liveinfo.default_community );
+	}else{
+	    NicoLiveAlertModule.registerTarget( this.liveinfo.default_community, this );
+	}
+	this.setAutoNextLiveIcon();
+    },
+
+    /**
+     * 次枠自動移動のアイコンを設定.
+     * 追跡の有効、無効によってアイコンを切り替える。
+     * アラートサーバーへの接続も行う。
+     */
+    setAutoNextLiveIcon:function(){
+	if( NicoLiveAlertModule.isRegistered( this.liveinfo.default_community ) ){
+	    $('statusbar-autonext').setAttribute('src','chrome://nicolivehelperadvance/content/data/bell.png');
+	    if( !IsOffline() ){
+		NicoLiveAlertModule.connect( new XMLHttpRequest() );
+	    }
+	}else{
+	    $('statusbar-autonext').setAttribute('src','chrome://nicolivehelperadvance/content/data/bell-mono.png');
+	}
     },
 
     /**

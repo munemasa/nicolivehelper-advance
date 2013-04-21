@@ -787,7 +787,7 @@
     <statusbarpanel id="statusbar-autonext" context="popup-nicolive-alert"
 		    style="margin-left:1px; margin-right:1px;"
 		    class="statusbarpanel-iconic" src="data/bell-mono.png"
-		    onclick=""/>
+		    onclick="NicoLiveHelper.changeAutoNextLiveSetting(event);"/>
     <statusbarpanel id="status-bar-browser"
 		    class="statusbarpanel-iconic" src="data/firefox.png"
 		    context="popup-select-browser"/>
