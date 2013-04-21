@@ -842,17 +842,16 @@
       <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-request').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-request').triggerNode);"
-		id="popup-request-marker"
-		/>
+		id="popup-request-marker"/>
       <menu label="&rate.name;">
-	<menupopup oncommand="TODO NicoLiveDatabase.setFavorite(event,$('popup-request').triggerNode);"
-		   onpopupshowing="TODO return NicoLiveDatabase.showingRateMenu(event,$('popup-request').triggerNode);">
-	  <menuitem label="&rate.none;" value="0" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.1;" value="10" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.2;" value="20" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.3;" value="30" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.4;" value="40" type="radio" autoCheck="true"/>
-	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
+	<menupopup oncommand="Database.setFavorite(event,$('popup-request').triggerNode);"
+		   onpopupshowing="return Database.showingRateMenu(event,$('popup-request').triggerNode);">
+	  <menuitem label="&rate.none;" value="0" type="checkbox" />
+	  <menuitem label="&rate.1;" value="10" type="checkbox" />
+	  <menuitem label="&rate.2;" value="20" type="checkbox" />
+	  <menuitem label="&rate.3;" value="30" type="checkbox" />
+	  <menuitem label="&rate.4;" value="40" type="checkbox" />
+	  <menuitem label="&rate.5;" value="50" type="checkbox" />
 	</menupopup>
       </menu>
 
@@ -945,6 +944,17 @@
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"
 		id="popup-stock-marker"/>
+      <menu label="&rate.name;">
+	<menupopup oncommand="Database.setFavorite(event,$('popup-stock').triggerNode);"
+		   onpopupshowing="return Database.showingRateMenu(event,$('popup-stock').triggerNode);">
+	  <menuitem label="&rate.none;" value="0" type="checkbox" />
+	  <menuitem label="&rate.1;" value="10" type="checkbox" />
+	  <menuitem label="&rate.2;" value="20" type="checkbox" />
+	  <menuitem label="&rate.3;" value="30" type="checkbox" />
+	  <menuitem label="&rate.4;" value="40" type="checkbox" />
+	  <menuitem label="&rate.5;" value="50" type="checkbox" />
+	</menupopup>
+      </menu>
 
       <menuitem label="&menu.turnoff_playedflag;" oncommand="NicoLiveStock.turnoffPlayedStatus($('popup-stock').triggerNode);"/>
 
@@ -985,6 +995,17 @@
 		label="&menu.copy_video_id;"
 		oncommand="MenuControl.copyVideoIdToClipboard($('popup-playlist').triggerNode);"/>
       <!-- マイリストに追加を追加するためのマーカー -->
+      <menu label="&rate.name;">
+	<menupopup oncommand="Database.setFavorite(event,$('popup-playlist').triggerNode);"
+		   onpopupshowing="return Database.showingRateMenu(event,$('popup-playlist').triggerNode);">
+	  <menuitem label="&rate.none;" value="0" type="checkbox" />
+	  <menuitem label="&rate.1;" value="10" type="checkbox" />
+	  <menuitem label="&rate.2;" value="20" type="checkbox" />
+	  <menuitem label="&rate.3;" value="30" type="checkbox" />
+	  <menuitem label="&rate.4;" value="40" type="checkbox" />
+	  <menuitem label="&rate.5;" value="50" type="checkbox" />
+	</menupopup>
+      </menu>
 
       <menuseparator/>
       <menu label="&classify.menu;">
@@ -1097,6 +1118,7 @@
 		oncommand="Database.addToStock();"/>
       <!-- <menuitem label="&menu.set_pname;"
 		oncommand="NicoLiveDatabase.setPName($('popup-db-result').triggerNode);"/> -->
+      <!--
       <menu label="&rate.name;">
 	<menupopup oncommand="NicoLiveDatabase.setFavorite(event,$('popup-db-result').triggerNode);"
 		   onpopupshowing="return NicoLiveDatabase.showingRateMenu(event,$('popup-db-result').triggerNode);">
@@ -1108,6 +1130,7 @@
 	  <menuitem label="&rate.5;" value="50" type="radio" autoCheck="true"/>
 	</menupopup>
       </menu>
+      -->
       <menuseparator/>
       <menuitem label="&menu.db_delete;"
 		oncommand="Database.deleteMovie();"/>
