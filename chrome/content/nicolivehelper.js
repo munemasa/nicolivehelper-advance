@@ -2393,7 +2393,7 @@ var NicoLiveHelper = {
 	let main = $('main-state-soundonly');
 	let sub = $('sub-state-soundonly');
 
-	if( text.match(/^\/play(sound)*\s*smile:.*(main|sub).*\"(.*)\"$/) ){
+	if( text.match(/^\/play(sound)*\s*smile:.*(main|sub)\s*\"(.*)\"$/) ){
 	    // 動画の再生
 	    let is_soundonly = RegExp.$1;
 	    let target = RegExp.$2;
@@ -3325,6 +3325,9 @@ var NicoLiveHelper = {
 	    for(let i=0,currentplay;currentplay=contents[i];i++){
 		let id = currentplay.getAttribute('id');
 		let title = currentplay.getAttribute('title') || "";
+		// 2回必要
+		title = restorehtmlspecialchars(title);
+		title = restorehtmlspecialchars(title);
 		let b = currentplay.getAttribute('disableVideo')=='1'?true:false;
 		if( id=="main" ){
 		    $('main-state-soundonly').checked = b;
@@ -4416,8 +4419,9 @@ var NicoLiveHelper = {
 	this.playlist_list = Storage.readObject( "nico_playlist", [] );
 	for(let i=0,item;item=this.playlist_list[i];i++){
 	    this.playlist_list["_"+item.video_id] = this.playlist_list[i].playedtime;
-	    NicoLiveHistory.addPlayList( item );
+	    //NicoLiveHistory.addPlayList( item );
 	}
+	NicoLiveHistory.updateView( this.playlist_list );
 	$('playlist-textbox').value = Storage.readObject( "nico_playlist_txt", "" );
     },
 
@@ -4513,6 +4517,16 @@ var NicoLiveHelper = {
 		this.userdefinedvalue = eval('('+req.responseText+')');
 	    }
 	}
+    },
+
+    /**
+     * 生主モードに移行.
+     */
+    toCasterMode: function(){
+	this.iscaster = true;
+	this.request_list = this.loadRequest( this.request_setno );
+	NicoLiveRequest.updateView( this.request_list );
+	this.loadPlaylist();
     },
 
     /**

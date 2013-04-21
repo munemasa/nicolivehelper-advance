@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
+Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.jsm");
+
 /**
  * 動画データベースなど
  */
@@ -70,7 +72,6 @@ var Database = {
     searchresult_node: null,
 
     pnamecache: {},
-    ratecache: {},
 
     numvideos: 0,
     addcounter: 0,
@@ -97,7 +98,7 @@ var Database = {
     },
 
     /**
-     * 動画をDBに追加する.
+     * 動画(複数)をDBに追加する.
      * 非同期処理。このメソッドでは10桁IDは取り込まない。
      * 処理残りをDBのラベルに表示しつつ、ジョブが空になるとコールバックを呼び出す。
      * @param sm 動画ID(sm,nm)やマイリスト
@@ -238,7 +239,7 @@ var Database = {
 		if(!this.error){
 		    // 追加に成功
 		    delete Database.jobs[music.video_id];
-		    Database.ratecache["_"+music.video_id] = 0;
+		    StarRateCache["_"+music.video_id] = 0;
 		}
 	    },
 	    handleError:function(error){
@@ -661,7 +662,7 @@ var Database = {
 	    st.bindUTF8StringParameter(0,video_id);
 	    st.execute();
 	    st.finalize();
-	    this.ratecache["_"+video_id] = -1;
+	    StarRateCache["_"+video_id] = -1;
 	} catch (x) {
 	}
     },
@@ -822,7 +823,7 @@ var Database = {
 	    st.finalize();
 	} catch (x) {
 	}
-	this.ratecache["_"+video_id] = rate;
+	StarRateCache["_"+video_id] = rate;
     },
 
     /**
@@ -830,7 +831,7 @@ var Database = {
      * @param video_id 動画ID
      */
     getFavorite:function(video_id){
-	if( this.ratecache["_"+video_id] ) return this.ratecache["_"+video_id];
+	if( StarRateCache["_"+video_id] ) return StarRateCache["_"+video_id];
 
 	let rate = -1;
 	try{
@@ -841,7 +842,7 @@ var Database = {
 	    }
 	    st.finalize();
 	    if(!rate) rate = 0;
-	    this.ratecache["_"+video_id] = rate;
+	    StarRateCache["_"+video_id] = rate;
 	} catch (x) {
 	    rate = 0;
 	}
@@ -1119,7 +1120,7 @@ var Database = {
 	}
 	debugprint("DB file:"+this._filename);
 	this.pnamecache = new Object();
-	this.ratecache  = new Object();
+
 	this.addSearchLine();
 	this.setRegisterdVideoNumber();
 
