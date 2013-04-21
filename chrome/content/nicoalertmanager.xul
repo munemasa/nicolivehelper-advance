@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 
 <dialog id="continuouscommentwindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
-	title="アラート管理(NicoLive Helper)"
+	title="アラート管理(NicoLive Helper Advance)"
 	buttons="cancel" ondialogcancel="return true;">
 
   <script type="application/javascript;version=1.7"
@@ -11,12 +11,15 @@
 	  src="chrome://nicolivehelperadvance/content/nicoalertmanager.js" />
 
   <vbox flex="1">
-    <label value="次枠誘導コミュニティ"/>
-    <description>以下のコミュニティの生放送が開始されると放送ページを開きます。</description>
+    <description>以下に登録されているコミュニティの生放送が開始されると放送ページを開きます。</description>
     <listbox id="manage-community" flex="1"
 	     context="popup-menu"
 	     onkeydown="return OnKeyDown(event);">
     </listbox>
+    <hbox>
+      <textbox id="textbox-enter" flex="1" placeholder="登録するコミュニティIDや放送IDを入力してください"/>
+      <button label="追加" oncommand="Add()"/>
+    </hbox>
   </vbox>
 
   <popupset>

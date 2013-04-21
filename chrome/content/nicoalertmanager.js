@@ -8,12 +8,22 @@ function Init(){
     }
 }
 
+function Add(){
+    var v = $('textbox-enter').value;
+    if( !NicoLiveAlertModule.isRegistered(v) ){
+	$('manage-community').appendItem(v,v);
+	// TODO 第二引数は仮
+	NicoLiveAlertModule.registerTarget(v, true);
+    }
+    $('textbox-enter').value = '';
+}
+
 function Delete(){
     var item = $('manage-community').selectedItem;
     if( item ){
 	NicoLiveAlertModule.unregisterTarget(item.value);
 	RemoveElement(item);
-	window.opener.NicoLiveHelper.setAutoNextLiveIcon();
+	// TODO window.opener.NicoLiveHelper.setAutoNextLiveIcon();
     }
 }
 
