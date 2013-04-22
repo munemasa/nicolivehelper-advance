@@ -20,6 +20,12 @@
       <textbox id="textbox-enter" flex="1" placeholder="登録するコミュニティIDや放送IDを入力してください"/>
       <button label="追加" oncommand="Add()"/>
     </hbox>
+    <hbox>
+      <button id="connect" label="接続"
+	      oncommand="NicoLiveAlertModule.connect( new XMLHttpRequest() ); SetButtonVisibility();"/>
+      <button id="disconnect" label="切断"
+	      oncommand="NicoLiveAlertModule.closeConnection(); SetButtonVisibility();"/>
+    </hbox>
   </vbox>
 
   <popupset>
