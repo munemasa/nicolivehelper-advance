@@ -4,7 +4,7 @@ var Backup = {
     /**
      * 現在の状態をsystem-backupに取る.
      */
-    backupCurrent:function(){
+    current:function(){
 	this.backup('system-backup');
 	this.createRestoreMenu();
     },
