@@ -12,6 +12,14 @@ var NicoLiveHelperAdvanceOverlay = {
 	return pref.getBoolPref("window.singlewindow");
     },
 
+    openNicoAlertManager:function(){
+	var value = null;
+	var f = "chrome,resizable=yes,centerscreen";
+	var w = window.openDialog("chrome://nicolivehelperadvance/content/nicoalertmanager.xul","nicoalert",
+				  f,value);
+	w.focus();
+    },
+
     insertHistory:function(url,title){
 	if(url=="lv0") return;
 

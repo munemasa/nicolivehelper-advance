@@ -20,6 +20,8 @@ var NicoLiveAlertModule = {
     alerted_target: {},   // 通知済みフラグ
     use_external_browser: false,
 
+    window_instance: null,
+
     /**
      * 通知対象として登録済みか.
      */
@@ -69,16 +71,14 @@ var NicoLiveAlertModule = {
 			    }, 2000 );
 		 */
 		NicoLiveAlertModule.openDefaultBrowser("http://live.nicovideo.jp/watch/"+request_id);
-		// TODO
-		/*
+		// シングルウィンドウでオートタブクローズが有効なら.
 		try{
-		    d.closeBroadcastingTab( d.request_id, d.community );
-		    if( !d.isAutoWindowClose() ){
-			// Windowオートクローズじゃなければ接続しちゃう
-			d.connectNewBroadcasting(request_id,"",true,request_id);
+		    if( this.window_instance.config.isSingleWindow() &&
+			this.window_instance.config.isAutoTabClose() ){
+			this.window_instance.closeBroadcastingTab( this.window_instance.liveinfo.request_id,
+								   this.window_instance.liveinfo.default_community );
 		    }
 		}catch(e){}
-		 */
 	    }
 	}
     },
