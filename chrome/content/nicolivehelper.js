@@ -476,7 +476,15 @@ var NicoLiveHelper = {
 	    if( n==MAIN || n==SUB ){
 		return this.play_status[ n ].videoinfo;
 	    }else{
-		return this.play_status[ this.play_target ].videoinfo;
+		let main = this.play_status[MAIN].videoinfo;
+		let sub = this.play_status[SUB].videoinfo;
+		if( main && sub ){
+		    // メイン、サブの両方が再生中なら、現在の再生ターゲット
+		    return this.play_status[ this.play_target ].videoinfo;
+		}else{
+		    // そうでなければ動画を再生している方を
+		    return main || sub;
+		}
 	    }
 	} catch (x) {
 	    return null;
