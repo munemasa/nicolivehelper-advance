@@ -9,6 +9,8 @@ Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 var pname_whitelist = {};
 
 var NicoLiveHelper = {
+    config: null, // Configオブジェクト
+
     secofweek: 604800, // 1週間の秒数(60*60*24*7).
     remainpoint: 0,    // 所有ニコニコポイント
 
@@ -4669,6 +4671,8 @@ var NicoLiveHelper = {
      * ウィンドウを開くときに真っ先に呼ばれる初期化関数.
      */
     init: function(){
+	this.config = Config;
+
 	debugprint('Initializing NicoLive Helper Advance '+GetAddonVersion()+'...');
 	document.title = "NicoLive Helper Advance " + GetAddonVersion();
 	if( Config.isSingleWindow() ){
@@ -4749,6 +4753,10 @@ var NicoLiveHelper = {
 	if( iscaster ){
 	    this.retrieveUserDefinedValue();
 	}
+
+	if( Config.isSingleWindow() ){
+	    NicoLiveAlertModule.window_instance = this;
+	}
     },
 
     /**
@@ -4781,6 +4789,10 @@ var NicoLiveHelper = {
 	this.closeAllConnection();
 
 	NicoLiveHttpObserver.destroy();
+
+	if( Config.isSingleWindow() ){
+	    NicoLiveAlertModule.window_instance = null;
+	}
     }
 
 };
