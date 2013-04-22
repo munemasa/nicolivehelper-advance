@@ -1,3 +1,4 @@
+
 var NicoLiveHelperAdvanceOverlay = {
     debugprint:function(txt){
 	//Application.console.log(txt);

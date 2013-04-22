@@ -45,7 +45,8 @@
 		oncommand="openNewTabWith('http://live.nicovideo.jp/my',window._content.document,null,event);" />
       <menuitem id="nlhadv-go-editstream" label="放送する"
 		oncommand="openNewTabWith('http://live.nicovideo.jp/editstream',window._content.document,null,event);" />
-      <menuitem id="nlhadv-go-mypage" label="ニコ生アラート管理"
+      <menuseparator/>
+      <menuitem id="nlhadv-go-mypage" label="アラート管理"
 		oncommand="NicoLiveHelperAdvanceOverlay.openNicoAlertManager();" />
     </menupopup>
   </popupset>

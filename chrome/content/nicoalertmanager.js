@@ -6,6 +6,17 @@ function Init(){
     for( k in l ){
 	$('manage-community').appendItem(k,k);
     }
+    SetButtonVisibility();
+}
+
+function SetButtonVisibility(){
+    if( NicoLiveAlertModule.connected ){
+	$('disconnect').hidden = false;
+	$('connect').hidden = true;
+    }else{
+	$('disconnect').hidden = true;
+	$('connect').hidden = false;
+    }
 }
 
 function Add(){
