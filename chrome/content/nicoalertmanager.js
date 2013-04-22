@@ -1,5 +1,5 @@
 
-var NicoLiveAlertModule = window.opener.NicoLiveAlertModule;
+Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
 function Init(){
     var l = NicoLiveAlertModule.alert_target;

@@ -2,6 +2,8 @@
 
 var EXPORTED_SYMBOLS = ["NicoLiveAlertModule"];
 
+//Components.utils.import("resource://gre/modules/Timer.jsm");
+
 function debugprint(str){
     var aConsoleService = Components.classes["@mozilla.org/consoleservice;1"].
 	getService(Components.interfaces.nsIConsoleService);
@@ -61,7 +63,12 @@ var NicoLiveAlertModule = {
 	if( d ){
 	    if( !this.alerted( community_id, request_id ) ){
 		this.alerted_target[community_id] = request_id;
-		this.openDefaultBrowser("http://live.nicovideo.jp/watch/"+request_id);
+		/*
+		setTimeout( function(){
+				NicoLiveAlertModule.openDefaultBrowser("http://live.nicovideo.jp/watch/"+request_id);
+			    }, 2000 );
+		 */
+		NicoLiveAlertModule.openDefaultBrowser("http://live.nicovideo.jp/watch/"+request_id);
 		// TODO
 		/*
 		try{
