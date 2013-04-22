@@ -328,7 +328,7 @@
 	      <menuitem label="9" value="9"/>
 	    </menupopup>
 	  </menulist>
-	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleRequest();"/>
+	  <button label="&button.shuffle;" oncommand="Backup.current();NicoLiveHelper.shuffleRequest();"/>
 	  <!--
 	  <button type="menu" label="リク受付方法">
 	    <menupopup>
@@ -341,9 +341,9 @@
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
-			oncommand="NicoLiveHelper.clearAllRequest();"/>
+			oncommand="Backup.current();NicoLiveHelper.clearAllRequest();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="NicoLiveHelper.clearPlayedRequest();"/>
+			oncommand="Backup.current();NicoLiveHelper.clearPlayedRequest();"/>
 	    </menupopup>
 	  </button>
 	  <label id="total-playtime" value="0分0秒/0件"/>
@@ -392,7 +392,7 @@
 	    </menupopup>
 	  </menulist>
 	  
-	  <button label="&button.shuffle;" oncommand="NicoLiveHelper.shuffleStock();"/>
+	  <button label="&button.shuffle;" oncommand="Backup.current();NicoLiveHelper.shuffleStock();"/>
 	  <button type="menu" label="&button.load_mylist;" style="min-width:1em;">
 	    <menupopup id="stock-from-mylist">
 	      <menuitem label="&toriaezu_mylist;" oncommand="NicoLiveMylist.addStockFromDeflist();"/>
@@ -403,9 +403,9 @@
 	  <button type="menu" label="消去" style="min-width:1em;">
 	    <menupopup id="menupopup-delete-stock">
 	      <menuitem label="&button.clearall;"
-			oncommand="NicoLiveHelper.clearAllStock();"/>
+			oncommand="Backup.current();NicoLiveHelper.clearAllStock();"/>
 	      <menuitem label="再生済みのみ消去"
-			oncommand="NicoLiveHelper.clearPlayedStock();"/>
+			oncommand="Backup.current();NicoLiveHelper.clearPlayedStock();"/>
 	    </menupopup>
 	  </button>
 	  <label id="stock-playtime" value="999分99秒/999件"/>
@@ -426,7 +426,7 @@
 	<hbox>
 	  <spacer flex="1"/>
 	  <button label="&button.clearall;"
-		  oncommand="NicoLiveHelper.clearRejectList();"/>
+		  oncommand="Backup.current();NicoLiveHelper.clearRejectList();"/>
 	</hbox>
 	<vbox flex="1" style="overflow:auto">
 	  <html:table id="reject-table" class="requestview">
@@ -438,7 +438,7 @@
       <vbox id="tab-playlist">
 	<hbox>
 	  <button label="&button.clearall;" tooltiptext="&playlist.tooltip_clearall;"
-		  oncommand="NicoLiveHelper.clearPlayList();"/>
+		  oncommand="Backup.current();NicoLiveHelper.clearPlayList();"/>
 	  <button label="&playlist.recover_text;" tooltiptext="&playlist.tooltip_recover_text;"
 		  oncommand="NicoLiveHistory.restorePlaylistText();"/>
 	  <spacer flex="1"/>
