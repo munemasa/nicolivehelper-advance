@@ -79,6 +79,8 @@
 	  src="chrome://nicolivehelperadvance/content/toolbar.js" />
   <script type="application/javascript;version=1.7"
 	  src="chrome://nicolivehelperadvance/content/commandmenu.js" />
+  <script type="application/javascript;version=1.7"
+	  src="chrome://nicolivehelperadvance/content/autocreatelive.js" />
 
   <keyset>
     <!-- F3: Find next -->
@@ -750,7 +752,7 @@
 	  <button label="&toolbar.nextlive_manually;"
 		  tooltiptext="次枠を取得するために、番組の新規作成ページにジャンプします。"
 		  oncommand="NicoLiveHelper.nextBroadcasting(true);"/>
-	  <button disabled="true" label="&toolbar.nextlive;" oncommand="TODO; NicoLiveHelper.nextBroadcasting();"/>
+	  <button label="&toolbar.nextlive;" oncommand="NicoLiveHelper.nextBroadcasting();"/>
 	  <button label="マイページ" oncommand="NicoLiveWindow.openDefaultBrowser('http://live.nicovideo.jp/my',true);"/>
 	</hbox>
       </vbox>
