@@ -238,6 +238,9 @@
 		<menuitem id="mikulive-recently-played-check" persist="checked"
 			  label="プレイログチェック(co154用)"
 			  tooltiptext="チェックがあると、co154で直近に再生された動画100件のチェックを行い、リクエストに前回の再生日時を提示します。" type="checkbox" autocheck="true"/>
+		<menuitem id="automatic-broadcasting" persist="checked"
+			  label="自動放送(Experimental)" type="checkbox" autocheck="true"
+			  tooltiptext="自動で放送を継続します。"/>
 		<menuseparator/>
 		<menuitem label="&toolbar.forget_learning;"
 			  oncommand="NicoLiveClassifier.forget();"/>
