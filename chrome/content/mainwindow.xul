@@ -101,6 +101,8 @@
     <key id="tweeting" key="t" modifiers="accel" oncommand="NicoLiveTweet.inputTweet();"/>
     <!-- CTRL+W: Close this window -->
     <key id="closewindow" key="w" modifiers="accel" oncommand="window.close();"/>
+    <!-- CTRL+Z: Undo -->
+    <key id="undo" key="z" modifiers="accel" oncommand="NicoLiveHelper.popUndoStack();"/>
 
     <!-- CTRL+Num: Change the tab -->
     <key id="tab-move-0" key="0" modifiers="accel" oncommand="NicoLiveWindow.changeTab(0);"/>

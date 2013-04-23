@@ -59,6 +59,8 @@ var NicoLiveHelper = {
     number_of_requests: {},  // ユーザー一人一人のリクエスト数
     userdefinedvalue: {},    // ユーザー定義値
 
+    undo_stack: [],          // アンドゥスタック
+
     // リクエスト、ストックを順番通りに処理するためのキュー
     request_q: [],
     stock_q: [],
@@ -105,6 +107,21 @@ var NicoLiveHelper = {
      */
     getStockSetNo: function(){
 	return this.stock_setno;
+    },
+
+    pushUndoStack: function( f ){
+	if( 'function'==typeof f ){
+	    this.undo_stack.push( f );
+	    if( this.undo_stack.length>10 ){
+		this.undo_stack.shift();
+	    }
+	}
+    },
+    popUndoStack: function(){
+	let f = this.undo_stack.pop();
+	if( 'function'==typeof f ){
+	    f();
+	}
     },
 
     /**
@@ -365,6 +382,14 @@ var NicoLiveHelper = {
      */
     removeRequest: function(n){
 	let removeditem = this.request_list.splice(n,1);
+
+	let f = function(){
+	    NicoLiveHelper.request_list.splice( n, 0, removeditem[0] );
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	return removeditem[0];
     },
     /**
@@ -373,6 +398,12 @@ var NicoLiveHelper = {
      */
     removeStock: function(n){
 	let removeditem = this.stock_list.splice(n,1);
+	let f = function(){
+	    NicoLiveHelper.stock_list.splice( n, 0, removeditem[0] );
+	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	    NicoLiveHelper.saveStock();
+	};
+	this.pushUndoStack( f );
 	return removeditem[0];
     },
 
@@ -406,14 +437,30 @@ var NicoLiveHelper = {
      * 画面の更新も行う.
      */
     shuffleRequest: function(){
+	let s = JSON.stringify( this.request_list );
+	let f = function(){
+	    NicoLiveHelper.request_list = JSON.parse(s);
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	ShuffleArray( this.request_list );
 	NicoLiveRequest.updateView( this.request_list );
+	this.saveRequest();
     },
     /**
      * ストックをシャッフルする.
      * 画面の更新も行う.
      */
     shuffleStock: function(){
+	let s = JSON.stringify( this.stock_list );
+	let f = function(){
+	    NicoLiveHelper.stock_list = JSON.parse(s);
+	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	};
+	this.pushUndoStack( f );
+
 	ShuffleArray( this.stock_list );
 	NicoLiveStock.updateView( this.stock_list );
     },
@@ -2093,6 +2140,15 @@ var NicoLiveHelper = {
      * 画面の更新あり
      */
     clearRejectList: function(){
+	if( this.reject_list.length<=0 ) return;
+
+	let s = this.reject_list;
+	let f = function(){
+	    NicoLiveHelper.reject_list = s;
+	    NicoLiveRejectRequest.updateView( s );
+	};
+	this.pushUndoStack( f );
+	
 	this.reject_list = new Array();
 	NicoLiveRejectRequest.updateView( this.reject_list );
     },
@@ -2101,6 +2157,17 @@ var NicoLiveHelper = {
      * プレイリストを全消去する.
      */
     clearPlayList: function(){
+	let s = this.playlist_list;
+	let s2 = $('playlist-textbox').value;
+	let f = function(){
+	    NicoLiveHelper.playlist_list = s;
+	    $('playlist-textbox').value = s2;
+	    NicoLiveHistory.updateView( s );
+	    NicoLiveStock.updatePlayedStatus( NicoLiveHelper.stock_list );
+	    NicoLiveHelper.savePlaylist();
+	};
+	this.pushUndoStack( f );
+
 	$('playlist-textbox').value = '';
 	this.playlist_list = new Array();
 	NicoLiveHistory.updateView( this.playlist_list );
