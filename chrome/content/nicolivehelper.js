@@ -2448,6 +2448,10 @@ var NicoLiveHelper = {
      * 放送終了時の処理.
      */
     finishBroadcasting: function(){
+	if( IsCaster() && $('automatic-broadcasting').hasAttribute('checked') ){
+	    this.nextBroadcasting();
+	}
+
 	this._donotshowdisconnectalert = true;
 	this.stopTimers();
 	this.closeAllConnection();
@@ -3577,13 +3581,11 @@ var NicoLiveHelper = {
 	if( !IsCaster() ) return;
 
 	if(!jingle){
-	    // TODO 自動放送
-	    /*
+	    // 自動放送
+	    // Automatic Broadcastingのときはジングルなしに次曲を再生開始可に.
 	    if( $('automatic-broadcasting').hasAttribute('checked') ){
-		// Automatic Broadcastingのときはジングルなしに次曲を再生開始可に.
-		if( !this.isInplay() ) NicoLiveHelper.setupPlayNextMusic(20*1000);
+		if( !this.isInplay() ) this.setupPlayNext(this.play_target, 20*1000);
 	    }
-	     */
 	    return;
 	}
 
@@ -3592,14 +3594,11 @@ var NicoLiveHelper = {
 		debugprint("play jingle.");
 		setTimeout(
 		    function(){
-			// TODO 自動放送
-			/*
 			 if( $('automatic-broadcasting').hasAttribute('checked') ){
-			 // Automatic Broadcastingのときはジングル再生に失敗しても
-			 // 継続できるように.
-			 NicoLiveHelper.setupPlayNextMusic(60*1000);
+			     // Automatic Broadcastingのときはジングル再生に失敗しても
+			     // 継続できるように 1分タイムアウトを設ける.
+			     NicoLiveHelper.setupPlayNext(NicoLiveHelper.play_target, 60*1000);
 			 }
-			 */
 			NicoLiveHelper.postCasterComment(jingle,"");
 		    }, 5*1000);
 	    }else{
@@ -3607,16 +3606,13 @@ var NicoLiveHelper = {
 	    }
 	}else{
 	    if( !this.isInplay() ){
-		// TODO 自動放送
-		/*
 		// 最近は枠取れたあとにしばらく入場できない場合があるため、
 		// 3分経過後に入場となったときにジングル再生が行なわれない.
 		// その場合にはジングル流さずに次を再生するようにして
 		// 自動配信を継続できるようにする.
 		if( $('automatic-broadcasting').hasAttribute('checked') ){
-		    NicoLiveHelper.setupPlayNextMusic(10*1000);
+		    this.setupPlayNext(this.play_target, 10*1000);
 		}
-		 */
 	    }
 	}
     },
