@@ -2448,20 +2448,26 @@ var NicoLiveHelper = {
      * 放送終了時の処理.
      */
     finishBroadcasting: function(){
-	if( IsCaster() && $('automatic-broadcasting').hasAttribute('checked') ){
+	let autolive = $('automatic-broadcasting').hasAttribute('checked');
+	if( IsCaster() && autolive ){
 	    this.nextBroadcasting();
 	}
 
-	this._donotshowdisconnectalert = true;
-	this.stopTimers();
-	this.closeAllConnection();
+	if( !autolive ){
+	    this._donotshowdisconnectalert = true;
+	    this.stopTimers();
+	    this.closeAllConnection();
 
-	PlayAlertSound();
-	let msg = this.liveinfo.request_id+' '+this.liveinfo.title+' は終了しました';
-	syslog(msg);
-	ShowNotice(msg,true);
+	    PlayAlertSound();
+	    let msg = this.liveinfo.request_id+' '+this.liveinfo.title+' は終了しました';
+	    syslog(msg);
+	    ShowNotice(msg,true);
 
-	this.checkForCloseWindow();
+	    this.checkForCloseWindow();
+	}else{
+	    // 自動放送時は、ウィンドウが閉じられてしまうとプログラムが終了してしまうので
+	    // ウィンドウを閉じたりはしない
+	}
     },
 
     /**
@@ -4323,7 +4329,6 @@ var NicoLiveHelper = {
                 try {
                     NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('end_time')[0].textContent);
                 } catch (x) {
-                    NicoLiveHelper.liveinfo.end_time = 0;
                 }
                 debugprint("New end_time=" + NicoLiveHelper.liveinfo.end_time);
                 if (NicoLiveHelper.liveinfo.end_time < GetCurrentTime()) {
@@ -4337,6 +4342,14 @@ var NicoLiveHelper = {
             };
             NicoApi.getplayerstatus( GetRequestId(), f);
         }
+	if( this._losstime ){
+	    if( now - this._losstime > 120 ){
+		// 自動放送のときはロスタイム2分で打ち切り
+		if( IsCaster() && $('automatic-broadcasting').hasAttribute('checked') ){
+		    this.finishBroadcasting();
+		}
+	    }
+	}
     },
 
     /**
