@@ -6,7 +6,7 @@ var NicoLiveRequest = {
      * table内に表示する動画情報を作成する.
      * @return 作成したvboxを返す
      */
-    createVideoInformation: function(item){
+    createVideoInformation: function(item, isrequest){
 	let vbox = CreateElement('vbox');
 	let tooltip="";
 	let i;
@@ -38,6 +38,15 @@ var NicoLiveRequest = {
 	let label;
 	// 動画ID+タイトル.
 	div.appendChild(a); // thumbnail
+
+	if( isrequest && NicoLiveHelper._playlog["_"+item.video_id] ){
+	    let t = NicoLiveHelper._playlog["_"+item.video_id];
+	    // tr.className ="table_recently_play";
+	    let txt = document.createTextNode("※この動画は"+GetDateString(t*1000)+"に再生されています。");
+	    div.appendChild( txt );
+	    div.appendChild( CreateHTMLElement('br') );
+	}
+
 	let text = document.createTextNode(item.video_id+' '+item.title);
 	div.appendChild(text);
 
@@ -197,7 +206,7 @@ var NicoLiveRequest = {
 	    // ニコニコ静画
 	    vbox = this.createSeigaInformation(item);
 	}else{
-	    vbox = this.createVideoInformation(item);
+	    vbox = this.createVideoInformation(item, true); // isrequest=true
 	}
 
 	vbox.setAttribute('class','vinfo');
