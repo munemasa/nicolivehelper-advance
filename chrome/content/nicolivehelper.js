@@ -4364,8 +4364,8 @@ var NicoLiveHelper = {
                 if ($('controlpanel-auto-free-extend').hasAttribute('checked')) {
                     if (180 - remaintime > this._extendcnt * 15) {
                         this._extendcnt = parseInt((180 - remaintime) / 15 + 1);
-                        // 15*10=150=2分半=30秒前までネバる
-                        if (this._extendcnt <= 10) {
+                        // 15*8=120=2分=1分前までネバる
+                        if (this._extendcnt <= 8) {
                             debugprint("自動無料延長を行います");
                             this.getsalelist(true);
                         }
