@@ -908,8 +908,14 @@
 		  </row>
 		</rows>
 	      </grid>
-	      <hbox><checkbox preference="pref-auto-close-tab" label="生放送終了時に、生放送のページも自動で閉じる"/></hbox>
-	      <hbox><checkbox preference="pref-autoscroll" label="NicoLive Helperを開いたとき、自動で生放送プレイヤーの位置までスクロールする"/></hbox>
+	      <hbox>
+		<checkbox preference="pref-auto-close-tab"
+			  label="生放送終了時に自動でNicoLive Helperを閉じる時、生放送のページも自動で閉じる"/>
+	      </hbox>
+	      <hbox>
+		<checkbox preference="pref-autoscroll"
+			  label="NicoLive Helperを開いたとき、自動で生放送プレイヤーの位置までスクロールする"/>
+	      </hbox>
 	    </vbox>
 	  </tabpanel>
 

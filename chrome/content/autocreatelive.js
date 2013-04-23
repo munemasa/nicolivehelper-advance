@@ -42,20 +42,21 @@ var AutoCreateLive = {
 
 		ShowNotice( LoadString('STR_SUCCESS_NEXT_BROADCAST') );
 		setTimeout(function(){
-			       // 新しいタブを開いて...
+			       // 次枠を開いて...
 			       NicoLiveWindow.openDefaultBrowser(nexturl, true);
-
-			       // マルチウィンドウ(標準)モードの場合はウィンドウの開閉に連動できるので
-			       // シングルウィンドウモードのみ考慮すればいい
+			       if( Config.isAutoTabClose() ){
+				   // 前枠を閉じて...
+				   NicoLiveHelper.closeBroadcastingTab(
+				       NicoLiveHelper.liveinfo.request_id,
+				       NicoLiveHelper.liveinfo.default_community );
+			       }
+			       // 自動ウィンドウクローズが有効だったら今の窓を閉じて...
+			       if( Config.isAutoWindowClose() ){
+				   NicoLiveHelper.closeWindow();
+			       }
+			       // シングルウィンドウモードなら現在のウィンドウで次枠に接続.
 			       if( Config.isSingleWindow() ){
-				   if( Config.isAutoTabClose() ){
-				       // タブを閉じて...
-				       NicoLiveHelper.closeBroadcastingTab(
-					   NicoLiveHelper.liveinfo.request_id,
-					   NicoLiveHelper.liveinfo.default_community );
-				       // 現在のウィンドウで次枠に接続.
-				       NicoLiveHelper.openNewBroadcast( request_id, "", true, request_id );
-				   }
+				   NicoLiveHelper.openNewBroadcast( request_id, "", true, request_id );
 			       }
 			   }, 5*1000);
 		return;
