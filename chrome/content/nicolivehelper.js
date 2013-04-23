@@ -3937,7 +3937,7 @@ var NicoLiveHelper = {
 
     /**
      * 次枠を取得するページにジャンプする.
-     * @param manually 手動次枠ならtrue
+     * @param manually 手動で次枠を取得ならtrue。次枠を自動で取得ならfalse。
      */
     nextBroadcasting:function(manually){
 	let id = this.liveinfo.request_id.match(/lv(\d+)/)[1];
@@ -3951,7 +3951,7 @@ var NicoLiveHelper = {
 	    if( manually ){
 		NicoLiveWindow.openDefaultBrowser(url, true);
 	    }else{
-		// TODO AutoCreateLive.create( url );
+		AutoCreateLive.create( url );
 	    }
 	}
     },
