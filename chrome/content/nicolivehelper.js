@@ -547,7 +547,17 @@ var NicoLiveHelper = {
 	    if( n==MAIN || n==SUB ){
 		return this.play_status[ n ];
 	    }else{
-		return this.play_status[ this.play_target ];
+		let main = this.play_status[MAIN];
+		let sub = this.play_status[SUB];
+		
+		if( main.play_end && sub.play_end ){
+		    return this.play_status[ this.play_target ];
+		}
+		if( main.play_end ){
+		    return main;
+		}else{
+		    return sub;
+		}
 	    }
 	} catch (x) {
 	    return null;
@@ -3757,7 +3767,7 @@ var NicoLiveHelper = {
 	    return;
 	}
 
-	let begin_time = this.play_status[ this.play_target ].play_begin;
+	let begin_time = this.getCurrentPlayStatus().play_begin;
 	let videolength = currentvideo.length_ms/1000;
 	let videoprogress = now-begin_time;
 
@@ -3827,6 +3837,8 @@ var NicoLiveHelper = {
 	this.play_status[target]._playend = setTimeout(
 	    function(){
 		NicoLiveHelper.play_status[target].videoinfo = null;
+		NicoLiveHelper.play_status[target].play_begin = 0;
+		NicoLiveHelper.play_status[target].play_end = 0;
 	    }, duration );
 
 	// 次曲再生タイマー
