@@ -3366,6 +3366,35 @@ var NicoLiveHelper = {
     },
 
     /**
+     * 初音ミクコミュのプレイログを取得する.
+     * 生主が変わったのをいいことに同じ曲を何度もリクするのがいるので.
+     */
+    getPlayLog:function(){
+	if( this.liveinfo.default_community!="co154" ) return;
+	let checking = $('mikulive-recently-played-check').hasAttribute('checked');
+	if( !checking ) return;
+
+	debugprint("downloading playlog of co154...");
+
+	let req = new XMLHttpRequest();
+	if( !req ) return;
+	req.open("GET","http://mikulive.com/~amano/co154/playlog-json.pl");
+	req.onreadystatechange = function(){
+	    if( req.readyState==4 && req.status==200 ){
+		NicoLiveHelper._playlog = new Object();
+		debugprint("playlog of co154 has downloaded.");
+
+		let log = JSON.parse(req.responseText);
+		debugprint("length="+log.length);
+		for(let i=0,item; item=log[i]; i++){
+		    NicoLiveHelper._playlog["_"+item.video_id] = (new Date(item.date)).getTime()/1000;
+		}
+	    }
+	};
+	req.send("");
+    },
+
+    /**
      * 生放送に接続する.
      * @param request_id 放送ID
      * @param title 番組のタイトル(事前に分かっていれば)
@@ -3484,6 +3513,8 @@ var NicoLiveHelper = {
 
 	    NicoLiveHelper.setLiveProgressBarTipText();
 	    NicoLiveHelper.setAutoNextLiveIcon();
+
+	    NicoLiveHelper.getPlayLog(); // for co154
 
 	    NicoLiveWindow.scrollLivePage();
 	    this._donotshowdisconnectalert = false;
@@ -4738,6 +4769,7 @@ var NicoLiveHelper = {
 
 	this._first_play = false;
 	this._isnotified = new Array();
+	this._playlog = new Object();
 
 	this.resetRequestCount();
     },

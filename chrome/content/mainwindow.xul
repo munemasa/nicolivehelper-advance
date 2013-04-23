@@ -233,6 +233,9 @@
 		<menuitem label="処理待ちのリクエスト、ストックを破棄"
 			  tooltiptext="現在処理待ちしているリクエスト、ストックを破棄します。"
 			  oncommand="NicoLiveHelper.clearProcessingQueue();"/>
+		<menuitem id="mikulive-recently-played-check" persist="checked"
+			  label="プレイログチェック(co154用)"
+			  tooltiptext="チェックがあると、co154で直近に再生された動画100件のチェックを行い、リクエストに前回の再生日時を提示します。" type="checkbox" autocheck="true"/>
 		<menuseparator/>
 		<menuitem label="&toolbar.forget_learning;"
 			  oncommand="NicoLiveClassifier.forget();"/>
