@@ -86,6 +86,13 @@ var Backup = {
      */
     backup: function(name){
 	let data = new Object;
+	/*
+	debugprint( NicoLiveHelper.request_list );
+	debugprint( NicoLiveHelper.stock_list );
+	debugprint( NicoLiveHelper.playlist_list );
+	debugprint( $('playlist-textbox').value );
+	 */
+
 	// オブジェクトのコピーにはちょっとセコイ手のような気がするが.
 	// これはこれで有効な気がする(重い処理のような気もするけど)
 	data.request   = JSON.parse(JSON.stringify(NicoLiveHelper.request_list));
@@ -127,6 +134,8 @@ var Backup = {
 	let item = Application.storage.get("nico_live_backup",null);
 	if( !item ){
 	    this.backuprestore = Storage.readObject("nico_live_backup",{});
+	}else{
+	    this.backuprestore = item;
 	}
 	this.createRestoreMenu();
     },
