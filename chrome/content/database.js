@@ -39,7 +39,6 @@ var StarRateCache;
  * tags           : character タグ(カンマ区切りの文字列, jpタグのみ)
  * update_date    : integer DB情報の更新日時
  * favorite       : integer (0.7.3+) お気に入り度
- * 
  * pname          : character (0.7.2+) 動画固有P名 (※0.8で廃止)
  * additional     : character (0.7.2+) 動画固有の追加情報 (※0.8で廃止)
  */
@@ -58,10 +57,10 @@ var StarRateCache;
  */
 /* TABLE folder (1.1.1+)
  * id       : integer primary key
- * type     : integer (0:folder, 1:video)
+ * type     : integer (0:folder, 1:video 2:smart folder)
  * parent   : integer (parent id)
  * name     : character (フォルダ名)
- * video_id : character (動画ID)
+ * video_id : character (動画ID) スマートフォルダの場合はルールを格納する
  */
 
 var Database = {

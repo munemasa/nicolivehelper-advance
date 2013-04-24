@@ -20,6 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
+const TYPE_FOLDER = 0;
+const TYPE_VIDEO = 1;
+const TYPE_SMARTFOLDER = 2;
+
 var NicoLiveFolderDB = {
     getDatabase:function(){
 	return Database.dbconnect;
@@ -72,6 +76,25 @@ var NicoLiveFolderDB = {
 	    debugprint('insert id:'+id);
 	    this.appendList(name, id);
 	}
+    },
+
+    /**
+     * スマートリストの新規作成.
+     */
+    newSmartList: function(){
+	let defname = "";
+	let param = {
+	    "name": defname
+	};
+	let f = "chrome,centerscreen,modal";
+	window.openDialog("chrome://nicolivehelperadvance/content/newsmartfolder.xul","newsmartlist",f,param);
+    },
+
+    /**
+     * スマートリストの編集.
+     */
+    editSmartList: function(){
+	
     },
 
     renameList:function(){
@@ -165,6 +188,9 @@ var NicoLiveFolderDB = {
 	return;
     },
 
+    /**
+     * 表示のソートをする.
+     */
     sort:function(sortmenu){
 	//debugprint(sortmenu.selectedItem.value);
 	let sortorder = ["",
