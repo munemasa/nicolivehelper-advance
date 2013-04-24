@@ -888,16 +888,20 @@
       <menu label="&classify.menu;">
 	<menupopup>
 	  <menu label="&classify.train;">
-	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-request').triggerNode);">
+	    <menupopup class="training-menu"
+		       oncommand="NicoLiveClassifier.doTrain(event,$('popup-request').triggerNode);">
 	    </menupopup>
 	  </menu>
-	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-request').triggerNode);"/>
+	  <menuitem label="&classify.check;"
+		    oncommand="NicoLiveClassifier.doClassify(event,$('popup-request').triggerNode);"/>
 	</menupopup>
       </menu>
 
       <menuseparator/>
-      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-request').triggerNode);"/>
-      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-request').triggerNode);"/>
+      <menuitem label="投稿者プロフィール"
+		oncommand="MenuControl.showProfile($('popup-request').triggerNode);"/>
+      <menuitem label="&general.property;"
+		oncommand="MenuControl.showProperty($('popup-request').triggerNode);"/>
     </menupopup>
 
     <!-- JWID検索 -->
@@ -910,12 +914,16 @@
       <hbox>
 	<label id="menu-stock-video-id" value="動画ID" style="padding-left:2em;"/>
       </hbox>
-      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menuitem label="&menu.copy_selection;"
+		oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
-	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
-	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
-	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	  <menuitem label="&menu.search_by_google;"
+		    oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;"
+		    oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索"
+		    oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
       <menuseparator/>
@@ -923,36 +931,57 @@
 	<menupopup>
 	  <menu label="&sort.ascend_order;">
 	    <menupopup>
-	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,1)"/>
-	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,1)"/>
-	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,1)"/>
-	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,1)"/>
-	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,1)"/>
-	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,1)"/>
-	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,1)"/>
-	      <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,1)"/>
-	      <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,1)"/>
-	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,1)"/>
+	      <menuitem label="&sort.view_counter;"
+			oncommand="NicoLiveHelper.sortStock(0,1)"/>
+	      <menuitem label="&sort.comment_num;"
+			oncommand="NicoLiveHelper.sortStock(1,1)"/>
+	      <menuitem label="&sort.mylist_counter;"
+			oncommand="NicoLiveHelper.sortStock(2,1)"/>
+	      <menuitem label="&sort.playtime;"
+			oncommand="NicoLiveHelper.sortStock(3,1)"/>
+	      <menuitem label="&sort.posteddate;"
+			oncommand="NicoLiveHelper.sortStock(4,1)"/>
+	      <menuitem label="&sort.mylist_rate;"
+			oncommand="NicoLiveHelper.sortStock(5,1)"/>
+	      <menuitem label="&sort.title;"
+			oncommand="NicoLiveHelper.sortStock(6,1)"/>
+	      <menuitem label="&sort.registered_date;"
+			oncommand="NicoLiveHelper.sortStock(7,1)"/>
+	      <menuitem label="&sort.ad_point;"
+			oncommand="NicoLiveHelper.sortStock(8,1)"/>
+	      <menuitem label="&general.bitrate;"
+			oncommand="NicoLiveHelper.sortStock(9,1)"/>
 	    </menupopup>
 	  </menu>
 	  <menu label="&sort.descend_order;">
 	    <menupopup>
-	      <menuitem label="&sort.view_counter;" oncommand="NicoLiveHelper.sortStock(0,-1)"/>
-	      <menuitem label="&sort.comment_num;" oncommand="NicoLiveHelper.sortStock(1,-1)"/>
-	      <menuitem label="&sort.mylist_counter;" oncommand="NicoLiveHelper.sortStock(2,-1)"/>
-	      <menuitem label="&sort.playtime;" oncommand="NicoLiveHelper.sortStock(3,-1)"/>
-	      <menuitem label="&sort.posteddate;" oncommand="NicoLiveHelper.sortStock(4,-1)"/>
-	      <menuitem label="&sort.mylist_rate;" oncommand="NicoLiveHelper.sortStock(5,-1)"/>
-	      <menuitem label="&sort.title;" oncommand="NicoLiveHelper.sortStock(6,-1)"/>
-	      <menuitem label="&sort.registered_date;" oncommand="NicoLiveHelper.sortStock(7,-1)"/>
-	      <menuitem label="&sort.ad_point;" oncommand="NicoLiveHelper.sortStock(8,-1)"/>
-	      <menuitem label="&general.bitrate;" oncommand="NicoLiveHelper.sortStock(9,-1)"/>
+	      <menuitem label="&sort.view_counter;"
+			oncommand="NicoLiveHelper.sortStock(0,-1)"/>
+	      <menuitem label="&sort.comment_num;"
+			oncommand="NicoLiveHelper.sortStock(1,-1)"/>
+	      <menuitem label="&sort.mylist_counter;"
+			oncommand="NicoLiveHelper.sortStock(2,-1)"/>
+	      <menuitem label="&sort.playtime;"
+			oncommand="NicoLiveHelper.sortStock(3,-1)"/>
+	      <menuitem label="&sort.posteddate;"
+			oncommand="NicoLiveHelper.sortStock(4,-1)"/>
+	      <menuitem label="&sort.mylist_rate;"
+			oncommand="NicoLiveHelper.sortStock(5,-1)"/>
+	      <menuitem label="&sort.title;"
+			oncommand="NicoLiveHelper.sortStock(6,-1)"/>
+	      <menuitem label="&sort.registered_date;"
+			oncommand="NicoLiveHelper.sortStock(7,-1)"/>
+	      <menuitem label="&sort.ad_point;"
+			oncommand="NicoLiveHelper.sortStock(8,-1)"/>
+	      <menuitem label="&general.bitrate;"
+			oncommand="NicoLiveHelper.sortStock(9,-1)"/>
 	    </menupopup>
 	  </menu>
 	</menupopup>
       </menu>
       <menuseparator/>
-      <menuitem label="&menu.copy_video_id;" oncommand="MenuControl.copyVideoIdToClipboard($('popup-stock').triggerNode);"/>
+      <menuitem label="&menu.copy_video_id;"
+		oncommand="MenuControl.copyVideoIdToClipboard($('popup-stock').triggerNode);"/>
       <menuitem label="&menu.prepare_video;" tooltiptext="&menu.tooltip_prepare;"
 		oncommand="MenuControl.prepare($('popup-stock').triggerNode);"
 		id="popup-stock-marker"/>
@@ -968,24 +997,30 @@
 	</menupopup>
       </menu>
 
-      <menuitem label="&menu.turnoff_playedflag;" oncommand="NicoLiveStock.turnoffPlayedStatus($('popup-stock').triggerNode);"/>
+      <menuitem label="&menu.turnoff_playedflag;"
+		oncommand="NicoLiveStock.turnoffPlayedStatus($('popup-stock').triggerNode);"/>
 
       <menuseparator/>
       <menu label="&classify.menu;">
 	<menupopup>
 	  <menu label="&classify.train;">
-	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-stock').triggerNode);">
+	    <menupopup class="training-menu"
+		       oncommand="NicoLiveClassifier.doTrain(event,$('popup-stock').triggerNode);">
 	    </menupopup>
 	  </menu>
-	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-stock').triggerNode);"/>
+	  <menuitem label="&classify.check;"
+		    oncommand="NicoLiveClassifier.doClassify(event,$('popup-stock').triggerNode);"/>
 	</menupopup>
       </menu>
 
-      <menuitem label="&menu.stock_savefile;" oncommand="NicoLiveStock.saveStockToFile();"/>
+      <menuitem label="&menu.stock_savefile;"
+		oncommand="NicoLiveStock.saveStockToFile();"/>
 
       <menuseparator/>
-      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-stock').triggerNode);"/>
-      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-stock').triggerNode);"/>
+      <menuitem label="投稿者プロフィール"
+		oncommand="MenuControl.showProfile($('popup-stock').triggerNode);"/>
+      <menuitem label="&general.property;"
+		oncommand="MenuControl.showProperty($('popup-stock').triggerNode);"/>
     </menupopup>
 
     <!-- 再生履歴用ポップアップ playlist history -->
@@ -993,12 +1028,16 @@
       <hbox>
 	<label id="menu-playlist-video-id" value="動画ID" style="padding-left:2em;"/>
       </hbox>
-      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menuitem label="&menu.copy_selection;"
+		oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
-	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
-	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
-	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	  <menuitem label="&menu.search_by_google;"
+		    oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;"
+		    oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索"
+		    oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
 
@@ -1023,20 +1062,25 @@
       <menu label="&classify.menu;">
 	<menupopup>
 	  <menu label="&classify.train;">
-	    <menupopup class="training-menu" oncommand="NicoLiveClassifier.doTrain(event,$('popup-playlist').triggerNode);">
+	    <menupopup class="training-menu"
+		       oncommand="NicoLiveClassifier.doTrain(event,$('popup-playlist').triggerNode);">
 	    </menupopup>
 	  </menu>
-	  <menuitem label="&classify.check;" oncommand="NicoLiveClassifier.doClassify(event,$('popup-playlist').triggerNode);"/>
+	  <menuitem label="&classify.check;"
+		    oncommand="NicoLiveClassifier.doClassify(event,$('popup-playlist').triggerNode);"/>
 	</menupopup>
       </menu>
 
       <menuseparator/>
-      <menuitem label="投稿者プロフィール" oncommand="MenuControl.showProfile($('popup-playlist').triggerNode);"/>
-      <menuitem label="&general.property;" oncommand="MenuControl.showProperty($('popup-playlist').triggerNode);"/>
+      <menuitem label="投稿者プロフィール"
+		oncommand="MenuControl.showProfile($('popup-playlist').triggerNode);"/>
+      <menuitem label="&general.property;"
+		oncommand="MenuControl.showProperty($('popup-playlist').triggerNode);"/>
     </menupopup>
 
     <!-- コメントビューの名前・ID欄のところ comment -->
-    <menupopup id="popup-comment-user" onpopupshowing="NicoLiveComment.showPopupMenuForID( this.triggerNode );">
+    <menupopup id="popup-comment-user"
+	       onpopupshowing="NicoLiveComment.showPopupMenuForID( this.triggerNode );">
       <hbox>
 <!--	<menuseparator/> -->
 	<label value="" id="popup-comment-displayuserid" style="padding-left:2em;"/>
@@ -1068,12 +1112,16 @@
     <menupopup id="popup-comment-body"
 	       onpopupshowing="MenuControl.showSelectionMenuIfTextSelected(this); MenuControl.showRightsSearch();">
       <menuitem label="none" style="display:none;"/><!-- showSelectionMenuIfTextSelected()が正しく処理できる用のダミーノード -->
-      <menuitem label="&menu.copy_selection;" oncommand="MenuControl.copyToClipboard();"/>
+      <menuitem label="&menu.copy_selection;"
+		oncommand="MenuControl.copyToClipboard();"/>
       <menu label="検索">
 	<menupopup>
-	  <menuitem label="&menu.search_by_google;" oncommand="MenuControl.searchByGoogle();"/>
-	  <menuitem label="&menu.search_by_niconico;" oncommand="MenuControl.searchByNicoNico();"/>
-	  <menuitem label="J-WIDで作品タイトル検索" oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
+	  <menuitem label="&menu.search_by_google;"
+		    oncommand="MenuControl.searchByGoogle();"/>
+	  <menuitem label="&menu.search_by_niconico;"
+		    oncommand="MenuControl.searchByNicoNico();"/>
+	  <menuitem label="J-WIDで作品タイトル検索"
+		    oncommand="NicoLiveRights.searchJWIDbyTitle(window.getSelection().toString());"/>
 	</menupopup>
       </menu>
       <menuitem label="&comment.menu.jasracsearch;" id="comment-search-jasrac"
@@ -1155,8 +1203,12 @@
     <menupopup id="folder-list-menu">
       <menuitem label="&folder.new;"
 		oncommand="NicoLiveFolderDB.newList();" tooltiptext="&folder.new.help;"/>
+      <menuitem label="新規スマートリスト作成"
+		oncommand="NicoLiveFolderDB.newSmartList();"/>
       <menuitem label="&folder.rename;"
 		oncommand="NicoLiveFolderDB.renameList();" tooltiptext="&folder.rename.help;"/>
+      <menuitem label="スマートリストを編集"
+		oncommand="NicoLiveFolderDB.editSmartList();"/>
       <menuitem label="&folder.delete;"
 		oncommand="NicoLiveFolderDB.deleteList();" tooltiptext="&folder.delete.help;"/>
       <menuseparator/>

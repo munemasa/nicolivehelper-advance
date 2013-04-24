@@ -122,10 +122,14 @@
 <!ENTITY db.emptytext_input "動画IDまたはマイリストのURLを入力するとDBに登録されます">
 <!ENTITY db.result_10 "10件">
 <!ENTITY db.result_20 "20件">
+<!ENTITY db.result_25 "25件">
 <!ENTITY db.result_50 "50件">
+<!ENTITY db.result_75 "75件">
 <!ENTITY db.result_100 "100件">
 <!ENTITY db.result_200 "200件">
+<!ENTITY db.result_250 "250件">
 <!ENTITY db.result_500 "500件">
+<!ENTITY db.result_750 "750件">
 <!ENTITY db.result_1000 "1000件">
 <!ENTITY db.do_search "検索実行">
 <!ENTITY db.add_stock "ストックに追加">
@@ -208,7 +212,7 @@
 <!ENTITY classify.check "分類のチェック">
 
 <!-- フォルダDB -->
-<!ENTITY folder.new "新規作成">
+<!ENTITY folder.new "新規リスト作成">
 <!ENTITY folder.new.help "リストを新規に作成します。">
 <!ENTITY folder.rename "名前変更">
 <!ENTITY folder.rename.help "選択しているリストの名前を変更します。">
