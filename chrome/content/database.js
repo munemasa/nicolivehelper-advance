@@ -57,10 +57,10 @@ var StarRateCache;
  */
 /* TABLE folder (1.1.1+)
  * id       : integer primary key
- * type     : integer (0:folder, 1:video 2:smart folder)
+ * type     : integer (0:folder, 1:video)
  * parent   : integer (parent id)
  * name     : character (フォルダ名)
- * video_id : character (動画ID) スマートフォルダの場合はルールを格納する
+ * video_id : character (動画ID) スマートフォルダの場合はルールが格納される
  */
 
 var Database = {
@@ -381,22 +381,34 @@ var Database = {
     search:function(){
 	clearInterval(this._updatehandle);
 
-	let hbox = $('search-condition').getElementsByTagName('hbox');
 	let sql = "select *,1000*mylist_counter/view_counter as mylist_rate from nicovideo where ";
 	let cnt;
 	let cond = [];
 	let i,item;
-	// statementを作るフェーズ.
+
+	// 検索条件をフォームから全て抽出.
+	let hbox = $('search-condition').getElementsByTagName('hbox');
+	let searchcond = new Array();
 	for(i=0,cnt=0;item=hbox[i];i++){
 	    let menulist = item.getElementsByTagName('menulist');
 	    let textbox  = item.getElementsByTagName('textbox');
 	    if(!textbox[0].value) continue;
+
+	    let cond = new Object();
+	    cond.key = menulist[0].value;  // 検索キー(タイトル,投稿日,...)
+	    cond.cond = menulist[1].value; // 条件(以上,以下,...)
+	    cond.text = textbox[0].value;  // 値
+	    searchcond.push( cond );
+	}
+
+	// statementを作るフェーズ.
+	for(i=0,cnt=0;item=searchcond[i];i++){
 	    // 検索項目.
 	    let tmp;
-	    tmp = this.searchtarget[parseInt(menulist[0].value)] +" ";
+	    tmp = this.searchtarget[ parseInt(item.key) ] +" ";
 
 	    cnt++;
-	    switch(this.searchcond[parseInt(menulist[1].value)]){
+	    switch(this.searchcond[ parseInt(item.cond)]){
 	    case "include": tmp += "like ?"+cnt; break;
 	    case "exclude": tmp += "not like ?"+cnt; break;
 	    case "gte":     tmp += ">=?"+cnt; break;
@@ -420,33 +432,29 @@ var Database = {
 
 	let st = this.dbconnect.createStatement(sql);
 	// bindするフェーズ.
-	for(i=0,cnt=0;item=hbox[i];i++){
-	    let menulist = item.getElementsByTagName('menulist');
-	    let textbox  = item.getElementsByTagName('textbox');
-	    if(!textbox[0].value) continue;
-
-	    switch(this.searchcond[parseInt(menulist[1].value)]){
+	for(i=0,cnt=0;item=searchcond[i];i++){
+	    switch(this.searchcond[parseInt(item.cond)]){
 	    case "include":
 	    case "exclude":
-		if(this.searchtarget[parseInt(menulist[0].value)]=="video_id"){
+		if(this.searchtarget[parseInt(item.key)]=="video_id"){
 		    try{
 			let vid = textbox[0].value.match(/(sm|nm)\d+/g)[0];
 			st.bindUTF8StringParameter(cnt,"%"+vid+"%");
 		    } catch (x) {
-			st.bindUTF8StringParameter(cnt,"%"+textbox[0].value+"%");
+			st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
 		    }
 		}else{
-		    st.bindUTF8StringParameter(cnt,"%"+textbox[0].value+"%");
+		    st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
 		}
 		break;
 	    case "gte":
 	    case "equal":
 	    case "lte":
 		let tmp;
-		if(this.searchtarget[parseInt(menulist[0].value)]=="first_retrieve"){
+		if(this.searchtarget[parseInt(item.key)]=="first_retrieve"){
 		    let date;
 		    let d;
-		    date = textbox[0].value.match(/\d+/g);
+		    date = item.text.match(/\d+/g);
 		    if(date.length==6){
 			d = new Date(date[0],date[1]-1,date[2],date[3],date[4],date[5]);
 			tmp = parseInt(d.getTime() / 1000); // integer
@@ -455,7 +463,7 @@ var Database = {
 			tmp = parseInt(d.getTime() / 1000); // integer
 		    }
 		}else{
-		    tmp = parseInt(textbox[0].value);
+		    tmp = parseInt(item.text);
 		}
 		st.bindInt64Parameter(cnt,tmp);
 		break;

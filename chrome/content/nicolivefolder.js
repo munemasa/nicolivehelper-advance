@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 const TYPE_FOLDER = 0;
 const TYPE_VIDEO = 1;
-const TYPE_SMARTFOLDER = 2;
+
 
 var NicoLiveFolderDB = {
     getDatabase:function(){
@@ -82,19 +82,30 @@ var NicoLiveFolderDB = {
      * スマートリストの新規作成.
      */
     newSmartList: function(){
-	let defname = "";
+	let defname = "test";
 	let param = {
-	    "name": defname
+	    "name": defname,
+	    "result": null
 	};
 	let f = "chrome,centerscreen,modal";
 	window.openDialog("chrome://nicolivehelperadvance/content/newsmartfolder.xul","newsmartlist",f,param);
+	debugprint( param.name );
+	debugprint( JSON.stringify(param.result) );
     },
 
     /**
      * スマートリストの編集.
      */
     editSmartList: function(){
-	
+	let defname = "test";
+	let param = {
+	    "name": defname,
+	    "result": null      // 編集する条件
+	};
+	let f = "chrome,centerscreen,modal";
+	window.openDialog("chrome://nicolivehelperadvance/content/newsmartfolder.xul","newsmartlist",f,param);
+	debugprint( param.name );
+	debugprint( JSON.stringify(param.result) );
     },
 
     renameList:function(){
@@ -183,7 +194,12 @@ var NicoLiveFolderDB = {
 	return listitem;
     },
 
+    /**
+     * フォルダを選択したときの処理.
+     * リストに動画リストを作成する.
+     */
     selectFolder:function(listbox){
+	// TODO スマートリストかどうかを調べて処理を変える.
 	this.sort( $('folder-item-sortmenu') );
 	return;
     },

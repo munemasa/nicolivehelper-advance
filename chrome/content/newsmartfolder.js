@@ -63,8 +63,36 @@ function RemoveSearchLine(e){
     $('search-condition').removeChild(e.target.parentNode);
 }
 
+function GetSearchCond(){
+    // 検索条件をフォームから全て抽出.
+    let hbox = $('search-condition').getElementsByTagName('hbox');
+    let searchcond = new Array();
+    for(let i=0,item;item=hbox[i];i++){
+	let menulist = item.getElementsByTagName('menulist');
+	let textbox  = item.getElementsByTagName('textbox');
+	if(!textbox[0].value) continue;
+	
+	let cond = new Object();
+	cond.key = menulist[0].value;  // 検索キー(タイトル,投稿日,...)
+	cond.cond = menulist[1].value; // 条件(以上,以下,...)
+	cond.text = textbox[0].value;  // 値
+	searchcond.push( cond );
+    }
+    return searchcond;
+}
+
+/**
+ * 呼び出し元に返す値をセット.
+ */
+function SetResult(){
+    window.arguments[0].result = GetSearchCond();
+    window.arguments[0].name = $('list-name').value;
+}
+
 function Init(){
     AddSearchLine();
+
+    $('list-name').value = window.arguments[0].name;
 }
 
 function Destroy(){

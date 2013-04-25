@@ -8,14 +8,14 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	title="新規スマートリスト作成(NicoLive Helper Advance)"
 	persist="screenX screenY width height sizemode"
-	buttons="accept,cancel" ondialogcancel="return true;" ondialogaccept="return false;">
+	buttons="accept,cancel" ondialogcancel="window.arguments[0].result = null; return true;" ondialogaccept="SetResult(); return true;">
 
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/newsmartfolder.js" />
 
   <vbox flex="1">
     <hbox>
-      <textbox flex="1" placeholder="スマートリストの名前を入力"/>
+      <textbox id="list-name" flex="1" placeholder="スマートリストの名前を入力"/>
     </hbox>
     <button popup="search-condition-panel" label="マッチ条件の入力"/>
     <hbox align="center">
