@@ -538,6 +538,9 @@ var NicoLiveFolderDB = {
 
     checkDragOnList:function(event){
 	let b = event.dataTransfer.types.contains("application/x-moz-node");
+	if( event.target.getAttribute('smartlist-cond') ){
+	    return false;
+	}
 	if( b ){
 	    event.preventDefault();
 	}
@@ -583,6 +586,15 @@ var NicoLiveFolderDB = {
      */
     dropToItemList:function(event){
 	if( !$('folder-listbox').selectedItem ) return;
+	let list = $('folder-listbox').selectedItem;
+	if( list ){
+	    let cond = list.getAttribute('smartlist-cond');
+	    if( cond ){
+		debugprint("スマートリストにはドロップできません");
+		return;
+	    }
+	}
+
 	let b = event.dataTransfer.types.contains("application/x-moz-node");
 	if( b ){
 	    return;
@@ -675,6 +687,9 @@ var NicoLiveFolderDB = {
 	st.finalize();
     },
 
+    /**
+     * フォルダリストにドロップしたときの処理.
+     */
     dropItemOnList:function(event){
 	this._data = event.dataTransfer;
 	let dt = event.dataTransfer;
@@ -683,6 +698,9 @@ var NicoLiveFolderDB = {
 	let target_list_id = target.value;
 	let source_list_id = $('folder-listbox').selectedItem.value;
 	debugprint($('folder-listbox').selectedItem.label+"/"+source_list_id+"->"+target.label+"/"+target.value);
+	if( event.target.getAttribute('smartlist-cond') ){
+	    return;
+	}
 
 	for (let i = 0; i < dt.mozItemCount; i++){
 	    let node = dt.mozGetDataAt("application/x-moz-node", i);
