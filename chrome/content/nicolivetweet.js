@@ -287,9 +287,9 @@ var NicoLiveTweet = {
 	let msg = (url&&hashtag)?(url + ' ' + hashtag):"";
 	if(msg){
 	    let current = NicoLiveHelper.getCurrentVideoInfo();
-	    debugprint(current.title);
 	    if( current && current.title ){
 		msg = "ニコ生視聴中:"+current.video_id+" "+current.title + " " + msg;
+		debugprint(current.title);
 	    }
 	}
 	let result = InputPrompt("NicoLive Helperからつぶやく","NicoLive Helper Advance",msg);
