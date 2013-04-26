@@ -665,7 +665,7 @@
 	  <hbox flex="1">
 	    <listbox id="folder-listbox" context="folder-list-menu"
 		     style="width: 15em;"
-		     onselect="NicoLiveFolderDB.selectFolder(this);"
+		     onselect="NicoLiveFolderDB.selectFolder();"
 		     ondragenter="NicoLiveFolderDB.checkDragOnList(event);"
 		     ondragover="NicoLiveFolderDB.checkDragOnList(event);"
 		     ondrop="NicoLiveFolderDB.dropItemOnList(event);">
@@ -673,7 +673,7 @@
 	    <vbox flex="1">
 	      <hbox>
 		<button label="DB検索" oncommand="$('db-deck').selectedIndex=0;"/>
-		<menulist id="folder-item-sortmenu" oncommand="NicoLiveFolderDB.sort(this);">
+		<menulist id="folder-item-sortmenu" oncommand="NicoLiveFolderDB.selectFolder();">
 		  <menupopup>
 		    <menuitem value="1" label="タイトル昇順"/>
 		    <menuitem value="2" label="タイトル降順"/>
@@ -1200,14 +1200,14 @@
     </menupopup>
 
     <!-- DBフォルダ用のポップアップメニュー -->
-    <menupopup id="folder-list-menu">
+    <menupopup id="folder-list-menu" onpopupshowing="NicoLiveFolderDB.showPopupMenu();">
       <menuitem label="&folder.new;"
 		oncommand="NicoLiveFolderDB.newList();" tooltiptext="&folder.new.help;"/>
       <menuitem label="新規スマートリスト作成"
 		oncommand="NicoLiveFolderDB.newSmartList();"/>
-      <menuitem label="&folder.rename;"
+      <menuitem label="&folder.rename;" id="folder-rename"
 		oncommand="NicoLiveFolderDB.renameList();" tooltiptext="&folder.rename.help;"/>
-      <menuitem label="スマートリストを編集"
+      <menuitem label="スマートリストを編集" id="folder-edit-smartlist"
 		oncommand="NicoLiveFolderDB.editSmartList();"/>
       <menuitem label="&folder.delete;"
 		oncommand="NicoLiveFolderDB.deleteList();" tooltiptext="&folder.delete.help;"/>

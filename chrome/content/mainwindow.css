@@ -270,3 +270,7 @@ toolbarbutton{
     border: 1px solid black;
     font-weight: bold;
 }
+
+#folder-listbox listitem.folder-smartlist:after {
+    content:"*";
+}

@@ -25,6 +25,9 @@ const TYPE_VIDEO = 1;
 
 
 var NicoLiveFolderDB = {
+    searchtarget: ["title","length","view_counter","comment_num","mylist_counter","tags","first_retrieve","video_id","description"],
+    searchcond: ["include","exclude","gte","equal","lte"],
+
     getDatabase:function(){
 	return Database.dbconnect;
     },
@@ -52,12 +55,22 @@ var NicoLiveFolderDB = {
 	$('folder-listitem-num').value = $('folder-item-listbox').children.length +"件";
     },
 
-    // リストに要素を追加.
-    appendList:function(name,id){
+
+    /**
+     * リストに要素を追加.
+     * @param name 名前
+     * @param id テーブル行のID
+     * @param cond スマートフォルダのマッチ条件JSON
+     */
+    appendList:function(name,id, cond){
 	let folder = $('folder-listbox');
 	let elem = CreateElement('listitem');
 	elem.setAttribute('label',name);
 	elem.setAttribute('value',id);
+	if( cond ){
+	    elem.setAttribute('smartlist-cond',cond);
+	    elem.setAttribute('class','folder-smartlist');
+	}
 	elem.setAttribute("tooltiptext",name);
 	folder.appendChild(elem);
     },
@@ -82,30 +95,72 @@ var NicoLiveFolderDB = {
      * スマートリストの新規作成.
      */
     newSmartList: function(){
-	let defname = "test";
+	let defname = "";
 	let param = {
 	    "name": defname,
+	    "num": 100,
 	    "result": null
 	};
 	let f = "chrome,centerscreen,modal";
 	window.openDialog("chrome://nicolivehelperadvance/content/newsmartfolder.xul","newsmartlist",f,param);
-	debugprint( param.name );
-	debugprint( JSON.stringify(param.result) );
+
+	if( param.name && param.result ){
+	    if( param.result.length==0 ) return;
+
+	    let db = this.getDatabase();
+	    let st = db.createStatement('INSERT INTO folder(type,parent,name,video_id) VALUES(0,-1,?1,?2)');
+	    st.bindUTF8StringParameter(0, param.name);
+	    let currentcond = new Object();
+	    currentcond.num = param.num;
+	    currentcond.cond = param.result;
+	    let cond = JSON.stringify( currentcond );
+	    st.bindUTF8StringParameter(1, cond );
+	    st.execute();
+	    st.finalize();
+	    let id = db.lastInsertRowID;
+
+	    debugprint('insert id:'+id);
+	    this.appendList(param.name, id, cond);
+	}
     },
 
     /**
      * スマートリストの編集.
      */
     editSmartList: function(){
-	let defname = "test";
+	let list = $('folder-listbox').selectedItem;
+
+	let defname = list.getAttribute('label');
+	let id = list.getAttribute('value');
+	let prevcond = JSON.parse( list.getAttribute('smartlist-cond') );
+
 	let param = {
 	    "name": defname,
-	    "result": null      // 編集する条件
+	    "num": prevcond.num,
+	    "result": prevcond.cond      // 編集する条件
 	};
 	let f = "chrome,centerscreen,modal";
 	window.openDialog("chrome://nicolivehelperadvance/content/newsmartfolder.xul","newsmartlist",f,param);
-	debugprint( param.name );
-	debugprint( JSON.stringify(param.result) );
+
+	if( param.name && param.result ){
+	    let db = this.getDatabase();
+
+	    list.setAttribute('label',param.name);
+
+	    let currentcond = new Object();
+	    currentcond.num = param.num;
+	    currentcond.cond = param.result;
+	    let cond = JSON.stringify( currentcond );
+	    list.setAttribute('smartlist-cond', cond );
+
+	    // フォルダ名を変更.
+	    let st = db.createStatement('UPDATE folder SET name=?1,video_id=?2 WHERE id=?3 AND type=0');
+	    st.bindUTF8StringParameter(0,param.name);
+	    st.bindUTF8StringParameter(1,cond);
+	    st.bindInt32Parameter(2,id);
+	    st.execute();
+	    st.finalize();
+	}	
     },
 
     renameList:function(){
@@ -195,12 +250,116 @@ var NicoLiveFolderDB = {
     },
 
     /**
+     * スマートフォルダの中身を表示する.
+     * @param condition スマートフォルダのマッチ条件
+     */
+    showSmartFolder: function(condition, sortmenu){
+	let sortorder = ["",
+			 "title ASC","title DESC",
+			 "first_retrieve DESC","first_retrieve ASC",
+			 "view_counter DESC","view_counter ASC",
+			 "comment_num DESC","comment_num ASC",
+			 "mylist_counter DESC","mylist_counter ASC",
+			 "length DESC","length ASC"];
+	let db = this.getDatabase();
+	let n = condition.num;
+	let searchcond = condition.cond;
+	let cond = [];
+	let sql = "select *,1000*mylist_counter/view_counter as mylist_rate from nicovideo where ";
+
+	// statementを作るフェーズ.
+	let i,item,cnt;
+	for(i=0,cnt=0;item=searchcond[i];i++){
+	    // 検索項目.
+	    let tmp;
+	    tmp = this.searchtarget[ parseInt(item.key) ] +" ";
+
+	    cnt++;
+	    switch(this.searchcond[ parseInt(item.cond)]){
+	    case "include": tmp += "like ?"+cnt; break;
+	    case "exclude": tmp += "not like ?"+cnt; break;
+	    case "gte":     tmp += ">=?"+cnt; break;
+	    case "equal":   tmp += "=?"+cnt; break;
+	    case "lte":     tmp += "<=?"+cnt; break;
+	    default: debugprint("unknown condition"); continue;
+	    }
+	    cond[cnt-1] = tmp;
+	}
+	if(cnt<=0) return;
+
+	sql += cond.join(' and '); // 条件は全部andで.
+	sql += ' ORDER BY '+ sortorder[sortmenu.selectedItem.value];
+	sql += " limit 0," + n;
+	debugprint('sql='+sql);
+
+	let st = db.createStatement(sql);
+	// bindするフェーズ.
+	for(i=0,cnt=0;item=searchcond[i];i++){
+	    switch(this.searchcond[parseInt(item.cond)]){
+	    case "include":
+	    case "exclude":
+		if(this.searchtarget[parseInt(item.key)]=="video_id"){
+		    try{
+			let vid = textbox[0].value.match(/(sm|nm)\d+/g)[0];
+			st.bindUTF8StringParameter(cnt,"%"+vid+"%");
+		    } catch (x) {
+			st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
+		    }
+		}else{
+		    st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
+		}
+		break;
+	    case "gte":
+	    case "equal":
+	    case "lte":
+		let tmp;
+		if(this.searchtarget[parseInt(item.key)]=="first_retrieve"){
+		    let date;
+		    let d;
+		    date = item.text.match(/\d+/g);
+		    if(date.length==6){
+			d = new Date(date[0],date[1]-1,date[2],date[3],date[4],date[5]);
+			tmp = parseInt(d.getTime() / 1000); // integer
+		    }else{
+			d = new Date(date[0],date[1]-1,date[2],0,0,0);
+			tmp = parseInt(d.getTime() / 1000); // integer
+		    }
+		}else{
+		    tmp = parseInt(item.text);
+		}
+		st.bindInt64Parameter(cnt,tmp);
+		break;
+	    default: debugprint("unknown condition"); continue;
+	    }
+	    cnt++;
+	}
+
+	let folder_listbox = $('folder-item-listbox');
+	RemoveChildren(folder_listbox);
+	while(st.executeStep()){
+	    let listitem = this.createListItemElement(st.row);
+	    folder_listbox.appendChild(listitem);
+	}
+	st.finalize();
+
+	this.updateItemNum();
+    },
+
+    /**
      * フォルダを選択したときの処理.
      * リストに動画リストを作成する.
      */
-    selectFolder:function(listbox){
-	// TODO スマートリストかどうかを調べて処理を変える.
-	this.sort( $('folder-item-sortmenu') );
+    selectFolder:function(){
+	// スマートリストかどうかを調べて処理を変える.
+	let list = $('folder-listbox').selectedItem;
+	if( list ){
+	    let cond = list.getAttribute('smartlist-cond');
+	    if( cond ){
+		this.showSmartFolder( JSON.parse(cond), $('folder-item-sortmenu') );
+	    }else{
+		this.sort( $('folder-item-sortmenu') );
+	    }
+	}
 	return;
     },
 
@@ -564,13 +723,12 @@ var NicoLiveFolderDB = {
     // フォルダリストの表示.
     showFolderList:function(){
 	let db = this.getDatabase();
-	let st = db.createStatement('SELECT id,name FROM folder WHERE type=0 ORDER BY name ASC');
+	let st = db.createStatement('SELECT id,name,video_id FROM folder WHERE type=0 ORDER BY name ASC');
 	while(st.executeStep()){
-	    this.appendList(st.row.name, st.row.id);
+	    this.appendList(st.row.name, st.row.id, st.row.video_id );
 	}
 	st.finalize();
     },
-
 
     playVideo:function(){
 	let item = $('folder-item-listbox').selectedItem;
@@ -623,6 +781,21 @@ var NicoLiveFolderDB = {
 	    }
 	}else{
 	    clearInterval(this._starttoplay_timer);
+	}
+    },
+
+    /**
+     * フォルダリストのメニューが表示されるときの処理.
+     */
+    showPopupMenu: function(){
+	let list = $('folder-listbox').selectedItem;
+	if( list ){
+	    let cond = list.getAttribute('smartlist-cond');
+	    if( cond ){
+		$('folder-edit-smartlist').hidden = false;
+	    }else{
+		$('folder-edit-smartlist').hidden = true;
+	    }
 	}
     },
 
