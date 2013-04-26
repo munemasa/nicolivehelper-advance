@@ -539,14 +539,26 @@ var NicoLiveFolderDB = {
     checkDragOnList:function(event){
 	let b = event.dataTransfer.types.contains("application/x-moz-node");
 	if( event.target.getAttribute('smartlist-cond') ){
+	    event.dataTransfer.effectAllowed = "none";
 	    return false;
 	}
+	event.dataTransfer.effectAllowed ="all";
 	if( b ){
 	    event.preventDefault();
 	}
 	return true;
     },
     checkDragOnItemList:function(event){
+	if( !$('folder-listbox').selectedItem ) return false;
+	let list = $('folder-listbox').selectedItem;
+	let cond = list.getAttribute('smartlist-cond');
+	if( cond ){
+	    event.dataTransfer.effectAllowed = "none";
+	    return false;
+	}else{
+	    event.dataTransfer.effectAllowed = "all";
+	}
+
 	let b = event.dataTransfer.types.contains("application/x-moz-node");
 	if( !b ){
 	    event.preventDefault();
