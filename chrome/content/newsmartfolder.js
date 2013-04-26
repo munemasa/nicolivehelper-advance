@@ -37,7 +37,7 @@ function AddSearchLine(){
     //elem.setAttribute("oncommand","Database.search();");
     //elem.setAttribute('timeout','2000');
     hbox.appendChild(elem);
-    
+
     //elem = CreateButton('+');
     //elem.addEventListener('command',function(e){ Database.addSearchLine();}, false);
     elem = CreateHTMLElement('input');
@@ -87,12 +87,32 @@ function GetSearchCond(){
 function SetResult(){
     window.arguments[0].result = GetSearchCond();
     window.arguments[0].name = $('list-name').value;
+    window.arguments[0].num = $('db-search-max').value;
 }
 
 function Init(){
+    $('list-name').value = window.arguments[0].name;
+
     AddSearchLine();
 
-    $('list-name').value = window.arguments[0].name;
+    let searchcond = window.arguments[0].result;
+
+    if( !searchcond ) return;
+
+    $('db-search-max').value = window.arguments[0].num;
+
+    for(let i=1; i<searchcond.length; i++){
+	AddSearchLine();
+    }
+    let hbox = $('search-condition').getElementsByTagName('hbox');
+    for(let i=0,item;item=hbox[i];i++){
+	let menulist = item.getElementsByTagName('menulist');
+	let textbox  = item.getElementsByTagName('textbox');
+
+	menulist[0].value = searchcond[i].key;  // 検索キー(タイトル,投稿日,...)
+	menulist[1].value = searchcond[i].cond; // 条件(以上,以下,...)
+	textbox[0].setAttribute('value',searchcond[i].text );  // 値
+    }
 }
 
 function Destroy(){
