@@ -1883,7 +1883,6 @@ var NicoLiveHelper = {
 		    }
 		}
 	    }
-▽あ
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
 	    else NicoLiveHelper.setupStockProgress();
