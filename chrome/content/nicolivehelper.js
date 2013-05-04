@@ -1868,6 +1868,7 @@ var NicoLiveHelper = {
 		    videoinfo = new Object();
 		    videoinfo.video_id = request.video_id; // 動画IDはリクエスト時のものを使う
 		    videoinfo.comment_no = request.comment_no;
+		    videoinfo.cno = request.comment_no;
 		}
 	    }
 
@@ -1882,7 +1883,7 @@ var NicoLiveHelper = {
 		    }
 		}
 	    }
-
+▽あ
             q.shift(); // リク処理したので一個削除
             if (!isstock) NicoLiveHelper.setupRequestProgress();
 	    else NicoLiveHelper.setupStockProgress();
@@ -3804,9 +3805,12 @@ var NicoLiveHelper = {
 
     /**
      * ストックにある動画を再生済みにする.
+     * 視聴者のときは処理しない。
      * @param video_id 再生済みにしたい動画ID
      */
     setPlayFlagForStock: function(video_id){
+	if( !IsCaster() ) return;
+
 	let b = false;
 	for( let i=0,item; item=this.stock_list[i]; i++ ){
 	    if( item.video_id==video_id ){
