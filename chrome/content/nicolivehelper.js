@@ -4528,6 +4528,14 @@ var NicoLiveHelper = {
      * リクエストをソート
      */
     sortRequest:function(type,order){
+	let s = JSON.stringify( this.request_list );
+	let f = function(){
+	    NicoLiveHelper.request_list = JSON.parse(s);
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	this.sortRequestStock(this.request_list,type,order);
 	NicoLiveRequest.updateView(this.request_list);
 	this.saveRequest();	
@@ -4537,6 +4545,13 @@ var NicoLiveHelper = {
      * ストックをソート
      */
     sortStock:function(type,order){
+	let s = JSON.stringify( this.stock_list );
+	let f = function(){
+	    NicoLiveHelper.stock_list = JSON.parse(s);
+	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	};
+	this.pushUndoStack( f );
+
 	this.sortRequestStock(this.stock_list,type,order);
 	NicoLiveStock.updateView(this.stock_list);
 	this.saveStock();
@@ -4544,6 +4559,14 @@ var NicoLiveHelper = {
 
     // コメ番順にソート.
     sortRequestByCommentNo:function(){
+	let s = JSON.stringify( this.request_list );
+	let f = function(){
+	    NicoLiveHelper.request_list = JSON.parse(s);
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	// order:1だと昇順、order:-1だと降順.
 	let order = 1;
 	this.request_list.sort( function(a,b){
