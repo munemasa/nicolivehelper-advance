@@ -2532,16 +2532,23 @@ var NicoLiveHelper = {
 
 	if( text.match(/^\/stop\s*(sub)*/) ){
 	    let target = RegExp.$1;
+	    clearInterval(this._revertcommenttimer);
 	    if( target=='sub' ){
 		let subtitle = $('sub-video-title');
 		subtitle.value = "";
 		subtitle.setAttribute('tooltiptext',"");
 		this.play_status[ SUB ].videoinfo = null;
+		clearTimeout( this.play_status[SUB]._playend );
+		clearTimeout( this.play_status[SUB]._playnext );
+		clearTimeout( this.play_status[SUB]._prepare );
 	    }else{
 		let maintitle = $('main-video-title');
 		maintitle.value = "";
 		maintitle.setAttribute('tooltiptext',"");
 		this.play_status[ MAIN ].videoinfo = null;
+		clearTimeout( this.play_status[MAIN]._playend );
+		clearTimeout( this.play_status[MAIN]._playnext );
+		clearTimeout( this.play_status[MAIN]._prepare );
 	    }
 	    return;
 	}
@@ -2562,6 +2569,7 @@ var NicoLiveHelper = {
 	    clearTimeout( this.play_status[MAIN]._playend );
 	    clearTimeout( this.play_status[MAIN]._playnext );
 	    clearTimeout( this.play_status[MAIN]._prepare );
+	    clearInterval(this._revertcommenttimer);
 	    return;
 	}
 	if( text.match(/^\/soundonly (on|off)\s*(.*)/) ){
