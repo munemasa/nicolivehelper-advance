@@ -4808,6 +4808,7 @@ var NicoLiveHelper = {
      */
     initVars: function(){
 	this._donotshowdisconnectalert = false;
+	this._extendcnt = 0;
 
 	this.liveinfo = new LiveInfo();
 	this.userinfo = new UserInfo();
