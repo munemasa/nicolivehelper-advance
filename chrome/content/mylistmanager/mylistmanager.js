@@ -781,7 +781,7 @@ var MyListManager = {
 	var f = "chrome,resizable=yes,centerscreen";
 	value.cookie = cookie;
 	value.agent = agent;
-	var w = window.openDialog("chrome://nicolivehelper/content/mylistmanager/mylistmanager.xul","",f,value);
+	var w = window.openDialog("chrome://nicolivehelperadvance/content/mylistmanager/mylistmanager.xul","",f,value);
 	w.focus();
     },
 
