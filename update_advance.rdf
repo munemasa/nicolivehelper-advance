@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="rdf:#$O3pNz"
+                   em:version="1.0a3">
+    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
+  </RDF:Description>
   <RDF:Seq RDF:about="rdf:#$N3pNz">
     <RDF:li RDF:resource="rdf:#$O3pNz"/>
   </RDF:Seq>
-  <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0a2">
-    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBADGnZsErBrsL+wLmSOm5fMc4PM2YMYV6rdrrdYksrAGirbbW5XxFh7Gj+uNkKgdiNcB/jIZULlKJ0tiZ9q7Ef9eHr7F+xmesVr9qIE4PTA23KnM6DEcycxC7q6zMlLobmLUIZDoiBRyfbsIOXefMS3g36zTdQKyGqN800Q3tPEdX">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
   </RDF:Description>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a2.xpi"
-                   em:updateHash="sha1:5c8a20899e9fda335f91b2a5f8a8b3f9dc1dbf53"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a3.xpi"
+                   em:updateHash="sha1:97ee37451003034e139a881e06dba1613174f215"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAEGGqx21hkpFci5XYFPLGl1l+qeNHAT3CIdL5eEGvRWAzBWDpp+DTwpj5D8HDqR5xbngvqKY8VJCYxZfcsKNf/l04k5L05VuA2eEBP8gDWlHrzGLTws4RgBWE0+gTRX1SpSEGKmEK2RD+wH56iR27i/bFxYZVX0W3ShYy4evbqv4">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
 </RDF:RDF>
