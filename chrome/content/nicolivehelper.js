@@ -338,6 +338,12 @@ var NicoLiveHelper = {
 	    // 一時停止が押されているので自動で次曲に行かない.
 	    return;
 	}
+	if( this._losstime ){
+	    // ロスタイムでは自動再生は行わない.
+	    ShowNotice("ロスタイム中なので自動再生は行いませんでした");
+	    return;
+	}
+
 	this.playNext();
     },
 
