@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="rdf:#$R3pNz"
-                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
-                   em:minVersion="4.0"
-                   em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a1.xpi"
-                   em:updateHash="sha1:5a079991a02049175ee4aaef68b06dd874da6e62"
-                   em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
   <RDF:Seq RDF:about="rdf:#$N3pNz">
     <RDF:li RDF:resource="rdf:#$O3pNz"/>
   </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0a1">
+                   em:version="1.0a2">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
   </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$R3pNz"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="4.0"
+                   em:maxVersion="*"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a2.xpi"
+                   em:updateHash="sha1:5c8a20899e9fda335f91b2a5f8a8b3f9dc1dbf53"
+                   em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
   <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAF/0bC5l4sFW+ULDXy7O3LVDL8GxiHSm1rw2OaUfY/p0PGC7DPcSsR7S2k0Mfn3oYqJc3m0HXkgPmMKAfPok8JklDl4TpK7UIghxP94IthuysRDI99Po2GJn5fhEVN0AZ/k4Zwiol3bUKcLf3uoPu9N6XUKCr0W6vfc1Nxx2UMgQ">
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAEGGqx21hkpFci5XYFPLGl1l+qeNHAT3CIdL5eEGvRWAzBWDpp+DTwpj5D8HDqR5xbngvqKY8VJCYxZfcsKNf/l04k5L05VuA2eEBP8gDWlHrzGLTws4RgBWE0+gTRX1SpSEGKmEK2RD+wH56iR27i/bFxYZVX0W3ShYy4evbqv4">
     <em:updates RDF:resource="rdf:#$N3pNz"/>
   </RDF:Description>
 </RDF:RDF>
