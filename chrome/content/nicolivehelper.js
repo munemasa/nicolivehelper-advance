@@ -142,7 +142,13 @@ var NicoLiveHelper = {
 	    if( tmp ) str = tmp;
 	}
 	if(str && !nomsg){
-	    if( this.iscaster ) this.postComment(str,command);
+	    if( this.iscaster ){
+		let videoinfo = this.getCurrentVideoInfo();
+		let truecomment = this.replaceMacros(str, videoinfo);
+		if(truecomment.length){
+		    this.postComment(truecomment,command);
+		}
+	    }
 	}
 	if( !flg ) this.anchor = {};
 	let e = evaluateXPath(document,"//*[@id='toolbar-allowrequest']//*[@allowrequest='"+flg+"']");
