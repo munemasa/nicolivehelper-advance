@@ -2104,6 +2104,14 @@ var NicoLiveHelper = {
      * 画面の更新あり
      */
     clearAllRequest: function(){
+	let s = this.request_list;
+	let f = function(){
+	    NicoLiveHelper.request_list = s;
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	this.request_list = new Array();
 	NicoLiveRequest.updateView( this.request_list );
     },
@@ -2112,6 +2120,14 @@ var NicoLiveHelper = {
      * 再生済みのリクエストを削除する.
      */
     clearPlayedRequest: function(){
+	let s = this.request_list;
+	let f = function(){
+	    NicoLiveHelper.request_list = s;
+	    NicoLiveRequest.updateView( NicoLiveHelper.request_list );
+	    NicoLiveHelper.saveRequest();
+	};
+	this.pushUndoStack( f );
+
 	let newstock = new Array();
 	for( let i=0,item; item=this.request_list[i]; i++ ){
 	    if( !this.isAlreadyPlayed( item.video_id ) ) newstock.push(item);
@@ -2127,6 +2143,13 @@ var NicoLiveHelper = {
      * 画面の更新あり
      */
     clearAllStock: function(){
+	let s = this.stock_list;
+	let f = function(){
+	    NicoLiveHelper.stock_list = s;
+	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	};
+	this.pushUndoStack( f );
+
 	this.stock_list = new Array();
 	NicoLiveStock.updateView( this.stock_list );
     },
@@ -2135,6 +2158,13 @@ var NicoLiveHelper = {
      * 再生済みのストックを削除する.
      */
     clearPlayedStock: function(){
+	let s = this.stock_list;
+	let f = function(){
+	    NicoLiveHelper.stock_list = s;
+	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	};
+	this.pushUndoStack( f );
+
 	let newstock = new Array();
 	for( let i=0,item; item=this.stock_list[i]; i++ ){
 	    if( !item.is_played ) newstock.push(item);
