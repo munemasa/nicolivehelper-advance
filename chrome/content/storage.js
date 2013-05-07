@@ -7,8 +7,17 @@ var Storage = {
      * ファイルに書き込む
      * @param k ファイル名(key)
      * @param v オブジェクト(value)
+     * @param memoryonly trueだとメモリに書き込むのみ
      */
-    writeObject: function( k, v ){
+    writeObject: function( k, v, memoryonly ){
+	let stringify = JSON.stringify(v);
+
+	Application.storage.set("nico"+k,stringify);
+	if( memoryonly ){
+	    debugprint("write to memory "+k);
+	    return;
+	}
+
 	debugprint("write "+k);
 	let f = this.getSaveDir();
 	f.append( k );
@@ -17,7 +26,7 @@ var Storage = {
 	let flags = 0x02|0x08|0x20;// wronly|create|truncate
 	os.init(f,flags,0664,0);
 	let cos = GetUTF8ConverterOutputStream(os);
-	cos.writeString( JSON.stringify(v) );
+	cos.writeString( stringify );
 	cos.close();
     },
 
@@ -27,6 +36,13 @@ var Storage = {
      * @param defvalue デフォルト値
      */
     readObject: function( k, defvalue ){
+	let item = Application.storage.get("nico"+k,null);
+	if(item!=null){
+	    debugprint("read from memory "+k);
+	    let obj = JSON.parse(item);
+	    return obj;
+	}
+
 	debugprint("read "+k);
 	let f = this.getSaveDir();
 	f.append( k );
