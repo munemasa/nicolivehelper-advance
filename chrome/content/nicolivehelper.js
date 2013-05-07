@@ -253,6 +253,7 @@ var NicoLiveHelper = {
 	    elem.value += item.video_id+" "+item.title+"\n";
 	}
 	NicoLiveHistory.addPlayList(item);
+	this.savePlaylist(true);
     },
 
     /**
@@ -401,7 +402,7 @@ var NicoLiveHelper = {
 	    NicoLiveHelper.saveRequest();
 	};
 	this.pushUndoStack( f );
-
+	this.saveRequest();
 	return removeditem[0];
     },
     /**
@@ -413,9 +414,10 @@ var NicoLiveHelper = {
 	let f = function(){
 	    NicoLiveHelper.stock_list.splice( n, 0, removeditem[0] );
 	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
-	    NicoLiveHelper.saveStock();
+	    NicoLiveHelper.saveStock(true);
 	};
 	this.pushUndoStack( f );
+	this.saveStock(true);
 	return removeditem[0];
     },
 
@@ -470,11 +472,13 @@ var NicoLiveHelper = {
 	let f = function(){
 	    NicoLiveHelper.stock_list = JSON.parse(s);
 	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	    NicoLiveHelper.saveStock(true);
 	};
 	this.pushUndoStack( f );
 
 	ShuffleArray( this.stock_list );
 	NicoLiveStock.updateView( this.stock_list );
+	this.saveStock(true);
     },
 
     /**
@@ -489,6 +493,10 @@ var NicoLiveHelper = {
 	if( !request ) return;
 
 	this.play( request );
+
+	// 再生するとリクエストリストの状態が変わるので更新する
+	let t = NicoLiveHelper.getTotalRequestTime();
+	$('total-playtime').value = LoadFormattedString('STR_FORMAT_NUMBER_OF_REQUEST',[t.min, t.sec, NicoLiveHelper.request_list.length]);
     },
 
     /**
@@ -2123,6 +2131,7 @@ var NicoLiveHelper = {
 	    NicoLiveHelper.saveRequest();
 	};
 	this.pushUndoStack( f );
+	this.saveRequest();
 
 	this.request_list = new Array();
 	NicoLiveRequest.updateView( this.request_list );
@@ -2174,6 +2183,7 @@ var NicoLiveHelper = {
 	let f = function(){
 	    NicoLiveHelper.stock_list = s;
 	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	    NicoLiveHelper.saveStock(true);
 	};
 	this.pushUndoStack( f );
 
@@ -2184,7 +2194,7 @@ var NicoLiveHelper = {
 	this.stock_list = newstock;
 	NicoLiveStock.updateView( this.stock_list );
 
-	this.saveStock();
+	this.saveStock(true);
     },
 
     /**
@@ -2216,7 +2226,7 @@ var NicoLiveHelper = {
 	    $('playlist-textbox').value = s2;
 	    NicoLiveHistory.updateView( s );
 	    NicoLiveStock.updatePlayedStatus( NicoLiveHelper.stock_list );
-	    NicoLiveHelper.savePlaylist();
+	    NicoLiveHelper.savePlaylist(true);
 	};
 	this.pushUndoStack( f );
 
@@ -2229,7 +2239,7 @@ var NicoLiveHelper = {
 	}
 	NicoLiveStock.updatePlayedStatus( this.stock_list );
 
-	this.savePlaylist();
+	this.savePlaylist(true);
     },
 
     /**
@@ -4599,12 +4609,13 @@ var NicoLiveHelper = {
 	let f = function(){
 	    NicoLiveHelper.stock_list = JSON.parse(s);
 	    NicoLiveStock.updateView( NicoLiveHelper.stock_list );
+	    NicoLiveHelper.saveStock(true);
 	};
 	this.pushUndoStack( f );
 
 	this.sortRequestStock(this.stock_list,type,order);
 	NicoLiveStock.updateView(this.stock_list);
-	this.saveStock();
+	this.saveStock(true);
     },
 
     // コメ番順にソート.
@@ -4693,33 +4704,38 @@ var NicoLiveHelper = {
 
     /**
      * リクエストをセーブする
+     * @param memoryonly trueだとメモリに書き込むのみ
      */
-    saveRequest:function(){
+    saveRequest:function(memoryonly){
 	// 視聴者ではリクエストは保存しない.
 	// シングルウィンドウのときは常に保存する.
 	if( IsCaster() || IsOffline() || Config.isSingleWindow() ){
-	    Storage.writeObject( "nico_request_setno"+this.request_setno, this.request_list );
+	    Storage.writeObject( "nico_request_setno"+this.request_setno,
+				 this.request_list,
+				 memoryonly );
 	}
     },
     /**
      * ストックをセーブする
+     * @param memoryonly trueだとメモリに書き込むのみ
      */
-    saveStock:function(){
-	Storage.writeObject( "nico_stock_setno"+this.stock_setno, this.stock_list );
+    saveStock:function(memoryonly){
+	Storage.writeObject( "nico_stock_setno"+this.stock_setno, this.stock_list, memoryonly );
     },
     /**
      * プレイリストをセーブする
+     * @param memoryonly trueだとメモリに書き込むのみ
      */
-    savePlaylist:function(){
+    savePlaylist:function(memoryonly){
 	// 視聴者ではプレイリストは保存しない.
 	// シングルウィンドウのときは常に保存する.
 	if( IsCaster() || IsOffline() || Config.isSingleWindow() ){
-	    Storage.writeObject( "nico_playlist", this.playlist_list );
-	    Storage.writeObject( "nico_playlist_txt", $('playlist-textbox').value );
+	    Storage.writeObject( "nico_playlist", this.playlist_list, memoryonly );
+	    Storage.writeObject( "nico_playlist_txt", $('playlist-textbox').value, memoryonly );
 	}
     },
     /**
-     * リクエスト、ストック、プレイリストを保存する
+     * リクエスト、ストック、プレイリストをストレージに保存する
      */
     saveAll: function(){
 	this.saveRequest();

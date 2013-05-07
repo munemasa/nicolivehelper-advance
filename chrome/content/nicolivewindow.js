@@ -439,8 +439,11 @@ var NicoLiveWindow = {
     showSetListMenu:function(elem){
 	let items = elem.getElementsByTagName("menuitem");
 	for each (let item in items ){
-	    let label = item.getAttribute("label2");
-	    if( label ){ item.label = label; }
+	    try{
+		let label = item.getAttribute("label2");
+		if( label ){ item.label = label; }
+	    } catch (x) {
+	    }
 	}
     },
     /**
