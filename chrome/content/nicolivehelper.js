@@ -3990,7 +3990,15 @@ var NicoLiveHelper = {
      * 次の動画を先読みする.
      */
     prepareNextVideo: function(target){
-	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
+	let remain;
+	let status = this.getCurrentPlayStatus(target);
+	try{
+	    remain = Config.play.in_time ?
+		this.liveinfo.end_time - (status.play_end + parseInt(Config.play_interval)) : 0;
+	} catch (x) {
+	    debugprint(x);
+	    remain = 0;
+	}
 
 	if( this.request_list.length ){
 	    let n = this.selectNextVideo( true, remain ); // isrequest=true
