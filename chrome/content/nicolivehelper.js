@@ -507,6 +507,8 @@ var NicoLiveHelper = {
 	if( this.isOffline() || !this.iscaster ) return;
 	let item = this.stock_list[n];
 	this.play( item );
+
+	this._repeat_cnt = n+1;
     },
     /**
      * 再生履歴から再生する.
@@ -3952,17 +3954,18 @@ var NicoLiveHelper = {
 	    }
 	}
 
-	if( candidate.length==0 ) return -1; // 候補なし
-
 	let playstyle = this.playstyle;
 	if( !isrequest ){
-	    let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random
+	    let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random 3:repeat
 	    switch(stockplaystyle){
 	    case '1': playstyle = PLAY_SEQUENTIAL; break;
 	    case '2': playstyle = PLAY_RANDOM; break;
+	    case '3': playstyle = PLAY_REPEAT; break;
 	    default: break;
 	    }
 	}
+
+	if( candidate.length==0 && playstyle!=PLAY_REPEAT ) return -1; // 候補なし
 
 	switch( playstyle ){
 	case PLAY_SEQUENTIAL:
@@ -3981,6 +3984,12 @@ var NicoLiveHelper = {
 	    break;
 
 	case PLAY_CONSUMPTION:
+	    break;
+	case PLAY_REPEAT:
+	    // リピート再生はストックのみで可能。再生済みは考慮しない
+	    if( !this._repeat_cnt ) this._repeat_cnt = 0;
+	    this._repeat_cnt %= this.stock_list.length;
+	    return this._repeat_cnt;
 	    break;
 	}
 	return -1;

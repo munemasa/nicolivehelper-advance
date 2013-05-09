@@ -27,6 +27,7 @@ const ROOM_NAME = ["アリーナ", "立ち見A列", "立ち見B列", "立ち見C
 const PLAY_SEQUENTIAL = 0;
 const PLAY_RANDOM = 1;
 const PLAY_CONSUMPTION = 2;
+const PLAY_REPEAT = 3;
 
 // リクエストを受け付けない理由コード
 const REASON_NOT_ACCEPT = 1;            // リクエストを受け付けていない

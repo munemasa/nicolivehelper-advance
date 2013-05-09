@@ -399,9 +399,9 @@
 	      <menuitem label="&stock.playstyle.none;" value="0"/>
 	      <menuitem label="&stock.playstyle.sequential;" value="1"/>
 	      <menuitem label="&stock.playstyle.random;" value="2"/>
+	      <menuitem label="リピート" value="3"/>
 	    </menupopup>
 	  </menulist>
-	  
 	  <button label="&button.shuffle;" oncommand="Backup.current();NicoLiveHelper.shuffleStock();"/>
 	  <button type="menu" label="&button.load_mylist;" style="min-width:1em;">
 	    <menupopup id="stock-from-mylist">
