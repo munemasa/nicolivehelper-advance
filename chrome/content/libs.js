@@ -7,8 +7,6 @@ try{
 } catch (x) {
 } 
 
-const RUN_ON_FIREFOX = true; // なにかいい判定方法あるんだろうけど調べがつかないのでフラグで.
-
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
@@ -89,6 +87,14 @@ function ShuffleArray( list ){
 	list[i] = list[j];
 	list[j] = t;
     }
+}
+
+/**
+ * Firefox extensionならtrueを返す.
+ */
+function OnFirefox(){
+    if( navigator.userAgent.match(/NicoLiveHelper/) ) return false;
+    return true;
 }
 
 /**
