@@ -308,10 +308,30 @@ var NicoLiveHelper = {
     },
 
     /**
+     * ロスタイムの時間を取得する.
+     * サーバー負荷が低いときは計算通りになるけど
+     * 重いときは全然あてにならないので数値固定に。
+     */
+    calcLossTime:function(){
+	let r = 0;
+	if( $('get-extratime').hasAttribute('checked') ){
+	    r = 45;
+	}
+	return r;
+
+	// どうも新バージョンでもロスタイム時間は以下の式でOKみたい.
+	let tmp = 120 - (this.liveinfo.start_time % 60);
+	if( tmp>115 ) tmp = 60;
+	tmp = Math.floor(tmp/10)*10; // 10秒未満の端数は切り捨て.
+	return tmp;
+    },
+
+    /**
      * 次曲ボタンを押したときのアクション.
      */
     playNext: function(){
 	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
+	remain += this.calcLossTime();
 
 	if( this.request_list.length ){
 	    let n = this.selectNextVideo( true, remain );
@@ -4006,6 +4026,8 @@ var NicoLiveHelper = {
 	    remain = Config.play.in_time ?
 		this.liveinfo.end_time - (status.play_end + parseInt(Config.play_interval)) : 0;
 	    remain--; // ちょっと調整.
+	    remain += this.calcLossTime();
+
 	} catch (x) {
 	    debugprint(x);
 	    remain = 0;
