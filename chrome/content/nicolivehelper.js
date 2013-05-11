@@ -3861,8 +3861,10 @@ var NicoLiveHelper = {
 
 	let videoremain = videolength - videoprogress;
 	if( videoremain<0 ) videoremain = 0;
-	videoname.label = currentvideo.title
+	let str = currentvideo.title
 	    + '('+ (this._flg_displayprogresstime?GetTimeString(videoprogress):'-'+GetTimeString(videoremain) ) + '/' + currentvideo.length+')';
+	videoname.label = str;
+	//this.setProgressInfoIntoOriginalPage( str );
 
 	// プログレスバーの長さ制限
 	let w = window.innerWidth - $('statusbar-n-of-listeners').clientWidth - $('statusbar-live-progress').clientWidth;
@@ -4368,6 +4370,31 @@ var NicoLiveHelper = {
 	if( tmp>115 ) tmp = 60;
 	tmp = Math.floor(tmp/10)*10; // 10秒未満の端数は切り捨て.
 	return tmp;
+    },
+
+    /**
+     * 元ページ内にテキストを書き込む.
+     * @param str 文字列
+     */
+    setProgressInfoIntoOriginalPage: function(str){
+	try{
+	    let tab = NicoLiveWindow.findTab(this.liveinfo.request_id) || NicoLiveWindow.findTab(this.liveinfo.default_community);
+	    if( tab ){
+		let doc = tab.linkedBrowser._contentWindow.window.document;
+		let root = doc.getElementById('flvplayer_container');
+		let elem = doc.getElementById('nicolivehelper_progressinfo');
+		if( elem ){
+		    elem.innerHTML = str;
+		}else{
+		    let span = CreateHTMLElement('span');
+		    span.setAttribute('id','nicolivehelper_progressinfo');
+		    span.setAttribute('style','color:white;');
+		    span.innerHTML = str;
+		    root.appendChild(span);
+		}
+	    }
+	} catch (x) {
+	}
     },
 
     /**
