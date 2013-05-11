@@ -1845,6 +1845,7 @@ var NicoLiveHelper = {
 			// 投稿者名の取得
 			NicoLiveHelper.getUserName( videoinfo.user_id );
 		    }
+		    NicoLiveHelper.saveRequest();
 
                 } else {
 		    // ストック
