@@ -24,6 +24,7 @@ var CommandMenu = {
 			let lvid = str.match(/href=\"http.*\/watch\/(lv\d+)\"\s*class=\"now\"/)[1];
 			debugprint( lvid );
 			if(lvid){
+			    $('debug-textbox').value = '';
 			    NicoLiveHelper.openNewBroadcast(lvid,"",true,"");
 			}
 		    } catch (x) {
@@ -50,6 +51,7 @@ var CommandMenu = {
 		let xml = req.responseXML;
 		try{
 		    let request_id = xml.getElementsByTagName("video_id")[0].textContent;
+		    $('debug-textbox').value = '';
 		    NicoLiveHelper.openNewBroadcast(request_id,"",false,"");
 		} catch (x) {
 		    debugprint(x);
@@ -69,10 +71,12 @@ var CommandMenu = {
 	}
 	request_id = lvid.match(/lv\d+/);
 	if(request_id){
+	    $('debug-textbox').value = '';
 	    NicoLiveHelper.openNewBroadcast(request_id,"",true,"");
 	}
 	request_id = lvid.match(/co\d+/) || lvid.match(/ch\d+/);
 	if(request_id){
+	    $('debug-textbox').value = '';
 	    NicoLiveHelper.openNewBroadcast(request_id,"",true,request_id);
 	}
 

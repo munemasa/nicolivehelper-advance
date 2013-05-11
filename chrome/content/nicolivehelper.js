@@ -3462,6 +3462,7 @@ var NicoLiveHelper = {
     reconnect:function(){
 	if( IsOffline() ) return;
 	if( ConfirmPrompt('再接続を行いますか?','再接続') ){
+	    $('debug-textbox').value = '';
 	    this.openNewBroadcast(
 		this.liveinfo.request_id, this.liveinfo.title,
 		IsCaster(), this.liveinfo.default_community );
@@ -3505,8 +3506,6 @@ var NicoLiveHelper = {
      * @param community_id 放送しているコミュニティID
      */
     openNewBroadcast: function(request_id, title, iscaster, community_id){
-	$('debug-textbox').value = '';
-
 	if( request_id=="lv0" ){
 	    debugprint("Now offline.");
 	    return;
@@ -4586,7 +4585,7 @@ var NicoLiveHelper = {
 	if( LibUserSessionCookie ){
 	    debugprint("user_session=" + LibUserSessionCookie );
 	}
-	if( !RUN_ON_FIREFOX && this._use_other_browser ){
+	if( !OnFirefox() && this._use_other_browser ){
 	    NicoLiveCookie.setCookie( LibUserSessionCookie );
 	}
     },
@@ -4981,7 +4980,8 @@ var NicoLiveHelper = {
 	try{
 	    // XULRunnerではここからコマンドライン引数を取る
 	    // window.arguments[0].getArgument(0);
-	    if( RUN_ON_FIREFOX ){
+	    if( OnFirefox() ){
+		debugprint("This is an extension.");
 		request_id = window.arguments[0];
 		title      = window.arguments[1];
 		iscaster   = window.arguments[2];
