@@ -26,9 +26,6 @@ var NicoLiveTalker = {
 
     runProcess:function(exe,text){
 	try{
-	    if( $('use-bouyomichan').selected ){
-		this.bouyomichan( $('bouyomichan-server').value, text);
-	    }
 	    if( $('use-saykotoeri').selected || $('use-saykotoeri2').selected){
 		// system()使うのでコマンドラインパラメータとして渡すのに危険なもの削除.
 		text = text.replace(/[;\"'&]/g,"");
@@ -40,6 +37,7 @@ var NicoLiveTalker = {
 		this.talkqueue.push(text);
 	    }
 	} catch (x) {
+	    debugprint(x);
 	}
 
 	return;
@@ -177,12 +175,12 @@ var NicoLiveTalker = {
 	try{
 	    $('enable-comment-talker').checked = prefs.getBoolPref("ext.comment-talker.enable");
 	    $('use-what-talker-program').selectedIndex = prefs.getIntPref("ext.comment-talker.program");
-	    $('bouyomichan-server').value = prefs.getCharPref("ext.comment-talker.bouyomichan-server");
 	    $('nlhaddon-restrictlength').value = prefs.getIntPref("ext.comment-talker.length");
 	    $('nlhaddon-format').value = prefs.getUnicharPref("ext.comment-talker.format");
 	    $('nlhaddon-talk-speed').value = prefs.getIntPref("ext.comment-talker.speed");
 	    $('nlhaddon-talk-volume').value = prefs.getIntPref("ext.comment-talker.volume");
 	} catch (x) {
+	    debugprint(x);
 	}
     },
 
@@ -196,7 +194,6 @@ var NicoLiveTalker = {
 	let prefs = Config.getBranch();
 	prefs.setBoolPref("ext.comment-talker.enable", $('enable-comment-talker').checked);
 	prefs.setIntPref("ext.comment-talker.program", $('use-what-talker-program').selectedIndex);
-	prefs.setCharPref("ext.comment-talker.bouyomichan-server",$('bouyomichan-server').value );
 	prefs.setIntPref("ext.comment-talker.length", $('nlhaddon-restrictlength').value);
 	prefs.setUnicharPref("ext.comment-talker.format",$('nlhaddon-format').value);
 	prefs.setIntPref("ext.comment-talker.speed", $('nlhaddon-talk-speed').value);
