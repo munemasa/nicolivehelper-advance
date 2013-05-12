@@ -1,5 +1,3 @@
-const NicoLiveHelperAdvanceVersion = "1.0a6";
-
 /**
  * いろいろと便利関数などを.
  */
@@ -169,7 +167,8 @@ function CreateXHR(method,uri, substitution)
 
 function GetAddonVersion()
 {
-    return NicoLiveHelperAdvanceVersion;
+    let ver = navigator.userAgent.match(/.*\/(.*)$/);
+    return ver[1];
 }
 
 function GetXmlText(xml,path){
