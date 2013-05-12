@@ -326,10 +326,44 @@ var NicoLiveHelper = {
 	return tmp;
     },
 
+    findRequestByVideoId: function(vid){
+	for(let i=0,item; item=this.request_list[i]; i++){
+	    if( item.video_id==vid ) return i;
+	}
+	return -1;
+    },
+    findStockByVideoId: function(vid){
+	for(let i=0,item; item=this.stock_list[i]; i++){
+	    if( item.video_id==vid ) return i;
+	}
+	return -1;
+    },
+
+    /**
+     * 先読みから再生する.
+     * リクエストやストックに先読みした動画がなければ再生しない.
+     */
+    playFromPrepared: function(){
+	let n;
+	n = this.findRequestByVideoId(this._prepared);
+	if( n>=0 ){
+	    NicoLiveRequest.playRequest( n );
+	    return true;
+	}
+	n = this.findStockByVideoId(this._prepared);
+	if( n>=0 ){
+	    NicoLiveStock.playStock( n );
+	    return true;
+	}
+	return false;
+    },
+
     /**
      * 次曲ボタンを押したときのアクション.
      */
     playNext: function(){
+	if( this.playFromPrepared() ) return;
+
 	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
 	remain += this.calcLossTime();
 
