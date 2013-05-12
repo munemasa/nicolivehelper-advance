@@ -1,3 +1,14 @@
+pref("toolkit.defaultChromeURI", "chrome://nicolivehelperadvance/content/mainwindow.xul");
+
+/* Don't inherit OS locale */
+pref("intl.locale.matchOS", "false");
+
+/* Choose own fallback locale; later it can be overridden by the user */
+pref("general.useragent.locale", "ja-JP");
+pref("intl.accept_languages", "ja, en-us, en");
+pref("browser.chromeURL", "chrome://nicolivehelperadvance/content/browser.xul");
+/* pref("browser.chromeURL", "chrome://navigator/content/navigator.xul"); */
+
 pref("extensions.nicolivehelperadvance.mikuonly",false);
 
 pref("extensions.nicolivehelperadvance.getusername",false);
