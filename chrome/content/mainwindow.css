@@ -96,7 +96,8 @@ vbox:hover + hbox.btn_command, hbox.btn_command:hover {
     margin: 0;
 }
 #tab-comment button {
-    margin: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 
