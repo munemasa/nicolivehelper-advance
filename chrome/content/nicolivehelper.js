@@ -228,6 +228,7 @@ var NicoLiveHelper = {
 	    }
 	}
 	elem.value += item.video_id+" "+item.title+"\n";
+	this.savePlaylist(true);
     },
 
     /**
@@ -315,7 +316,7 @@ var NicoLiveHelper = {
     calcLossTime:function(){
 	let r = 0;
 	if( $('get-extratime').hasAttribute('checked') ){
-	    r = 45;
+	    r = 60;
 	}
 	return r;
 
@@ -365,7 +366,9 @@ var NicoLiveHelper = {
 	if( this.playFromPrepared() ) return;
 
 	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
-	remain += this.calcLossTime();
+	if( remain ){
+	    remain += this.calcLossTime();
+	}
 
 	if( this.request_list.length ){
 	    let n = this.selectNextVideo( true, remain );
@@ -4390,19 +4393,6 @@ var NicoLiveHelper = {
 	}else{
 	    debugprint("延長処理をキャンセルしました");
 	}
-    },
-
-    /**
-     * ロスタイム時間を求める.
-     * @return 秒を返す
-     */
-    calcLossTime:function(){
-	return 60; // サーバー負荷によって安定しないので固定に
-
-	let tmp = 120 - (this.liveinfo.start_time % 60);
-	if( tmp>115 ) tmp = 60;
-	tmp = Math.floor(tmp/10)*10; // 10秒未満の端数は切り捨て.
-	return tmp;
     },
 
     /**
