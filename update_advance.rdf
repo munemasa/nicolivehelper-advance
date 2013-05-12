@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="rdf:#$R3pNz"
-                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
-                   em:minVersion="4.0"
-                   em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a5.xpi"
-                   em:updateHash="sha1:30c98faa74496fd971b8702da4258c26ef98a7db"
-                   em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBABuUKjTM1gqLouSTVVIy/Gw8HQ0cyjHo6GUgjegC3Scwskr14ywkSSEoASJ5rRyszsyJN6gHjMXtPSPoeV4yuxAPf6zy716pjJFxhvzeLgFqTuhc7YiQOJeSSLKBRus6/ue4cnyG/w5QnxTZZlUVc/FAVbTz3hVSg0mb8lEfCYbN">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Seq RDF:about="rdf:#$N3pNz">
     <RDF:li RDF:resource="rdf:#$O3pNz"/>
   </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0a5">
+                   em:version="1.0a6">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
   </RDF:Description>
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKkUG82XFGqieYTfPenWIDtG4rPsXEcuchPIxvbKB6c2rmgW4CCWdmNKKp/O4OnpveRTS7FIc5oA1MUkQMkUdZ8yajX/ks6qUbJmF+8xOWk95m6RNPwbXPdPBrdTJAFPGxpcyK6v0MOARYDQpBiepSPm38pccvnEvLjfzQsJXecf">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$R3pNz"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="4.0"
+                   em:maxVersion="*"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a6.xpi"
+                   em:updateHash="sha1:6a543579b870d50eaa516dce9972ed4a5516bb85"
+                   em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
 </RDF:RDF>
