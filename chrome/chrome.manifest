@@ -1,0 +1,7 @@
+content	nicolivehelperadvance	content/
+locale	nicolivehelperadvance	ja-JP	locale/ja-JP/
+content	nlhadv_commenttalker	content/nlh_commenttalker/ platform
+
+overlay chrome://nicolivehelperadvance/content/mainwindow.xul chrome://nlhadv_commenttalker/content/nicolivetalker.xul
+
+style chrome://nicolivehelperadvance/content/mainwindow.xul chrome://nicolivehelperadvance/content/mainwindow-mac.css os=Darwin
