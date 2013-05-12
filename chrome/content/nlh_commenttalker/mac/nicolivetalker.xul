@@ -54,10 +54,12 @@
       </hbox>
 
       <groupbox>
+	<!--
 	<hbox align="center">
 	  <label disabled="true" value="読み上げ速度"/><textbox disabled="true" size="5" id="nlhaddon-talk-speed" min="50" max="300" value="100" type="number"/>
 	  <label disabled="true" value="音量"/><textbox size="5" disabled="true" id="nlhaddon-talk-volume" min="0" max="100" value="100" type="number"/>
 	</hbox>
+	-->
 
 	<hbox><checkbox persist="checked" id="nlhaddon-read-castercomment" label="運営コメントを読み上げる"/></hbox>
 	<hbox><checkbox persist="checked" id="nlhaddon-dontread-leadingslash" label="/で始まるコメントを読み上げない"/></hbox>
