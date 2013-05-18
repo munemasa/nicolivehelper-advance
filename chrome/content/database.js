@@ -1143,6 +1143,14 @@ var Database = {
 	ShowNotice('検索結果にある動画を全てDBから削除しました');
     },
 
+    /**
+     * サーチリザルトから動画ページを開く.
+     */
+    openPage: function(){
+	let video_id = $('db-search-result').selectedItem.getAttribute('vid');
+	NicoLiveWindow.openDefaultBrowser("http://www.nicovideo.jp/watch/"+video_id,true);
+    },
+
     onkeydown:function(event){
 	//debugprint(event);
 	//this._data = event;
