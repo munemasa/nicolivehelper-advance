@@ -2735,10 +2735,15 @@ var NicoLiveHelper = {
 	    }
 	    this.setPlayFlagForStock( video_id );
 	    this._prepared = null;
+
+	    this.saveRequest(true);
+	    this.saveStock(true);
 	}
 
 	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
-	    
+	    this.saveRequest(true);
+	    this.saveStock(true);
+	    this.savePlaylist(true);
 	}
 
 	if( chat.text.match(/^\/disconnect/) ){

@@ -1171,6 +1171,8 @@
 
     <!-- DB検索結果リスト用メニュー for database -->
     <menupopup id="popup-db-result">
+      <menuitem label="ページを開く" oncommand="Database.openPage();"/>
+
       <menuitem label="&menu.copy_video_id;"
 		oncommand="Database.copyVideoId();"/>
       <menuitem label="&menu.db_sendrequest;"
