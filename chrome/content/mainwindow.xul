@@ -259,6 +259,7 @@
 	    <menuitem label="&toolbar.resize_window_default;" oncommand="NicoLiveWindow.setDefaultSize();"/>
 	    <menuseparator id="window-list-begin-marker"/>
 	    <menuseparator id="window-list-end-marker"/>
+	    <menuitem label="ヘルプ" oncommand="NicoLiveWindow.openDefaultBrowser('http://miku39.jp/nicolive/nicolivehelperadvance/man/',true);"/>
 	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>
 	</toolbarbutton>
@@ -1173,6 +1174,8 @@
 
     <!-- DB検索結果リスト用メニュー for database -->
     <menupopup id="popup-db-result">
+      <menuitem label="ページを開く" oncommand="Database.openPage();"/>
+
       <menuitem label="&menu.copy_video_id;"
 		oncommand="Database.copyVideoId();"/>
       <menuitem label="&menu.db_sendrequest;"

@@ -1429,6 +1429,8 @@ var NicoLiveHelper = {
 	root = xml.getElementsByTagName('thumb')[0];
 	if( !root ) throw "no thumb tag";
 
+	let tags = ["jp","tw","us"];
+	let tagscnt = 0;
 	for(let i=0,elem; elem=root.childNodes[i]; i++){	    	
 	    switch( elem.tagName ){
 	    case "user_id":
@@ -1480,12 +1482,17 @@ var NicoLiveHelper = {
 		    info.tags = new Object();
 		}
 		if( !info.tags[domain] ) info.tags[domain] = new Array();
+		else{
+		    domain = 'tag'+tagscnt;
+		    info.tags[domain] = new Array();
+		}
 		if( !info.tags_array ) info.tags_array = new Array();
 		for(let i=0,item;item=tag[i];i++){
 		    let tag = restorehtmlspecialchars(ZenToHan(item.textContent));
 		    info.tags[domain].push( tag );
 		    info.tags_array.push( tag );
 		}
+		tagscnt++;
 		break;
 	    case "size_high":
 		info.filesize = parseInt(elem.textContent);
@@ -2728,10 +2735,15 @@ var NicoLiveHelper = {
 	    }
 	    this.setPlayFlagForStock( video_id );
 	    this._prepared = null;
+
+	    this.saveRequest(true);
+	    this.saveStock(true);
 	}
 
 	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
-	    
+	    this.saveRequest(true);
+	    this.saveStock(true);
+	    this.savePlaylist(true);
 	}
 
 	if( chat.text.match(/^\/disconnect/) ){
