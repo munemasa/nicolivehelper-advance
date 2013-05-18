@@ -256,6 +256,7 @@
 	    <menuitem label="&toolbar.resize_window_default;" oncommand="NicoLiveWindow.setDefaultSize();"/>
 	    <menuseparator id="window-list-begin-marker"/>
 	    <menuseparator id="window-list-end-marker"/>
+	    <menuitem label="ヘルプ" oncommand="NicoLiveWindow.openDefaultBrowser('http://miku39.jp/nicolive/nicolivehelperadvance/man/',true);"/>
 	    <menuitem label="About..." oncommand="OpenAboutDialog();"/>
 	  </menupopup>
 	</toolbarbutton>
