@@ -48,7 +48,7 @@
 
   <vbox flex="1">
     <hbox flex="1">
-      <listbox id="folder-listbox" context="folder-list-menu"
+      <listbox id="folder-listbox" context="mylist-item-menu"
 	       onselect="MyListManager.loadMyList(this.selectedItem.value, this.selectedItem.label);"
 	       ondragenter="MyListManager.checkDragOnMyList(event);"
 	       ondragover="MyListManager.checkDragOnMyList(event);"
@@ -93,7 +93,7 @@
 		 ondragenter="MyListManager.checkDropToListItem(event);"
 		 ondragover="MyListManager.checkDropToListItem(event);"
 		 ondrop="MyListManager.dropToListItem(event);"
-		 onkeydown=""
+		 onkeydown="return MyListManager.onkeydown(event);"
 		 ondblclick="">
 	</listbox>
       </vbox>
@@ -107,6 +107,10 @@
       <statusbarpanel id="statusbar-username" label="USERNAME"/>
     </statusbar>
   </vbox>
+
+  <menupopup id="mylist-item-menu">
+    <menuitem label="動画を追加する" oncommand="MyListManager.addVideo();"/>
+  </menupopup>
 
   <!-- for folder -->
   <menupopup id="folder-item-menu">
