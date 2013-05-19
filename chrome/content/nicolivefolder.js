@@ -217,7 +217,14 @@ var NicoLiveFolderDB = {
      * @param item 動画情報のデータ(row)
      */
     createListItemElement:function(item){
-	let posteddate = GetDateString(item.first_retrieve*1000);
+	let posteddate;
+	if( Config.japanese_standard_time ){
+	    let diff = Config.timezone_offset * 60;
+	    let t = item.first_retrieve + diff + 9*60*60;
+	    posteddate = GetDateString(t*1000);
+	}else{
+	    posteddate = GetDateString(info.first_retrieve*1000);
+	}
 
 	let listitem = CreateElement('listitem');
 	listitem.setAttribute('vid',item.video_id);

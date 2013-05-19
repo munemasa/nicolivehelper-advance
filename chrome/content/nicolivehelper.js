@@ -706,7 +706,13 @@ var NicoLiveHelper = {
 		break;
 	    case 'date':
 		if( !info.first_retrieve ) break;
-		tmp = GetDateString(info.first_retrieve*1000);
+		if( Config.japanese_standard_time ){
+		    let diff = Config.timezone_offset * 60;
+		    let t = info.first_retrieve + diff + 9*60*60;
+		    tmp = GetDateString(t*1000);
+		}else{
+		    tmp = GetDateString(info.first_retrieve*1000);
+		}
 		break;
 	    case 'length':
 		if( !info.length ) break;
@@ -1651,7 +1657,11 @@ var NicoLiveHelper = {
 	    let sevendaysago = GetCurrentTime()-this.secofweek;
 	    let d = new Date(sevendaysago*1000);
 	    d = new Date( d.toLocaleFormat("%Y/%m/%d 0:00:00") );
-	    d = d.getTime()/1000;
+	    d = d.getTime()/1000; // 現地時刻の0:00:00で処理される
+	    if( Config.japanese_standard_time ){
+		d += Config.timezone_offset*60; // GMTの0:00:00にする
+		d += 9*60*60; // JSTの0:00:00にする
+	    }
 	    if( videoinfo.first_retrieve >= d ){
 		videoinfo.errno = REASON_DISABLE_NEWMOVIE;
 		videoinfo.errmsg = Config.msg.newmovie;
@@ -3921,8 +3931,17 @@ var NicoLiveHelper = {
 
 	// チップヘルプでの動画情報表示
 	try{
+	    let posteddate;
+	    if( Config.japanese_standard_time ){
+		let diff = Config.timezone_offset * 60;
+		let t = currentvideo.first_retrieve + diff + 9*60*60;
+		posteddate = GetDateString(t*1000);
+	    }else{
+		posteddate = GetDateString(currentvideo.first_retrieve*1000);
+	    }
+
 	    let str;
-	    str = "投稿日/"+GetDateString(currentvideo.first_retrieve*1000)
+	    str = "投稿日/"+posteddate
 		+ " 再生数/"+currentvideo.view_counter
 		+ " コメント/"+currentvideo.comment_num
 		+ " マイリスト/"+currentvideo.mylist_counter+"\n"

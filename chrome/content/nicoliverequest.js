@@ -64,7 +64,14 @@ var NicoLiveRequest = {
 	 */
 	div.appendChild(CreateHTMLElement('br'));
 
-	let datestr = GetDateString(item.first_retrieve*1000);
+	let datestr;
+	if( Config.japanese_standard_time ){
+	    let diff = Config.timezone_offset * 60;
+	    let t = item.first_retrieve + diff + 9*60*60;
+	    datestr = GetDateString(t*1000);
+	}else{
+	    datestr = GetDateString(info.first_retrieve*1000);
+	}
 	div.appendChild(document.createTextNode("投:" + datestr +" "
 		+ "再:"+FormatCommas(item.view_counter)+" コ:"+FormatCommas(item.comment_num)
 		+ " マ:"+FormatCommas(item.mylist_counter)+" 時間:"+item.length
