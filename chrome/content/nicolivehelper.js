@@ -1765,6 +1765,7 @@ var NicoLiveHelper = {
 	if( date_to-date_from >= 86400000 ){ /* 86400000は1日のミリ秒数 */
 	    // 投稿日チェック
 	    let posted = videoinfo.first_retrieve*1000;
+	    // TODO 時差補正する
 	    if( date_from <= posted && posted <= date_to ){
 		// OK
 	    }else{
