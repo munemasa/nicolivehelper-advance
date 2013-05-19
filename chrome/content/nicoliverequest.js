@@ -70,7 +70,7 @@ var NicoLiveRequest = {
 	    let t = item.first_retrieve + diff + 9*60*60;
 	    datestr = GetDateString(t*1000);
 	}else{
-	    datestr = GetDateString(info.first_retrieve*1000);
+	    datestr = GetDateString(item.first_retrieve*1000);
 	}
 	div.appendChild(document.createTextNode("投:" + datestr +" "
 		+ "再:"+FormatCommas(item.view_counter)+" コ:"+FormatCommas(item.comment_num)
