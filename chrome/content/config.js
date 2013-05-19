@@ -4,6 +4,9 @@ var Config = {
     play_interval: 0,          // 動作再生の間隔
     videoinfo_interval: 0,     // 動画情報コメントの送信間隔
 
+    japanese_standard_time: false,
+    timezone_offset: 0,
+
     request:{}, // リクエスト設定
     play:{},    // 再生設定
 
@@ -335,6 +338,9 @@ var Config = {
 	// カスタムスクリプト
 	this.do_customscript = branch.getBoolPref("custom-script");
 	this.customscript = Storage.readObject('nico_live_customscript',{});
+
+	this.japanese_standard_time = branch.getBoolPref("japanese-standard-time");
+	this.timezone_offset = (new Date()).getTimezoneOffset();
 
 	// NG動画
 	this.loadNGVideosSetting(branch);
