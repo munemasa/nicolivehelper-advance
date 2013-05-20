@@ -462,6 +462,10 @@ var Database = {
 			d = new Date(date[0],date[1]-1,date[2],0,0,0);
 			tmp = parseInt(d.getTime() / 1000); // integer
 		    }
+		    if( Config.japanese_standard_time ){
+			tmp -= Config.timezone_offset*60;
+			tmp -= 9*60*60;
+		    }
 		}else{
 		    tmp = parseInt(item.text);
 		}
@@ -542,7 +546,7 @@ var Database = {
 	    let t = item.first_retrieve + diff + 9*60*60;
 	    posteddate = GetDateString(t*1000);
 	}else{
-	    posteddate = GetDateString(info.first_retrieve*1000);
+	    posteddate = GetDateString(item.first_retrieve*1000);
 	}
 
 	let listitem = CreateElement('listitem');
