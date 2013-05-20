@@ -1760,12 +1760,20 @@ var NicoLiveHelper = {
 	let date_from,date_to;
 	date_from = restrict.date_from.match(/\d+/g);
 	date_to   = restrict.date_to.match(/\d+/g);
-	date_from = new Date(date_from[0],date_from[1]-1,date_from[2]);
-	date_to   = new Date(date_to[0],date_to[1]-1,date_to[2],23,59,59);
-	if( date_to-date_from >= 86400000 ){ /* 86400000は1日のミリ秒数 */
+	date_from = (new Date(date_from[0],date_from[1]-1,date_from[2])).getTime() / 1000;
+	date_to   = (new Date(date_to[0],date_to[1]-1,date_to[2],23,59,59)).getTime() / 1000;
+	if( date_to-date_from >= 86400 ){ /* 86400は1日の秒数 */
 	    // 投稿日チェック
-	    let posted = videoinfo.first_retrieve*1000;
-	    // TODO 時差補正する
+	    let posted = videoinfo.first_retrieve;
+
+	    // 時差補正する
+	    if( Config.japanese_standard_time ){
+		date_from -= Config.timezone_offset*60;
+		date_from -= 9*60*60;
+		date_to -= Config.timezone_offset*60;
+		date_to -= 9*60*60;
+	    }
+
 	    if( date_from <= posted && posted <= date_to ){
 		// OK
 	    }else{
