@@ -706,7 +706,13 @@ var NicoLiveHelper = {
 		break;
 	    case 'date':
 		if( !info.first_retrieve ) break;
-		tmp = GetDateString(info.first_retrieve*1000);
+		if( Config.japanese_standard_time ){
+		    let diff = Config.timezone_offset * 60;
+		    let t = info.first_retrieve + diff + 9*60*60;
+		    tmp = GetDateString(t*1000);
+		}else{
+		    tmp = GetDateString(info.first_retrieve*1000);
+		}
 		break;
 	    case 'length':
 		if( !info.length ) break;
@@ -1651,7 +1657,11 @@ var NicoLiveHelper = {
 	    let sevendaysago = GetCurrentTime()-this.secofweek;
 	    let d = new Date(sevendaysago*1000);
 	    d = new Date( d.toLocaleFormat("%Y/%m/%d 0:00:00") );
-	    d = d.getTime()/1000;
+	    d = d.getTime()/1000; // 現地時刻の0:00:00で処理される
+	    if( Config.japanese_standard_time ){
+		d += Config.timezone_offset*60; // GMTの0:00:00にする
+		d += 9*60*60; // JSTの0:00:00にする
+	    }
 	    if( videoinfo.first_retrieve >= d ){
 		videoinfo.errno = REASON_DISABLE_NEWMOVIE;
 		videoinfo.errmsg = Config.msg.newmovie;
@@ -1750,11 +1760,20 @@ var NicoLiveHelper = {
 	let date_from,date_to;
 	date_from = restrict.date_from.match(/\d+/g);
 	date_to   = restrict.date_to.match(/\d+/g);
-	date_from = new Date(date_from[0],date_from[1]-1,date_from[2]);
-	date_to   = new Date(date_to[0],date_to[1]-1,date_to[2],23,59,59);
-	if( date_to-date_from >= 86400000 ){ /* 86400000は1日のミリ秒数 */
+	date_from = (new Date(date_from[0],date_from[1]-1,date_from[2])).getTime() / 1000;
+	date_to   = (new Date(date_to[0],date_to[1]-1,date_to[2],23,59,59)).getTime() / 1000;
+	if( date_to-date_from >= 86400 ){ /* 86400は1日の秒数 */
 	    // 投稿日チェック
-	    let posted = videoinfo.first_retrieve*1000;
+	    let posted = videoinfo.first_retrieve;
+
+	    // 時差補正する
+	    if( Config.japanese_standard_time ){
+		date_from -= Config.timezone_offset*60;
+		date_from -= 9*60*60;
+		date_to -= Config.timezone_offset*60;
+		date_to -= 9*60*60;
+	    }
+
 	    if( date_from <= posted && posted <= date_to ){
 		// OK
 	    }else{
@@ -2118,6 +2137,7 @@ var NicoLiveHelper = {
      */
     addRequestDirect: function(videoinfo){
 	if( !this.isAlreadyRequested( videoinfo.video_id ) ){
+	    videoinfo = JSON.parse( JSON.stringify(videoinfo) );
 	    NicoLiveHelper.request_list.push( videoinfo );
 	    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
 	}else{
@@ -2130,6 +2150,7 @@ var NicoLiveHelper = {
      */
     addStockDirect: function(videoinfo){
 	if( !this.hasStock( videoinfo.video_id ) ){
+	    videoinfo = JSON.parse( JSON.stringify(videoinfo) );
 	    videoinfo.is_casterselection = true;
 	    NicoLiveHelper.stock_list.push( videoinfo );
 	    NicoLiveStock.addStockView( videoinfo );
@@ -3921,8 +3942,17 @@ var NicoLiveHelper = {
 
 	// チップヘルプでの動画情報表示
 	try{
+	    let posteddate;
+	    if( Config.japanese_standard_time ){
+		let diff = Config.timezone_offset * 60;
+		let t = currentvideo.first_retrieve + diff + 9*60*60;
+		posteddate = GetDateString(t*1000);
+	    }else{
+		posteddate = GetDateString(currentvideo.first_retrieve*1000);
+	    }
+
 	    let str;
-	    str = "投稿日/"+GetDateString(currentvideo.first_retrieve*1000)
+	    str = "投稿日/"+posteddate
 		+ " 再生数/"+currentvideo.view_counter
 		+ " コメント/"+currentvideo.comment_num
 		+ " マイリスト/"+currentvideo.mylist_counter+"\n"
@@ -4075,9 +4105,10 @@ var NicoLiveHelper = {
 	try{
 	    remain = Config.play.in_time ?
 		this.liveinfo.end_time - (status.play_end + parseInt(Config.play_interval)) : 0;
-	    remain--; // ちょっと調整.
-	    remain += this.calcLossTime();
-
+	    if( remain ){
+		remain--; // ちょっと調整.
+		remain += this.calcLossTime();
+	    }
 	} catch (x) {
 	    debugprint(x);
 	    remain = 0;

@@ -330,22 +330,18 @@ var NicoLiveHelperAdvanceOverlay = {
 	    if (firstrun){
 		Prefs.setBoolPref("firstrun",false);
 		Prefs.setCharPref("version",current);
-		// TODO ここに初めて実行したとき用のコードを挿入します。 
-		/*
+		// ここに初めて実行したとき用のコードを挿入します。 
 		window.setTimeout(function(){
-				      gBrowser.selectedTab = gBrowser.addTab("http://code.google.com/p/nicolivehelper-advance/wiki/Manual");
+				      gBrowser.selectedTab = gBrowser.addTab("http://miku39.jp/nicolive/nicolivehelperadvance/man/");
 				  }, 1500);
-		 */
 	    }
 	    if (ver!=current && !firstrun){ // !firstrun によりこのセクションは拡張機能を初めて使うときは実行されません。
 		Prefs.setCharPref("version",current);
-		// TODO バージョンが異なるとき、すなわちアップグレードしたときに実行するコードを挿入します。
-		/*
+		// バージョンが異なるとき、すなわちアップグレードしたときに実行するコードを挿入します。
 		window.setTimeout(
 		    function(){
-			gBrowser.selectedTab = gBrowser.addTab("http://code.google.com/p/nicolivehelper-advance/wiki/UpdateHistory#0.2");
+			gBrowser.selectedTab = gBrowser.addTab("http://miku39.jp/nicolive/nicolivehelperadvance/man/?page_id=46");
 		    }, 1500);
-		 */
 	    }
 	}
     },
