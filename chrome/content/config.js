@@ -248,6 +248,7 @@ var Config = {
 	this.play.do_prepare = branch.getBoolPref("play.prepare");
 	this.play.prepare_timing = branch.getIntPref("play.prepare-timing");
 
+	// 枠に収まるように選曲
 	this.play.in_time = branch.getBoolPref("play.in-time");
 
 	// ジングル動画設定
