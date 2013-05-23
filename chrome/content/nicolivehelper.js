@@ -2137,6 +2137,7 @@ var NicoLiveHelper = {
      */
     addRequestDirect: function(videoinfo){
 	if( !this.isAlreadyRequested( videoinfo.video_id ) ){
+	    videoinfo = JSON.parse( JSON.stringify(videoinfo) );
 	    NicoLiveHelper.request_list.push( videoinfo );
 	    NicoLiveRequest.addRequestView( videoinfo ); // 表示追加
 	}else{
@@ -2149,6 +2150,7 @@ var NicoLiveHelper = {
      */
     addStockDirect: function(videoinfo){
 	if( !this.hasStock( videoinfo.video_id ) ){
+	    videoinfo = JSON.parse( JSON.stringify(videoinfo) );
 	    videoinfo.is_casterselection = true;
 	    NicoLiveHelper.stock_list.push( videoinfo );
 	    NicoLiveStock.addStockView( videoinfo );
