@@ -4105,9 +4105,10 @@ var NicoLiveHelper = {
 	try{
 	    remain = Config.play.in_time ?
 		this.liveinfo.end_time - (status.play_end + parseInt(Config.play_interval)) : 0;
-	    remain--; // ちょっと調整.
-	    remain += this.calcLossTime();
-
+	    if( remain ){
+		remain--; // ちょっと調整.
+		remain += this.calcLossTime();
+	    }
 	} catch (x) {
 	    debugprint(x);
 	    remain = 0;
