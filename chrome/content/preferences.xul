@@ -859,6 +859,8 @@
       <preference id="pref-classes-value"
 		  name="extensions.nicolivehelperadvance.mlclasses-value" type="unichar"/>
 
+      <preference id="pref-japanese-standard-time"
+		  name="extensions.nicolivehelperadvance.japanese-standard-time" type="bool"/>
       <preference id="pref-video-db-path"
 		  name="extensions.nicolivehelperadvance.db-path" type="unichar"/>
       <preference id="pref-storage-path"
@@ -1067,6 +1069,10 @@
 
 	  <tabpanel orient="vertical">
 	    <!-- other -->
+	    <checkbox preference="pref-japanese-standard-time"
+		      label="動画の投稿時刻を日本標準時で表示・処理する"
+		      tooltiptext="日本標準時でない環境下で、動画投稿日時を日本標準時として表示・処理するようにします。"/>
+
 	    <groupbox>
 	      <caption>動画DBファイル</caption>
 	      <hbox>

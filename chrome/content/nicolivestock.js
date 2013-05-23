@@ -282,7 +282,12 @@ var NicoLiveStock = {
      */
     addRequestDirect: function(event){
 	let n = this.getIndex(event);
-	NicoLiveHelper.addRequestDirect( NicoLiveHelper.stock_list[n] );
+	if( !IsCaster() && !IsOffline() ){
+	    let vid = NicoLiveHelper.stock_list[n].video_id;
+	    NicoLiveHelper.postListenerComment( vid, "" );
+	}else{
+	    NicoLiveHelper.addRequestDirect( NicoLiveHelper.stock_list[n] );
+	}
     },
 
     /**

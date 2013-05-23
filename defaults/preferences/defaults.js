@@ -15,6 +15,7 @@ pref("extensions.nicolivehelperadvance.getusername",false);
 pref("extensions.nicolivehelperadvance.no-auto-pname",false); // 自動P名抽出をしない
 pref("extensions.nicolivehelperadvance.custom-script",false);
 
+pref("extensions.nicolivehelperadvance.japanese-standard-time",false);
 pref("extensions.nicolivehelperadvance.db-path","");
 pref("extensions.nicolivehelperadvance.storage-path","");
 

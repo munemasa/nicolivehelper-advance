@@ -360,6 +360,21 @@ var MyListManager = {
 	window.opener.NicoLiveStock.addStock( str );
     },
 
+    addVideo: function(){
+	if( this.registerMylistQueue.length ) return;
+
+	let video_id = InputPrompt("マイリストに追加する動画IDを入力してください","動画の追加","");
+	if( !video_id ) return;
+
+	this.registerMylistQueue = new Array();
+	let d = video_id.trim().split(/\s+/);
+	for(let i=0,item;item=d[i];i++){
+	    this.registerMylistQueue.push( item );
+	}
+	$('statusbar-progressmeter').max = this.registerMylistQueue.length;
+	this.runAddingMyList();
+    },
+
     openPage:function(){
 	let items = $('folder-item-listbox').children;
 	let str = "";
@@ -634,6 +649,8 @@ var MyListManager = {
     },
 
     checkDropToListItem:function(event){
+	event.dataTransfer.effectAllowed = this.registerMylistQueue.length ? "none":"all";
+
 	let b = false;
 	var file = event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
 	if( file ){
@@ -712,11 +729,15 @@ var MyListManager = {
 	if( this.registerMylistQueue.length==0 ){
 	    this.finishAddingMyList();
 	    this.refreshCurrentMylist();
+	    this._target_mylist_id = 0;
 	    return;
 	}
 	$('statusbar-progressmeter').value = $('statusbar-progressmeter').max - this.registerMylistQueue.length;
 
-	let mylist_id = $('folder-listbox').selectedItem.value;
+	if( !this._target_mylist_id ){
+	    this._target_mylist_id = $('folder-listbox').selectedItem.value;
+	}
+	let mylist_id = this._target_mylist_id;
 	let video_id = this.registerMylistQueue.shift();
 	if( mylist_id=='default' ){
 	    this.finishAddingMyList();
@@ -743,6 +764,8 @@ var MyListManager = {
     },
 
     dropToListItem:function(event){
+	if( this.registerMylistQueue.length ) return;
+
 	// ファイルをドロップしたとき.
 	var file = event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
 	if (file instanceof Components.interfaces.nsIFile){
@@ -837,6 +860,24 @@ var MyListManager = {
     refreshCurrentMylist:function(){
 	let mylist = $('folder-listbox');
 	this.loadMyList( mylist.selectedItem.value, mylist.selectedItem.label );
+    },
+
+    onkeydown:function(event){
+	//debugprint(event);
+	//this._data = event;
+	switch( event.keyCode ){
+	case 65: // A
+	    if( event.ctrlKey || event.metaKey ){
+		$('folder-item-listbox').selectAll();
+		event.stopPropagation();
+		return false;
+	    }
+	    break;
+	case 46: // DEL
+	    this.delete();
+	    break;
+	}
+	return true;
     },
 
     init: function(){
