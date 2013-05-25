@@ -39,14 +39,6 @@ var NicoLiveRequest = {
 	// 動画ID+タイトル.
 	div.appendChild(a); // thumbnail
 
-	if( isrequest && NicoLiveHelper._playlog["_"+item.video_id] ){
-	    let t = NicoLiveHelper._playlog["_"+item.video_id];
-	    // tr.className ="table_recently_play";
-	    let txt = document.createTextNode("※この動画は"+GetDateString(t*1000)+"に再生されています。");
-	    div.appendChild( txt );
-	    div.appendChild( CreateHTMLElement('br') );
-	}
-
 	let text = document.createTextNode(item.video_id+' '+item.title);
 	div.appendChild(text);
 
@@ -207,6 +199,13 @@ var NicoLiveRequest = {
 	this._summation_time += Config.play_interval + item.length_ms/1000;
 
 	td = tr.insertCell(tr.cells.length);
+
+	if( NicoLiveHelper._playlog["_"+item.video_id] ){
+	    let t = NicoLiveHelper._playlog["_"+item.video_id];
+	    tr.className ="table_recently_play";
+	    let txt = document.createTextNode("※この動画は"+GetDateString(t*1000)+"に再生されています。");
+	    td.appendChild( txt );
+	}
 
 	let vbox;
 	if( item.video_id.indexOf("im")==0 ){
