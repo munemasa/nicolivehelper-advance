@@ -99,6 +99,8 @@
     <key id="open-broadcasting" key="o" modifiers="accel" oncommand="CommandMenu.openBroadcasting();"/>
     <!-- CTRL+R: Reconnect -->
     <key id="reconnect" key="r" modifiers="accel" oncommand="NicoLiveHelper.reconnect();"/>
+    <!-- CTRL+S: Save -->
+    <key id="save-scene" key="s" modifiers="accel" oncommand="NicoLiveHelper.saveAll(); ShowNotice('ウィンドウの状態を保存しました');"/>
     <!-- CTRL+T: Tweet by Twitter -->
     <key id="tweeting" key="t" modifiers="accel" oncommand="NicoLiveTweet.inputTweet();"/>
     <!-- CTRL+W: Close this window -->
