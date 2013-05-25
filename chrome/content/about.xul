@@ -21,6 +21,13 @@
 	  onclick="window.opener.NicoLiveWindow.openDefaultBrowser('http://com.nicovideo.jp/community/co105163',true);"
 	  value="http://com.nicovideo.jp/community/co105163"/>
     </hbox>
+    <label value="Report a bug:"/>
+    <hbox style="margin-left: 1em;">
+      <label 
+	  style="color:blue; text-decoration:underline;cursor:pointer"
+	  onclick="window.opener.NicoLiveWindow.openDefaultBrowser('https://bitbucket.org/amano_rox/nicolivehelper-advance/issues/new',true);"
+	  value="At Bitbucket"/>
+    </hbox>
     <label value="Donation:"/>
     <hbox style="margin-left: 1em;">
       <label value="PayPal"
