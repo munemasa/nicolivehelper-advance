@@ -212,6 +212,7 @@
 		      oncommand="NicoLiveHelper.postCasterComment('/vote stop','');"/>
 	    <menuseparator/>
 	    <menuitem label="マイリストマネージャ" oncommand="OpenMyListManager();"/>
+	    <menuitem label="ブラウザ" oncommand="OpenBrowser()"/>
 	    <menuseparator/>
 
 	    <!-- special -->
