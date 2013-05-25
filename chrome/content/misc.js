@@ -49,3 +49,13 @@ function OpenMyListManager(){
     var w = window.openDialog("chrome://nicolivehelperadvance/content/mylistmanager/mylistmanager.xul","mylistmanager",f,value);
     w.focus();
 }
+
+function OpenBrowser(){
+    let url;
+    if( IsOffline() ){
+	url = "http://live.nicovideo.jp/my";
+    }else{
+	url = "http://live.nicovideo.jp/watch/"+GetRequestId();
+    }
+    NicoLiveWindow.openInAppBrowser(url,true);
+}
