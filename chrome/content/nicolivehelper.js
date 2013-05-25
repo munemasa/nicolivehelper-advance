@@ -490,7 +490,7 @@ var NicoLiveHelper = {
 	// 単純なループの中で単純にspliceで取るわけにはいかないので
 	// 削除しない動画リスト作って取り替えることに
 	for(let i=0,item;item=this.request_list[i];i++){
-	    if(item.user_id==user_id){
+	    if(item.request_user_id==user_id){
 		if( !vid || item.video_id==vid ){
 		    cnt++;
 		    continue;
