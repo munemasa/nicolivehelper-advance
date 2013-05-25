@@ -490,7 +490,7 @@ var NicoLiveHelper = {
 	// 単純なループの中で単純にspliceで取るわけにはいかないので
 	// 削除しない動画リスト作って取り替えることに
 	for(let i=0,item;item=this.request_list[i];i++){
-	    if(item.user_id==user_id){
+	    if(item.request_user_id==user_id){
 		if( !vid || item.video_id==vid ){
 		    cnt++;
 		    continue;
@@ -2858,27 +2858,29 @@ var NicoLiveHelper = {
      * 視聴者コメントを処理する.
      */
     processListenersComment: function(chat){
-	if( chat.text.match(/((sm|nm|so|im)\d+)/) ){
-	    let video_id = RegExp.$1;
-	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
-	    let code = "";
-	    try{
-		// 作品コードの処理
-		code = chat.text.match(/(...[-+=/]....[-+=/].)/)[1];
-		code = code.replace(/[-+=/]/g,"-"); // JWID用作品コード.
-		NicoLiveHelper.product_code["_"+video_id] = code;
-	    } catch (x) {
+	if( chat.text.indexOf("/del")!=0 ){
+	    if( chat.text.match(/((sm|nm|so|im)\d+)/) ){
+		let video_id = RegExp.$1;
+		let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
+		let code = "";
+		try{
+		    // 作品コードの処理
+		    code = chat.text.match(/(...[-+=/]....[-+=/].)/)[1];
+		    code = code.replace(/[-+=/]/g,"-"); // JWID用作品コード.
+		    NicoLiveHelper.product_code["_"+video_id] = code;
+		} catch (x) {
+		}
+		this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+		return;
 	    }
-	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
-	    return;
-	}
-	if( chat.text.match(/(\d{10})/) ){
-	    let video_id = RegExp.$1;
-	    if( video_id=="8888888888" ) return;
-	    let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
-	    let code = "";
-	    this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
-	    return;
+	    if( chat.text.match(/(\d{10})/) ){
+		let video_id = RegExp.$1;
+		if( video_id=="8888888888" ) return;
+		let is_self_request = chat.text.match(/[^他](貼|張)|自|関/);
+		let code = "";
+		this.addRequest( video_id, chat.comment_no, chat.user_id, is_self_request, code );
+		return;
+	    }
 	}
 
 	switch( chat.text ){
