@@ -1639,7 +1639,7 @@ var NicoLiveHelper = {
 	    if( Config.request.accept_played ){
 		let n = Config.request.allow_n_min_ago * 60; // n分以上前に再生したものは許可.
 		let now = GetCurrentTime();
-		if( this.playlist_list["_"+video_id] >= now-n ){
+		if( this.playlist_list["_"+videoinfo.video_id] >= now-n ){
 		    videoinfo.errno = REASON_ALREADY_PLAYED;
 		    videoinfo.errmsg = Config.msg.played;
 		    throw videoinfo;
@@ -1939,7 +1939,7 @@ var NicoLiveHelper = {
 		    }
                 }
 	    } catch (x) {
-		debugprint(x);
+		debugprint( x.fileName+":"+x.lineNumber+" "+x );
 		if( videoinfo ){
 		    debugprint("error code:"+x.errno);
 		    if( isstock ){
