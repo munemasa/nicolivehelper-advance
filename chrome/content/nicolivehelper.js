@@ -2969,7 +2969,10 @@ var NicoLiveHelper = {
 	    return;
 	}
 	NicoLiveComment.addComment( chat, target_room );
-	NicoLiveTalker.talkComment( chat );
+	try{
+	    NicoLiveTalker.talkComment( chat );
+	} catch (x) {
+	}
 
 	if( chat.date >= NicoLiveHelper.connecttime ){
 	    this.filterComment( chat );
