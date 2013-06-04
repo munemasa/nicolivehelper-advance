@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Seq RDF:about="rdf:#$N3pNz">
+    <RDF:li RDF:resource="rdf:#$O3pNz"/>
+  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a12.xpi"
-                   em:updateHash="sha1:e90072a8430c9642cee184ab2c7fe930e478db00"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a13.xpi"
+                   em:updateHash="sha1:6042489483361de4cb6b813f5304799ae387765c"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAKpFgCOim3uqXBqbQgf3f/8hgSGosWCTRR4IuxO1EqDGBB3+qpc852NPaVB0EqpW5ATIzO/XENI7DELINJITRyN7x/Y616w3DzpVH8Geg2wgl0QZmK6jRscTVYCmzlRMBawnVgXTgtQTGP/fYN3W9KUj51zDy4ralBK77+XqJ9sJ">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0a12">
+                   em:version="1.0a13">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
   </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$N3pNz">
-    <RDF:li RDF:resource="rdf:#$O3pNz"/>
-  </RDF:Seq>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAATqq4XGCxraQdeFqq8aGv9JKdRA4+gSOIPBJrXpTso6xLCBtpLTfWotiXbnGHF1qI87zLp95ibtdjcql+DQKNibQAskzMZAN+6P627VNCbwpBh2zXjK03o2/IsUYWH1fyaGxI7QH1H6frY41UED/B+w7Fyz/1qjlc/j/gi3ZcOQ">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
 </RDF:RDF>
