@@ -2431,6 +2431,11 @@ var NicoLiveHelper = {
 
 	this.commentstate = COMMENT_STATE_MOVIEINFO_BEGIN;
 	this.postCasterComment( str, cmd, '', COMMENT_MSG_TYPE_MOVIEINFO );
+
+	if( this._sendvideoinfo_counter>=4 ){
+	    this.commentstate = COMMENT_STATE_MOVIEINFO_DONE;
+	    clearInterval( this._sendvideoinfo_timer );
+	}
     },
 
     /**
