@@ -849,6 +849,22 @@ var NLHPreference = {
 	$('pref-storage-path').value = file.path;
     },
 
+    /**
+     * 壁紙の指定.
+     */
+    refWallpaperPath:function(){
+	const nsIFilePicker = Components.interfaces.nsIFilePicker;
+	let fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+	fp.init(window, "壁紙の指定", nsIFilePicker.modeOpen);
+	let rv = fp.show();
+	if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+	    let file = fp.file;
+	    let path = fp.file.path;
+	    this.debugprint("「"+path+"」を壁紙に使用します");
+	    $('pref-wallpaper').value = path;
+	}
+    },
+
     init:function(){
 	this.updateFilePicker();
 	this.buildFontList();

@@ -180,6 +180,20 @@ var Config = {
     },
 
     /**
+     * 壁紙設定をする.
+     */
+    setWallPaper: function(){
+	let branch = this.getBranch();
+	let wallpaper = branch.getUnicharPref("display.wallpaper");
+	if( wallpaper ){
+	    let sheet = document.styleSheets[1];
+	    wallpaper = wallpaper.replace(/\\/g,'/');
+	    let rule = "vbox { background-image: url('file://"+wallpaper+"'); }";
+	    sheet.insertRule(rule,1);
+	}
+    },
+
+    /**
      * コメント関係の設定を読む
      */
     loadCommentSettings:function (branch) {
@@ -388,6 +402,7 @@ var Config = {
         this.loadTwitterSettings(branch);
 
         this.setVideoDetail();
+	this.setWallPaper();
 
 	this.loadClasses();
         this.loadListenerCommandSettings(branch);
