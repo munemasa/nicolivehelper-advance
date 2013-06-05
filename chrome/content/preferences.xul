@@ -73,6 +73,8 @@
 		  name="extensions.nicolivehelperadvance.display.font-scale" type="int"/>
       <!-- to obtain font group from browser settings -->
       <preference id="font.language.group" name="font.language.group" type="wstring"/>
+      <preference id="pref-wallpaper"
+		  name="extensions.nicolivehelperadvance.display.wallpaper" type="unichar"/>
 
       <!-- 184コメント -->
       <preference id="pref-184comment"
@@ -197,6 +199,14 @@
 	    </hbox>
 	  </groupbox>
 
+	  <groupbox>
+	    <caption>壁紙</caption>
+	    <hbox>
+	      <textbox flex="1" preference="pref-wallpaper" id="wallpaper-path"/>
+	      <button label="参照..." oncommand="NLHPreference.refWallpaperPath();"/>
+	      <button label="リセット" oncommand="$('pref-wallpaper').value='';"/>
+	    </hbox>
+	  </groupbox>
 	</tabpanel>
 
 	<!-- コメント -->
