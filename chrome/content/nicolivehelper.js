@@ -343,18 +343,31 @@ var NicoLiveHelper = {
     /**
      * 先読みから再生する.
      * リクエストやストックに先読みした動画がなければ再生しない.
+     * ランダム再生時のみ有効。
      */
     playFromPrepared: function(){
 	let n;
-	n = this.findRequestByVideoId(this._prepared);
-	if( n>=0 ){
-	    NicoLiveRequest.playRequest( n );
-	    return true;
+	if( this.playstyle==PLAY_RANDOM ){
+	    n = this.findRequestByVideoId(this._prepared);
+	    if( n>=0 ){
+		NicoLiveRequest.playRequest( n );
+		return true;
+	    }
 	}
-	n = this.findStockByVideoId(this._prepared);
-	if( n>=0 ){
-	    NicoLiveStock.playStock( n );
-	    return true;
+
+	let playstyle = this.playstyle;
+	let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random 3:repeat
+	switch(stockplaystyle){
+	case '2': playstyle = PLAY_RANDOM; break;
+	default: break;
+	}
+
+	if( playstyle==PLAY_RANDOM ){
+	    n = this.findStockByVideoId(this._prepared);
+	    if( n>=0 ){
+		NicoLiveStock.playStock( n );
+		return true;
+	    }
 	}
 	return false;
     },
