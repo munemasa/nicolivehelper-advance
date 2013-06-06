@@ -70,6 +70,7 @@ pref("extensions.nicolivehelperadvance.display.show_detail", false); // 動画�
 pref("extensions.nicolivehelperadvance.display.font","");
 pref("extensions.nicolivehelperadvance.display.font-color","");
 pref("extensions.nicolivehelperadvance.display.font-scale",9);
+pref("extensions.nicolivehelperadvance.display.wallpaper","");
 
 // 詳細設定→ウィンドウ
 pref("extensions.nicolivehelperadvance.window.singlewindow",false);
