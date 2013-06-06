@@ -61,8 +61,64 @@ var CommandMenu = {
 	req.send("");
     },
 
+    /**
+     * Safariブラウザで表示しているページのURLを取得.
+     * @return URLを返す
+     */
+    readSafariUrl:function(){
+	try{
+	    let path = GetExtensionPath();
+	    path.append("libs");
+	    path.append("safariurl.as");
+	    debugprint(path.path);
+
+	    var file = Components.classes["@mozilla.org/file/local;1"]
+		.createInstance(Components.interfaces.nsILocalFile);
+	    file.initWithPath("/bin/sh");
+	    var process = Components.classes["@mozilla.org/process/util;1"]
+		.createInstance(Components.interfaces.nsIProcess);
+	    process.init(file);
+	    debugprint(file.path);
+
+	    let path2 = GetExtensionPath();
+	    path2.append("libs");
+	    path2.append("safariurl.tmp");
+	    debugprint(path2.path);
+	    var arg = "osascript \"" + path.path + "\" > \"" + path2.path+"\"";
+	    debugprint(arg);
+	    var args = [ "-c", arg ];
+	    process.run(true, args, args.length);
+
+	    var output = OpenFile( path2.path );
+	    var istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
+	    istream.init(output, 0x01, 0444, 0);
+	    istream.QueryInterface(Components.interfaces.nsILineInputStream);
+    
+	    var cis = GetUTF8ConverterInputStream(istream);
+    	    // 行を配列に読み込む
+	    var line = {}, hasmore;
+	    var str = "";
+	    do {
+		hasmore = cis.readString(1024,line);
+		str += line.value;
+	    } while(hasmore);
+	    istream.close();
+	    
+	    debugprint(str);
+	    return str;
+	} catch (x) {
+	    debugprint(x);
+	}
+	return "";
+    },
+
     openBroadcasting: function(){
-	let lvid = InputPrompt("接続する番組の放送ID、コミュニティ・チャンネルID、URLを入力してください。\n何も入力せずにOKすると、現在放送中の番組に接続します。","放送IDを入力","");
+	var str = "";
+	if( $('use-mac-safari').hasAttribute('checked') ){
+	    str = this.readSafariUrl();
+	}
+
+	let lvid = InputPrompt("接続する番組の放送ID、コミュニティ・チャンネルID、URLを入力してください。\n何も入力せずにOKすると、現在放送中の番組に接続します。","放送IDを入力",str);
 	let request_id;
 	if( lvid==null ) return;
 	if( lvid=="" ){
