@@ -2469,6 +2469,9 @@ var NicoLiveHelper = {
     revertVideoInfo:function(){
 	// 動画情報送信が終わっていないときは復元不要だし.
 	if( this.commentstate!=COMMENT_STATE_MOVIEINFO_DONE ) return;
+	// 再生終わっているのなら復元不要だし.
+	if( this.isInplay() ) return;
+
 	let n = Config.videoinfo_revert_line;
 	if(n<=0) return;
 	let sendstr = Config.videoinfo[n-1].comment;
