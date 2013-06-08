@@ -278,6 +278,7 @@ var NicoLiveStock = {
 
     /**
      * ストックからリクエストに追加する.
+     * 視聴者の場合は、リクエスト(動画ID)を送信する.
      * @param event ボタンの押下イベント
      */
     addRequestDirect: function(event){
