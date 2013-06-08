@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Seq RDF:about="rdf:#$N3pNz">
-    <RDF:li RDF:resource="rdf:#$O3pNz"/>
-  </RDF:Seq>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAGIEIbmsqsGpjND4VGHs+H/LkjEBhvMA9d1Ox5pOjdLOhl44ygcbx7u//6jWD/Yr9EPQ2Af//gKo29cYNeZ/1nMbNNsgp49pnlXF0kWf3QI0YQXIsotymxKlQofNZHQ457+HaLqkwLHRLcDyDeW7IyW0+gouVEahNk2RGbP3Rx20">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0a13.xpi"
-                   em:updateHash="sha1:6042489483361de4cb6b813f5304799ae387765c"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0b1.xpi"
+                   em:updateHash="sha1:6ae58d843f69c8530bba333f65f3f9f149d6c3f1"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
+  <RDF:Seq RDF:about="rdf:#$N3pNz">
+    <RDF:li RDF:resource="rdf:#$O3pNz"/>
+  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0a13">
+                   em:version="1.0b1">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
-  </RDF:Description>
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAATqq4XGCxraQdeFqq8aGv9JKdRA4+gSOIPBJrXpTso6xLCBtpLTfWotiXbnGHF1qI87zLp95ibtdjcql+DQKNibQAskzMZAN+6P627VNCbwpBh2zXjK03o2/IsUYWH1fyaGxI7QH1H6frY41UED/B+w7Fyz/1qjlc/j/gi3ZcOQ">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
   </RDF:Description>
 </RDF:RDF>
