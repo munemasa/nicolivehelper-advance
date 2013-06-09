@@ -252,6 +252,7 @@ var NicoLiveTweet = {
 	     401 {"request":"/1/statuses/update.json","error":"Could not authenticate you."}
 	     */
 	    if( req.status!=200 ){
+		debugprint("Status="+req.status);
 		let result = JSON.parse(req.responseText);
 		ShowNotice('Twitter:'+result.error);
 	    }
