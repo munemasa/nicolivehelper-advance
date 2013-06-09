@@ -2445,7 +2445,8 @@ var NicoLiveHelper = {
 	this.commentstate = COMMENT_STATE_MOVIEINFO_BEGIN;
 	this.postCasterComment( str, cmd, '', COMMENT_MSG_TYPE_MOVIEINFO );
 
-	if( this._sendvideoinfo_counter>=4 ){
+	if( this._sendvideoinfo_counter>=4 ||
+	    !Config.videoinfo[ this._sendvideoinfo_counter ].comment ){
 	    this.commentstate = COMMENT_STATE_MOVIEINFO_DONE;
 	    clearInterval( this._sendvideoinfo_timer );
 	}
@@ -2469,6 +2470,9 @@ var NicoLiveHelper = {
     revertVideoInfo:function(){
 	// 動画情報送信が終わっていないときは復元不要だし.
 	if( this.commentstate!=COMMENT_STATE_MOVIEINFO_DONE ) return;
+	// 再生終わっているのなら復元不要だし.
+	if( !this.isInplay() ) return;
+
 	let n = Config.videoinfo_revert_line;
 	if(n<=0) return;
 	let sendstr = Config.videoinfo[n-1].comment;
@@ -5024,6 +5028,7 @@ var NicoLiveHelper = {
     initVars: function(){
 	this._donotshowdisconnectalert = false;
 	this._extendcnt = 0;
+	this._losstime = 0;
 
 	this.liveinfo = new LiveInfo();
 	this.userinfo = new UserInfo();
