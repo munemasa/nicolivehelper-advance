@@ -24,6 +24,7 @@
 	}else{
 	    if( $('no-clear').hasAttribute('checked') ){
 	        window.opener.NicoLiveHelper.postCasterComment(str,'');
+		textbox.value = '';
 	    }else{
 	        window.opener.NicoLiveComment.postComment(textbox,ev);
 	    }
