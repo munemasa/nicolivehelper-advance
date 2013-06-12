@@ -3611,6 +3611,9 @@ var NicoLiveHelper = {
 	    return;
 	}
 
+	// initVars()でタイマーIDを保存しているワークを初期化するので
+	// 先に止める
+	this.stopTimers();
 	this.initVars();
 
 	let f = function(xml, req){
@@ -3723,7 +3726,6 @@ var NicoLiveHelper = {
 	};
 
 	this._donotshowdisconnectalert = true;
-	this.stopTimers();
 	this.closeAllConnection();
 	NicoLiveComment.clearAll();
 
