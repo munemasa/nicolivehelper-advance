@@ -22,7 +22,11 @@
 	    window.opener.NicoLiveHelper.postListenerComment(str,'');
 	    textbox.value = '';
 	}else{
-  	    window.opener.NicoLiveComment.postComment(textbox,ev);
+	    if( $('no-clear').hasAttribute('checked') ){
+	        window.opener.NicoLiveHelper.postCasterComment(str,'');
+	    }else{
+	        window.opener.NicoLiveComment.postComment(textbox,ev);
+	    }
 	}
      }
 
@@ -40,7 +44,10 @@
 	       ontextreverted="this.select();"
 	       />
     </hbox>
-    <checkbox persist="checked" autoCheck="true" id="use-listener-comment" label="視聴者コメントにする(放送主用)"/>
+    <hbox>
+      <checkbox persist="checked" autoCheck="true" id="use-listener-comment" label="視聴者コメントにする(放送主用)"/>
+      <checkbox persist="checked" autoCheck="true" id="no-clear" label="運営コメント欄を消去しない" tooltiptext="hidden+/permの運営コメントを消去しません"/>
+    </hbox>
   </vbox>
 
 </dialog>
