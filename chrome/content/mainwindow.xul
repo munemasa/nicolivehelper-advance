@@ -520,6 +520,7 @@
 	  
 	  <splitter collapse="after" state="collapsed"/>
 	  <vbox flex="1" style="overflow:auto;">
+	    <checkbox persist="checked" autoCheck="true" id="no-clear" label="コメントする時に、事前に/clsで運営コメント欄を消去しない" tooltiptext="hidden+/permの運営コメントを消去しません"/>
 	    <hbox style="display: inline-block;" flex="1">
 	      <grid>
 		<columns>

@@ -254,7 +254,11 @@ var NicoLiveComment = {
 
 	let mail = $('textbox-mail').value;
 
-	NicoLiveHelper.postComment(str,mail,"");
+	if( IsCaster() && $('no-clear').hasAttribute('checked') ){
+	    NicoLiveHelper.postCasterComment(str,mail,"");
+	}else{
+	    NicoLiveHelper.postComment(str,mail,"");
+	}
 
 	textbox.value = "";
 	return true;
