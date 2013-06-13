@@ -3018,7 +3018,7 @@ var NicoLiveHelper = {
 	case 2: // チャンネル生放送の場合、こちらの場合もあり。/infoコマンドなどもココ
 	case 3: // 運営コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
-	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
+	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper.isTimeshift ) return;
 
 	    // 再生ステータスを更新
 	    this.processPlayState(chat.text);
@@ -3028,7 +3028,7 @@ var NicoLiveHelper = {
 	default:
 	    // 視聴者コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
-	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper._timeshift ) return;
+	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper.isTimeshift ) return;
 	    this.processListenersComment(chat);
 	    NicoLiveComment.reflection( chat );
 	    break;
@@ -5045,6 +5045,7 @@ var NicoLiveHelper = {
 	this._donotshowdisconnectalert = false;
 	this._extendcnt = 0;
 	this._losstime = 0;
+	this.isTimeshift = false;
 
 	this.liveinfo = new LiveInfo();
 	this.userinfo = new UserInfo();
