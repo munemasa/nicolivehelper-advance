@@ -363,10 +363,20 @@ var NicoLiveHelper = {
 	}
 
 	if( playstyle==PLAY_RANDOM ){
-	    n = this.findStockByVideoId(this._prepared);
-	    if( n>=0 ){
-		NicoLiveStock.playStock( n );
-		return true;
+	    if( this.request_list.length==0 ){
+		/*
+		 * リクエストとストックに同じ動画があって、
+		 * リクエストが順次、ストックがランダムの場合、
+		 * リクエストの先読み、ストックの先読み優先処理、
+		 * リクエストは残ったまま、次の動画として先読み、
+		 * ストックの先読み優先……となるので、
+		 * リクエストが空のときのみ先読み優先とする。
+		 */
+		n = this.findStockByVideoId(this._prepared);
+		if( n>=0 ){
+		    NicoLiveStock.playStock( n );
+		    return true;
+		}
 	    }
 	}
 	return false;
