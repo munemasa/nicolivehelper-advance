@@ -29,6 +29,10 @@ var NicoLiveRejectRequest = {
 	let td;
 	td = tr.insertCell(tr.cells.length);
 	td.appendChild(document.createTextNode("#"+table.rows.length));
+	if( item.comment_no ){
+	    td.appendChild(CreateHTMLElement('br'));
+	    td.appendChild(document.createTextNode("C#"+item.comment_no));
+	}
 
 	td = tr.insertCell(tr.cells.length);
 
