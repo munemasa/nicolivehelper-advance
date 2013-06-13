@@ -3252,11 +3252,11 @@ var NicoLiveHelper = {
 		try{
 		    if( !NicoLiveHelper._donotshowdisconnectalert ){
 			let musictime = $('statusbar-music-name');
-			musictime.label="コメントサーバから切断されました。";
+			musictime.label="コメントサーバーから切断されました。";
 			PlayAlertSound();
-			ShowNotice('コメントサーバから切断されました。',true);
+			ShowNotice('コメントサーバーから切断されました。',true);
 			setTimeout( function(){
-					AlertPrompt('コメントサーバから切断されました。(code='+status+')',
+					AlertPrompt('コメントサーバーから切断されました。(code='+status+')',
 						    NicoLiveHelper.liveinfo.request_id);
 				    }, 5000 );
 		    }
@@ -3622,11 +3622,6 @@ var NicoLiveHelper = {
 	    return;
 	}
 
-	// initVars()でタイマーIDを保存しているワークを初期化するので
-	// 先に止める
-	this.stopTimers();
-	this.initVars();
-
 	let f = function(xml, req){
 	    if( req.readyState!=4 ) return;
 	    if( req.status!=200 ){
@@ -3736,10 +3731,15 @@ var NicoLiveHelper = {
 	    this._donotshowdisconnectalert = false;
 	};
 
+	// initVars()でタイマーIDを保存しているワークを初期化するので
+	// 先に止める
+	this.stopTimers();
 	this._donotshowdisconnectalert = true;
 	this.closeAllConnection();
+
 	NicoLiveComment.clearAll();
 
+	this.initVars();
 	NicoApi.getplayerstatus( request_id, f );
     },
 
@@ -5042,7 +5042,6 @@ var NicoLiveHelper = {
      * ただし、放送枠を越えて持続性の持つデータを扱う変数は初期化しない。
      */
     initVars: function(){
-	this._donotshowdisconnectalert = false;
 	this._extendcnt = 0;
 	this._losstime = 0;
 	this.isTimeshift = false;
