@@ -320,6 +320,12 @@ var NicoLiveMylist = {
 			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-playlist').triggerNode, event);");
 	$('popup-playlist').insertBefore( popup, $('popup-playlist-marker').nextSibling );
 
+	// ステータスバーのポップアップメニューに追加
+	popup = popup.cloneNode(true);
+	popup.setAttribute("oncommand",
+			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-playlist').triggerNode, event);");
+	$('popup-statusbar').insertBefore( popup, $('popup-statusbar-marker') );
+
         let elem;
         for (let i = 0, item; item = mylists[i]; i++) {
             let tmp = item.name.match(/.{1,20}/);

@@ -791,7 +791,7 @@
 
   <!-- statusbar -->
   <statusbar id="statusbar">
-    <stack id="statusbar-currentmusic" context="popup-add-mylist"
+    <stack id="statusbar-currentmusic" context="popup-statusbar"
 	   onclick="NicoLiveHelper.changeDisplayProgressTime(event);">
       <progressmeter id="statusbar-music-progressmeter" mode="determined" value="0" flex="1" />
       <statusbarpanel id="statusbar-music-name" label="" flex="1" crop="start"/>
@@ -1252,6 +1252,23 @@
 
     <!-- マイリストに追加しかないメニュー -->
     <menupopup id="popup-add-mylist">
+    </menupopup>
+
+    <!-- ステータスバー上のメニュー -->
+    <menupopup id="popup-statusbar">
+      <menu label="&rate.name;" id="popup-statusbar-marker">
+	<menupopup 
+	    oncommand="Database.setFavorite(event,null,NicoLiveHelper.getCurrentVideoInfo().video_id);"
+	    onpopupshowing="return Database.showingRateMenu(event,null,NicoLiveHelper.getCurrentVideoInfo().video_id);">
+	  <menuitem label="&rate.none;" value="0" type="checkbox"/>
+	  <menuitem label="&rate.1;" value="10" type="checkbox"/>
+	  <menuitem label="&rate.2;" value="20" type="checkbox"/>
+	  <menuitem label="&rate.3;" value="30" type="checkbox"/>
+	  <menuitem label="&rate.4;" value="40" type="checkbox"/>
+	  <menuitem label="&rate.5;" value="50" type="checkbox"/>
+	</menupopup>
+      </menu>
+      <menuitem label="&statusbar.add_db;" oncommand="Database.addCurrentPlayedVideo();"/>
     </menupopup>
 
     <!-- クッキー共有するブラウザ指定 -->
