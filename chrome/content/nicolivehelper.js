@@ -3028,7 +3028,7 @@ var NicoLiveHelper = {
 	default:
 	    // 視聴者コメント
 	    // 接続時(getplayerstatus)に取得した古いコメントに反応しない
-	    if( chat.date < NicoLiveHelper.connecttime || NicoLiveHelper.isTimeshift ) return;
+	    if( IsCaster() && chat.date < NicoLiveHelper.connecttime || NicoLiveHelper.isTimeshift ) return;
 	    this.processListenersComment(chat);
 	    NicoLiveComment.reflection( chat );
 	    break;
