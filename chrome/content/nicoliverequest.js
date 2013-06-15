@@ -453,6 +453,9 @@ var NicoLiveRequest = {
 	    if( item.is_casterselection ){
 		row.className = "table_casterselection";
 	    }
+	    if( NicoLiveHelper._playlog["_"+item.video_id] ){
+		row.className ="table_recently_play";
+	    }
 
 	    RemoveChildren( td );
 	    td.appendChild( document.createTextNode('#'+(i+1)));
