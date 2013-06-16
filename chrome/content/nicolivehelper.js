@@ -353,30 +353,10 @@ var NicoLiveHelper = {
 		NicoLiveRequest.playRequest( n );
 		return true;
 	    }
-	}
-
-	let playstyle = this.playstyle;
-	let stockplaystyle = $('stock-playstyle').value; // 0:none 1:seq 2:random 3:repeat
-	switch(stockplaystyle){
-	case '2': playstyle = PLAY_RANDOM; break;
-	default: break;
-	}
-
-	if( playstyle==PLAY_RANDOM ){
-	    if( this.request_list.length==0 ){
-		/*
-		 * リクエストとストックに同じ動画があって、
-		 * リクエストが順次、ストックがランダムの場合、
-		 * リクエストの先読み、ストックの先読み優先処理、
-		 * リクエストは残ったまま、次の動画として先読み、
-		 * ストックの先読み優先……となるので、
-		 * リクエストが空のときのみ先読み優先とする。
-		 */
-		n = this.findStockByVideoId(this._prepared);
-		if( n>=0 ){
-		    NicoLiveStock.playStock( n );
-		    return true;
-		}
+	    n = this.findStockByVideoId(this._prepared);
+	    if( n>=0 ){
+		NicoLiveStock.playStock( n );
+		return true;
 	    }
 	}
 	return false;
