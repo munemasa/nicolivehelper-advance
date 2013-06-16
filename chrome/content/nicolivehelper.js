@@ -1982,14 +1982,11 @@ var NicoLiveHelper = {
 		}
 	    }
 
-	    if( !isstock && NicoLiveHelper.iscaster && Config.request.autoreply ){
+	    if( !isstock && IsCaster() && Config.request.autoreply ){
 		if( videoinfo.cno ){
 		    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, videoinfo);
 		    if( sendmsg ){
-			let func = function(){
-			    NicoLiveHelper.postCasterComment( sendmsg, "" );
-			};
-			NicoLiveHelper.clearCasterCommentAndRun( func );
+			NicoLiveHelper.postComment( sendmsg, "", "" );
 		    }
 		}
 	    }
