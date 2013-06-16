@@ -323,7 +323,7 @@ var NicoLiveMylist = {
 	// ステータスバーのポップアップメニューに追加
 	popup = popup.cloneNode(true);
 	popup.setAttribute("oncommand",
-			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-playlist').triggerNode, event);");
+			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-statusbar').triggerNode, event);");
 	$('popup-statusbar').insertBefore( popup, $('popup-statusbar-marker') );
 
         let elem;
