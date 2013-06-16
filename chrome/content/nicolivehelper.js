@@ -1378,9 +1378,6 @@ var NicoLiveHelper = {
 			if(0 && pname[j].match(pname[i]+'$')){
 			    omitflg = true;
 			}
-			if( pname[j].indexOf( pname[i] )!=-1 ){
-			    omitflg = true;
-			}
 			/* 曲名(誰P)となっているものが含まれていたらそれを除外する
 			 * ために (誰P) を含むものを除外する.
 			 */
