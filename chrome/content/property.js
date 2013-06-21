@@ -57,7 +57,8 @@ var Property = {
 	}
 	$('video_tags').innerHTML = text;
 
-	$('video_thumbnail').focus();
+	$('additional_info').focus(); // これを初期表示域に入るように一旦フォーカス当てる
+	$('pname').focus();
     },
     destroy:function(){
     }
