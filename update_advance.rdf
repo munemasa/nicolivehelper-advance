@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAIxH1tj8uzkx+7/6HaZg40EZ89++35M2HF3iofctjJ+TdcLHpbNhB/jwzzJRg82cvXG5qS2xLkY1hwB30Qhc8brvcdtrfDuamvzisrz2CTSiQnwhIGJuDSM5fjGXNObznq2Mqkb/1Z3OVl0QAji9KrzZFXRQG3shnjV0FTUBKywn">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$N3pNz">
+    <RDF:li RDF:resource="rdf:#$O3pNz"/>
+  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0b6.xpi"
-                   em:updateHash="sha1:c1c255badb533939c6afd6a1fa287200a32d01d2"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0b7.xpi"
+                   em:updateHash="sha1:36f4f1f1cd002bd40f97d960696384d85571951f"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBACVwg6drRc6Qh0INwz0/E9nzEbrYvZGPvs7FzOeQNtRFw7xIlmpNJD1qwCWlKnMWEiqVGLY9TRh6x8qET6MjPMMjLFp/zkI1mngB1zCT+gh6/RHwEUXqdgsMY1en58tX8ikjmCh/g9l4zmsoXTcsvpn8oAG2ZHpMMYtjXtz5a3aY">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0b6">
+                   em:version="1.0b7">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
   </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$N3pNz">
-    <RDF:li RDF:resource="rdf:#$O3pNz"/>
-  </RDF:Seq>
 </RDF:RDF>
