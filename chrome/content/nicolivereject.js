@@ -52,8 +52,9 @@ var NicoLiveRejectRequest = {
 	hbox.setAttribute('tooltiptext','');
 	hbox.setAttribute('class','command-buttons');
 
+	let button;
 	/*
-	let button = CreateElement('toolbarbutton');
+	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/information.png');
 	//button.setAttribute('label','情報');
 	button.setAttribute('class','command-button');
@@ -72,6 +73,17 @@ var NicoLiveRejectRequest = {
 	button.setAttribute('label','ストック');
 	button.setAttribute('class','command-button');
 	button.setAttribute("oncommand","NicoLiveRejectRequest.addStockDirect(event);");
+	hbox.appendChild(button);
+
+	let spacer = CreateElement('spacer');
+	spacer.setAttribute('flex','1');
+	hbox.appendChild(spacer);
+
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/remove.png');
+	button.setAttribute('label','削除');
+	button.setAttribute("oncommand","NicoLiveRejectRequest.removeReject(event);");
+	button.setAttribute('class','command-button');
 	hbox.appendChild(button);
 
 	vbox.appendChild(hbox);
@@ -99,6 +111,12 @@ var NicoLiveRejectRequest = {
 	let n = this.getIndex(event);
 	let videoinfo = NicoLiveHelper.getRejectedVideo( n );
 	NicoLiveHelper.addStockDirect( videoinfo );
+    },
+
+    removeReject:function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.reject_list.splice(n,1);
+	this.updateView( NicoLiveHelper.reject_list );
     },
 
     /**
