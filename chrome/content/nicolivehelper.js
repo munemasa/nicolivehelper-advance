@@ -3999,6 +3999,7 @@ var NicoLiveHelper = {
 	}
 	if( b ){
 	    NicoLiveStock.updatePlayedStatus( this.stock_list );
+	    NicoLiveStock.updateRemain();
 	}
     },
 
