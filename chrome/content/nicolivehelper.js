@@ -366,6 +366,8 @@ var NicoLiveHelper = {
      * 次曲ボタンを押したときのアクション.
      */
     playNext: function(){
+	if( this.isOffline() || !this.iscaster ) return;
+
 	if( this.playFromPrepared() ) return;
 
 	let remain = Config.play.in_time ? GetLiveRemainTime() : 0;
