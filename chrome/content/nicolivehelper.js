@@ -722,15 +722,15 @@ var NicoLiveHelper = {
 		tmp = info.length;
 		break;
 	    case 'view':
-		if( !info.view_counter ) break;
+		if( !info.view_counter && 'number' != typeof info.view_counter ) break;
 		tmp = FormatCommas(info.view_counter);
 		break;
 	    case 'comment':
-		if( !info.comment_num ) break;
+		if( !info.comment_num && 'number' != typeof info.comment_num ) break;
 		tmp = FormatCommas(info.comment_num);
 		break;
 	    case 'mylist':
-		if( !info.mylist_counter ) break;
+		if( !info.mylist_counter && 'number' != typeof info.mylist_counter ) break;
 		tmp = FormatCommas(info.mylist_counter);
 		break;
 	    case 'mylistrate':
@@ -743,7 +743,7 @@ var NicoLiveHelper = {
 		break;
 	    case 'tags':
 		// 1行40文字程度までかなぁ
-		if( !info.tags['jp'] || info.tags['jp'].length==0 ) break;
+		if( !info.tags['jp'] ) break;
 		tmp = info.tags['jp'].join('　');
 		tmp = tmp.replace(/(.{35,}?)　/g,"$1<br>");
 		break;
