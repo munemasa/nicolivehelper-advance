@@ -2021,6 +2021,7 @@ var NicoLiveHelper = {
             if (req.status != 200) {
                 // TODO 静画情報取得に失敗
                 debugprint(" getting seiga info failed.");
+		ShowNotice("静画情報の取得に失敗しました: "+request.video_id);
                 q.shift();
                 if (!isstock) NicoLiveHelper.setupRequestProgress();
 		else NicoLiveHelper.setupStockProgress();
@@ -2043,6 +2044,14 @@ var NicoLiveHelper = {
 		    if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
 			NicoLiveHelper.request_list.push(seigainfo);
 			NicoLiveRequest.addRequestView(seigainfo);
+
+			if(seigainfo.comment_no!=0 ){
+			    let sendmsg = Config.msg.accept;
+			    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
+			    if( sendmsg ){
+				NicoLiveHelper.postComment( sendmsg, "", "" );
+			    }
+			}
 		    }
 		} else {
 		    // ストック
@@ -2774,6 +2783,13 @@ var NicoLiveHelper = {
 	}
 
 	if( chat.text.match(/^\/play\s*seiga:(\d+)\s*(main|sub)/) ){
+	    let video_id = RegExp.$1;
+	    let target = RegExp.$2;
+	    target = target=="main"?MAIN:SUB;
+	    let current = this.getCurrentVideoInfo( target );
+	    if( current && current.video_id.indexOf(video_id)>0 ){
+		this.sendVideoInfo( current );
+	    }
 	    this.saveRequest(true);
 	    this.saveStock(true);
 	    this.savePlaylist(true);
