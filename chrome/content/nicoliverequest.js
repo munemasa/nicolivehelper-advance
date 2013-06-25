@@ -456,6 +456,10 @@ var NicoLiveRequest = {
 	    if( NicoLiveHelper._playlog["_"+item.video_id] ){
 		row.className ="table_recently_play";
 	    }
+	    if(item.is_self_request){
+		// green
+		row.className = "table_selfreq";
+	    }
 
 	    RemoveChildren( td );
 	    td.appendChild( document.createTextNode('#'+(i+1)));
