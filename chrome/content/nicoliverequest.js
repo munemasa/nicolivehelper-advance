@@ -147,7 +147,8 @@ var NicoLiveRequest = {
 	div.className ="selection";
 	let a = CreateHTMLElement('a');
 	a.className = "";
-	a.setAttribute("onclick","NicoLiveWindow.openDefaultBrowser('http://seiga.nicovideo.jp/seiga/"+item.video_id.replace(/img/,'im')+"');");
+	a.setAttribute("onclick",
+		       "NicoLiveWindow.openDefaultBrowser('http://seiga.nicovideo.jp/seiga/"+item.video_id+"');");
 
 	let img = CreateHTMLElement('img');
 	img.src = item.thumbnail_url;
