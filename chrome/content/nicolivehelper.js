@@ -264,7 +264,8 @@ var NicoLiveHelper = {
 	let str;
 	let is_sub = $('do-subdisplay').checked;
 	if( request.video_id.indexOf("im")==0 ){
-	    str = "/play " + request.video_id + " " + (is_sub?"sub":"main");
+	    let video_id = request.video_id.replace('im','img');
+	    str = "/play " + video_id + " " + (is_sub?"sub":"main");
 	}else{
 	    str = "/play" + ($('menuid-soundonly').checked?"sound ":" ")+ request.video_id;
 	    if( is_sub ){
@@ -736,7 +737,8 @@ var NicoLiveHelper = {
 		tmp = FormatCommas(info.mylist_counter);
 		break;
 	    case 'mylistrate':
-		if( !info.mylist_counter || !info.view_counter ) break;
+		if( !info.mylist_counter && 'number' !=typeof info.mylist_counter) break;
+		if( !info.view_counter   && 'number' != typeof info.view_counter ) break;
 		if( info.view_counter==0 ){
 		    tmp = "0.0%";
 		}else{
@@ -1414,7 +1416,7 @@ var NicoLiveHelper = {
 	    title = RegExp.$1;
 	}
 
-	info.video_id = video_id.replace(/^im/,'img');
+	info.video_id = video_id;
 	info.title = title;
 	info.thumbnail_url = "http://lohas.nicoseiga.jp/thumb/" + video_id.replace(/^im(\d+)/,'$1q');
 	info.description = "";
