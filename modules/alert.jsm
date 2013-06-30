@@ -78,6 +78,9 @@ var NicoLiveAlertModule = {
 			this.window_instance.closeBroadcastingTab( this.window_instance.liveinfo.request_id,
 								   this.window_instance.liveinfo.default_community );
 		    }
+		    if( this.window_instance.config.isSingleWindow() ){
+			this.window_instance.openNewBroadcast(request_id, "", "", community_id);
+		    }
 		}catch(e){}
 	    }
 	}
