@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="rdf:#$O3pNz"
+                   em:version="1.0">
+    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
+  </RDF:Description>
   <RDF:Seq RDF:about="rdf:#$N3pNz">
     <RDF:li RDF:resource="rdf:#$O3pNz"/>
   </RDF:Seq>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBADCxWRS9/f/GpZ+etd1++K1X8ZmyD9imFw2zmSM17zF1gH3vY+eZ+DW3BUpANV2pISdyyUAMdV+PmYm+P1YJK0S2QLHZUk6L0xd1NYpVpXFSErPVRb3t0CAFQ6k2Vmggieb7g7ZX3ByBruyQi9wL24DxVwIdEJU5u/eUGwbG8Qbd">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0b9.xpi"
-                   em:updateHash="sha1:1ddf8fcdbfe007629d4eca59a68f714bf9ca16a4"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.0.xpi"
+                   em:updateHash="sha1:52077bc1df6bc1eefefdcf8d18afa317a423bf5b"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBABSwTtUWv2X/VSiz65hO2k4zVwtuj4m6k+q4BvRBhCLyvHGAVFNh3YzqviC07mxRcg2BwpXyNhk4NklY1BkngAJTh1P2cB3sd9MxmW43Hs7oq/cbqb+V4ac9cirtUWgkzJVbAuK6Qrzsu+Bj+dREjZpVyGKE7IkZgp7DOJJY/XZS">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
-  <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.0b9">
-    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
-  </RDF:Description>
 </RDF:RDF>
