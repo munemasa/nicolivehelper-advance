@@ -259,6 +259,7 @@ var NicoLiveComment = {
 	}else{
 	    NicoLiveHelper.postComment(str,mail,"");
 	}
+	//NicoLiveTalker.runProcess("",str);
 
 	textbox.value = "";
 	return true;
