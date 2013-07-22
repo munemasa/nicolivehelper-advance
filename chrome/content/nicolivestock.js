@@ -314,7 +314,9 @@ var NicoLiveStock = {
 	    let item = NicoLiveHelper.stock_list[i];
 
 	    row.className = (i+1)%2?"table_oddrow":"table_evenrow";
-	    if( item.is_played ){
+	    if( item.errno==REASON_NO_LIVE_PLAY ){
+		row.className = "table_played no_live_play";
+	    }else if( item.is_played ){
 		row.className = "table_played";
 	    }else if( item.is_casterselection ){
 		row.className = "table_casterselection";
