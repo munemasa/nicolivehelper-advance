@@ -511,7 +511,7 @@ var NicoLiveStock = {
 	let first = true;
 	do {
 	    hasmore = istream.readLine(line);
-	    if( line.value.match(/(sm|nm)\d+|\d{10}/) ){
+	    if( line.value.match(/(sm|nm|im)\d+|\d{10}/) ){
 		if(first){
 		    //NicoLiveHelper.clearStock();
 		    first = false;
