@@ -252,7 +252,7 @@
 			  oncommand="NicoLiveClassifier.forget();"/>
 	      </menupopup>
 	    </menu>
-	    <menuitem label="Report a bug" oncommand="NicoLiveWindow.openDefaultBrowser('https://bitbucket.org/amano_rox/nicolivehelper-advance/issues/new',true);"/>
+	    <menuitem label="Report Bug / Request a New Feature" oncommand="NicoLiveWindow.openDefaultBrowser('https://bitbucket.org/amano_rox/nicolivehelper-advance/issues/new',true);"/>
 	    <menuseparator/>
 	    <menuitem label="&toolbar.open_preference;" accesskey="O" oncommand="OpenSettingsDialog();"/>
 	  </menupopup>
