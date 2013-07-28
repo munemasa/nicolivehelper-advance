@@ -582,11 +582,19 @@ var NicoLiveStock = {
 	}
 	// ブラウザのタブをドロップしたとき.
 	if( event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
-	    //this._debug = event;
+	    this._debug = event;
 	    debugprint("tab dropped");
 	    let str = "";
 	    let tab = event.dataTransfer.mozGetDataAt("application/x-moz-tabbrowser-tab",0);
 	    let doc = tab.linkedBrowser.contentDocument;
+	    // 新検索β
+	    if( doc.location.hostname.match(/search.nicovideo/) ){
+		let items = evaluateXPath(doc,"//li[@class='video']/div/a/@data-cmsid");
+		for(let i=0,item; item=items[i]; i++){
+		    debugprint(item.textContent);
+		    str += item.textContent + " ";
+		}
+	    }
 	    // 検索ページ.
 	    let items = evaluateXPath(doc,"//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href");
 	    for(let i=0,item; item=items[i]; i++){
