@@ -2043,16 +2043,31 @@ var NicoLiveHelper = {
 	    if( Config.allow_seiga ){
 		if (!isstock) {
 		    // リクエスト
-		    if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
+		    if( !NicoLiveHelper.allowrequest ){
+			// リクエスト不可
+			let sendmsg = Config.msg.notaccept;
+			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
+			if( sendmsg ){
+			    NicoLiveHelper.postComment( sendmsg, "", "" );
+			}
+		    }else if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
 			NicoLiveHelper.request_list.push(seigainfo);
 			NicoLiveRequest.addRequestView(seigainfo);
 
 			if(seigainfo.comment_no!=0 ){
+			    // リクエストを受け付けました
 			    let sendmsg = Config.msg.accept;
 			    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			    if( sendmsg ){
 				NicoLiveHelper.postComment( sendmsg, "", "" );
 			    }
+			}
+		    }else{
+			// すでにリクエスト済みです
+			let sendmsg = Config.msg.requested;
+			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
+			if( sendmsg ){
+			    NicoLiveHelper.postComment( sendmsg, "", "" );
 			}
 		    }
 		} else {
