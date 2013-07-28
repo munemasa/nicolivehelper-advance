@@ -314,11 +314,15 @@ var NicoLiveMylist = {
 			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-stock').triggerNode, event);");
 	$('popup-stock').insertBefore( popup, $('popup-stock-marker').nextSibling );
 
-	// 再生履歴のポップアップメニューに追加
+	// 再生履歴(詳細)のポップアップメニューに追加
 	popup = popup.cloneNode(true);
 	popup.setAttribute("oncommand",
 			   "NicoLiveMylist.addMylistFromMenu( event.target.value, event.target.label, $('popup-playlist').triggerNode, event);");
 	$('popup-playlist').insertBefore( popup, $('popup-playlist-marker').nextSibling );
+
+	// 再生履歴(テキスト)のメニューに追加
+	popup = popup.cloneNode(true);
+	NicoLiveHistory.appendMenu( popup );
 
 	// ステータスバーのポップアップメニューに追加
 	popup = popup.cloneNode(true);
