@@ -24,17 +24,16 @@ var NicoLiveTalker = {
     if( $('nlhaddon-restrictlength').value>0 &&
 	chat.text.length >= $('nlhaddon-restrictlength').value ) return;
     
-    chat.text = chat.text.replace(/[8８]{2,}$/,"ぱちぱち");
-    chat.text = chat.text.replace(/[wｗ]{2,}$/,"わらわら");
-    chat.text = chat.text.replace(/[wｗ]$/,"わら");
-    chat.text = chat.text.replace(/http:\/\/[\w.%\&=/-?]+/,"ゆーあーるえるしょうりゃく");
-    
     let str;
     let replacefunc = function(s,p){
       let tmp = s;
       switch(p){
       case 'comment':
 	tmp = chat.text_notag;
+	tmp = tmp.replace(/[8８]{2,}$/,"ぱちぱち");
+	tmp = tmp.replace(/[wｗ]{2,}$/,"わらわら");
+	tmp = tmp.replace(/[wｗ]$/,"わら");
+	tmp = tmp.replace(/http:\/\/[\w.%\&=/-?]+/,"ゆーあーるえるしょうりゃく");
 	break;
       case 'name':
 	try{
