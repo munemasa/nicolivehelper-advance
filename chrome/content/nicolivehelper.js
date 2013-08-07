@@ -2048,7 +2048,9 @@ var NicoLiveHelper = {
 			let sendmsg = Config.msg.notaccept;
 			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			if( sendmsg ){
-			    NicoLiveHelper.postComment( sendmsg, "", "" );
+			    if( IsCaster() && Config.request.autoreply ){
+				NicoLiveHelper.postComment( sendmsg, "", "" );
+			    }
 			}
 		    }else if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
 			NicoLiveHelper.request_list.push(seigainfo);
@@ -2059,7 +2061,9 @@ var NicoLiveHelper = {
 			    let sendmsg = Config.msg.accept;
 			    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			    if( sendmsg ){
-				NicoLiveHelper.postComment( sendmsg, "", "" );
+				if( IsCaster() && Config.request.autoreply ){
+				    NicoLiveHelper.postComment( sendmsg, "", "" );
+				}
 			    }
 			}
 		    }else{
@@ -2067,7 +2071,9 @@ var NicoLiveHelper = {
 			let sendmsg = Config.msg.requested;
 			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			if( sendmsg ){
-			    NicoLiveHelper.postComment( sendmsg, "", "" );
+			    if( IsCaster() && Config.request.autoreply ){
+				NicoLiveHelper.postComment( sendmsg, "", "" );
+			    }
 			}
 		    }
 		} else {
