@@ -1532,6 +1532,12 @@ var NicoLiveHelper = {
 	    throw "no video id.";
 	}
 
+	try{
+	    info.pname = this.getPName(info);
+	} catch (x) {
+	    info.pname = "";
+	}
+
 	if( Config.do_classify /* || NicoLivePreference.isMikuOnly() */ ){
 	    let str = new Array();
 	    // 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
