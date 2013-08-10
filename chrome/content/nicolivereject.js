@@ -25,6 +25,10 @@ var NicoLiveRejectRequest = {
 	    tr.className = "white";
 	    break;
 	}
+	if(item.is_self_request){
+	    // green
+	    tr.className = "table_selfreq";
+	}
 
 	let td;
 	td = tr.insertCell(tr.cells.length);
