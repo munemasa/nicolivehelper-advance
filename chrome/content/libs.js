@@ -806,3 +806,48 @@ function IsLinux()
     }
     return false;
 }
+
+function WindowOnTop(win, istop){
+    try{
+	let baseWin = win.QueryInterface(Ci.nsIInterfaceRequestor)
+	    .getInterface(Ci.nsIWebNavigation)
+	    .QueryInterface(Ci.nsIDocShellTreeItem)
+	    .treeOwner
+	    .QueryInterface(Ci.nsIInterfaceRequestor)
+	    .nsIBaseWindow;
+	let nativeHandle = baseWin.nativeHandle;
+
+	let lib = ctypes.open('user32.dll');
+
+	let HWND_TOPMOST = -1;
+	let HWND_NOTOPMOST = -2;
+	let SWP_NOMOVE = 2;
+	let SWP_NOSIZE = 1;
+
+	/*
+	 WINUSERAPI BOOL WINAPI SetWindowPos(
+	 __in HWND hWnd, 
+	 __in_opt HWND hWndInsertAfter,
+	 __in int X,
+	 __in int Y,
+	 __in int cx,
+	 __in int cy,
+	 __in UINT uFlags );
+	 */
+	let SetWindowPos = lib.declare("SetWindowPos",
+				       ctypes.winapi_abi, // abi
+				       ctypes.int32_t,     // return type
+				       ctypes.int32_t,     // hWnd arg 1 HWNDはint32_tでOK
+				       ctypes.int32_t,     // hWndInsertAfter
+				       ctypes.int32_t,     // X
+				       ctypes.int32_t,     // Y
+				       ctypes.int32_t,     // cx
+				       ctypes.int32_t,     // cy
+				       ctypes.uint32_t);   // uFlags
+	SetWindowPos( parseInt(nativeHandle), istop?HWND_TOPMOST:HWND_NOTOPMOST,
+		      0, 0, 0, 0,
+		      SWP_NOMOVE | SWP_NOSIZE);
+	lib.close();
+    } catch (x) {
+    }
+}
