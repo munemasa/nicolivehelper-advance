@@ -145,6 +145,49 @@ var NicoLiveHistory = {
 	}
     },
 
+    /**
+     * プレイリストのテキストから範囲選択して指定した動画のマイリス登録.
+     */
+    addMylist:function(mylist_id,mylist_name,ev){
+	let notes = $('playlist-textbox');
+	let substring;
+	substring = notes.value.substr(notes.selectionStart,notes.selectionEnd-notes.selectionStart);
+
+	if(substring.length>=3){
+	    NicoLiveMylist.addMyList(mylist_id,mylist_name,substring, ev);
+	}
+    },
+
+    // 再生履歴にマイリストに追加メニューを追加.
+    appendMenu:function( popup ){
+	// テキストボックスのコンテキストメニュー
+	let notes = $('playlist-textbox');
+	let input = document.getAnonymousElementByAttribute(notes, 'anonid', 'input');
+	let menu = document.getAnonymousElementByAttribute(input.parentNode, "anonid", "input-box-contextmenu");
+
+	notes.addEventListener('popupshowing',this,false);
+
+	menu.insertBefore( CreateElement('menuseparator'), menu.firstChild );
+
+	let popupmenu = popup;
+	popupmenu.setAttribute('id','addto-mylist-from-history');
+	popupmenu.setAttribute("oncommand","NicoLiveHistory.addMylist(event.target.value,event.target.label,event);");
+	menu.insertBefore( popupmenu, menu.firstChild );
+    },
+
+    handleEvent:function(event){
+	if(event.type=='popupshowing'){
+	    // テキスト表示のとき範囲選択されていればマイリストに追加を表示する.
+	    let hidden = true;
+	    let notes = $('playlist-textbox');
+	    let n = notes.selectionEnd-notes.selectionStart;
+	    if(n>0){
+		hidden = false;
+	    }
+	    $('addto-mylist-from-history').hidden = hidden;
+	}
+    },
+
     init:function(){
 	debugprint("NicoLiveHistory.init");
     }
