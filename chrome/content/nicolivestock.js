@@ -582,7 +582,7 @@ var NicoLiveStock = {
 	}
 	// ブラウザのタブをドロップしたとき.
 	if( event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
-	    this._debug = event;
+	    //this._debug = event;
 	    debugprint("tab dropped");
 	    let str = "";
 	    let tab = event.dataTransfer.mozGetDataAt("application/x-moz-tabbrowser-tab",0);

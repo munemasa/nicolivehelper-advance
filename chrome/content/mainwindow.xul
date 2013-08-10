@@ -254,6 +254,10 @@
 	    </menu>
 	    <menuitem label="Report Bug / Request a New Feature" oncommand="NicoLiveWindow.openDefaultBrowser('https://bitbucket.org/amano_rox/nicolivehelper-advance/issues/new',true);"/>
 	    <menuseparator/>
+	    <menuitem id="window-on-top" persist="checked"
+		      label="常に最前面に表示" type="checkbox" autocheck="true"
+		      oncommand="WindowOnTop( window, $('window-on-top').hasAttribute('checked') );"
+		      tooltiptext="Windows/Firefox 17以降で有効"/>
 	    <menuitem label="&toolbar.open_preference;" accesskey="O" oncommand="OpenSettingsDialog();"/>
 	  </menupopup>
 	</toolbarbutton>

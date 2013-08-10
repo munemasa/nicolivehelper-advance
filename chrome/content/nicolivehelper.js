@@ -1532,6 +1532,12 @@ var NicoLiveHelper = {
 	    throw "no video id.";
 	}
 
+	try{
+	    info.pname = this.getPName(info);
+	} catch (x) {
+	    info.pname = "";
+	}
+
 	if( Config.do_classify /* || NicoLivePreference.isMikuOnly() */ ){
 	    let str = new Array();
 	    // 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
@@ -2048,7 +2054,9 @@ var NicoLiveHelper = {
 			let sendmsg = Config.msg.notaccept;
 			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			if( sendmsg ){
-			    NicoLiveHelper.postComment( sendmsg, "", "" );
+			    if( IsCaster() && Config.request.autoreply ){
+				NicoLiveHelper.postComment( sendmsg, "", "" );
+			    }
 			}
 		    }else if( !NicoLiveHelper.isAlreadyRequested(seigainfo.video_id) ){
 			NicoLiveHelper.request_list.push(seigainfo);
@@ -2059,7 +2067,9 @@ var NicoLiveHelper = {
 			    let sendmsg = Config.msg.accept;
 			    sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			    if( sendmsg ){
-				NicoLiveHelper.postComment( sendmsg, "", "" );
+				if( IsCaster() && Config.request.autoreply ){
+				    NicoLiveHelper.postComment( sendmsg, "", "" );
+				}
 			    }
 			}
 		    }else{
@@ -2067,7 +2077,9 @@ var NicoLiveHelper = {
 			let sendmsg = Config.msg.requested;
 			sendmsg = NicoLiveHelper.replaceMacros(sendmsg, seigainfo);
 			if( sendmsg ){
-			    NicoLiveHelper.postComment( sendmsg, "", "" );
+			    if( IsCaster() && Config.request.autoreply ){
+				NicoLiveHelper.postComment( sendmsg, "", "" );
+			    }
 			}
 		    }
 		} else {
@@ -5167,6 +5179,8 @@ var NicoLiveHelper = {
 	if( Config.isSingleWindow() ){
 	    NicoLiveAlertModule.window_instance = this;
 	}
+
+	WindowOnTop( window,$('window-on-top').hasAttribute('checked') );
     },
 
     /**
