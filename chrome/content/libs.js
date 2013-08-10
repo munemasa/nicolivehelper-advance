@@ -1,3 +1,5 @@
+Components.utils.import("resource://gre/modules/ctypes.jsm");
+
 /**
  * いろいろと便利関数などを.
  */
