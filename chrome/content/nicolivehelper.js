@@ -5179,6 +5179,8 @@ var NicoLiveHelper = {
 	if( Config.isSingleWindow() ){
 	    NicoLiveAlertModule.window_instance = this;
 	}
+
+	WindowOnTop( window,$('window-on-top').hasAttribute('checked') );
     },
 
     /**
