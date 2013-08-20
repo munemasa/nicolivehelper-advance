@@ -1955,6 +1955,11 @@ var NicoLiveHelper = {
 	    } catch (x) {
 		debugprint( x.fileName+":"+x.lineNumber+" "+x );
 		if( videoinfo ){
+		    if( IsCaster() && Config.getusername ){
+			// 投稿者名の取得
+			NicoLiveHelper.getUserName( videoinfo.user_id );
+		    }
+
 		    debugprint("error code:"+x.errno);
 		    if( isstock ){
 			// ストックの場合は拒否する必要のないケースがあるので
