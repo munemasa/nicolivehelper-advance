@@ -488,9 +488,11 @@ var NicoLiveRequest = {
 	if( tr.className=="table_selfreq"){
 	    tr.className = n%2?"table_evenrow":"table_oddrow";
 	    item.selfrequest = false;
+	    item.is_self_request = false;
 	}else{
 	    tr.className = "table_selfreq";
 	    item.selfrequest = true;
+	    item.is_self_request = true;
 	}
     },
 
