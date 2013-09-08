@@ -28,21 +28,28 @@ var NicoLiveRights = {
 
     searchJWIDbyTitle:function(str){
 	str = str.trim();
-	let tab = window.opener.getBrowser().addTab('http://www2.jasrac.or.jp/eJwid/main.jsp?trxID=F00100');
-	window.opener.getBrowser().selectedTab = tab;
-	let opentab = window.opener.getBrowser().getBrowserForTab(tab);
-	opentab.addEventListener('load',
-				 function(e){
-				     try{
-					 let frame = e.target.getElementsByTagName('frame')[0].wrappedJSObject;
-					 let inputcode = evaluateXPath(frame.contentDocument,"//input[@name='IN_WORKS_TITLE_NAME1']")[0];
-					 inputcode.value = str;
-					 let submit = evaluateXPath(frame.contentDocument,"//input[@name='CMD_SEARCH']")[0];
-					 submit.click();
-				     } catch (x) {
-				     }
-				 },true);
-	tab = null; opentab = null;
+	let win = NicoLiveWindow.openInAppBrowser('http://www2.jasrac.or.jp/eJwid/main.jsp?trxID=F00100',true);
+
+	let f = function(e){
+	    try{
+		let frame = e.target.getElementsByTagName('frame')[0].wrappedJSObject;
+		let inputcode = evaluateXPath(frame.contentDocument,"//input[@name='IN_WORKS_TITLE_NAME1']")[0];
+		inputcode.value = str;
+		let submit = evaluateXPath(frame.contentDocument,"//input[@name='CMD_SEARCH']")[0];
+		submit.click();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	};
+
+	win.addEventListener('load',
+			     function(e){
+				 try{
+				     e.target.getElementById('page').addEventListener('load', f, true);
+				 } catch (x) {
+				     debugprint(x);
+				 }
+			     },true);
     },
 
     searchJWID:function(code){
@@ -55,21 +62,28 @@ var NicoLiveRights = {
 	} catch (x) {
 	    return;
 	}
-	let tab = window.opener.getBrowser().addTab('http://www2.jasrac.or.jp/eJwid/main.jsp?trxID=F00100');
-	window.opener.getBrowser().selectedTab = tab;
-	let opentab = window.opener.getBrowser().getBrowserForTab(tab);
-	opentab.addEventListener('load',
-				 function(e){
-				     try{
-					 let frame = e.target.getElementsByTagName('frame')[0].wrappedJSObject;
-					 let inputcode = evaluateXPath(frame.contentDocument,"//input[@name='IN_WORKS_CD']")[0];
-					 inputcode.value = code;
-					 let submit = evaluateXPath(frame.contentDocument,"//input[@name='CMD_SEARCH']")[0];
-					 submit.click();
-				     } catch (x) {
-				     }
-				 },true);
-	tab = null; opentab = null;
+	let win = NicoLiveWindow.openInAppBrowser('http://www2.jasrac.or.jp/eJwid/main.jsp?trxID=F00100',true);
+
+	let f = function(e){
+	    try{
+		let frame = e.target.getElementsByTagName('frame')[0].wrappedJSObject;
+		let inputcode = evaluateXPath(frame.contentDocument,"//input[@name='IN_WORKS_CD']")[0];
+		inputcode.value = code;
+		let submit = evaluateXPath(frame.contentDocument,"//input[@name='CMD_SEARCH']")[0];
+		submit.click();
+	    } catch (x) {
+		debugprint(x);
+	    }
+	};
+
+	win.addEventListener('load',
+			     function(e){
+				 try{
+				     e.target.getElementById('page').addEventListener('load', f, true);
+				 } catch (x) {
+				     debugprint(x);
+				 }
+			     },true);
     },
     search_elicense:function(code){
 	// xxx-xxxx-x (JASRAC)
@@ -80,16 +94,20 @@ var NicoLiveRights = {
 	} catch (x) {
 	    return;
 	}
-	let tab = window.opener.getBrowser().addTab('https://ssl.elicense.co.jp/piece_search/search');
-	window.opener.getBrowser().selectedTab = tab;
-	let opentab = window.opener.getBrowser().getBrowserForTab(tab);
-	opentab.addEventListener('load',
-				 function(e){
-				     let input = evaluateXPath(e.target,"//*[@id='piece_cd_s']")[0];
-				     input.value = code;
-				     let submit = evaluateXPath(e.target,"//*[@name='search_start']")[0];
-				     submit.click();
-				 },true);
-	tab = null; opentab = null;
+	let win = NicoLiveWindow.openInAppBrowser('https://ssl.elicense.co.jp/piece_search/search',true);
+	let f = function(e){
+	    let input = evaluateXPath(e.target,"//*[@id='piece_cd_s']")[0];
+	    input.value = code;
+	    let submit = evaluateXPath(e.target,"//*[@name='search_start']")[0];
+	    submit.click();
+	};
+	win.addEventListener('load',
+			     function(e){
+				 try{
+				     e.target.getElementById('page').addEventListener('load', f, true);
+				 } catch (x) {
+				     debugprint(x);
+				 }
+			     },true);
     }
 };
