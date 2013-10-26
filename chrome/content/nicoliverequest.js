@@ -236,6 +236,7 @@ var NicoLiveRequest = {
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
+	button.setAttribute('tooltiptext','動画を再生します');
 	button.setAttribute('class','command-button');
 	button.setAttribute("oncommand","NicoLiveRequest._playRequest(event);");
 	hbox.appendChild(button);
@@ -243,25 +244,36 @@ var NicoLiveRequest = {
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-top.png');
 	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','一番上に移動します');
 	button.setAttribute('oncommand',"NicoLiveRequest.goTopRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_up.png');
 	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','一つ上に移動します');
 	button.setAttribute("oncommand","NicoLiveRequest.moveUpRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/direction_down.png');
+	button.setAttribute('tooltiptext','一つ下に移動します');
 	button.setAttribute('class','command-button');
 	button.setAttribute("oncommand","NicoLiveRequest.moveDownRequest(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/go-bottom.png');
+	button.setAttribute('tooltiptext','一番下に移動します');
 	button.setAttribute('class','command-button');
 	button.setAttribute('oncommand',"NicoLiveRequest.goBottomRequest(event);");
+	hbox.appendChild(button);
+
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/prepare.png');
+	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','先読み(/prepare)します');
+	button.setAttribute('oncommand',"NicoLiveRequest.prepareVideo(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
@@ -298,6 +310,7 @@ var NicoLiveRequest = {
 	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/remove.png');
 	button.setAttribute('label','削除');
+	button.setAttribute('tooltiptext','一覧から削除します');
 	button.setAttribute("oncommand","NicoLiveRequest.removeRequest(event);");
 	button.setAttribute('class','command-button');
 	hbox.appendChild(button);
@@ -346,6 +359,12 @@ var NicoLiveRequest = {
 	let n = this.getIndex(event);
 	this.playRequest(n);
     },
+
+    prepareVideo:function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.postCasterComment("/prepare "+NicoLiveHelper.request_list[n].video_id);
+    },
+
     /**
      * リクエストを再生する
      * @param n 対象のリクエスト(0,1,2,...)

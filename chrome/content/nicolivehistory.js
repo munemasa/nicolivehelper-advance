@@ -53,7 +53,15 @@ var NicoLiveHistory = {
 	button.setAttribute('image','data/play.png');
 	button.setAttribute('label','再生');
 	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','動画を再生します');
 	button.setAttribute("oncommand","NicoLiveHistory.playHistory(event);");
+	hbox.appendChild(button);
+
+	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/prepare.png');
+	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','先読み(/prepare)します');
+	button.setAttribute('oncommand',"NicoLiveHistory.prepareVideo(event);");
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
@@ -130,6 +138,14 @@ var NicoLiveHistory = {
 	let n = this.getIndex(event);
 	debugprint("Play History: #"+n);
 	NicoLiveHelper.playHistory(n);
+    },
+
+    /**
+     * 先読みする.
+     */
+    prepareVideo:function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.postCasterComment("/prepare "+NicoLiveHelper.playlist_list[n].video_id);
     },
 
     /**
