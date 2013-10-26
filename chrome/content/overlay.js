@@ -234,7 +234,12 @@ var NicoLiveHelperAdvanceOverlay = {
 	    elem.addEventListener("click",function(){
 				      NicoLiveHelperAdvanceOverlay.openNicoLiveWindow(url);
 				  },true);
-	    e.target.getElementById('flvplayer_container').appendChild(elem);
+	    //e.target.getElementById('flvplayer_container').appendChild(elem);
+	    try{
+		e.target.getElementById('watch_zapping_box').parentNode.insertBefore(elem,
+										     e.target.getElementById('watch_zapping_box'));
+	    }catch(e){
+	    }
 	}
 	let player;
 	try{
