@@ -114,6 +114,13 @@ var NicoLiveStock = {
 	hbox.appendChild(button);
 
 	button = CreateElement('toolbarbutton');
+	button.setAttribute('image','data/prepare.png');
+	button.setAttribute('class','command-button');
+	button.setAttribute('tooltiptext','先読み(/prepare)します');
+	button.setAttribute('oncommand',"NicoLiveStock.prepareVideo(event);");
+	hbox.appendChild(button);
+
+	button = CreateElement('toolbarbutton');
 	button.setAttribute('image','data/add.png');
 	button.setAttribute('label','リクエスト');
 	button.setAttribute('class','command-button');
@@ -184,6 +191,12 @@ var NicoLiveStock = {
 	let n = this.getIndex(event);
 	this.playStock(n);
     },
+
+    prepareVideo:function(event){
+	let n = this.getIndex(event);
+	NicoLiveHelper.postCasterComment("/prepare "+NicoLiveHelper.stock_list[n].video_id);
+    },
+
     /**
      * ストックを再生する.
      * @param n 0,1,2,...
