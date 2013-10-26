@@ -236,6 +236,7 @@ var NicoLiveHelperAdvanceOverlay = {
 				  },true);
 	    //e.target.getElementById('flvplayer_container').appendChild(elem);
 	    try{
+		e.target.getElementById('watch_player_box').appendChild(elem);
 		e.target.getElementById('watch_zapping_box').parentNode.insertBefore(elem,
 										     e.target.getElementById('watch_zapping_box'));
 	    }catch(e){
