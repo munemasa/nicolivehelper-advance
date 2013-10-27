@@ -4725,6 +4725,8 @@ var NicoLiveHelper = {
 	if( !OnFirefox() && this._use_other_browser ){
 	    NicoLiveCookie.setCookie( LibUserSessionCookie );
 	}
+
+	NicoLiveAlertModule.use_external_browser = this._use_other_browser;
     },
 
 
