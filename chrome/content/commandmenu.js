@@ -81,7 +81,7 @@ var CommandMenu = {
 	}
 
 	request_id = lvid.match(/nsen\/(.*)$/);
-	if( request_id[1] ){
+	if( request_id && request_id[1] ){
 	    this.getNsenId(request_id[1]);
 	}
     }
