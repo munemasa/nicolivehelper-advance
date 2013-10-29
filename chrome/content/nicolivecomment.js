@@ -6,6 +6,9 @@ Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.js
 var NicoLiveComment = {
     ostream: null,    // ログファイル(アリーナ)
 
+    elem_mail: null,  // メール欄の要素
+    elem_text: null,  // コメント本体
+
     comment_table: null,     // $('comment-table')
     auto_kotehan: null,      // $('auto-kotehan')
     kotehan_overwrite: null, // $('kotehan-allowoverwrite')
@@ -993,6 +996,8 @@ var NicoLiveComment = {
 	this.initReflector();
 	this.initBSPColor();
 	this.createNameList();
+
+	this.elem_mail = $('textbox-mail');
     },
     destroy: function(){
 	Storage.writeObject( "nico_namemap", this.namemap );
