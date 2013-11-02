@@ -9,7 +9,7 @@
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
   <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/simplecomment.js" />
 
-  <vbox flex="1">
+  <vbox id="body" flex="1">
     <hbox id="box-caster-comment">
       <textbox id="textbox-comment"
 	       flex="1"
@@ -23,6 +23,16 @@
     <hbox>
       <checkbox persist="checked" autoCheck="true" id="use-listener-comment" label="視聴者コメントにする(放送主用)"/>
       <checkbox persist="checked" autoCheck="true" id="no-clear" label="運営コメント欄を消去しない" tooltiptext="hidden+/permの運営コメントを消去しません"/>
+    </hbox>
+    <hbox align="center" flex="1">
+      <label value="テンプレート"/>
+      <menulist oncommand="ReadTextFile(DirLists[this.value]);" flex="1">
+	<menupopup id="menu-filelist" dir="" persist="dir">
+	</menupopup>
+      </menulist>
+      <toolbarbutton label="" tooltiptext=""
+		     oncommand="SelectFolder();"
+		     image="data/folder.png"/>
     </hbox>
   </vbox>
 
