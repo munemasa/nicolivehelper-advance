@@ -84,6 +84,7 @@ function SelectFolder(){
 
 function Init(){
     try{
+	DirLists = new Array();
 	RemoveChildren( $('menu-filelist') );
 
 	let path = $('menu-filelist').getAttribute('dir') || "";
