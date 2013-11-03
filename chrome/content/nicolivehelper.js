@@ -2562,7 +2562,8 @@ var NicoLiveHelper = {
 		if( settimer ){
 		    let sec = videoinfo.length_ms/1000;
 		    if( Config.max_playtime ){
-			sec = Config.max_playtime * 60; // seconds
+			let tmp = Config.max_playtime * 60; // seconds;
+			sec = tmp<sec ? tmp:sec;
 		    }
 		    NicoLiveHelper.setupPlayNext( target, sec );
 		}
@@ -2802,7 +2803,8 @@ var NicoLiveHelper = {
 
 		let sec = current.length_ms/1000;
 		if( Config.max_playtime ){
-		    sec = Config.max_playtime * 60; // seconds
+		    let tmp = Config.max_playtime * 60; // seconds;
+		    sec = tmp<sec ? tmp:sec;
 		}
 		this.setupPlayNext( target, sec );
 	    }else{
