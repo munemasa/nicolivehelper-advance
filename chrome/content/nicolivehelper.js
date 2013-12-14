@@ -753,9 +753,10 @@ var NicoLiveHelper = {
 		break;
 	    case 'username':
 		// 動画の投稿者名
-		tmp = UserNameCache[info.user_id] || "";
+		tmp = info.user_nickname || "";
 		break;
 	    case 'pname':
+		// P名
 		if(info.video_id==null || info.tags['jp']==null) break;
 		tmp = NicoLiveHelper.getPName(info);
 		break;
@@ -1450,6 +1451,9 @@ var NicoLiveHelper = {
 	    case "user_id":
 		info.user_id = elem.textContent;
 		break;
+	    case "user_nickname":
+		info.user_nickname = elem.textContent;
+		break;
 	    case "video_id":
 		info.video_id = elem.textContent;
 		break;
@@ -1938,12 +1942,7 @@ var NicoLiveHelper = {
 		    }
 		    NicoLiveHelper.number_of_requests[request.user_id]++;
 
-		    if( IsCaster() && Config.getusername ){
-			// 投稿者名の取得
-			NicoLiveHelper.getUserName( videoinfo.user_id );
-		    }
 		    NicoLiveHelper.saveRequest();
-
                 } else {
 		    // ストック
 		    if( !NicoLiveHelper.hasStock(videoinfo.video_id) ){
@@ -1955,11 +1954,6 @@ var NicoLiveHelper = {
 	    } catch (x) {
 		debugprint( x.fileName+":"+x.lineNumber+" "+x );
 		if( videoinfo ){
-		    if( IsCaster() && Config.getusername ){
-			// 投稿者名の取得
-			NicoLiveHelper.getUserName( videoinfo.user_id );
-		    }
-
 		    debugprint("error code:"+x.errno);
 		    if( isstock ){
 			// ストックの場合は拒否する必要のないケースがあるので
