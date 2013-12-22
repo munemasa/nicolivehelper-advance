@@ -608,16 +608,9 @@ var NicoLiveStock = {
 		    str += item.textContent + " ";
 		}
 	    }
-	    // 検索ページ.
-	    let items = evaluateXPath(doc,"//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href");
+	    // 検索ページ、ランキングページ
+	    let items = evaluateXPath(doc,"//li[contains(@class, 'item')]/@data-id");
 	    for(let i=0,item; item=items[i]; i++){
-		//debugprint(item.textContent);
-		str += item.textContent + " ";
-	    }
-	    // ランキングページ.
-	    items = evaluateXPath(doc,"//div/p/a[@class='watch']/@href");
-	    for(let i=0,item; item=items[i]; i++){
-		//debugprint(item.textContent);
 		str += item.textContent + " ";
 	    }
 	    // コミュニティ動画
