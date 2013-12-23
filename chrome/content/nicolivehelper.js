@@ -1462,6 +1462,7 @@ var NicoLiveHelper = {
 		break;
 	    case "description":
 		info.description = restorehtmlspecialchars(elem.textContent).replace(/　/g,' ');
+		info.description = info.description.replace(/<.*?>/g,"");
 		break;
 	    case "thumbnail_url":
 		info.thumbnail_url = elem.textContent;
