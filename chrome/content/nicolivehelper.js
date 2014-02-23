@@ -5109,7 +5109,9 @@ var NicoLiveHelper = {
 
 	this.initVars();
 	this.setPlayTarget( $('do-subdisplay').checked );
-	this.setupCookie();
+	try{
+	    this.setupCookie();
+	}catch(e){ debugprint(e); }
 	this.updatePNameWhitelist();
 
 	// 以下、生放送への接続処理など

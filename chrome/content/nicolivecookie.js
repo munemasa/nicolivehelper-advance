@@ -165,7 +165,37 @@ var NicoLiveCookie = {
 	}
 	st.finalize();
 	dbconnect.close();
+
+	if( !return_value ){
+	    if( IsWINNT() ){
+		return this.getChromeEncryptedCookie( file.path );
+	    }
+	}
 	return return_value;
+    },
+
+    getChromeEncryptedCookie: function( path ){
+	// HRESULT GetGoogleChromeCookie(LPCSTR db_path, LPSTR cookie, DWORD len)
+	if( !this.chrome_encrypted ){
+	    if( !this.lib ){
+		let path = GetExtensionPath();
+		path.append("libs");
+		path.append("cookiereader_dll.dll");
+		this.lib = ctypes.open(path.path);
+	    }
+	    this.chrome_encrypted = this.lib.declare("GetGoogleChromeCookie",
+						     ctypes.default_abi,
+						     ctypes.long,
+						     ctypes.char.ptr,
+						     ctypes.char.ptr,
+						     ctypes.uint32_t );
+	}
+
+	var myString = ctypes.char.array()(1024);
+	this.chrome_encrypted( path, myString, 1024 );
+
+	var c = myString.readString();
+	return c;
     },
 
     // Mac Safariのクッキーを取得(js-ctypes)
