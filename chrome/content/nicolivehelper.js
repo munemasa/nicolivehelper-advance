@@ -4167,6 +4167,8 @@ var NicoLiveHelper = {
      * 次の動画を先読みする.
      */
     prepareNextVideo: function(target){
+	if( !Config.do_prepare ) return;
+
 	let remain;
 	let status = this.getCurrentPlayStatus(target);
 	try{
