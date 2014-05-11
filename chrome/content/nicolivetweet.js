@@ -254,7 +254,7 @@ var NicoLiveTweet = {
 	    if( req.status!=200 ){
 		debugprint("Status="+req.status);
 		let result = JSON.parse(req.responseText);
-		ShowNotice('Twitter:'+result.error);
+		ShowNotice('Twitter:'+result.errors[0].message);
 	    }
 	    //debugprint('update result:'+req.responseText);
 	};
@@ -262,7 +262,9 @@ var NicoLiveTweet = {
 	req.open('POST', url );
 	req.setRequestHeader('Authorization',OAuth.getAuthorizationHeader('http://miku39.jp/',message.parameters));
 	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-	req.send("status="+encodeURIComponent(text));
+
+	text = this.fixedEncodeURIComponent(text);
+	req.send("status="+text);
     },
 
     /**
@@ -276,6 +278,10 @@ var NicoLiveTweet = {
 	}else{
 	    NicoLiveHelper.postTweet(text);
 	}
+    },
+
+    fixedEncodeURIComponent:function (str) {
+	return encodeURIComponent(str).replace(/[!'()]/g, escape).replace(/\*/g, "%2A");
     },
 
     /**
