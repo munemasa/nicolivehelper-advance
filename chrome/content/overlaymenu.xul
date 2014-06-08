@@ -26,15 +26,14 @@
     <menuitem id="nicolive-advance-popup-menu" label="Open NicoLive Helper Advance" oncommand="NicoLiveHelperAdvanceOverlay.openNicoLiveWindow();" />
   </popup>
 
-  <toolbar id="addon-bar">
-<!--    <statusbarpanel id="NicoLive-panel" label="NicoLive Helper" /> -->
+  <statusbar id="status-bar">
     <toolbarbutton id="nicolivehelper-panel"
 		   label="NicoLive Helper Advance"
 		   onclick="if(event.button==0) NicoLiveHelperAdvanceOverlay.openNicoLiveWindow();"
 		   context="nicolivehelperadvance-contextmenu"
 		   class="toolbarbutton-1"
 		   image="chrome://nicolivehelperadvance/content/data/logo16.png" />
-  </toolbar>
+  </statusbar>
 
   <popupset>
     <menupopup id="nicolivehelperadvance-contextmenu">
