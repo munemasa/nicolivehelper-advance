@@ -179,7 +179,7 @@ var Database = {
 		}else{
 		    // 通信失敗
 		    debugprint("DB http status="+req.status);
-		    delete delete Database.jobs[id];
+		    delete Database.jobs[id];
 		}
 	    }
 	};
