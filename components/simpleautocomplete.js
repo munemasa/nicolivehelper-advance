@@ -109,6 +109,15 @@ SimpleAutoCompleteResult.prototype = {
     return "";
   },
 
+    /**
+   * Get the final value that should be completed when the user confirms
+   * the match at the given index.
+   * @return {string} the final value of the result at the given index 
+   */
+  getFinalCompleteValueAt: function(index) {
+    return this.getValueAt(index);
+  },
+
   /**
    * Remove the value at the given index from the autocomplete results.
    * If removeFromDb is set to true, the value should be removed from
@@ -152,8 +161,9 @@ SimpleAutoCompleteSearch.prototype = {
     // as the source of match data. Any values that match the search string
     // are moved into temporary arrays and passed to the AutoCompleteResult
     if (searchParam.length > 0) {
-      var nativeJSON = Components.classes["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-      var searchResults = nativeJSON.decode(searchParam);
+	//var nativeJSON = Components.classes["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+      //var searchResults = nativeJSON.decode(searchParam);
+      var searchResults = JSON.parse(searchParam);
       var results = [];
       var comments = [];
       for (i=0; i<searchResults.length; i++) {
