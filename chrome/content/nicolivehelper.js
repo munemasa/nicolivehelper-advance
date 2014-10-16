@@ -5098,6 +5098,8 @@ var NicoLiveHelper = {
      * ウィンドウを開くときに真っ先に呼ばれる初期化関数.
      */
     init: function(){
+	NicoLiveAlertModule.XPathEvaluator = XPathEvaluator;
+
 	this.config = Config;
 
 	debugprint('Initializing NicoLive Helper Advance '+GetAddonVersion()+'...');

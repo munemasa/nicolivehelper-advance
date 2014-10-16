@@ -20,6 +20,8 @@ var NicoLiveAlertModule = {
     alerted_target: {},   // 通知済みフラグ
     use_external_browser: false,
 
+    XPathEvaluator: null,
+
     window_instance: null,
 
     /**
@@ -134,8 +136,7 @@ var NicoLiveAlertModule = {
      * @return 式を評価した結果を配列で返す
      */
     evaluateXPath:function(aNode, aExpr) {
-	var xpe = Components.classes["@mozilla.org/dom/xpath-evaluator;1"]
-            .createInstance(Components.interfaces.nsIDOMXPathEvaluator);
+	var xpe = new this.XPathEvaluator();
 	var nsResolver = xpe.createNSResolver(aNode.ownerDocument == null ?
 					      aNode.documentElement : aNode.ownerDocument.documentElement);
 	var result = xpe.evaluate(aExpr, aNode, nsResolver, 0, null);
