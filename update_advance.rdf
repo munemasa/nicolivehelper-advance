@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAJjzUxUpQuYBXQP1y4mTITlYj9uiDjnXVMwGczRAiBYoQyIDvGjiGP3c7rtm/4/ffTg6gJYAtVFTkcI3xgwh28X8qI/+k5pr4jr8mGuxj4SbDmgxPkVGF2SBVV3wRg/CyBXGmPnFR5nlYw7V64eDgDCn5eN+RCRfe6LXHFPt+SpO">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$N3pNz">
-    <RDF:li RDF:resource="rdf:#$O3pNz"/>
-  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.7.1.1.xpi"
-                   em:updateHash="sha1:b1a983bff7cd1acec26b6e27f2f38c882bcf769c"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.8.xpi"
+                   em:updateHash="sha1:a037abd63716c84ce57d80b59da934e2706876c6"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
   <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.7.1.1">
+                   em:version="1.8">
     <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
+  </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$N3pNz">
+    <RDF:li RDF:resource="rdf:#$O3pNz"/>
+  </RDF:Seq>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAASyZt5FqJycAM5Ktt8d+X0og6kUz7jIb00fZgtAPWK9dmR6PGXWIrd4nlQobuRDDmGsOSp0N7JibNdlnRdicTe+Fb3Z3r5HkbLbSHLg0515+E9PT8wln3/yz6dFI9pYkqUSrtR8NvnM6m/4uyp8TClfYF7BgPgd3pg1/u1xFuMy">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
   </RDF:Description>
 </RDF:RDF>
