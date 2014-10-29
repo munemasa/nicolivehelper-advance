@@ -321,6 +321,9 @@ var MyListManager = {
 	    if( req.readyState==4 ){
 		if( req.status==200 ){
 		    let token = req.responseText.match(/NicoAPI\.token\s*=\s*\"(.*)\";/);
+		    if( !token ){
+			token = req.responseText.match(/NicoAPI\.token\s*=\s*\'(.*)\';/);
+		    }
 		    MyListManager.apitoken = token;
 		}
 	    }
@@ -448,6 +451,10 @@ var MyListManager = {
 	    if( req.readyState==4 ){
 		if( req.status==200 ){
 		    let token = req.responseText.match(/NicoAPI\.token\s*=\s*\"(.*)\";/);
+		    if( !token ){
+			token = req.responseText.match(/NicoAPI\.token\s*=\s*\'(.*)\';/);
+		    }
+
 		    MyListManager.apitoken = token[1];
 		    if( "function"==typeof postfunc ){
 			postfunc();
@@ -750,6 +757,9 @@ var MyListManager = {
 	    if( req.readyState==4 && req.status==200 ){
 		try{
 		    let token = req.responseText.match(/NicoAPI\.token\s*=\s*\"(.*)\";/);
+		    if( !token ){
+			token = req.responseText.match(/NicoAPI\.token\s*=\s*\'(.*)\';/);
+		    }
 		    let item_id = req.responseText.match(/item_id\"\s*value=\"(.*)\">/);
 		    debugprint('token='+token[1]);
 		    debugprint('item_id='+item_id[1]);

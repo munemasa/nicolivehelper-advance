@@ -75,6 +75,9 @@ var NicoLiveMylist = {
 	    if(xmlhttp.readyState==4 && xmlhttp.status==200){
 		try{
 		    let token = xmlhttp.responseText.match(/NicoAPI\.token\s*=\s*\"(.*)\";/);
+		    if( !token ){
+			token = xmlhttp.responseText.match(/NicoAPI\.token\s*=\s*\'(.*)\';/);
+		    }
 		    let item_id = xmlhttp.responseText.match(/item_id\"\s*value=\"(.*)\">/);
 		    token = token[1];
 		    item_id = item_id[1];
@@ -141,6 +144,9 @@ var NicoLiveMylist = {
 		if( req.readyState==4 && req.status==200 ){
 		    try{
 			let token = req.responseText.match(/NicoAPI\.token\s*=\s*\"(.*)\";/);
+			if( !token ){
+			    token = req.responseText.match(/NicoAPI\.token\s*=\s*\'(.*)\';/);
+			}
 			let item_id = req.responseText.match(/item_id\"\s*value=\"(.*)\">/);
 			debugprint('token='+token[1]);
 			debugprint('item_id='+item_id[1]);
