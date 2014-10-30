@@ -169,24 +169,8 @@ function CreateXHR(method,uri, substitution)
 
 function GetAddonVersion()
 {
-    let version;
-    try{
-	let em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-	let addon = em.getItemForID("nicolivehelperadvance@miku39.jp");
-	version = addon.version;
-    } catch (x) {
-	// Fx4
-	AddonManager.getAddonByID("nicolivehelperadvance@miku39.jp",
-				  function(addon) {
-				      version = addon.version;
-				  });
-	// Piroさん(http://piro.sakura.ne.jp/)が値が設定されるまで待つことをやっていたので真似してしまう.
-	let thread = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
-	while (version === void(0)) {
-	    thread.processNextEvent(true);
-	}
-    }
-    return version;
+    let ver = navigator.userAgent.match(/.*\/(.*)$/);
+    return ver[1];
 }
 
 function GetXmlText(xml,path){
@@ -307,27 +291,13 @@ function OpenFile(path){
 
 // NicoLiveHelperのインストールパスを返す.
 function GetExtensionPath(){
-    let id = "nicolivehelperadvance@miku39.jp";
-    let ext;
+    let file;
     try{
-	ext = Components.classes["@mozilla.org/extensions/manager;1"]
-            .getService(Components.interfaces.nsIExtensionManager)
-            .getInstallLocation(id)
-            .getItemLocation(id);
+	file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("CurProcD", Components.interfaces.nsIFile);
     } catch (x) {
-	let _addon;
-	AddonManager.getAddonByID("nicolivehelperadvance@miku39.jp",
-				  function(addon) {
-				      _addon = addon;
-				  });
-	// Piroさん(http://piro.sakura.ne.jp/)が値が設定されるまで待つことをやっていたので真似してしまう.
-	let thread = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
-	while (_addon === void(0)) {
-	    thread.processNextEvent(true);
-	}
-	ext = _addon.getResourceURI('/').QueryInterface(Components.interfaces.nsIFileURL).file.clone();
+	file = ".";
     }
-    return ext;
+    return file;
 }
 
 function PlayAlertSound(){
