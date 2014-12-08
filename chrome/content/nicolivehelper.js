@@ -4591,7 +4591,7 @@ var NicoLiveHelper = {
             debugprint("get getplayerstatus to obtain end_time.");
             let f = function (xml, req) {
                 if (req.readyState != 4 || req.status != 200) return;
-                let xml = req.responseXML;
+                xml = req.responseXML;
                 try {
                     NicoLiveHelper.liveinfo.end_time = parseInt(xml.getElementsByTagName('end_time')[0].textContent);
                 } catch (x) {
