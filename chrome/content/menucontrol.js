@@ -28,7 +28,7 @@ var MenuControl = {
      */
     showSelectionMenuIfTextSelected:function(elem){
 	let str = window.getSelection().toString() || "";
-	let elem = elem.firstChild.nextSibling;
+	elem = elem.firstChild.nextSibling;
 	if( str ){
 	    elem.hidden = false;
 	    elem.nextSibling.hidden = false;
