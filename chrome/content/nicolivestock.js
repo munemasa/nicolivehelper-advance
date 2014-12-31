@@ -360,7 +360,7 @@ var NicoLiveStock = {
      * @param requestqueue ストック
      */
     updateRemain:function (requestqueue) {
-	let requestqueue = NicoLiveHelper.stock_list;
+	requestqueue = NicoLiveHelper.stock_list;
         let t = NicoLiveHelper.getTotalStockTime();
 
         let n = 0;
