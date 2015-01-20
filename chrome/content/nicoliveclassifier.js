@@ -48,7 +48,7 @@ var NicoLiveClassifier = {
 	    return 0;
 	}
 	let c = 0;
-	for each( a in bucket.tf ){
+	for ( a of bucket.tf ){
 	    c += a;
 	}
 	return c;
