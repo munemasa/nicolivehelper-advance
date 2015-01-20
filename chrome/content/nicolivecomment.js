@@ -19,19 +19,21 @@ var NicoLiveComment = {
     colormap: {},      // 配色マップ
     namemap: {},       // コテハンマップ
 
-    getScrollBox:function(){
+    getScrollBox: function(){
 	if( this._comment_box ) return this._comment_box;
-	this._comment_box = $('comment-box').boxObject;
+	try{
+	    this._comment_box = $( 'comment-box' ).boxObject.QueryInterface( Components.interfaces.nsIScrollBoxObject );
+	}catch( e ){
+	    this._comment_box = $( 'comment-box' ).boxObject;
+	}
 	console.log( this._comment_box );
 	return this._comment_box;
     },
-    getYPosition:function(){
-	try{
-	    return this.getScrollBox().positionY;
-	}catch(e){
-	    debugprint(e);
-	    return 0;
-	}
+    getYPosition: function(){
+	let y = new Object();
+	let x = new Object();
+	this.getScrollBox().getPosition( x, y );
+	return y.value;
     },
 
     /**
