@@ -3711,7 +3711,7 @@ var NicoLiveHelper = {
 
 	    let serverdate = evaluateXPath(xml,"/getplayerstatus/@time");
 	    if(serverdate.length){
-		serverdate = serverdate[0].textContent;
+		serverdate = serverdate[0].value;
 	    }else{
 		serverdate = GetCurrentTime();
 	    }
