@@ -399,7 +399,7 @@ var NicoLiveWindow = {
     saveSetListName:function(){
 	let elems = evaluateXPath2(document,"//xul:menulist[@class='select-setlist']//xul:menuitem");
 	let data = new Array();
-	for each( let item in elems ){
+	for ( let item of elems ){
 	    let value = item.getAttribute("label2") || item.value;
 	    data.push( value );
 	}
@@ -438,7 +438,7 @@ var NicoLiveWindow = {
      */
     showSetListMenu:function(elem){
 	let items = elem.getElementsByTagName("menuitem");
-	for each (let item in items ){
+	for (let item of items ){
 	    try{
 		let label = item.getAttribute("label2");
 		if( label ){ item.label = label; }
@@ -451,7 +451,7 @@ var NicoLiveWindow = {
      */
     hideSetListMenu:function(elem){
 	let items = elem.getElementsByTagName("menuitem");
-	for each (let item in items ){
+	for (let item of items ){
 	    item.label = item.value;
 	}
     },
