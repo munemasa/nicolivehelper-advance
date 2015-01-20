@@ -21,14 +21,17 @@ var NicoLiveComment = {
 
     getScrollBox:function(){
 	if( this._comment_box ) return this._comment_box;
-	this._comment_box = $('comment-box').boxObject.QueryInterface(Components.interfaces.nsIScrollBoxObject);
+	this._comment_box = $('comment-box').boxObject;
+	console.log( this._comment_box );
 	return this._comment_box;
     },
-    getPosition:function(){
-	let y = new Object();
-	let x = new Object();
-	this.getScrollBox().getPosition(x,y);
-	return y.value;
+    getYPosition:function(){
+	try{
+	    return this.getScrollBox().positionY;
+	}catch(e){
+	    debugprint(e);
+	    return 0;
+	}
     },
 
     /**
@@ -152,10 +155,10 @@ var NicoLiveComment = {
 	this.autoKotehan( comment, target_room );
 
 	// TODO コメントの表示位置の保持が意外と重い
-	if( comment.date>=NicoLiveHelper.connecttime ){
-	    let y = this.getPosition();
-	    if( y!=0 ){
-		this.getScrollBox().scrollTo( 0, y+tr.clientHeight);
+	if( comment.date >= NicoLiveHelper.connecttime ){
+	    let y = this.getYPosition();
+	    if( y != 0 ){
+		this.getScrollBox().scrollTo( 0, y + tr.clientHeight );
 	    }
 	}
     },
