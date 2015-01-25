@@ -1200,9 +1200,8 @@ var Database = {
 	    path = null;
 	}
 	if( path ){
-	    Application.console.log(path);
-	    let localFile = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
-	    localFile.initWithPath( path );
+	    Application.console.log( path );
+	    let localFile = OpenFile( path );
 	    return localFile;
 	}else{
 	    return this.getDefaultPath();
