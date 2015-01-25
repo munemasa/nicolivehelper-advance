@@ -76,7 +76,7 @@ function SelectFolder(){
     }
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-	var path = fp.file.path;
+	path = fp.file.path;
 	$('menu-filelist').setAttribute('dir',path);
 	Init();
     }
@@ -91,7 +91,6 @@ function Init(){
 	$('menu-filelist').parentNode.setAttribute('tooltiptext',path);
 
 	let file = OpenFile(path);
-	file.QueryInterface(Components.interfaces.nsILocalFile);
 	let direntry = file.directoryEntries.QueryInterface(Components.interfaces.nsIDirectoryEnumerator);
 
 	let dir;
@@ -105,7 +104,7 @@ function Init(){
 	    }
 	}
     } catch (x) {
-	Application.console.log(x);
+	console.log(x);
     }
 }
 
