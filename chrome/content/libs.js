@@ -1,16 +1,15 @@
-Components.utils.import("resource://gre/modules/ctypes.jsm");
-
 /**
  * いろいろと便利関数などを.
  */
-try{
-    // Fx4.0
-    Components.utils.import("resource://gre/modules/AddonManager.jsm");
-} catch (x) {
-} 
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import( "resource://gre/modules/AddonManager.jsm" );
+Cu.import("resource://gre/modules/ctypes.jsm");
+let FileUtils = Cu.import("resource://gre/modules/FileUtils.jsm").FileUtils;
+
 
 const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 const HTML_NS= "http://www.w3.org/1999/xhtml";
@@ -293,14 +292,11 @@ function CreateFolder(path){
  * ファイルを開く
  */
 function OpenFile(path){
-    let localfileCID = '@mozilla.org/file/local;1';
-    let localfileIID =Components.interfaces.nsILocalFile;
-    try {
-	let file = Components.classes[localfileCID].createInstance(localfileIID);
-	file.initWithPath(path);
-	return file;
-    }
-    catch(e) {
+    try{
+	let nsifile = new FileUtils.File( path );
+	return nsifile;
+    }catch( e ){
+	console.log( "file or directory not found: " + path );
 	return false;
     }
 }
