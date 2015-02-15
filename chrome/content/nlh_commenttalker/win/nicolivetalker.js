@@ -29,11 +29,11 @@ var NicoLiveTalker = {
      * @param text 読み上げるテキスト
      * @param type 読み上げ方法(指定無効)
      */
-    runProcess:function(exe,text, type){
+    runProcess:function(exe, text, type){
 	type = $('nlhaddon-use-external').checked ? 1 : 0;
 	switch(type){
 	case 0:
-	    this.talk(exe,text);
+	    this.callBouyomichan( text );
 	    break;
 	case 1:
 	    this.runExternalProcess(exe,text,type);
@@ -51,7 +51,7 @@ var NicoLiveTalker = {
      */
     runExternalProcess:function(exe,text, type){
 	var file = Components.classes["@mozilla.org/file/local;1"]
-                     .createInstance(Components.interfaces.nsILocalFile);
+                     .createInstance(Components.interfaces.nsIFile);
 	var path = $('nlhaddon-external-program').value;
 	file.initWithPath(path);
 	var process = Components.classes["@mozilla.org/process/util;1"]
@@ -93,6 +93,62 @@ var NicoLiveTalker = {
 
     test:function(){
 	this.runProcess("", $('nlhaddon-testbox').value);
+    },
+
+    callBouyomichan: function( text, ipaddr ){
+	/*
+	 struct bouyomichan_header{
+	 short command;
+	 short speed;
+	 short tone;
+	 short volume;
+	 short voice;
+	 char character_code; // no padding
+	 long length;
+	 }
+	 */
+	try{
+	    let server = ipaddr || "127.0.0.1";
+	    let port = 50001;
+
+	    let socketTransportService = Components.classes["@mozilla.org/network/socket-transport-service;1"].getService( Components.interfaces.nsISocketTransportService );
+	    let socket = socketTransportService.createTransport( null, 0, server, port, null );
+	    let ostream = socket.openOutputStream( 0, 0, 0 );
+	    let binout = Components.classes["@mozilla.org/binaryoutputstream;1"].createInstance( Components.interfaces.nsIBinaryOutputStream );
+	    binout.setOutputStream( ostream );
+
+	    function write16le( val ){
+		binout.write8( val & 0xff );
+		binout.write8( (val >> 8) & 0xff );
+	    };
+	    function write32le( val ){
+		binout.write8( val & 0xff );
+		binout.write8( (val >> 8) & 0xff );
+		binout.write8( (val >> 16) & 0xff );
+		binout.write8( (val >> 24) & 0xff );
+	    };
+
+	    write16le( 1 ); // command
+	    write16le( -1 ); // speed
+	    write16le( -1 ); // tone
+	    write16le( -1 ); // volume
+	    write16le( 0 ); // voice
+	    binout.write8( 1 ); // 0:UTF-8, 1:Unicode, 2:Shift-JIS
+
+	    write32le( text.length * 2 );
+
+	    for( let i = 0; i < text.length; i++ ){
+		let ch = text.charCodeAt( i );
+		binout.write8( ch & 0xff );
+		binout.write8( (ch >> 8) & 0xff );
+	    }
+
+	    binout.flush();
+	    ostream.flush();
+	    ostream.close();
+	}catch( e ){
+	    console.log( e );
+	}
     },
 
     /**
@@ -140,18 +196,6 @@ var NicoLiveTalker = {
 
     init:function(){
 	debugprint('CommentTalker init.');
-
-	try{
-	    var path = GetExtensionPath();
-	    path.append("libs");
-	    path.append("commenttalker_dll.dll");
-	    debugprint(path.path);
-	    this.lib = ctypes.open(path.path);
-	    this.talk = this.lib.declare("bouyomichan", ctypes.default_abi, ctypes.int32_t, ctypes.jschar.ptr, ctypes.jschar.ptr);
-	} catch (x) {
-	    debugprint(x);
-	}
-
 	let prefs = Config.getBranch();
 	try{ $('enable-comment-talker').checked = prefs.getBoolPref("ext.comment-talker.enable"); }catch(x){}
 	try{ $('nlhaddon-restrictlength').value = prefs.getIntPref("ext.comment-talker.length"); }catch (x){}
@@ -159,12 +203,6 @@ var NicoLiveTalker = {
 	try{ $('nlhaddon-external-program').value = prefs.getUnicharPref("ext.comment-talker.ext-program"); }catch (x){}
     },
     destroy:function(){
-	try{
-	    this.lib.close();
-	} catch (x) {
-	    debugprint(x);
-	}
-
 	let prefs = Config.getBranch();
 	prefs.setBoolPref("ext.comment-talker.enable", $('enable-comment-talker').checked);
 	prefs.setIntPref("ext.comment-talker.length", $('nlhaddon-restrictlength').value);
