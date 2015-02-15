@@ -24,6 +24,62 @@ Components.utils.import("resource://gre/modules/ctypes.jsm");
 
 var NicoLiveTalker = {
 
+    callBouyomichan: function( text, ipaddr ){
+	/*
+	 struct bouyomichan_header{
+	 short command;
+	 short speed;
+	 short tone;
+	 short volume;
+	 short voice;
+	 char character_code; // no padding
+	 long length;
+	 }
+	 */
+	try{
+	    let server = ipaddr || "127.0.0.1";
+	    let port = 50001;
+
+	    let socketTransportService = Components.classes["@mozilla.org/network/socket-transport-service;1"].getService( Components.interfaces.nsISocketTransportService );
+	    let socket = socketTransportService.createTransport( null, 0, server, port, null );
+	    let ostream = socket.openOutputStream( 0, 0, 0 );
+	    let binout = Components.classes["@mozilla.org/binaryoutputstream;1"].createInstance( Components.interfaces.nsIBinaryOutputStream );
+	    binout.setOutputStream( ostream );
+
+	    function write16le( val ){
+		binout.write8( val & 0xff );
+		binout.write8( (val >> 8) & 0xff );
+	    };
+	    function write32le( val ){
+		binout.write8( val & 0xff );
+		binout.write8( (val >> 8) & 0xff );
+		binout.write8( (val >> 16) & 0xff );
+		binout.write8( (val >> 24) & 0xff );
+	    };
+
+	    write16le( 1 ); // command
+	    write16le( -1 ); // speed
+	    write16le( -1 ); // tone
+	    write16le( -1 ); // volume
+	    write16le( 0 ); // voice
+	    binout.write8( 1 ); // 0:UTF-8, 1:Unicode, 2:Shift-JIS
+
+	    write32le( text.length * 2 );
+
+	    for( let i = 0; i < text.length; i++ ){
+		let ch = text.charCodeAt( i );
+		binout.write8( ch & 0xff );
+		binout.write8( (ch >> 8) & 0xff );
+	    }
+
+	    binout.flush();
+	    ostream.flush();
+	    ostream.close();
+	}catch( e ){
+	    console.log( e );
+	}
+    },
+
     runProcess:function(exe,text){
 	try{
 	    if( $('use-saykotoeri').selected || $('use-saykotoeri2').selected){
