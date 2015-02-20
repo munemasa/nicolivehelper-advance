@@ -75,6 +75,7 @@ var NicoLiveTalker = {
 	    binout.flush();
 	    ostream.flush();
 	    ostream.close();
+	    socket.close();
 	}catch( e ){
 	    console.log( e );
 	}
