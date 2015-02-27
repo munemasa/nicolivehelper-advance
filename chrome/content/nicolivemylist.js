@@ -270,6 +270,64 @@ var NicoLiveMylist = {
 	} );
     },
 
+    addToDatabaseFromDeflist: function(){
+	console.log( "addToDatabaseFromDeflist" );
+    },
+
+    /**
+     * マイリストからDBに登録する.
+     * @param mylist_id マイリストID
+     * @param mylist_name マイリスト名(未使用)
+     * @param callback DB追加後のコールバック関数
+     */
+    addDatabase: function( mylist_id, mylist_name, callback ){
+	let f = function( xml, req ){
+	    if( req.readyState == 4 ){
+		if( req.status == 200 ){
+		    let xml = req.responseXML;
+		    let link = xml.getElementsByTagName( 'link' );
+		    let videos = new Array();
+		    for( let i = 0, item; item = link[i]; i++ ){
+			let video_id = item.textContent.match( /(sm|nm)\d+/ );
+			if( video_id ){
+			    videos.push( video_id[0] );
+			}
+		    }
+		    Database.addVideos( videos.join( ',' ), callback );
+		}else{
+		    NicoLiveMylist.addDatabaseFromMylistViaApi( mylist_id, mylist_name );
+		}
+	    }
+	};
+	NicoApi.mylistRSS( mylist_id, f );
+    },
+
+    /**
+     * マイリストからDBに追加する(API使用).
+     * @param mylist_id マイリストのID
+     * @param mylist_name マイリストの名前(未使用)
+     */
+    addDatabaseFromMylistViaApi: function( mylist_id, mylist_name ){
+	let f = function( xml, req ){
+	    if( req.readyState == 4 ){
+		if( req.status == 200 ){
+		    let mylistobj = JSON.parse( req.responseText );
+		    let videos = new Array();
+		    for( let item of mylistobj.mylistitem ){
+			videos.push( item.item_data.video_id ); // もしくは watch_id
+		    }
+		    Database.addVideos( videos.join( ',' ) );
+		}
+	    }
+	};
+
+	// http://www.nicovideo.jp/my/mylist の token を得る
+	let url = "http://www.nicovideo.jp/my/mylist";
+	NicoApi.getApiToken( url, function( token ){
+	    NicoApi.getMylist( mylist_id, token, f );
+	} );
+    },
+
     /**
      * マイリストに追加のメニューを作成する
      * @param mylists マイリストグループ
@@ -390,30 +448,6 @@ var NicoLiveMylist = {
              elem.setAttribute("oncommand","NicoLiveMylist.addDatabase(event.target.value, event.target.label);");
              $('menupopup-from-mylist-to-db').appendChild(elem);
         }
-    },
-
-    /**
-     * マイリストからDBに登録する.
-     * @param mylist_id マイリストID
-     * @param mylist_name マイリスト名(未使用)
-     * @param callback DB追加後のコールバック関数
-     */
-    addDatabase:function(mylist_id,mylist_name,callback){
-	let f = function(xml,req){
-	    if( req.readyState==4 && req.status==200 ){
-		let xml = req.responseXML;
-		let link = xml.getElementsByTagName('link');
-		let videos = new Array();
-		for(let i=0,item;item=link[i];i++){
-		    let video_id = item.textContent.match(/(sm|nm)\d+/);
-		    if(video_id){
-			videos.push(video_id[0]);
-		    }
-		}
-		Database.addVideos(videos.join(','), callback);
-	    }
-	};
-	NicoApi.mylistRSS( mylist_id, f );
     },
 
     /**
