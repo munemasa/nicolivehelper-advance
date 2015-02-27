@@ -57,6 +57,31 @@ var NicoApi = {
 	}
     },
 
+    // ニコニコ動画のAPIトークンを取得する
+    // postfunc には func(token) を受け取る関数を渡す
+    getApiToken: function( url, postfunc ){
+	let f = function( xml, xmlhttp ){
+	    if( xmlhttp.readyState == 4 ){
+		if( xmlhttp.status == 200 ){
+		    try{
+			let token = xmlhttp.responseText.match( /NicoAPI\.token\s*=\s*\"(.*)\";/ );
+			if( !token ){
+			    token = xmlhttp.responseText.match( /NicoAPI\.token\s*=\s*\'(.*)\';/ );
+			}
+			token = token[1];
+			if( "function" == typeof postfunc ){
+			    postfunc( token );
+			}
+			console.log( "Token:" + token );
+		    }catch( x ){
+			console.log( x );
+		    }
+		}
+	    }
+	};
+	this.callApi( url, f );
+    },
+
     broadcast: function( request_id, postdata, postfunc ){
 	let url = this.live_base_uri + "broadcast/" + request_id;
 	this.callApi( url, postfunc, postdata );
@@ -121,6 +146,14 @@ var NicoApi = {
     mylistRSS: function( mylist_id, postfunc ){
 	let url = "http://www.nicovideo.jp/mylist/" + mylist_id + "?rss=2.0";
 	this.callApi( url, postfunc );
+    },
+
+    getMylist: function( mylist_id, token, postfunc ){
+	let url = this.base_uri + "api/mylist/list";
+	let reqstr = [];
+	reqstr[0] = "group_id=" + mylist_id;
+	reqstr[1] = "token=" + encodeURIComponent( token );
+	this.callApi( url, postfunc, reqstr );
     },
 
     addDeflist: function( item_id, token, additional_msg, postfunc ){
