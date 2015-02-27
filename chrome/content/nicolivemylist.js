@@ -303,14 +303,15 @@ var NicoLiveMylist = {
      * @param ev eventオブジェクト
      */
     addMylistFromMenu: function( mylist_id, mylist_name, triggernode, ev ){
-	debugprint(mylist_id);
-	debugprint(mylist_name);
-	debugprint(triggernode);
+	//debugprint(mylist_id);
+	//debugprint(mylist_name);
+	//debugprint(triggernode);
 	this.triggernode = triggernode;
 
 	let videoinfo;
-	if( triggernode.tagName=='statusbarpanel' ){
-	    // ステータスバーから
+	if( triggernode.tagName=='statusbarpanel' || triggernode.tagName=='xul:label' ){
+	    // あまりいい条件分岐ではないけど
+	    // ステータスバーでのトリガーノードのタグ名がxul:labelになるので。
 	    videoinfo = NicoLiveHelper.getCurrentVideoInfo();
 	}else if( triggernode.tagName=='label' ){
 	    // メイン、サブの再生曲タイトル表示のところから
