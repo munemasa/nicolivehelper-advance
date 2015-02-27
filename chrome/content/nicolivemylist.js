@@ -272,6 +272,25 @@ var NicoLiveMylist = {
 
     addToDatabaseFromDeflist: function(){
 	console.log( "addToDatabaseFromDeflist" );
+	let f = function( xml, req ){
+	    if( req.readyState == 4 && req.status == 200 ){
+		let result = JSON.parse( req.responseText );
+		switch( result.status ){
+		case 'ok':
+		    let videos = new Array();
+		    for( let i = 0; i < result.mylistitem.length; i++ ){
+			videos.push( result.mylistitem[i].item_data.video_id );
+		    }
+		    Database.addVideos( videos.join( ' ' ) );
+		    break;
+		case 'fail':
+		    break;
+		default:
+		    break;
+		}
+	    }
+	};
+	NicoApi.getDeflist( f );
     },
 
     /**
