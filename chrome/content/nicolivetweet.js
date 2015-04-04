@@ -24,7 +24,7 @@ var NicoLiveTweet = {
     consumer: "s7oBmLr1QbvyMkwNojgMVw",
     consumerSecret: "jGgsV5nKfchguFWcfmVtil1Dz77vCykiTznhzdwcV0",
 
-    requestTokenURL: "https://twitter.com/oauth/request_token",
+    requestTokenURL: "https://api.twitter.com/oauth/request_token",
     authenticateURL: "https://api.twitter.com/oauth/authenticate", // ?oauth_token=hoge
     accessTokenURL: "https://api.twitter.com/oauth/access_token",
     updateURL: "https://api.twitter.com/1.1/statuses/update.json",
@@ -92,13 +92,9 @@ var NicoLiveTweet = {
 	};
 	let url = this.requestTokenURL;
 	req.open('POST', url );
-	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-
-	let str = new Array();
-	for(let i=0,item;item=message.parameters[i];i++){
-	    str.push(item[0] +"=" + item[1]);
-	}
-	req.send(str.join('&'));
+	req.setRequestHeader( 'Authorization',
+	    OAuth.getAuthorizationHeader( 'http://miku39.jp/', message.parameters ) );
+	req.send('');
     },
 
     getAccessTokenOfNLH:function(pin, callback){
