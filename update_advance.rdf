@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAFlac+Urz+eiOHHA4wxPk1dr7Wv4zT7t4Rmp2H/EPM87/QeZyy55YtFp0yTVmhGIQ8n1BZHJlsLY/fT1mrhT4QBAn6RhI69JZo5IZkKPwhXJU0FRuoVWsh6wNGTWSOkecX627fQEUtXMBKMqhunsztPSZ8Bsm/ujmxG0DOhIupJd">
-    <em:updates RDF:resource="rdf:#$N3pNz"/>
-  </RDF:Description>
-  <RDF:Description RDF:about="rdf:#$O3pNz"
-                   em:version="1.10">
-    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
-  </RDF:Description>
   <RDF:Seq RDF:about="rdf:#$N3pNz">
     <RDF:li RDF:resource="rdf:#$O3pNz"/>
   </RDF:Seq>
+  <RDF:Description RDF:about="rdf:#$O3pNz"
+                   em:version="1.10.1">
+    <em:targetApplication RDF:resource="rdf:#$R3pNz"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="urn:mozilla:extension:nicolivehelperadvance@miku39.jp"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAChbN75+xjcBnVBS2PHh0McHkyVfJbjRTKSXpcJEWnqM2rYZTwjfWTgIqmGaQOkG6kPeje5iL0/u24cpdqR+j4xA+JLcyEtXtrH1XQhp+E8vHwd4OhcAOxRuASkgUlPLwcIWnNqItr8ATM7Us/Uuh9TID083qSiTqDFnUmhi0cIn">
+    <em:updates RDF:resource="rdf:#$N3pNz"/>
+  </RDF:Description>
   <RDF:Description RDF:about="rdf:#$R3pNz"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="4.0"
                    em:maxVersion="*"
-                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.10.xpi"
-                   em:updateHash="sha1:8691adff6f73d1356c4153b779be457077cfe814"
+                   em:updateLink="http://miku39.jp/dists/software/firefox/nicolivehelperadvance_1.10.1.xpi"
+                   em:updateHash="sha1:4d7f3bc4c4b0753f691df8d8f622998f138db4b7"
                    em:updateInfoURL="http://miku39.jp/dists/software/firefox/nicolivehelper/updateinfourl.xhtml" />
 </RDF:RDF>
