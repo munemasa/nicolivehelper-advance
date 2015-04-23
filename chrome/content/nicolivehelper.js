@@ -3143,6 +3143,10 @@ var NicoLiveHelper = {
 	    if( this.ticket != newticket ){
 		syslog("コメントサーバーに接続しました。");
 		ShowNotice("コメントサーバに接続しました");
+		if( $('automatic-broadcasting').hasAttribute('checked') ){
+		    debugprint("自動放送モードにより、放送を自動開始します。");
+		    NicoLiveHelper.beginLive( NicoLiveHelper.post_token );
+		}
 	    }
 	    this.ticket = newticket;
 	}
