@@ -179,7 +179,7 @@ var AutoCreateLive = {
     },
 
 
-    create: function( editurl ){
+    createLive: function( editurl ){
 	// http://live.niconico.com/editstream
 	// http://live.nicovideo.jp/editstream
 	this.win = NicoLiveWindow.openInAppBrowser(editurl);

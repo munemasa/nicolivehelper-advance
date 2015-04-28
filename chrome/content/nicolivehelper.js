@@ -4223,7 +4223,7 @@ var NicoLiveHelper = {
 	    if( manually ){
 		NicoLiveWindow.openDefaultBrowser(url, true);
 	    }else{
-		AutoCreateLive.create( url );
+		AutoCreateLive.createLive( url );
 	    }
 	}
     },
