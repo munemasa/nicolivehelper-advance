@@ -10,10 +10,10 @@
     <em:creator>amano</em:creator>
 <!--    <em:contributor>Richika</em:contributor> -->
     <em:homepageURL>http://com.nicovideo.jp/community/co105163</em:homepageURL>
-
+<!--
     <em:updateURL>http://miku39.jp/dists/software/firefox/nicolivehelper/update_advance.rdf</em:updateURL>
     <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/0ThrrGd6VkDncZHF8SY0hg9KmUKTdnhtfhC2D4NkiljAt2IjwoQxrZeKEIbEssVDQKWTqt0MuaYY/S+ehJYOjts8CzogzQR3cEtdO0sWok2wkkJ7Vz5XL8F4GsmfIjvCttwzeKl+8ybNDUSM+9EV73Vve0bOiP6YXUDD0+yJGwIDAQAB</em:updateKey>
-
+-->
     <em:localized>
       <Description>
 	<em:locale>ja</em:locale>
