@@ -6,6 +6,6 @@ APP_NAME=nicolivehelperadvance
 CHROME_PROVIDERS="chrome"
 CLEAN_UP=1
 ROOT_FILES=""
-ROOT_DIRS="components defaults platform libs modules"
+ROOT_DIRS="components defaults libs modules"
 BEFORE_BUILD=
 AFTER_BUILD=
