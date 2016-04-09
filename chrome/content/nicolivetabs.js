@@ -37,7 +37,7 @@ var NicoLiveTabs = {
 	target.parentNode.insertBefore(node,target);
 
 	let tabs = evaluateXPath2(document,"//xul:tabs/xul:tab");
-	//Application.console.log(tabs.length);
+	//console.log(tabs.length);
 
 	let i = tabs.length-1;
 	let tmp = new Array();
