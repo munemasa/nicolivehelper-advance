@@ -10,7 +10,7 @@ function AcceptFunction(){
 	}
 	item.value.push( texts[i].value );
     }
-    //Application.console.log(str);
+    //console.log(str);
     let mail = document.getElementById("menu-se").value;
     opener.NicoLiveHelper.postCasterComment("/vote start "+str, mail);
 

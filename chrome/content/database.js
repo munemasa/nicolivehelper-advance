@@ -890,7 +890,7 @@ var Database = {
     saveGPStorage:function(name,obj){
 	let st;
 	let value = JSON.stringify(obj);
-	//Application.console.log(value);
+	//console.log(value);
 	try{
 	    st = this.dbconnect.createStatement('insert into gpstorage(key,value) values(?1,?2)');
 	    st.bindUTF8StringParameter(0,name);
@@ -914,7 +914,7 @@ var Database = {
     loadGPStorage:function(name,defitem){
 	let item;
 	debugprint('load '+name);
-	item = Application.storage.get(name,null);
+	item = NLHApplication.NLHstorage.get( name, null );
 	if(item!=null){
 	    //debugprint("メモリからデータをロードします");
 	    return item;
@@ -1200,7 +1200,7 @@ var Database = {
 	    path = null;
 	}
 	if( path ){
-	    Application.console.log( path );
+	    console.log( path );
 	    let localFile = OpenFile( path );
 	    return localFile;
 	}else{

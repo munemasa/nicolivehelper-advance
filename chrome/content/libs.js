@@ -502,11 +502,11 @@ function syslog(txt){
 function debugprint(txt){
     if( $('debug-textbox') )
 	$('debug-textbox').value += txt + "\n";
-    //Application.console.log(txt);
+    //console.log(txt);
 }
 
 function debugconsole(txt){
-    Application.console.log(txt);
+    console.log(txt);
 }
 
 function debugalert(txt){
@@ -536,7 +536,7 @@ function ShowPopupNotification(imageURL,title,text,request_id){
 	observe: function(subject, topic, data) {
 	    if(topic=='alertclickcallback'){
 		let url = 'http://live.nicovideo.jp/watch/'+data;
-		Application.console.log('open:'+url);
+		console.log('open:'+url);
 		gBrowser.addTab(url);
 	    }
 	}
