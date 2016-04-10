@@ -1,7 +1,7 @@
 try{
-    Components.utils.import("resource://gre/modules/ctypes.jsm");
-} catch (x) {
-    Application.console.log(x);
+    Components.utils.import( "resource://gre/modules/ctypes.jsm" );
+}catch( x ){
+    console.log( x );
 }
 
 var NicoLiveCookie = {
@@ -17,8 +17,8 @@ var NicoLiveCookie = {
 	    if( this.lib ){
 		this.lib.close();
 	    }
-	} catch (x) {
-	    Application.console.log(x);
+	}catch( x ){
+	    console.log( x );
 	}
     },
 

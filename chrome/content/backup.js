@@ -23,7 +23,7 @@ var Backup = {
 			 LoadString('STR_BACKUP_WARN_DEL_TITLE'))){
 	    delete Backup.backuprestore[backupname];
 	    Backup.createRestoreMenu();
-	    Application.storage.set("nico_live_backup",Backup.backuprestore);
+	    NLHApplication.NLHstorage.set( "nico_live_backup", Backup.backuprestore );
 	    ShowNotice( LoadFormattedString('STR_BACKUP_DELETE',[backupname]) );
 	}
     },
@@ -106,7 +106,7 @@ var Backup = {
 	}
 
 	this.backuprestore[name] = data;
-	Application.storage.set("nico_live_backup",this.backuprestore);
+	NLHApplication.NLHstorage.set( "nico_live_backup", this.backuprestore );
     },
 
     /**
@@ -131,7 +131,7 @@ var Backup = {
     },
 
     init: function(){
-	let item = Application.storage.get("nico_live_backup",null);
+	let item = NLHApplication.NLHstorage.get( "nico_live_backup", null );
 	if( !item ){
 	    this.backuprestore = Storage.readObject("nico_live_backup",{});
 	}else{
@@ -140,7 +140,7 @@ var Backup = {
 	this.createRestoreMenu();
     },
     destroy: function(){
-	Application.storage.set("nico_live_backup",this.backuprestore);
+	NLHApplication.NLHstorage.set( "nico_live_backup", this.backuprestore );
 	Storage.writeObject("nico_live_backup",this.backuprestore);
     }
 };

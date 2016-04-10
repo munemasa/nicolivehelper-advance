@@ -174,9 +174,12 @@ var NicoLiveHistory = {
 	}
     },
 
-    // 再生履歴にマイリストに追加メニューを追加.
+    /**
+     * 再生履歴（テキスト）に「マイリストに追加」と「選択範囲の動画IDをコピー」を追加する.
+     * @param popup マイリストに追加のポップアップメニュー
+     */
     appendMenu:function( popup ){
-	// テキストボックスのコンテキストメニュー
+	// テキストボックスのコンテキストメニューを拾う
 	let notes = $('playlist-textbox');
 	let input = document.getAnonymousElementByAttribute(notes, 'anonid', 'input');
 	let menu = document.getAnonymousElementByAttribute(input.parentNode, "anonid", "input-box-contextmenu");
@@ -185,10 +188,29 @@ var NicoLiveHistory = {
 
 	menu.insertBefore( CreateElement('menuseparator'), menu.firstChild );
 
+	let copy_id_menu = CreateMenuItem( "選択範囲の動画IDをコピー", "copy_video_id_in_selected" );
+	copy_id_menu.setAttribute( "oncommand", "NicoLiveHistory.copyVideoIdFromRegion();" );
+	menu.insertBefore( copy_id_menu, menu.firstChild );
+
 	let popupmenu = popup;
 	popupmenu.setAttribute('id','addto-mylist-from-history');
 	popupmenu.setAttribute("oncommand","NicoLiveHistory.addMylist(event.target.value,event.target.label,event);");
 	menu.insertBefore( popupmenu, menu.firstChild );
+    },
+
+    copyVideoIdFromRegion: function(){
+	let notes = $( 'playlist-textbox' );
+	let substring;
+	substring = notes.value.substr( notes.selectionStart, notes.selectionEnd - notes.selectionStart );
+
+	if( substring.length >= 3 ){
+	    let video_ids = substring.match(/^(sm|nm|ze|so)\d+|\d{10}/mg);
+
+	    console.log( video_ids );
+	    if( video_ids ){
+		CopyToClipboard( video_ids.join(' ') );
+	    }
+	}
     },
 
     handleEvent:function(event){

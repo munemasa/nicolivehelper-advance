@@ -43,8 +43,8 @@ function SendOneLine()
 		tmp.splice(0,2);
 		comment = tmp.join("/");
 	    }
-	    //Application.console.log("cmd:"+cmd);
-	    //Application.console.log("comment:"+comment);
+	    //console.log("cmd:"+cmd);
+	    //console.log("comment:"+comment);
 	    opener.NicoLiveHelper.postComment(comment,cmd,"");
 	}else{
 	    let color = document.getElementById('bsp-name-color').selectedItem.value;
@@ -99,7 +99,7 @@ function FileDropped(event){
     var file = event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
     if (file instanceof Components.interfaces.nsIFile){
 	if( !file.leafName.match(/\.txt$/) ) return;
-	//Application.console.log("file dropped:"+file.path);
+	//console.log("file dropped:"+file.path);
 	ReadTextFile(file);
 	return;
     }
@@ -125,7 +125,7 @@ function Init(){
 	    }
 	}
     } catch (x) {
-	Application.console.log(x);
+	console.log( x );
     }
 
     if( window.opener.NicoLiveHelper.liveinfo.title ){

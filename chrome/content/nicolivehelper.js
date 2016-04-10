@@ -1,10 +1,11 @@
 /* NicoLive Helper Advance for Firefox/XULRunner */
 
-
 Components.utils.import("resource://nicolivehelperadvancemodules/usernamecache.jsm");
 Components.utils.import("resource://nicolivehelperadvancemodules/httpobserve.jsm");
 Components.utils.import("resource://nicolivehelperadvancemodules/alert.jsm");
 
+var NLHApplication = {};
+Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.jsm", NLHApplication);
 
 var pname_whitelist = {};
 
@@ -3143,6 +3144,10 @@ var NicoLiveHelper = {
 	    if( this.ticket != newticket ){
 		syslog("コメントサーバーに接続しました。");
 		ShowNotice("コメントサーバに接続しました");
+		if( $('automatic-broadcasting').hasAttribute('checked') ){
+		    debugprint("自動放送モードにより、放送を自動開始します。");
+		    NicoLiveHelper.beginLive( NicoLiveHelper.post_token );
+		}
 	    }
 	    this.ticket = newticket;
 	}
@@ -4219,7 +4224,7 @@ var NicoLiveHelper = {
 	    if( manually ){
 		NicoLiveWindow.openDefaultBrowser(url, true);
 	    }else{
-		AutoCreateLive.create( url );
+		AutoCreateLive.createLive( url );
 	    }
 	}
     },
@@ -5143,10 +5148,10 @@ var NicoLiveHelper = {
 	} catch (x) {
 	    debugprint(x);
 	    debugprint("no window.arguments.");
-	    request_id = Application.storage.get("nico_request_id","lv0");
-	    title      = Application.storage.get("nico_live_title","");
-	    iscaster   = Application.storage.get("nico_live_caster",true);
-	    community_id = Application.storage.get("nico_live_coid","");
+	    request_id = NLHApplication.NLHstorage.get("nico_request_id","lv0");
+	    title      = NLHApplication.NLHstorage.get("nico_live_title","");
+	    iscaster   = NLHApplication.NLHstorage.get("nico_live_caster",true);
+	    community_id = NLHApplication.NLHstorage.get("nico_live_coid","");
 	}
 	title = title.replace(/\u200b/g,"");
 
