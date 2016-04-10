@@ -37,7 +37,7 @@ var NLHPreference = {
 	str = str.replace(/<\/(.*?)>/g,"</html:$1>");
 	str = str.replace(/<([^/].*?)>/g,"<html:$1>");
 	str = str.replace(/html:br/g,"html:br/");
-	//Application.console.log(str);
+	//console.log(str);
 	$('preview-videoinfo').innerHTML = str;
     },
 
@@ -893,7 +893,7 @@ var NLHPreference = {
 	}
     },
     destroy:function(){
-	//Application.console.log('close advanced setting');
+	//console.log('close advanced setting');
     }
 };
 

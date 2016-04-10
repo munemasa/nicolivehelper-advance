@@ -12,7 +12,7 @@ var Storage = {
     writeObject: function( k, v, memoryonly ){
 	let stringify = JSON.stringify(v);
 
-	Application.storage.set("nico"+k,stringify);
+	NLHApplication.NLHstorage.set( "nico" + k, stringify );
 	if( memoryonly ){
 	    debugprint("write to memory "+k);
 	    return;
@@ -36,7 +36,7 @@ var Storage = {
      * @param defvalue デフォルト値
      */
     readObject: function( k, defvalue ){
-	let item = Application.storage.get("nico"+k,null);
+	let item = NLHApplication.NLHstorage.get( "nico" + k, null );
 	if(item!=null){
 	    debugprint("read from memory "+k);
 	    let obj = JSON.parse(item);
@@ -119,7 +119,7 @@ var Storage = {
 	    retval = this.getDefaultSaveDir();
 	}
 
-	//Application.console.log("Storage Path="+this._path.path);
+	//console.log("Storage Path="+this._path.path);
 	return retval;
     },
 

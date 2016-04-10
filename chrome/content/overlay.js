@@ -1,7 +1,10 @@
+var NLHApplication = {};
+Components.utils.import("resource://nicolivehelperadvancemodules/sharedobject.jsm", NLHApplication);
+
 
 var NicoLiveHelperAdvanceOverlay = {
     debugprint:function(txt){
-	//Application.console.log(txt);
+	//console.log(txt);
     },
 
     getPref:function(){
@@ -68,11 +71,11 @@ var NicoLiveHelperAdvanceOverlay = {
      * @param community_id コミュニティID
      */
     open:function(url,title,iscaster,community_id){
-	let feature="chrome,resizable=yes";
-	Application.storage.set("nico_request_id",url);
-	Application.storage.set("nico_live_title",title);
-	Application.storage.set("nico_live_caster",iscaster);
-	Application.storage.set("nico_live_coid",community_id);
+	let feature = "chrome,resizable=yes";
+	NLHApplication.NLHstorage.set( "nico_request_id", url );
+	NLHApplication.NLHstorage.set( "nico_live_title", title );
+	NLHApplication.NLHstorage.set( "nico_live_caster", iscaster );
+	NLHApplication.NLHstorage.set( "nico_live_coid", community_id );
 
 	this.debugprint("request id:"+url);
 	this.debugprint("title:"+title);
@@ -101,7 +104,7 @@ var NicoLiveHelperAdvanceOverlay = {
 	    }
 	}
 	this.insertHistory(url,title);
-	//Application.console.log(url+' '+title);
+	//console.log(url+' '+title);
     },
 
     /**
@@ -219,7 +222,7 @@ var NicoLiveHelperAdvanceOverlay = {
 		request_id = unsafeWin.Video.id;
 		if( !request_id || request_id.indexOf("lv")!=0 ) return;
 	    } catch (x) {
-		//Application.console.log(x);
+		//console.log(x);
 		return;
 	    }
 	}else{

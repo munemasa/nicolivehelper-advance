@@ -26,7 +26,7 @@ var NicoLiveComment = {
 	}catch( e ){
 	    this._comment_box = $( 'comment-box' ).boxObject;
 	}
-	console.log( this._comment_box );
+	//console.log( this._comment_box );
 	return this._comment_box;
     },
     getYPosition: function(){
