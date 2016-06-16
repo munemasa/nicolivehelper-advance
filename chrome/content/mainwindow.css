@@ -279,7 +279,6 @@ toolbarbutton{
 
 
 /* コントロールパネル */
-
 .cp-target-label[selected='true'] {
     font-weight: bold;
     /* font-style: italic; */

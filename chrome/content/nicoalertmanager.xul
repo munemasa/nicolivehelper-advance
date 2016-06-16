@@ -22,7 +22,7 @@
     </hbox>
     <hbox>
       <button id="connect" label="接続"
-	      oncommand="NicoLiveAlertModule.connect( new XMLHttpRequest() ); SetButtonVisibility();"/>
+	      oncommand="NicoLiveAlertModule.connect( new XMLHttpRequest() ); setTimeout( function(){ SetButtonVisibility()}, 2000 );"/>
       <button id="disconnect" label="切断"
 	      oncommand="NicoLiveAlertModule.closeConnection(); SetButtonVisibility();"/>
     </hbox>
