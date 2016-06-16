@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2009 amano <amano@miku39.jp>
+ Copyright (c) 2009 amano <amano@miku39.jp>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
  */
 
 var NicoLiveTweet = {
@@ -32,26 +32,26 @@ var NicoLiveTweet = {
 
     oauth: {},
 
-    getSavedToken:function(){
+    getSavedToken: function(){
 	// ログインマネージャに保存したトークンとシークレットトークンを読み込む.
 	let hostname = "chrome://nicolivehelperadvance";
-	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);  
-	let logins = myLoginManager.findLogins({}, hostname, null, 'twitter token');
+	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService( Components.interfaces.nsILoginManager );
+	let logins = myLoginManager.findLogins( {}, hostname, null, 'twitter token' );
 	if( logins.length ){
-	    debugprint('# of twitter tokens:'+logins.length);
+	    debugprint( '# of twitter tokens:' + logins.length );
 	    this.oauth = {};
 	    this.oauth["oauth_token"] = logins[0].username;
 	    this.oauth["oauth_token_secret"] = logins[0].password;
 	}else{
-	    debugprint('No twitter token in LoginManager.');
+	    debugprint( 'No twitter token in LoginManager.' );
 	}
     },
 
-    getRequestTokenOfNLH:function(){
-	this.getRequestToken(this.consumer, this.consumerSecret);
+    getRequestTokenOfNLH: function(){
+	this.getRequestToken( this.consumer, this.consumerSecret );
     },
 
-    getRequestToken:function(consumer,consumerSecret){
+    getRequestToken: function( consumer, consumerSecret ){
 	// Desktop clientで7-digit PINコードを使うときに
 	// まずはrequest token URLにアクセスしoauth_tokenを取得して、
 	// authorize URLにoauth_tokenをGETパラメタで渡すと、
@@ -65,43 +65,43 @@ var NicoLiveTweet = {
 	    method: "POST",
 	    parameters: []
 	};
-	message.parameters.push(["oauth_consumer_key",consumer]);
-	message.parameters.push(["oauth_signature_method","HMAC-SHA1"]);
-	message.parameters.push(["oauth_timestamp",""]);
-	message.parameters.push(["oauth_nonce",""]);
-	message.parameters.push(["oauth_signature",""]);
-	message.parameters.push(["oauth_callback","oob"]);
-	OAuth.setTimestampAndNonce(message);
-	OAuth.SignatureMethod.sign(message,accessor);
+	message.parameters.push( ["oauth_consumer_key", consumer] );
+	message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
+	message.parameters.push( ["oauth_timestamp", ""] );
+	message.parameters.push( ["oauth_nonce", ""] );
+	message.parameters.push( ["oauth_signature", ""] );
+	message.parameters.push( ["oauth_callback", "oob"] );
+	OAuth.setTimestampAndNonce( message );
+	OAuth.SignatureMethod.sign( message, accessor );
 
 	let req = new XMLHttpRequest();
 	if( !req ) return;
 
 	req.onreadystatechange = function(){
-	    if( req.readyState!=4 ) return;
-	    if( req.status==200 ){
-		let values = req.responseText.split('&');
-		for(let i=0,item;item=values[i];i++){
-		    let val = item.split('=');
+	    if( req.readyState != 4 ) return;
+	    if( req.status == 200 ){
+		let values = req.responseText.split( '&' );
+		for( let i = 0, item; item = values[i]; i++ ){
+		    let val = item.split( '=' );
 		    NicoLiveTweet.oauth[val[0]] = val[1];
 		}
 		let url = NicoLiveTweet.authenticateURL + "?oauth_token=" + NicoLiveTweet.oauth['oauth_token'];
-		NicoLiveWindow.openDefaultBrowser(url,true);
+		NicoLiveWindow.openDefaultBrowser( url, true );
 	    }
-	    debugprint('request token:'+req.responseText);
+	    debugprint( 'request token:' + req.responseText );
 	};
 	let url = this.requestTokenURL;
-	req.open('POST', url );
+	req.open( 'POST', url );
 	req.setRequestHeader( 'Authorization',
 	    OAuth.getAuthorizationHeader( 'http://miku39.jp/', message.parameters ) );
-	req.send('');
+	req.send( '' );
     },
 
-    getAccessTokenOfNLH:function(pin, callback){
-	this.getAccessToken(this.consumer, this.consumerSecret,pin,callback);
+    getAccessTokenOfNLH: function( pin, callback ){
+	this.getAccessToken( this.consumer, this.consumerSecret, pin, callback );
     },
 
-    getAccessToken:function(consumer,consumerSecret,pin, callback){
+    getAccessToken: function( consumer, consumerSecret, pin, callback ){
 	// 7-digit PINを使ったアクセストークンの取得.
 	let accessor = {
 	    consumerSecret: consumerSecret,
@@ -112,53 +112,53 @@ var NicoLiveTweet = {
 	    method: "POST",
 	    parameters: []
 	};
-	message.parameters.push(["oauth_consumer_key",consumer]);
-	message.parameters.push(["oauth_nonce",""]);
-	message.parameters.push(["oauth_signature",""]);
-	message.parameters.push(["oauth_signature_method","HMAC-SHA1"]);
-	message.parameters.push(["oauth_timestamp",""]);
-	message.parameters.push(["oauth_token",this.oauth.oauth_token]);
-	message.parameters.push(["oauth_verifier",pin]);
-	message.parameters.push(["oauth_version","1.0"]);
+	message.parameters.push( ["oauth_consumer_key", consumer] );
+	message.parameters.push( ["oauth_nonce", ""] );
+	message.parameters.push( ["oauth_signature", ""] );
+	message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
+	message.parameters.push( ["oauth_timestamp", ""] );
+	message.parameters.push( ["oauth_token", this.oauth.oauth_token] );
+	message.parameters.push( ["oauth_verifier", pin] );
+	message.parameters.push( ["oauth_version", "1.0"] );
 
-	OAuth.setTimestampAndNonce(message);
-	OAuth.SignatureMethod.sign(message,accessor);
+	OAuth.setTimestampAndNonce( message );
+	OAuth.SignatureMethod.sign( message, accessor );
 
 	let req = new XMLHttpRequest();
 	if( !req ) return;
 
 	req.onreadystatechange = function(){
-	    if( req.readyState!=4 ) return;
-	    if( req.status==200 ){
-		let values = req.responseText.split('&');
+	    if( req.readyState != 4 ) return;
+	    if( req.status == 200 ){
+		let values = req.responseText.split( '&' );
 		NicoLiveTweet.oauth = {};
-		for(let i=0,item;item=values[i];i++){
-		    let val = item.split('=');
+		for( let i = 0, item; item = values[i]; i++ ){
+		    let val = item.split( '=' );
 		    NicoLiveTweet.oauth[val[0]] = val[1];
 		}
 	    }
-	    if('function'==typeof callback) callback(req.status, NicoLiveTweet.oauth);
-	    debugprint('status='+req.status);
-	    debugprint(req.responseText);
+	    if( 'function' == typeof callback ) callback( req.status, NicoLiveTweet.oauth );
+	    debugprint( 'status=' + req.status );
+	    debugprint( req.responseText );
 	};
 	let url = this.accessTokenURL;
-	req.open('POST', url );
-	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	req.open( 'POST', url );
+	req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 	let xauth = new Array();
 	let str = new Array();
 	xauth = message.parameters;
-	for(let i=0,item;item=xauth[i];i++){
-	    str.push(item[0] +"=" + item[1] + "");
+	for( let i = 0, item; item = xauth[i]; i++ ){
+	    str.push( item[0] + "=" + item[1] + "" );
 	}
-	req.send(str.join('&'));	
+	req.send( str.join( '&' ) );
     },
 
     /**
      * xAuthでアクセストークンを取得.
      * @note 現在使用できない
      */
-    getAccessTokenByXAuth:function(user_id,password,callback){
+    getAccessTokenByXAuth: function( user_id, password, callback ){
 	// xAuthを使用したアクセストークンの取得.
 	let accessor = {
 	    consumerSecret: this.consumerSecret,
@@ -169,53 +169,53 @@ var NicoLiveTweet = {
 	    method: "POST",
 	    parameters: []
 	};
-	message.parameters.push(["oauth_consumer_key",this.consumer]);
-	message.parameters.push(["oauth_nonce",""]);
-	message.parameters.push(["oauth_signature",""]);
-	message.parameters.push(["oauth_signature_method","HMAC-SHA1"]);
-	message.parameters.push(["oauth_timestamp",""]);
-	message.parameters.push(["oauth_version","1.0"]);
-	message.parameters.push(["x_auth_mode","client_auth"]);
-	message.parameters.push(["x_auth_password",password]);
-	message.parameters.push(["x_auth_username",user_id]);
+	message.parameters.push( ["oauth_consumer_key", this.consumer] );
+	message.parameters.push( ["oauth_nonce", ""] );
+	message.parameters.push( ["oauth_signature", ""] );
+	message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
+	message.parameters.push( ["oauth_timestamp", ""] );
+	message.parameters.push( ["oauth_version", "1.0"] );
+	message.parameters.push( ["x_auth_mode", "client_auth"] );
+	message.parameters.push( ["x_auth_password", password] );
+	message.parameters.push( ["x_auth_username", user_id] );
 
-	OAuth.setTimestampAndNonce(message);
-	OAuth.SignatureMethod.sign(message,accessor);
+	OAuth.setTimestampAndNonce( message );
+	OAuth.SignatureMethod.sign( message, accessor );
 
 	let req = new XMLHttpRequest();
 	if( !req ) return;
 
 	req.onreadystatechange = function(){
-	    if( req.readyState!=4 ) return;
-	    if( req.status==200 ){
-		let values = req.responseText.split('&');
+	    if( req.readyState != 4 ) return;
+	    if( req.status == 200 ){
+		let values = req.responseText.split( '&' );
 		NicoLiveTweet.oauth = {};
-		for(let i=0,item;item=values[i];i++){
-		    let val = item.split('=');
+		for( let i = 0, item; item = values[i]; i++ ){
+		    let val = item.split( '=' );
 		    NicoLiveTweet.oauth[val[0]] = val[1];
 		}
 	    }
-	    if('function'==typeof callback) callback(req.status, NicoLiveTweet.oauth);
+	    if( 'function' == typeof callback ) callback( req.status, NicoLiveTweet.oauth );
 	    //debugprint('request token:'+req.responseText);
 	};
 	let url = this.accessTokenURL;
-	req.open('POST', url );
-	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	req.open( 'POST', url );
+	req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 	let xauth = new Array();
 	let str = new Array();
 	xauth = message.parameters;
-	for(let i=0,item;item=xauth[i];i++){
-	    str.push(item[0] +"=" + item[1] + "");
+	for( let i = 0, item; item = xauth[i]; i++ ){
+	    str.push( item[0] + "=" + item[1] + "" );
 	}
-	req.send(str.join('&'));
+	req.send( str.join( '&' ) );
     },
 
     /**
      * ステータスを更新する(つぶやく)
      * @param text テキスト(文字数チェックしていない)
      */
-    updateStatus:function(text){
+    updateStatus: function( text ){
 	if( !this.oauth["oauth_token_secret"] || !this.oauth["oauth_token"] ) return;
 	let accessor = {
 	    consumerSecret: this.consumerSecret,
@@ -226,41 +226,41 @@ var NicoLiveTweet = {
 	    method: "POST",
 	    parameters: []
 	};
-	message.parameters.push(["oauth_consumer_key",this.consumer]);
-	message.parameters.push(["oauth_nonce",""]);
-	message.parameters.push(["oauth_token",this.oauth["oauth_token"]]);
-	message.parameters.push(["oauth_signature",""]);
-	message.parameters.push(["oauth_signature_method","HMAC-SHA1"]);
-	message.parameters.push(["oauth_timestamp",""]);
-	message.parameters.push(["oauth_version","1.0"]);
-	message.parameters.push(["status",text]);
+	message.parameters.push( ["oauth_consumer_key", this.consumer] );
+	message.parameters.push( ["oauth_nonce", ""] );
+	message.parameters.push( ["oauth_token", this.oauth["oauth_token"]] );
+	message.parameters.push( ["oauth_signature", ""] );
+	message.parameters.push( ["oauth_signature_method", "HMAC-SHA1"] );
+	message.parameters.push( ["oauth_timestamp", ""] );
+	message.parameters.push( ["oauth_version", "1.0"] );
+	message.parameters.push( ["status", text] );
 
-	OAuth.setTimestampAndNonce(message);
-	OAuth.SignatureMethod.sign(message,accessor);
+	OAuth.setTimestampAndNonce( message );
+	OAuth.SignatureMethod.sign( message, accessor );
 
 	let req = new XMLHttpRequest();
 	if( !req ) return;
 
 	req.onreadystatechange = function(){
-	    if( req.readyState!=4 ) return;
+	    if( req.readyState != 4 ) return;
 	    /*
 	     403 {"request":"/1/statuses/update.json","error":"Status is a duplicate."}
 	     401 {"request":"/1/statuses/update.json","error":"Could not authenticate you."}
 	     */
-	    if( req.status!=200 ){
-		debugprint("Status="+req.status);
-		let result = JSON.parse(req.responseText);
-		ShowNotice('Twitter:'+result.errors[0].message);
+	    if( req.status != 200 ){
+		debugprint( "Status=" + req.status );
+		let result = JSON.parse( req.responseText );
+		ShowNotice( 'Twitter:' + result.errors[0].message );
 	    }
 	    //debugprint('update result:'+req.responseText);
 	};
 	let url = this.updateURL;
-	req.open('POST', url );
-	req.setRequestHeader('Authorization',OAuth.getAuthorizationHeader('http://miku39.jp/',message.parameters));
-	req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+	req.open( 'POST', url );
+	req.setRequestHeader( 'Authorization', OAuth.getAuthorizationHeader( 'http://miku39.jp/', message.parameters ) );
+	req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
-	text = this.fixedEncodeURIComponent(text);
-	req.send("status="+text);
+	text = this.fixedEncodeURIComponent( text );
+	req.send( "status=" + text );
     },
 
     /**
@@ -268,42 +268,44 @@ var NicoLiveTweet = {
      * 設定で指定した方法でつぶやく。
      * @param text テキスト
      */
-    tweet:function(text){
-	if( Config.twitter.api=='self' ){
-	    this.updateStatus(text);
+    tweet: function( text ){
+	if( Config.twitter.api == 'self' ){
+	    this.updateStatus( text );
 	}else{
-	    NicoLiveHelper.postTweet(text);
+	    NicoLiveHelper.postTweet( text );
 	}
     },
 
-    fixedEncodeURIComponent:function (str) {
-	return encodeURIComponent(str).replace(/[!'()]/g, escape).replace(/\*/g, "%2A");
+    fixedEncodeURIComponent: function( str ){
+	return encodeURIComponent( str ).replace( /[!'()]/g, escape ).replace( /\*/g, "%2A" );
     },
 
     /**
      * つぶやく.
      * 現在再生中の動画があれば、視聴中のテンプレをデフォルト文字列とします。
      */
-    inputTweet:function(){
+    inputTweet: function(){
 	let hashtag = NicoLiveHelper.liveinfo.twitter_tag || "";
-	let url = NicoLiveHelper.getRequestId()!='lv0' ? "http://nico.ms/"+NicoLiveHelper.getRequestId():"";
-	let msg = (url&&hashtag)?(url + ' ' + hashtag):"";
-	if(msg){
+	let url = NicoLiveHelper.getRequestId() != 'lv0' ? "http://nico.ms/" + NicoLiveHelper.getRequestId() : "";
+	let msg = (url && hashtag) ? (url + ' ' + hashtag) : "";
+	if( msg ){
 	    let current = NicoLiveHelper.getCurrentVideoInfo();
 	    if( current && current.title ){
-		msg = "ニコ生視聴中:"+current.video_id+" "+current.title + " " + msg;
-		debugprint(current.title);
+		msg = "ニコ生視聴中:" + current.video_id + " " + current.title + " " + msg;
+		debugprint( current.title );
 	    }
 	}
-	let result = InputPrompt("NicoLive Helperからつぶやく","NicoLive Helper Advance",msg);
+	let result = InputPrompt( "NicoLive Helperからつぶやく", "NicoLive Helper Advance", msg );
 	if( result ){
-	    NicoLiveTweet.updateStatus(result);
+	    NicoLiveTweet.updateStatus( result );
 	}
     },
 
-    init:function(){
+    init: function(){
 	this.getSavedToken();
     }
 };
 
-window.addEventListener("load", function(e){ NicoLiveTweet.init(); }, false);
+window.addEventListener( "load", function( e ){
+    NicoLiveTweet.init();
+}, false );
