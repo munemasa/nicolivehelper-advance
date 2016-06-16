@@ -277,6 +277,19 @@ toolbarbutton{
     margin-right: 1px;
 }
 
+
+/* コントロールパネル */
+
+.cp-target-label[selected='true'] {
+    font-weight: bold;
+    /* font-style: italic; */
+}
+.cp-target-label[selected='true']:before {
+/*    content: url(chrome://nicolivehelperadvance/content/data/musicnote.png); */
+    content: "♪";
+}
+
+/* 動画DBフォルダ */
 #folder-listbox listitem:-moz-drag-over {
     border: 1px solid black;
     font-weight: bold;
