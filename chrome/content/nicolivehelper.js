@@ -167,11 +167,11 @@ var NicoLiveHelper = {
 	this.play_target = is_sub?SUB:MAIN;
 
 	if( is_sub ){
-	    $('cp-mainscreen-label').style.fontWeight = 'normal';
-	    $('cp-subscreen-label').style.fontWeight = 'bold';
+	    $('cp-mainscreen-label').setAttribute('selected', 'false');
+	    $('cp-subscreen-label').setAttribute('selected', 'true');
 	}else{
-	    $('cp-mainscreen-label').style.fontWeight = 'bold';
-	    $('cp-subscreen-label').style.fontWeight = 'normal';
+	    $('cp-mainscreen-label').setAttribute('selected', 'true');
+	    $('cp-subscreen-label').setAttribute('selected', 'false');
 	}
     },
 

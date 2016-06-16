@@ -275,7 +275,7 @@
   <!-- Current Play Status -->
   <hbox id="player-current-status">
     <groupbox flex="1" style="padding: 2px;">
-      <caption id="cp-mainscreen-label" label="&general.main_screen;"/>
+      <caption class="cp-target-label" id="cp-mainscreen-label" label="&general.main_screen;"/>
       <hbox>
 	<toolbarbutton id="main-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
 		       oncommand="NicoLiveHelper.setSoundOnly(MAIN,this.checked);"/>
@@ -288,7 +288,7 @@
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
     </hbox>
     <groupbox flex="1" style="padding: 2px;">
-      <caption id="cp-subscreen-label" label="&general.sub_screen;"/>
+      <caption class="cp-target-label" id="cp-subscreen-label" label="&general.sub_screen;"/>
       <hbox>
 	<toolbarbutton id="sub-state-soundonly" class="soundonly-toggle" label="&general.sound_only;" type="checkbox"
 		       oncommand="NicoLiveHelper.setSoundOnly(SUB,this.checked);"/>
