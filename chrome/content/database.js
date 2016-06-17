@@ -1191,7 +1191,7 @@ var Database = {
 	    st = this.dbconnect.createStatement( 'SELECT name FROM folder WHERE type=0 AND video_id IS NULL ORDER BY name' );
 	    while( st.step() ){
 		let name = st.getString( 0 );
-		arr.push( arr );
+		arr.push( name );
 	    }
 	    st.finalize();
 	}catch( x ){
