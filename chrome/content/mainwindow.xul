@@ -1273,6 +1273,11 @@
 	</menupopup>
       </menu>
       <menuitem label="&statusbar.add_db;" oncommand="Database.addCurrentPlayedVideo();"/>
+      <menu label="動画DBフォルダーに追加">
+	<menupopup id="menu-add-db-folder"
+		   oncommand="Database.addCurrentVideoToFolder(event.target.value);">
+	</menupopup>
+      </menu>
     </menupopup>
 
     <!-- クッキー共有するブラウザ指定 -->

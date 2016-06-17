@@ -62,17 +62,20 @@ var NicoLiveFolderDB = {
      * @param id テーブル行のID
      * @param cond スマートフォルダのマッチ条件JSON
      */
-    appendList:function(name,id, cond){
-	let folder = $('folder-listbox');
-	let elem = CreateElement('listitem');
-	elem.setAttribute('label',name);
-	elem.setAttribute('value',id);
+    appendList: function( name, id, cond ){
+	let folder = $( 'folder-listbox' );
+	let elem = CreateElement( 'listitem' );
+	elem.setAttribute( 'label', name );
+	elem.setAttribute( 'value', id );
 	if( cond ){
-	    elem.setAttribute('smartlist-cond',cond);
-	    elem.setAttribute('class','folder-smartlist');
+	    elem.setAttribute( 'smartlist-cond', cond );
+	    elem.setAttribute( 'class', 'folder-smartlist' );
+	}else{
+	    let menuitem = CreateMenuItem( name, id );
+	    $( 'menu-add-db-folder' ).appendChild( menuitem );
 	}
-	elem.setAttribute("tooltiptext",name);
-	folder.appendChild(elem);
+	elem.setAttribute( "tooltiptext", name );
+	folder.appendChild( elem );
     },
 
     // リストの新規作成.
