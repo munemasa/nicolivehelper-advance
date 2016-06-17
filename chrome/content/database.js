@@ -97,6 +97,16 @@ var Database = {
     },
 
     /**
+     * 現在再生中の曲を動画DBフォルダーに登録.
+     * @param list_id フォルダーID
+     */
+    addCurrentVideoToFolder: function( list_id ){
+	let v = NicoLiveHelper.getCurrentVideoInfo();
+
+	NicoLiveFolderDB._appendVideos( list_id, v.video_id );
+    },
+
+    /**
      * 動画(複数)をDBに追加する.
      * 非同期処理。このメソッドでは10桁IDは取り込まない。
      * 処理残りをDBのラベルに表示しつつ、ジョブが空になるとコールバックを呼び出す。
@@ -1291,4 +1301,3 @@ window.addEventListener( "unload", function( e ){
 }, false );
 
 Database.init1st();
-Database.getFolderNames();
