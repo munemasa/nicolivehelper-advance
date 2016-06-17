@@ -154,7 +154,10 @@ var Database = {
 		    $( 'folder-listitem-num' ).value = str;
 		    if( Database.getRemainJobs() == 0 ){
 			if( 'function' == typeof callback ){
-			    callback();
+			    try{
+				callback();
+			    }catch( x ){
+			    }
 			}
 			clearInterval( Database._callback );
 			Database._callback = null;
