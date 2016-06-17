@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2009 amano <amano@miku39.jp>
+ Copyright (c) 2009 amano <amano@miku39.jp>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
  */
 
 var StarRateCache;
@@ -66,7 +66,7 @@ var StarRateCache;
 var Database = {
     dbconnect: null, // DBへの接続オブジェクト
     jobs: {},        // DB追加・更新ジョブリスト. 動画IDをキーにしたObjectで.
-    
+
     searchresult: [],
     searchresult_node: null,
 
@@ -75,8 +75,8 @@ var Database = {
     numvideos: 0,
     addcounter: 0,
     updatecounter: 0,
-    searchtarget: ["title","length","view_counter","comment_num","mylist_counter","tags","first_retrieve","video_id","description"],
-    searchcond: ["include","exclude","gte","equal","lte"],
+    searchtarget: ["title", "length", "view_counter", "comment_num", "mylist_counter", "tags", "first_retrieve", "video_id", "description"],
+    searchcond: ["include", "exclude", "gte", "equal", "lte"],
 
     /**
      * 残りのジョブ数を返す.
@@ -92,7 +92,7 @@ var Database = {
     /**
      * 現在再生中の曲をDBに登録.
      */
-    addCurrentPlayedVideo:function(){
+    addCurrentPlayedVideo: function(){
 	Database.addDatabase( NicoLiveHelper.getCurrentVideoInfo() );
     },
 
@@ -104,53 +104,53 @@ var Database = {
      * @param sm 動画ID(sm,nm)やマイリスト
      * @param callback 全ての追加処理が終わったときに呼ばれるコールバック関数
      */
-    addVideos:function(sm, callback){
+    addVideos: function( sm, callback ){
 	// sm/nm番号のテキストで渡す.
-	if(sm.length<3) return;
+	if( sm.length < 3 ) return;
 	if( this._callback ) return;
 
-	$('db-label').value="";
-	$('input-db').value="";
+	$( 'db-label' ).value = "";
+	$( 'input-db' ).value = "";
 
 	this.jobs = new Object();
 	try{
 	    let l;
-	    l = sm.match(/mylist\/\d+/g);
-	    if(l){
+	    l = sm.match( /mylist\/\d+/g );
+	    if( l ){
 		// マイリスト
-		for(let i=0,mylist;mylist=l[i];i++){
-		    let id = mylist.match(/mylist\/(\d+)/)[1];
+		for( let i = 0, mylist; mylist = l[i]; i++ ){
+		    let id = mylist.match( /mylist\/(\d+)/ )[1];
 		    // マイリストからsm,nmを拾って再びaddVideos()する
-		    NicoLiveMylist.addDatabase(id,"",callback);
+		    NicoLiveMylist.addDatabase( id, "", callback );
 		}
 		return;
 	    }
-	    l = sm.match(/(sm|nm)\d+/g);
+	    l = sm.match( /(sm|nm)\d+/g );
 	    this.numvideos = l.length;
 	    this.addcounter = 0;
 	    this.updatecounter = 0;
-	    for(let i=0,id;id=l[i];i++){
+	    for( let i = 0, id; id = l[i]; i++ ){
 		this.jobs[id] = true; // ジョブに追加
-		this.addOneVideoAsync(id);
+		this.addOneVideoAsync( id );
 	    }
-	    let str = "処理残り:"+Database.getRemainJobs();
-	    $('db-label').value = str;
-	    $('folder-listitem-num').value = str;
+	    let str = "処理残り:" + Database.getRemainJobs();
+	    $( 'db-label' ).value = str;
+	    $( 'folder-listitem-num' ).value = str;
 
 	    this._callback = setInterval(
 		function(){
-		    let str = "処理残り:"+Database.getRemainJobs();
-		    $('db-label').value = str;
-		    $('folder-listitem-num').value = str;
-		    if( Database.getRemainJobs()==0 ){
-			if( 'function'==typeof callback){
+		    let str = "処理残り:" + Database.getRemainJobs();
+		    $( 'db-label' ).value = str;
+		    $( 'folder-listitem-num' ).value = str;
+		    if( Database.getRemainJobs() == 0 ){
+			if( 'function' == typeof callback ){
 			    callback();
 			}
 			clearInterval( Database._callback );
 			Database._callback = null;
 		    }
 		}, 1000 );
-	} catch (x) {
+	}catch( x ){
 	}
     },
 
@@ -160,25 +160,25 @@ var Database = {
      * 非同期処理で行う.
      * @param id 動画ID
      */
-    addOneVideoAsync:function(id){
+    addOneVideoAsync: function( id ){
 	// 動画IDで渡す.
-	if(id.length<3) return;
-	let f = function(xml,req){
-	    if( req.readyState==4 ){
-		if( req.status==200 ){
+	if( id.length < 3 ) return;
+	let f = function( xml, req ){
+	    if( req.readyState == 4 ){
+		if( req.status == 200 ){
 		    try{
-			let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
+			let music = NicoLiveHelper.extractVideoInfo( req.responseXML );
 			if( music ){
-			    Database.addDatabase(music);
+			    Database.addDatabase( music );
 			}
-		    } catch (x) {
+		    }catch( x ){
 			// XML内容の異常とか
-			debugprint(x);
+			debugprint( x );
 			delete Database.jobs[id];
 		    }
 		}else{
 		    // 通信失敗
-		    debugprint("DB http status="+req.status);
+		    debugprint( "DB http status=" + req.status );
 		    delete Database.jobs[id];
 		}
 	    }
@@ -191,16 +191,16 @@ var Database = {
      * 非同期処理
      * @param id 動画ID
      */
-    updateOneVideoAsync:function(id){
+    updateOneVideoAsync: function( id ){
 	// 動画IDで渡す.
-	if(id.length<3) return;
-	let f = function(xml,req){
-	    if( req.readyState==4 && req.status==200 ){
+	if( id.length < 3 ) return;
+	let f = function( xml, req ){
+	    if( req.readyState == 4 && req.status == 200 ){
 		try{
-		    let music = NicoLiveHelper.extractVideoInfo(req.responseXML);
-		    Database.updateRowAsync(music);
-		} catch (x) {
-		    debugprint(id+'は削除されています(x='+x+')');
+		    let music = NicoLiveHelper.extractVideoInfo( req.responseXML );
+		    Database.updateRowAsync( music );
+		}catch( x ){
+		    debugprint( id + 'は削除されています(x=' + x + ')' );
 		}
 	    }
 	};
@@ -214,46 +214,46 @@ var Database = {
      * @param music 動画情報
      * @param dosync trueのとき同期処理
      */
-    addDatabase:function(music,dosync){
+    addDatabase: function( music, dosync ){
 	// NicoLiveHelper.extractVideoInfo()が作る構造でmusicを渡す.
 	let st;
 
 	// try insert
 	//debugprint('try insert');
-	st = this.dbconnect.createStatement('insert into nicovideo(video_id,title,description,thumbnail_url,first_retrieve,length,view_counter,comment_num,mylist_counter,tags,update_date) values(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)');
-	st.bindUTF8StringParameter(0,music.video_id);
-	st.bindUTF8StringParameter(1,music.title);
-	st.bindUTF8StringParameter(2,music.description);
-	st.bindUTF8StringParameter(3,music.thumbnail_url);
-	st.bindInt32Parameter(4,music.first_retrieve);
-	st.bindInt32Parameter(5,music.length_ms/1000);
-	st.bindInt32Parameter(6,music.view_counter);
-	st.bindInt32Parameter(7,music.comment_num);
-	st.bindInt32Parameter(8,music.mylist_counter);
-	st.bindUTF8StringParameter(9,music.tags['jp'].join(',')); // タグは日本語タグのみで
-	st.bindInt32Parameter(10,GetCurrentTime());
+	st = this.dbconnect.createStatement( 'insert into nicovideo(video_id,title,description,thumbnail_url,first_retrieve,length,view_counter,comment_num,mylist_counter,tags,update_date) values(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)' );
+	st.bindUTF8StringParameter( 0, music.video_id );
+	st.bindUTF8StringParameter( 1, music.title );
+	st.bindUTF8StringParameter( 2, music.description );
+	st.bindUTF8StringParameter( 3, music.thumbnail_url );
+	st.bindInt32Parameter( 4, music.first_retrieve );
+	st.bindInt32Parameter( 5, music.length_ms / 1000 );
+	st.bindInt32Parameter( 6, music.view_counter );
+	st.bindInt32Parameter( 7, music.comment_num );
+	st.bindInt32Parameter( 8, music.mylist_counter );
+	st.bindUTF8StringParameter( 9, music.tags['jp'].join( ',' ) ); // タグは日本語タグのみで
+	st.bindInt32Parameter( 10, GetCurrentTime() );
 
 	let callback = {
-	    handleCompletion:function(reason){
-		if(!this.error){
+	    handleCompletion: function( reason ){
+		if( !this.error ){
 		    // 追加に成功
 		    delete Database.jobs[music.video_id];
-		    StarRateCache["_"+music.video_id] = 0;
+		    StarRateCache["_" + music.video_id] = 0;
 		}
 	    },
-	    handleError:function(error){
+	    handleError: function( error ){
 		// insertが失敗のときはすでに行があるのでupdateにする.
 		//debugprint('insert error/'+error.result+'/'+error.message);
-		Database.updateRowAsync(music);
+		Database.updateRowAsync( music );
 		this.error = true;
 	    },
-	    handleResult:function(result){
+	    handleResult: function( result ){
 	    }
 	};
-	if(dosync){
+	if( dosync ){
 	    st.execute();
 	}else{
-	    st.executeAsync(callback);
+	    st.executeAsync( callback );
 	}
     },
 
@@ -262,31 +262,31 @@ var Database = {
      * 非同期処理
      * @param music 動画情報
      */
-    updateRowAsync:function(music){
-	let st = this.dbconnect.createStatement('update nicovideo set title=?1,description=?2,thumbnail_url=?3,first_retrieve=?4,length=?5,view_counter=?6,comment_num=?7,mylist_counter=?8,tags=?9,update_date=?10 where video_id=?11');
-	st.bindUTF8StringParameter(0,music.title);
-	st.bindUTF8StringParameter(1,music.description);
-	st.bindUTF8StringParameter(2,music.thumbnail_url);
-	st.bindInt32Parameter(3,music.first_retrieve);
-	st.bindInt32Parameter(4,music.length_ms/1000);
-	st.bindInt32Parameter(5,music.view_counter);
-	st.bindInt32Parameter(6,music.comment_num);
-	st.bindInt32Parameter(7,music.mylist_counter);
-	st.bindUTF8StringParameter(8,music.tags['jp'].join(','));
-	st.bindInt32Parameter(9,GetCurrentTime());
-	st.bindUTF8StringParameter(10,music.video_id);
+    updateRowAsync: function( music ){
+	let st = this.dbconnect.createStatement( 'update nicovideo set title=?1,description=?2,thumbnail_url=?3,first_retrieve=?4,length=?5,view_counter=?6,comment_num=?7,mylist_counter=?8,tags=?9,update_date=?10 where video_id=?11' );
+	st.bindUTF8StringParameter( 0, music.title );
+	st.bindUTF8StringParameter( 1, music.description );
+	st.bindUTF8StringParameter( 2, music.thumbnail_url );
+	st.bindInt32Parameter( 3, music.first_retrieve );
+	st.bindInt32Parameter( 4, music.length_ms / 1000 );
+	st.bindInt32Parameter( 5, music.view_counter );
+	st.bindInt32Parameter( 6, music.comment_num );
+	st.bindInt32Parameter( 7, music.mylist_counter );
+	st.bindUTF8StringParameter( 8, music.tags['jp'].join( ',' ) );
+	st.bindInt32Parameter( 9, GetCurrentTime() );
+	st.bindUTF8StringParameter( 10, music.video_id );
 	//debugprint('update '+music.video_id);
 	let callback = {
-	    handleCompletion:function(reason){
+	    handleCompletion: function( reason ){
 		delete Database.jobs[music.video_id];
 	    },
-	    handleError:function(error){
-		debugprint('update error'+error.result+'/'+error.message);
+	    handleError: function( error ){
+		debugprint( 'update error' + error.result + '/' + error.message );
 	    },
-	    handleResult:function(result){
+	    handleResult: function( result ){
 	    }
 	};
-	st.executeAsync(callback);
+	st.executeAsync( callback );
     },
 
     /**
@@ -294,105 +294,105 @@ var Database = {
      * @param sm 動画ID
      * @return DBにデータがあればtrueを返す
      */
-    isInDB:function(sm){
-	let st = this.dbconnect.createStatement('SELECT * FROM nicovideo WHERE video_id = ?1');
+    isInDB: function( sm ){
+	let st = this.dbconnect.createStatement( 'SELECT * FROM nicovideo WHERE video_id = ?1' );
 	let isexist = false;
 	try{
-	    st.bindUTF8StringParameter(0,sm);
-	    while(st.step()){
+	    st.bindUTF8StringParameter( 0, sm );
+	    while( st.step() ){
 		isexist = true;
 	    }
 	    st.finalize();
-	} catch (x) {
-	    debugprint(x);
+	}catch( x ){
+	    debugprint( x );
 	    isexist = false;
 	}
 	return isexist;
     },
 
-    removeSearchLine:function(e){
-	let hbox = $('search-condition').getElementsByTagName('hbox');
-	if(hbox.length<=1) return;
-	$('search-condition').removeChild(e.target.parentNode);
+    removeSearchLine: function( e ){
+	let hbox = $( 'search-condition' ).getElementsByTagName( 'hbox' );
+	if( hbox.length <= 1 ) return;
+	$( 'search-condition' ).removeChild( e.target.parentNode );
     },
 
     /**
      * 検索条件入力行を追加する.
      */
-    addSearchLine:function(){
+    addSearchLine: function(){
 	let menulist;
 	let elem;
-	let hbox = CreateElement('hbox');
-	elem = CreateElement('menupopup');
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_TITLE"),0));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_LENGTH"),1));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_VIEWS"),2));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_COMMENTS"),3));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_MYLISTS"),4));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_TAGS"),5));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_POSTEDDATE"),6));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_VIDEOID"),7));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_DESC"),8));
-	menulist = CreateElement('menulist');
-	menulist.setAttribute("oncommand","Database.search();");
-	menulist.appendChild(elem);
-	hbox.appendChild(menulist);
+	let hbox = CreateElement( 'hbox' );
+	elem = CreateElement( 'menupopup' );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_TITLE" ), 0 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_LENGTH" ), 1 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_VIEWS" ), 2 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_COMMENTS" ), 3 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_MYLISTS" ), 4 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_TAGS" ), 5 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_POSTEDDATE" ), 6 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_VIDEOID" ), 7 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_DESC" ), 8 ) );
+	menulist = CreateElement( 'menulist' );
+	menulist.setAttribute( "oncommand", "Database.search();" );
+	menulist.appendChild( elem );
+	hbox.appendChild( menulist );
 
-	elem = CreateElement('menupopup');
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_INCLUDE"),0));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_EXCLUDE"),1));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_GTE"),2));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_EQUAL"),3));
-	elem.appendChild(CreateMenuItem(LoadString("STR_DBCOND_LTE"),4));
-	menulist = CreateElement('menulist');
-	menulist.setAttribute("oncommand","Database.search();");
-	menulist.appendChild(elem);
-	hbox.appendChild(menulist);
+	elem = CreateElement( 'menupopup' );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_INCLUDE" ), 0 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_EXCLUDE" ), 1 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_GTE" ), 2 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_EQUAL" ), 3 ) );
+	elem.appendChild( CreateMenuItem( LoadString( "STR_DBCOND_LTE" ), 4 ) );
+	menulist = CreateElement( 'menulist' );
+	menulist.setAttribute( "oncommand", "Database.search();" );
+	menulist.appendChild( elem );
+	hbox.appendChild( menulist );
 
-	elem = CreateElement('textbox');
-	elem.setAttribute('flex','1');
-	elem.setAttribute('type','search');
+	elem = CreateElement( 'textbox' );
+	elem.setAttribute( 'flex', '1' );
+	elem.setAttribute( 'type', 'search' );
 	//elem.setAttribute('autocompletesearch','form-history');
-	elem.setAttribute("oncommand","Database.search();");
-	elem.setAttribute('timeout','2000');
-	hbox.appendChild(elem);
+	elem.setAttribute( "oncommand", "Database.search();" );
+	elem.setAttribute( 'timeout', '2000' );
+	hbox.appendChild( elem );
 
 	//elem = CreateButton('+');
 	//elem.addEventListener('command',function(e){ Database.addSearchLine();}, false);
-	elem = CreateHTMLElement('input');
-	elem.setAttribute('type','button');
-	elem.setAttribute('value','+');
-	elem.setAttribute("onclick","Database.addSearchLine();");
-	hbox.appendChild(elem);
+	elem = CreateHTMLElement( 'input' );
+	elem.setAttribute( 'type', 'button' );
+	elem.setAttribute( 'value', '+' );
+	elem.setAttribute( "onclick", "Database.addSearchLine();" );
+	hbox.appendChild( elem );
 
 	//elem = CreateButton('-');
 	//elem.addEventListener('command',function(e){ Database.removeSearchLine(e);}, false);
-	elem = CreateHTMLElement('input');
-	elem.setAttribute('type','button');
-	elem.setAttribute('value','-');
-	elem.setAttribute("onclick","Database.removeSearchLine(event);");
-	hbox.appendChild(elem);
-	$('search-condition').appendChild(hbox);
+	elem = CreateHTMLElement( 'input' );
+	elem.setAttribute( 'type', 'button' );
+	elem.setAttribute( 'value', '-' );
+	elem.setAttribute( "onclick", "Database.removeSearchLine(event);" );
+	hbox.appendChild( elem );
+	$( 'search-condition' ).appendChild( hbox );
     },
 
     /**
      * 検索を実行する.
      */
-    search:function(){
-	clearInterval(this._updatehandle);
+    search: function(){
+	clearInterval( this._updatehandle );
 
 	let sql = "select *,1000*mylist_counter/view_counter as mylist_rate from nicovideo where ";
 	let cnt;
 	let cond = [];
-	let i,item;
+	let i, item;
 
 	// 検索条件をフォームから全て抽出.
-	let hbox = $('search-condition').getElementsByTagName('hbox');
+	let hbox = $( 'search-condition' ).getElementsByTagName( 'hbox' );
 	let searchcond = new Array();
-	for(i=0,cnt=0;item=hbox[i];i++){
-	    let menulist = item.getElementsByTagName('menulist');
-	    let textbox  = item.getElementsByTagName('textbox');
-	    if(!textbox[0].value) continue;
+	for( i = 0, cnt = 0; item = hbox[i]; i++ ){
+	    let menulist = item.getElementsByTagName( 'menulist' );
+	    let textbox = item.getElementsByTagName( 'textbox' );
+	    if( !textbox[0].value ) continue;
 
 	    let cond = new Object();
 	    cond.key = menulist[0].value;  // 検索キー(タイトル,投稿日,...)
@@ -402,95 +402,109 @@ var Database = {
 	}
 
 	// statementを作るフェーズ.
-	for(i=0,cnt=0;item=searchcond[i];i++){
+	for( i = 0, cnt = 0; item = searchcond[i]; i++ ){
 	    // 検索項目.
 	    let tmp;
-	    tmp = this.searchtarget[ parseInt(item.key) ] +" ";
+	    tmp = this.searchtarget[parseInt( item.key )] + " ";
 
 	    cnt++;
-	    switch(this.searchcond[ parseInt(item.cond)]){
-	    case "include": tmp += "like ?"+cnt; break;
-	    case "exclude": tmp += "not like ?"+cnt; break;
-	    case "gte":     tmp += ">=?"+cnt; break;
-	    case "equal":   tmp += "=?"+cnt; break;
-	    case "lte":     tmp += "<=?"+cnt; break;
-	    default: debugprint("unknown condition"); continue;
+	    switch( this.searchcond[parseInt( item.cond )] ){
+	    case "include":
+		tmp += "like ?" + cnt;
+		break;
+	    case "exclude":
+		tmp += "not like ?" + cnt;
+		break;
+	    case "gte":
+		tmp += ">=?" + cnt;
+		break;
+	    case "equal":
+		tmp += "=?" + cnt;
+		break;
+	    case "lte":
+		tmp += "<=?" + cnt;
+		break;
+	    default:
+		debugprint( "unknown condition" );
+		continue;
 	    }
-	    cond[cnt-1] = tmp;
+	    cond[cnt - 1] = tmp;
 	}
-	if(cnt<=0) return;
+	if( cnt <= 0 ) return;
 
-	sql += cond.join(' and '); // 条件は全部andで.
-	if( $('db-search-order').value == "random" ){
+	sql += cond.join( ' and ' ); // 条件は全部andで.
+	if( $( 'db-search-order' ).value == "random" ){
 	    sql += " order by random()";
 	}else{
-	    sql += " order by " + $('db-search-orderby').value;
-	    sql += " " + $('db-search-order').value;
+	    sql += " order by " + $( 'db-search-orderby' ).value;
+	    sql += " " + $( 'db-search-order' ).value;
 	}
-	sql += " limit 0," + parseInt($('db-search-max').value);
-	debugprint('sql='+sql);
+	sql += " limit 0," + parseInt( $( 'db-search-max' ).value );
+	debugprint( 'sql=' + sql );
 
-	let st = this.dbconnect.createStatement(sql);
+	let st = this.dbconnect.createStatement( sql );
 	// bindするフェーズ.
-	for(i=0,cnt=0;item=searchcond[i];i++){
-	    switch(this.searchcond[parseInt(item.cond)]){
+	for( i = 0, cnt = 0; item = searchcond[i]; i++ ){
+	    switch( this.searchcond[parseInt( item.cond )] ){
 	    case "include":
 	    case "exclude":
-		if(this.searchtarget[parseInt(item.key)]=="video_id"){
+		if( this.searchtarget[parseInt( item.key )] == "video_id" ){
 		    try{
-			let vid = textbox[0].value.match(/(sm|nm)\d+/g)[0];
-			st.bindUTF8StringParameter(cnt,"%"+vid+"%");
-		    } catch (x) {
-			st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
+			let vid = textbox[0].value.match( /(sm|nm)\d+/g )[0];
+			st.bindUTF8StringParameter( cnt, "%" + vid + "%" );
+		    }catch( x ){
+			st.bindUTF8StringParameter( cnt, "%" + item.text + "%" );
 		    }
 		}else{
-		    st.bindUTF8StringParameter(cnt,"%"+item.text+"%");
+		    st.bindUTF8StringParameter( cnt, "%" + item.text + "%" );
 		}
 		break;
 	    case "gte":
 	    case "equal":
 	    case "lte":
 		let tmp;
-		if(this.searchtarget[parseInt(item.key)]=="first_retrieve"){
+		if( this.searchtarget[parseInt( item.key )] == "first_retrieve" ){
 		    let date;
 		    let d;
-		    date = item.text.match(/\d+/g);
-		    if(date.length==6){
-			d = new Date(date[0],date[1]-1,date[2],date[3],date[4],date[5]);
-			tmp = parseInt(d.getTime() / 1000); // integer
+		    date = item.text.match( /\d+/g );
+		    if( date.length == 6 ){
+			d = new Date( date[0], date[1] - 1, date[2], date[3], date[4], date[5] );
+			tmp = parseInt( d.getTime() / 1000 ); // integer
 		    }else{
-			d = new Date(date[0],date[1]-1,date[2],0,0,0);
-			tmp = parseInt(d.getTime() / 1000); // integer
+			d = new Date( date[0], date[1] - 1, date[2], 0, 0, 0 );
+			tmp = parseInt( d.getTime() / 1000 ); // integer
 		    }
 		    if( Config.japanese_standard_time ){
-			tmp -= Config.timezone_offset*60;
-			tmp -= 9*60*60;
+			tmp -= Config.timezone_offset * 60;
+			tmp -= 9 * 60 * 60;
 		    }
 		}else{
-		    tmp = parseInt(item.text);
+		    tmp = parseInt( item.text );
 		}
-		st.bindInt64Parameter(cnt,tmp);
+		st.bindInt64Parameter( cnt, tmp );
 		break;
-	    default: debugprint("unknown condition"); continue;
+	    default:
+		debugprint( "unknown condition" );
+		continue;
 	    }
 	    cnt++;
 	}
 
 	let callback = {
-	    handleCompletion:function(reason){
-		$('db-label').value = LoadFormattedString('STR_DBRESULT',[Database.searchresult.length]);
+	    handleCompletion: function( reason ){
+		$( 'db-label' ).value = LoadFormattedString( 'STR_DBRESULT', [Database.searchresult.length] );
 		// 検索した動画を即時更新は重そうなので今のところはやめておく
 		//Database.updateDatabase( Database.searchresult );
 	    },
-	    handleError:function(error){
+	    handleError: function( error ){
 		//debugprint('search error/'+error.result+'/'+error.message);
 	    },
-	    handleResult:function(result){
+	    handleResult: function( result ){
 		let row;
-		while(row = result.getNextRow()){
-		    let music=Database.rowToVideoInfo(row);
-		    Database.addSearchResult(music);
-		    Database.searchresult.push(music);
+		while( row = result.getNextRow() ){
+		    let music = Database.rowToVideoInfo( row );
+		    Database.addSearchResult( music );
+		    Database.searchresult.push( music );
 		}
 	    }
 	};
@@ -498,40 +512,40 @@ var Database = {
 	RemoveChildren( this.searchresult_node );
 
 	this.searchresult = new Array();
-	st.executeAsync(callback);
+	st.executeAsync( callback );
     },
 
     /**
      *  データベースを更新する.
      * @param movies 動画情報の配列
      */
-    updateDatabase:function(movies){
-	clearInterval(this._updatehandle);
-	if(!movies) return;
+    updateDatabase: function( movies ){
+	clearInterval( this._updatehandle );
+	if( !movies ) return;
 
-	$('db-label').value = "検索結果の動画情報を更新しています...";
-	this.delayedUpdate(movies);
+	$( 'db-label' ).value = "検索結果の動画情報を更新しています...";
+	this.delayedUpdate( movies );
 	this._updatehandle = setInterval(
 	    function(){
-		Database.delayedUpdate(movies);
-	    }, 10*1000 );
+		Database.delayedUpdate( movies );
+	    }, 10 * 1000 );
     },
-    delayedUpdate:function(movies){
+    delayedUpdate: function( movies ){
 	let now = GetCurrentTime();
-	let cnt=0;
-	for(let i=0,item;item=movies[i];i++){
-	    if (cnt<10 && !item.done && (now-item.update_date) > 60*60*1 ){
-	    //if (cnt<10 && !item.done ){
+	let cnt = 0;
+	for( let i = 0, item; item = movies[i]; i++ ){
+	    if( cnt < 10 && !item.done && (now - item.update_date) > 60 * 60 * 1 ){
+		//if (cnt<10 && !item.done ){
 		cnt++;
 		item.done = true;
-		this.updateOneVideoAsync(item.video_id);
+		this.updateOneVideoAsync( item.video_id );
 	    }
 	}
-	debugprint('updating db...'+cnt);
-	if(cnt==0){
-	    clearInterval(this._updatehandle);
-	    $('db-label').value = "更新終了しました";
-	    debugprint('updating done.');
+	debugprint( 'updating db...' + cnt );
+	if( cnt == 0 ){
+	    clearInterval( this._updatehandle );
+	    $( 'db-label' ).value = "更新終了しました";
+	    debugprint( 'updating done.' );
 	}
     },
 
@@ -539,50 +553,50 @@ var Database = {
      * 動画情報を表示するリストアイテム要素を作成.
      * @param item 動画情報(VideoInfo)
      */
-    createListItemElement:function(item){
+    createListItemElement: function( item ){
 	let posteddate;
 	if( Config.japanese_standard_time ){
 	    let diff = Config.timezone_offset * 60;
-	    let t = item.first_retrieve + diff + 9*60*60;
-	    posteddate = GetDateString(t*1000);
+	    let t = item.first_retrieve + diff + 9 * 60 * 60;
+	    posteddate = GetDateString( t * 1000 );
 	}else{
-	    posteddate = GetDateString(item.first_retrieve*1000);
+	    posteddate = GetDateString( item.first_retrieve * 1000 );
 	}
 
-	let listitem = CreateElement('listitem');
-	listitem.setAttribute('vid',item.video_id);
-	let str = restorehtmlspecialchars(item.title) + "\nタグ: " + item.tags.join(' ');
-	listitem.setAttribute("tooltiptext",str);
+	let listitem = CreateElement( 'listitem' );
+	listitem.setAttribute( 'vid', item.video_id );
+	let str = restorehtmlspecialchars( item.title ) + "\nタグ: " + item.tags.join( ' ' );
+	listitem.setAttribute( "tooltiptext", str );
 
-	let hbox = CreateElement('hbox');
-	let image = CreateElement('image');
-	image.setAttribute('src',item.thumbnail_url);
-	image.setAttribute('style','-moz-box-align:center;width:98px;height:75px;margin-right:4px;');
-	image.setAttribute('validate','never');
-	let div = CreateHTMLElement('div');
-	let rate = GetFavRateString(item.favorite);
-	div.innerHTML = item.video_id + " "+(item.title)+"<br/>"
-	    + "投稿日:"+posteddate+" 時間:"+item.length+"<br/>"
-	    + "再生:"+FormatCommas(item.view_counter)
-	    + " コメント:"+FormatCommas(item.comment_num)
-	    + " マイリスト:"+FormatCommas(item.mylist_counter)
-	    + " レート:"+rate +"<br/>"
-	    + "タグ:"+item.tags.join(' ');
+	let hbox = CreateElement( 'hbox' );
+	let image = CreateElement( 'image' );
+	image.setAttribute( 'src', item.thumbnail_url );
+	image.setAttribute( 'style', '-moz-box-align:center;width:98px;height:75px;margin-right:4px;' );
+	image.setAttribute( 'validate', 'never' );
+	let div = CreateHTMLElement( 'div' );
+	let rate = GetFavRateString( item.favorite );
+	div.innerHTML = item.video_id + " " + (item.title) + "<br/>"
+	    + "投稿日:" + posteddate + " 時間:" + item.length + "<br/>"
+	    + "再生:" + FormatCommas( item.view_counter )
+	    + " コメント:" + FormatCommas( item.comment_num )
+	    + " マイリスト:" + FormatCommas( item.mylist_counter )
+	    + " レート:" + rate + "<br/>"
+	    + "タグ:" + item.tags.join( ' ' );
 
-	let vbox = CreateElement('vbox');
-	vbox.appendChild(image);
-	hbox.appendChild(vbox);
-	hbox.appendChild(div);
-	listitem.appendChild(hbox);
+	let vbox = CreateElement( 'vbox' );
+	vbox.appendChild( image );
+	hbox.appendChild( vbox );
+	hbox.appendChild( div );
+	listitem.appendChild( hbox );
 	return listitem;
     },
 
     /**
      * 検索結果を表示する<listbox>に1つ追加する.
-     * 
+     *
      */
-    addSearchResult:function(item){
-	let listitem = this.createListItemElement(item);
+    addSearchResult: function( item ){
+	let listitem = this.createListItemElement( item );
 	this.searchresult_node.appendChild( listitem );
     },
 
@@ -591,39 +605,39 @@ var Database = {
      * tagsはただの配列になっているのに注意
      * @param row SQLクエリのリザルト行
      */
-    rowToVideoInfo:function(row){
+    rowToVideoInfo: function( row ){
 	let info = new Object();
 	// innerHTMLで流し込むのでhtmlspecialcharsを使う.
-	info.video_id       = row.getResultByName('video_id');
-	info.title          = htmlspecialchars(row.getResultByName('title'));
-	info.description    = htmlspecialchars(row.getResultByName('description'));
-	info.thumbnail_url  = row.getResultByName('thumbnail_url');
-	info.first_retrieve = row.getResultByName('first_retrieve');
-	info.length         = row.getResultByName('length');
-	info.length_ms      = info.length*1000;
-	info.length         = GetTimeString(info.length);
-	info.view_counter   = row.getResultByName('view_counter');
-	info.comment_num    = row.getResultByName('comment_num');
-	info.mylist_counter = row.getResultByName('mylist_counter');
-	let tags            = htmlspecialchars(row.getResultByName('tags'));
-	info.tags           = tags.split(/,/);
+	info.video_id = row.getResultByName( 'video_id' );
+	info.title = htmlspecialchars( row.getResultByName( 'title' ) );
+	info.description = htmlspecialchars( row.getResultByName( 'description' ) );
+	info.thumbnail_url = row.getResultByName( 'thumbnail_url' );
+	info.first_retrieve = row.getResultByName( 'first_retrieve' );
+	info.length = row.getResultByName( 'length' );
+	info.length_ms = info.length * 1000;
+	info.length = GetTimeString( info.length );
+	info.view_counter = row.getResultByName( 'view_counter' );
+	info.comment_num = row.getResultByName( 'comment_num' );
+	info.mylist_counter = row.getResultByName( 'mylist_counter' );
+	let tags = htmlspecialchars( row.getResultByName( 'tags' ) );
+	info.tags = tags.split( /,/ );
 	//info.pname          = row.getResultByName('pname');
-	info.update_date    = row.getResultByName('update_date');
-	info.favorite       = row.getResultByName('favorite');
+	info.update_date = row.getResultByName( 'update_date' );
+	info.favorite = row.getResultByName( 'favorite' );
 	return info;
     },
 
     /**
      * 動画DBに登録済みの数を表示する.
      */
-    setRegisterdVideoNumber:function(){
-	let st = this.dbconnect.createStatement('SELECT count(video_id) FROM nicovideo');
+    setRegisterdVideoNumber: function(){
+	let st = this.dbconnect.createStatement( 'SELECT count(video_id) FROM nicovideo' );
 	let n = 0;
-	while(st.executeStep()){
-	    n = st.getInt32(0);
+	while( st.executeStep() ){
+	    n = st.getInt32( 0 );
 	}
 	st.finalize();
-	$('db-label').value = LoadFormattedString('STR_DB_REGISTERED_NUM',[n]);
+	$( 'db-label' ).value = LoadFormattedString( 'STR_DB_REGISTERED_NUM', [n] );
     },
 
     /**
@@ -631,44 +645,44 @@ var Database = {
      * @param video_id 動画ID
      * @param pname P名
      */
-    setPName:function(video_id, pname){
+    setPName: function( video_id, pname ){
 	let st;
 	try{
-	    st = this.dbconnect.createStatement('insert into pname(video_id,pname) values(?1,?2)');
-	    st.bindUTF8StringParameter(0,video_id);
-		st.bindUTF8StringParameter(1,pname);
+	    st = this.dbconnect.createStatement( 'insert into pname(video_id,pname) values(?1,?2)' );
+	    st.bindUTF8StringParameter( 0, video_id );
+	    st.bindUTF8StringParameter( 1, pname );
 	    st.execute();
 	    st.finalize();
-	} catch (x) {
-	    st = this.dbconnect.createStatement('update pname set pname=?1 where video_id=?2');
-	    st.bindUTF8StringParameter(0,pname);
-	    st.bindUTF8StringParameter(1,video_id);
+	}catch( x ){
+	    st = this.dbconnect.createStatement( 'update pname set pname=?1 where video_id=?2' );
+	    st.bindUTF8StringParameter( 0, pname );
+	    st.bindUTF8StringParameter( 1, video_id );
 	    st.execute();
 	    st.finalize();
 	}
-	this.pnamecache["_"+video_id] = pname;
+	this.pnamecache["_" + video_id] = pname;
     },
 
     /**
      * P名を取得する.
      * @param video_id 動画ID
      */
-    getPName:function(video_id){
-	if( this.pnamecache["_"+video_id] ) return this.pnamecache["_"+video_id];
+    getPName: function( video_id ){
+	if( this.pnamecache["_" + video_id] ) return this.pnamecache["_" + video_id];
 	let pname = "";
 
 	try{
-	    let st = this.dbconnect.createStatement('SELECT pname FROM pname WHERE video_id = ?1');
-	    st.bindUTF8StringParameter(0,video_id);
-	    while(st.step()){
-		pname = st.getString(0);
+	    let st = this.dbconnect.createStatement( 'SELECT pname FROM pname WHERE video_id = ?1' );
+	    st.bindUTF8StringParameter( 0, video_id );
+	    while( st.step() ){
+		pname = st.getString( 0 );
 	    }
 	    st.finalize();
-	    if(!pname) pname = "";
-	    if(pname){
-		this.pnamecache["_"+video_id] = pname;
+	    if( !pname ) pname = "";
+	    if( pname ){
+		this.pnamecache["_" + video_id] = pname;
 	    }
-	} catch (x) {
+	}catch( x ){
 	    pname = "";
 	}
 	return pname;
@@ -679,18 +693,18 @@ var Database = {
      * @param video_id 動画ID
      * @param additional 追加情報(text)
      */
-    setAdditional:function(video_id, additional){
+    setAdditional: function( video_id, additional ){
 	let st;
 	try{
-	    st = this.dbconnect.createStatement('insert into pname(video_id,additional) values(?1,?2)');
-	    st.bindUTF8StringParameter(0,video_id);
-	    st.bindUTF8StringParameter(1,additional);
+	    st = this.dbconnect.createStatement( 'insert into pname(video_id,additional) values(?1,?2)' );
+	    st.bindUTF8StringParameter( 0, video_id );
+	    st.bindUTF8StringParameter( 1, additional );
 	    st.execute();
 	    st.finalize();
-	} catch (x) {
-	    st = this.dbconnect.createStatement('update pname set additional=?1 where video_id=?2');
-	    st.bindUTF8StringParameter(0,additional);
-	    st.bindUTF8StringParameter(1,video_id);
+	}catch( x ){
+	    st = this.dbconnect.createStatement( 'update pname set additional=?1 where video_id=?2' );
+	    st.bindUTF8StringParameter( 0, additional );
+	    st.bindUTF8StringParameter( 1, video_id );
 	    st.execute();
 	    st.finalize();
 	}
@@ -700,15 +714,15 @@ var Database = {
      * 追加情報の取得.
      * @param video_id 動画ID
      */
-    getAdditional:function(video_id){
-	let st = this.dbconnect.createStatement('SELECT additional FROM pname WHERE video_id = ?1');
+    getAdditional: function( video_id ){
+	let st = this.dbconnect.createStatement( 'SELECT additional FROM pname WHERE video_id = ?1' );
 	let additional;
-	st.bindUTF8StringParameter(0,video_id);
-	while(st.step()){
-	    additional = st.getString(0);
+	st.bindUTF8StringParameter( 0, video_id );
+	while( st.step() ){
+	    additional = st.getString( 0 );
 	}
 	st.finalize();
-	if(!additional) additional = "";
+	if( !additional ) additional = "";
 	return additional;
     },
 
@@ -718,71 +732,71 @@ var Database = {
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
      * @param vid 動画ID
      */
-    setFavorite:function(e,node,vid){
+    setFavorite: function( e, node, vid ){
 	let video_id;
-	if(vid){
+	if( vid ){
 	    video_id = vid;
 	}else{
-	    let elem = FindParentElement(node,'vbox');
-	    video_id = elem.getAttribute('nicovideo_id');
+	    let elem = FindParentElement( node, 'vbox' );
+	    video_id = elem.getAttribute( 'nicovideo_id' );
 	}
 	let rate = e.target.value;
 
 	// ツールチップのテキストを更新
 	// TODO
-	let videolist = evaluateXPath(document,"//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
+	let videolist = evaluateXPath( document, "//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='" + video_id + "']" );
 
-	for(let i=0,item; item=videolist[i]; i++){
-	    if( video_id==item.getAttribute('nicovideo_id') ){
+	for( let i = 0, item; item = videolist[i]; i++ ){
+	    if( video_id == item.getAttribute( 'nicovideo_id' ) ){
 		try{
-		    let tooltip="レート:"+GetFavRateString(rate);
-		    let oldtooltip = item.getAttribute("tooltiptext");
-		    tooltip = oldtooltip.replace(/^レート:.*$/m,tooltip);
-		    item.setAttribute('tooltiptext',tooltip);
-		} catch (x) {
+		    let tooltip = "レート:" + GetFavRateString( rate );
+		    let oldtooltip = item.getAttribute( "tooltiptext" );
+		    tooltip = oldtooltip.replace( /^レート:.*$/m, tooltip );
+		    item.setAttribute( 'tooltiptext', tooltip );
+		}catch( x ){
 		}
 	    }
 	}
 
-	if( this.getFavorite(video_id)<0 ){
+	if( this.getFavorite( video_id ) < 0 ){
 	    // 動画DBにデータがないので追加した通知.
-	    ShowNotice( LoadFormattedString('STR_ERR_RATE_NOT_SAVED',[video_id]) );
-	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory(video_id);
+	    ShowNotice( LoadFormattedString( 'STR_ERR_RATE_NOT_SAVED', [video_id] ) );
+	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory( video_id );
 	    if( videoinfo ){
-		this.addDatabase(videoinfo,true);// do synchronized operation.
+		this.addDatabase( videoinfo, true );// do synchronized operation.
 	    }
 	}
 
 	let st;
 	try{
-	    st = this.dbconnect.createStatement('update nicovideo set favorite=?1 where video_id=?2');
-	    st.bindUTF8StringParameter(0,rate);
-	    st.bindUTF8StringParameter(1,video_id);
+	    st = this.dbconnect.createStatement( 'update nicovideo set favorite=?1 where video_id=?2' );
+	    st.bindUTF8StringParameter( 0, rate );
+	    st.bindUTF8StringParameter( 1, video_id );
 	    st.execute();
 	    st.finalize();
-	} catch (x) {
+	}catch( x ){
 	}
-	StarRateCache["_"+video_id] = rate;
+	StarRateCache["_" + video_id] = rate;
     },
 
     /**
      * スターレーティングの値を取得.
      * @param video_id 動画ID
      */
-    getFavorite:function(video_id){
-	if( StarRateCache["_"+video_id] ) return StarRateCache["_"+video_id];
+    getFavorite: function( video_id ){
+	if( StarRateCache["_" + video_id] ) return StarRateCache["_" + video_id];
 
 	let rate = -1;
 	try{
-	    let st = this.dbconnect.createStatement('SELECT favorite FROM nicovideo WHERE video_id = ?1');
-	    st.bindUTF8StringParameter(0,video_id);
-	    while(st.step()){
-		rate = st.getInt32(0);
+	    let st = this.dbconnect.createStatement( 'SELECT favorite FROM nicovideo WHERE video_id = ?1' );
+	    st.bindUTF8StringParameter( 0, video_id );
+	    while( st.step() ){
+		rate = st.getInt32( 0 );
 	    }
 	    st.finalize();
-	    if(!rate) rate = 0;
-	    StarRateCache["_"+video_id] = rate;
-	} catch (x) {
+	    if( !rate ) rate = 0;
+	    StarRateCache["_" + video_id] = rate;
+	}catch( x ){
 	    rate = 0;
 	}
 	return rate;
@@ -793,45 +807,45 @@ var Database = {
      * 動画DBリザルトなどの<listitem>表示での使用。
      * @param e eventオブジェクト
      */
-    setFavoriteViaListitem:function(e){
-	let video_id = $('db-search-result').selectedItem.getAttribute('vid');
+    setFavoriteViaListitem: function( e ){
+	let video_id = $( 'db-search-result' ).selectedItem.getAttribute( 'vid' );
 	let rate = e.target.value;
 
 	// ツールチップのテキストを更新
 	// TODO
-	let videolist = evaluateXPath(document,"//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='"+video_id+"']");
+	let videolist = evaluateXPath( document, "//html:table[@class='requestview' or @class='historyview']/descendant::html:tr/descendant::*[@nicovideo_id='" + video_id + "']" );
 
-	for(let i=0,item; item=videolist[i]; i++){
-	    if( video_id==item.getAttribute('nicovideo_id') ){
+	for( let i = 0, item; item = videolist[i]; i++ ){
+	    if( video_id == item.getAttribute( 'nicovideo_id' ) ){
 		try{
-		    let tooltip="レート:"+GetFavRateString(rate);
-		    let oldtooltip = item.getAttribute("tooltiptext");
-		    tooltip = oldtooltip.replace(/^レート:.*$/m,tooltip);
-		    item.setAttribute('tooltiptext',tooltip);
-		} catch (x) {
+		    let tooltip = "レート:" + GetFavRateString( rate );
+		    let oldtooltip = item.getAttribute( "tooltiptext" );
+		    tooltip = oldtooltip.replace( /^レート:.*$/m, tooltip );
+		    item.setAttribute( 'tooltiptext', tooltip );
+		}catch( x ){
 		}
 	    }
 	}
 
-	if( this.getFavorite(video_id)<0 ){
+	if( this.getFavorite( video_id ) < 0 ){
 	    // 動画DBにデータがないので追加した通知.
-	    ShowNotice( LoadFormattedString('STR_ERR_RATE_NOT_SAVED',[video_id]) );
-	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory(video_id);
+	    ShowNotice( LoadFormattedString( 'STR_ERR_RATE_NOT_SAVED', [video_id] ) );
+	    let videoinfo = NicoLiveHelper.findVideoInfoFromMemory( video_id );
 	    if( videoinfo ){
-		this.addDatabase(videoinfo,true);// do synchronized operation.
+		this.addDatabase( videoinfo, true );// do synchronized operation.
 	    }
 	}
 
 	let st;
 	try{
-	    st = this.dbconnect.createStatement('update nicovideo set favorite=?1 where video_id=?2');
-	    st.bindUTF8StringParameter(0,rate);
-	    st.bindUTF8StringParameter(1,video_id);
+	    st = this.dbconnect.createStatement( 'update nicovideo set favorite=?1 where video_id=?2' );
+	    st.bindUTF8StringParameter( 0, rate );
+	    st.bindUTF8StringParameter( 1, video_id );
 	    st.execute();
 	    st.finalize();
-	} catch (x) {
+	}catch( x ){
 	}
-	StarRateCache["_"+video_id] = rate;
+	StarRateCache["_" + video_id] = rate;
     },
 
     /**
@@ -840,18 +854,18 @@ var Database = {
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
      * @param vid 動画ID
      */
-    showingRateMenuViaListitem:function(e,node,vid){
+    showingRateMenuViaListitem: function( e, node, vid ){
 	try{
-	    let video_id = $('db-search-result').selectedItem.getAttribute('vid');
-	    let rate = this.getFavorite(video_id);
-	    if(rate<0) rate = 0;
-	    let menuitems = evaluateXPath(e.target,"*");
-	    for(let i=0,item;item=menuitems[i];i++){
-		if(item.value==rate) item.setAttribute('checked','true');
-		else item.setAttribute('checked','false');
+	    let video_id = $( 'db-search-result' ).selectedItem.getAttribute( 'vid' );
+	    let rate = this.getFavorite( video_id );
+	    if( rate < 0 ) rate = 0;
+	    let menuitems = evaluateXPath( e.target, "*" );
+	    for( let i = 0, item; item = menuitems[i]; i++ ){
+		if( item.value == rate ) item.setAttribute( 'checked', 'true' );
+		else item.setAttribute( 'checked', 'false' );
 	    }
-	} catch (x) {
-	    debugprint(x);
+	}catch( x ){
+	    debugprint( x );
 	}
 	return true;
     },
@@ -862,20 +876,20 @@ var Database = {
      * @param node メニューがポップアップしたノード(nullの場合はvidを指定)
      * @param vid 動画ID
      */
-    showingRateMenu:function(e,node,vid){
+    showingRateMenu: function( e, node, vid ){
 	let video_id;
-	if(vid){
+	if( vid ){
 	    video_id = vid;
 	}else{
-	    let elem = FindParentElement(node,'vbox');
-	    video_id = elem.getAttribute('nicovideo_id');
+	    let elem = FindParentElement( node, 'vbox' );
+	    video_id = elem.getAttribute( 'nicovideo_id' );
 	}
-	let rate = this.getFavorite(video_id);
-	if(rate<0) rate = 0;
-	let menuitems = evaluateXPath(e.target,"*");
-	for(let i=0,item;item=menuitems[i];i++){
-	    if(item.value==rate) item.setAttribute('checked','true');
-	    else item.setAttribute('checked','false');
+	let rate = this.getFavorite( video_id );
+	if( rate < 0 ) rate = 0;
+	let menuitems = evaluateXPath( e.target, "*" );
+	for( let i = 0, item; item = menuitems[i]; i++ ){
+	    if( item.value == rate ) item.setAttribute( 'checked', 'true' );
+	    else item.setAttribute( 'checked', 'false' );
 	}
 	return true;
     },
@@ -887,20 +901,20 @@ var Database = {
      * @param name キー
      * @param obj バリュー
      */
-    saveGPStorage:function(name,obj){
+    saveGPStorage: function( name, obj ){
 	let st;
-	let value = JSON.stringify(obj);
+	let value = JSON.stringify( obj );
 	//console.log(value);
 	try{
-	    st = this.dbconnect.createStatement('insert into gpstorage(key,value) values(?1,?2)');
-	    st.bindUTF8StringParameter(0,name);
-	    st.bindUTF8StringParameter(1,value);
+	    st = this.dbconnect.createStatement( 'insert into gpstorage(key,value) values(?1,?2)' );
+	    st.bindUTF8StringParameter( 0, name );
+	    st.bindUTF8StringParameter( 1, value );
 	    st.execute();
 	    st.finalize();
-	} catch (x) {
-	    st = this.dbconnect.createStatement('update gpstorage set value=?1 where key=?2');
-	    st.bindUTF8StringParameter(0,value);
-	    st.bindUTF8StringParameter(1,name);
+	}catch( x ){
+	    st = this.dbconnect.createStatement( 'update gpstorage set value=?1 where key=?2' );
+	    st.bindUTF8StringParameter( 0, value );
+	    st.bindUTF8StringParameter( 1, name );
 	    st.execute();
 	    st.finalize();
 	}
@@ -911,31 +925,31 @@ var Database = {
      * @param name キー
      * @param defitem キーがなかったときのデフォルト値
      */
-    loadGPStorage:function(name,defitem){
+    loadGPStorage: function( name, defitem ){
 	let item;
-	debugprint('load '+name);
+	debugprint( 'load ' + name );
 	item = NLHApplication.NLHstorage.get( name, null );
-	if(item!=null){
+	if( item != null ){
 	    //debugprint("メモリからデータをロードします");
 	    return item;
 	}
 	//debugprint("ストレージからデータをロードします");
 	try{
-	    let st = this.dbconnect.createStatement('SELECT value FROM gpstorage where key=?1');
-	    st.bindUTF8StringParameter(0,name);
+	    let st = this.dbconnect.createStatement( 'SELECT value FROM gpstorage where key=?1' );
+	    st.bindUTF8StringParameter( 0, name );
 	    let value = "";
-	    while(st.step()){
-		value=st.getString(0);
+	    while( st.step() ){
+		value = st.getString( 0 );
 	    }
 	    st.finalize();
-	    if(value){
-		item = JSON.parse(value);
+	    if( value ){
+		item = JSON.parse( value );
 	    }else{
 		item = defitem;
 	    }
-	} catch (x) {
-	    debugprint(x);
-	    debugprint("DBアクセスでエラーが発生したためデフォルト値になります");
+	}catch( x ){
+	    debugprint( x );
+	    debugprint( "DBアクセスでエラーが発生したためデフォルト値になります" );
 	    item = defitem;
 	}
 	return item;
@@ -944,28 +958,28 @@ var Database = {
     /**
      * 動画情報を保存するテーブルを作成.
      */
-    createVideoDB:function(){
-	if(!this.dbconnect.tableExists('nicovideo')){
+    createVideoDB: function(){
+	if( !this.dbconnect.tableExists( 'nicovideo' ) ){
 	    // テーブルなければ作成.
-	    this.dbconnect.createTable('nicovideo','video_id character primary key, title character, description character, thumbnail_url character, first_retrieve integer, length integer, view_counter integer, comment_num integer, mylist_counter integer, tags character, update_date integer, favorite integer');
+	    this.dbconnect.createTable( 'nicovideo', 'video_id character primary key, title character, description character, thumbnail_url character, first_retrieve integer, length integer, view_counter integer, comment_num integer, mylist_counter integer, tags character, update_date integer, favorite integer' );
 	}
     },
 
     // リク制限を保存するDB
     // NicoLiveHelper Advanceでは未使用
-    createRequestCondDB:function(){
+    createRequestCondDB: function(){
 	return;
-	if(!this.dbconnect.tableExists('requestcond')){
-	    this.dbconnect.createTable('requestcond','presetname character primary key, value character');
+	if( !this.dbconnect.tableExists( 'requestcond' ) ){
+	    this.dbconnect.createTable( 'requestcond', 'presetname character primary key, value character' );
 	}
     },
 
     // 汎用(General-Purpose)で使うDB
     // NicoLive Helper Advanceでは未使用
-    createGPStorageDB:function(){
+    createGPStorageDB: function(){
 	return;
-	if(!this.dbconnect.tableExists('gpstorage')){
-	    this.dbconnect.createTable('gpstorage','key character primary key, value character');
+	if( !this.dbconnect.tableExists( 'gpstorage' ) ){
+	    this.dbconnect.createTable( 'gpstorage', 'key character primary key, value character' );
 	}
     },
 
@@ -973,9 +987,9 @@ var Database = {
     /**
      * P名、追加情報テーブルを作成する.
      */
-    createPnameDB:function(){
-	if(!this.dbconnect.tableExists('pname')){
-	    this.dbconnect.createTable('pname','video_id character primary key, pname character, additional character');
+    createPnameDB: function(){
+	if( !this.dbconnect.tableExists( 'pname' ) ){
+	    this.dbconnect.createTable( 'pname', 'video_id character primary key, pname character, additional character' );
 	}
     },
 
@@ -983,9 +997,9 @@ var Database = {
     /**
      * 動画DBのフォルダ管理用テーブルを作成する.
      */
-    createFolderDB:function(){
-	if(!this.dbconnect.tableExists('folder')){
-	    this.dbconnect.createTable('folder','id integer primary key, type integer, parent integer, name character, video_id character, foreign key(video_id) references nicovideo(video_id)');
+    createFolderDB: function(){
+	if( !this.dbconnect.tableExists( 'folder' ) ){
+	    this.dbconnect.createTable( 'folder', 'id integer primary key, type integer, parent integer, name character, video_id character, foreign key(video_id) references nicovideo(video_id)' );
 	}
     },
 
@@ -994,27 +1008,27 @@ var Database = {
      * 現在はsm|nmのみに対応。
      * @param file nsIFile
      */
-    readFileToDatabase:function(file){
+    readFileToDatabase: function( file ){
 	// file は nsIFile
-	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
-	istream.init(file, 0x01, 0444, 0);
-	istream.QueryInterface(Components.interfaces.nsILineInputStream);
+	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance( Components.interfaces.nsIFileInputStream );
+	istream.init( file, 0x01, 0444, 0 );
+	istream.QueryInterface( Components.interfaces.nsILineInputStream );
 
 	// 行を配列に読み込む
 	let line = {}, hasmore;
 	let str = "";
-	do {
-	    hasmore = istream.readLine(line);
-	    if( line.value.match(/(sm|nm)\d+/) ){
+	do{
+	    hasmore = istream.readLine( line );
+	    if( line.value.match( /(sm|nm)\d+/ ) ){
 		str += line.value + " ";
 	    }
-	} while(hasmore);
+	}while( hasmore );
 
-	this.addVideos(str);
+	this.addVideos( str );
 	istream.close();
     },
 
-    checkDrag:function(event){
+    checkDrag: function( event ){
 	event.preventDefault();
 	return true;
     },
@@ -1023,50 +1037,50 @@ var Database = {
      * DBタブにドロップしたとき.
      * @param event DOMイベント
      */
-    dropToDatabase:function(event){
+    dropToDatabase: function( event ){
 	//this.dataTransfer = event.dataTransfer;
 
 	// ファイルをドロップしたとき.
-	let file = event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
-	if (file instanceof Components.interfaces.nsIFile){
-	    if( !file.leafName.match(/\.txt$/) ) return;
-	    debugprint("file dropped:"+file.path);
-	    this.readFileToDatabase(file);
+	let file = event.dataTransfer.mozGetDataAt( "application/x-moz-file", 0 );
+	if( file instanceof Components.interfaces.nsIFile ){
+	    if( !file.leafName.match( /\.txt$/ ) ) return;
+	    debugprint( "file dropped:" + file.path );
+	    this.readFileToDatabase( file );
 	    return;
 	}
 
-	if( event.dataTransfer.types.contains('text/plain') ){
-	    let txt = event.dataTransfer.mozGetDataAt("text/plain",0);
-	    this.addVideos(txt);
+	if( event.dataTransfer.types.contains( 'text/plain' ) ){
+	    let txt = event.dataTransfer.mozGetDataAt( "text/plain", 0 );
+	    this.addVideos( txt );
 	    return;
 	}
 	// アンカーをドロップしたとき.
-	if( event.dataTransfer.types.contains("text/uri-list") ){
-	    let uri = event.dataTransfer.mozGetDataAt("text/uri-list",0);
-	    debugprint("uri dropped:"+uri);
-	    this.addVideos(uri);
+	if( event.dataTransfer.types.contains( "text/uri-list" ) ){
+	    let uri = event.dataTransfer.mozGetDataAt( "text/uri-list", 0 );
+	    debugprint( "uri dropped:" + uri );
+	    this.addVideos( uri );
 	    return;
 	}
 	// タブをドロップしたとき.
-	if( event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
-	    debugprint("tab dropped");
-	    let tab = event.dataTransfer.mozGetDataAt("application/x-moz-tabbrowser-tab",0);
+	if( event.dataTransfer.types.contains( "application/x-moz-tabbrowser-tab" ) ){
+	    debugprint( "tab dropped" );
+	    let tab = event.dataTransfer.mozGetDataAt( "application/x-moz-tabbrowser-tab", 0 );
 	    let doc = tab.linkedBrowser.contentDocument;
 	    let str = "";
 	    // 検索ページ.
-	    let items = evaluateXPath(doc,"//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href");
-	    for(let i=0,item; item=items[i]; i++){
+	    let items = evaluateXPath( doc, "//*[@class='uad_thumbfrm' or @class='uad_thumbfrm_1' or @class='uad_thumbfrm_2']/table/tbody/tr/td/p/a/@href" );
+	    for( let i = 0, item; item = items[i]; i++ ){
 		//debugprint(item.textContent);
 		str += item.textContent + " ";
 	    }
 	    // ランキングページ.
-	    items = evaluateXPath(doc,"//div/p/a[@class='watch']/@href");
-	    for(let i=0,item; item=items[i]; i++){
+	    items = evaluateXPath( doc, "//div/p/a[@class='watch']/@href" );
+	    for( let i = 0, item; item = items[i]; i++ ){
 		//debugprint(item.textContent);
 		str += item.textContent + " ";
 	    }
-	    str += event.dataTransfer.mozGetDataAt("text/x-moz-text-internal",0);
-	    this.addVideos(str);
+	    str += event.dataTransfer.mozGetDataAt( "text/x-moz-text-internal", 0 );
+	    this.addVideos( str );
 	    return;
 	}
     },
@@ -1074,41 +1088,41 @@ var Database = {
     /**
      * 検索結果の動画IDをコピーする.
      */
-    copyVideoId:function(){
-	let items = $('db-search-result').selectedItems;
+    copyVideoId: function(){
+	let items = $( 'db-search-result' ).selectedItems;
 	let str = "";
-	for(let i=0,item; item=items[i]; i++){
-	    str += item.getAttribute('vid') + "\n";
+	for( let i = 0, item; item = items[i]; i++ ){
+	    str += item.getAttribute( 'vid' ) + "\n";
 	}
-	CopyToClipboard(str);
+	CopyToClipboard( str );
     },
     /**
      * 検索結果をストックに追加する.
      */
-    addToStock:function(){
-	let items = $('db-search-result').selectedItems;
+    addToStock: function(){
+	let items = $( 'db-search-result' ).selectedItems;
 	let str = "";
-	for(let i=0,item; item=items[i]; i++){
-	    str += item.getAttribute('vid') + " ";
+	for( let i = 0, item; item = items[i]; i++ ){
+	    str += item.getAttribute( 'vid' ) + " ";
 	}
-	NicoLiveStock.addStock(str);
+	NicoLiveStock.addStock( str );
     },
     /**
      * 検索結果からリクエストする.
      */
-    sendRequest:function(){
+    sendRequest: function(){
 	if( IsCaster() || IsOffline() ){
 	    // リクエストリストに放り込むときは複数可
-	    let items = $('db-search-result').selectedItems;
+	    let items = $( 'db-search-result' ).selectedItems;
 	    let str = "";
-	    for(let i=0,item; item=items[i]; i++){
-		str += item.getAttribute('vid') + " ";
+	    for( let i = 0, item; item = items[i]; i++ ){
+		str += item.getAttribute( 'vid' ) + " ";
 	    }
-	    NicoLiveRequest.addRequest(str);
+	    NicoLiveRequest.addRequest( str );
 	}else{
 	    // リクエスト送信は1つのみ.
-	    let video_id = $('db-search-result').selectedItem.getAttribute('vid');
-	    NicoLiveHelper.postListenerComment(video_id,"");
+	    let video_id = $( 'db-search-result' ).selectedItem.getAttribute( 'vid' );
+	    NicoLiveHelper.postListenerComment( video_id, "" );
 	}
     },
 
@@ -1116,15 +1130,15 @@ var Database = {
      * DBから動画情報を削除する.
      * @param video_id 動画ID
      */
-    deleteMovieByVideoId:function(video_id){
+    deleteMovieByVideoId: function( video_id ){
 	let st;
 	try{
-	    st = this.dbconnect.createStatement('delete from nicovideo where video_id=?1');
-	    st.bindUTF8StringParameter(0,video_id);
+	    st = this.dbconnect.createStatement( 'delete from nicovideo where video_id=?1' );
+	    st.bindUTF8StringParameter( 0, video_id );
 	    st.execute();
 	    st.finalize();
-	    StarRateCache["_"+video_id] = -1;
-	} catch (x) {
+	    StarRateCache["_" + video_id] = -1;
+	}catch( x ){
 	}
     },
 
@@ -1132,43 +1146,61 @@ var Database = {
      * 動画を削除する.
      * @param node メニューを出したノード
      */
-    deleteMovie:function(){
-	let items = $('db-search-result').selectedItems;
-	for(let i=0,item; item=items[i]; i++){
-	    this.deleteMovieByVideoId( item.getAttribute('vid') );
+    deleteMovie: function(){
+	let items = $( 'db-search-result' ).selectedItems;
+	for( let i = 0, item; item = items[i]; i++ ){
+	    this.deleteMovieByVideoId( item.getAttribute( 'vid' ) );
 	}
-	ShowNotice("選択した動画をDBから削除しました");
+	ShowNotice( "選択した動画をDBから削除しました" );
     },
 
     /**
      * サーチ結果にある動画を全て削除する.
      */
-    deleteSearchResults:function(){
-	if( !ConfirmPrompt('検索結果にある動画を全てDBから削除しますか？','動画の削除') ) return;
+    deleteSearchResults: function(){
+	if( !ConfirmPrompt( '検索結果にある動画を全てDBから削除しますか？', '動画の削除' ) ) return;
 
-	let videos = $('db-search-result').getElementsByTagName('listitem');
-	for(let i=0,item; item=videos[i];i++){
-	    let video_id = item.getAttribute("vid");
-	    this.deleteMovieByVideoId(video_id);
+	let videos = $( 'db-search-result' ).getElementsByTagName( 'listitem' );
+	for( let i = 0, item; item = videos[i]; i++ ){
+	    let video_id = item.getAttribute( "vid" );
+	    this.deleteMovieByVideoId( video_id );
 	}
-	ShowNotice('検索結果にある動画を全てDBから削除しました');
+	ShowNotice( '検索結果にある動画を全てDBから削除しました' );
+    },
+
+    /**
+     * フォルダ名リストを返す.
+     */
+    getFolderNames: function(){
+	let arr = new Array();
+	try{
+	    let st;
+	    st = this.dbconnect.createStatement( 'SELECT name FROM folder WHERE type=0 AND video_id IS NULL ORDER BY name' );
+	    while( st.step() ){
+		let name = st.getString( 0 );
+		arr.push( arr );
+	    }
+	    st.finalize();
+	}catch( x ){
+	}
+	return arr;
     },
 
     /**
      * サーチリザルトから動画ページを開く.
      */
     openPage: function(){
-	let video_id = $('db-search-result').selectedItem.getAttribute('vid');
-	NicoLiveWindow.openDefaultBrowser("http://www.nicovideo.jp/watch/"+video_id,true);
+	let video_id = $( 'db-search-result' ).selectedItem.getAttribute( 'vid' );
+	NicoLiveWindow.openDefaultBrowser( "http://www.nicovideo.jp/watch/" + video_id, true );
     },
 
-    onkeydown:function(event){
+    onkeydown: function( event ){
 	//debugprint(event);
 	//this._data = event;
 	switch( event.keyCode ){
 	case 65: // A
 	    if( event.ctrlKey || event.metaKey ){
-		$('db-search-result').selectAll();
+		$( 'db-search-result' ).selectAll();
 		event.stopPropagation();
 		return false;
 	    }
@@ -1183,20 +1215,20 @@ var Database = {
     /**
      * デフォルトのDBパスを返す
      */
-    getDefaultPath:function(){
-        let file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("ProfD", Components.interfaces.nsIFile);
-        file.append("nicolivehelper_miku39jp.sqlite");
+    getDefaultPath: function(){
+	let file = Components.classes["@mozilla.org/file/directory_service;1"].getService( Components.interfaces.nsIProperties ).get( "ProfD", Components.interfaces.nsIFile );
+	file.append( "nicolivehelper_miku39jp.sqlite" );
 	return file;
     },
 
     /**
      * DBのパスを返す
      */
-    getDBPath:function(){
+    getDBPath: function(){
 	let path;
 	try{
-	    path = Config.getBranch().getUnicharPref("db-path");
-	} catch (x) {
+	    path = Config.getBranch().getUnicharPref( "db-path" );
+	}catch( x ){
 	    path = null;
 	}
 	if( path ){
@@ -1208,42 +1240,42 @@ var Database = {
 	}
     },
 
-    init1st:function(){
+    init1st: function(){
 	try{
-            let file = this.getDBPath(); //this.getDefaultPath();
+	    let file = this.getDBPath(); //this.getDefaultPath();
 	    this._filename = file.path;
 
-            let storageService = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService);
-            this.dbconnect = storageService.openDatabase(file);
+	    let storageService = Components.classes["@mozilla.org/storage/service;1"].getService( Components.interfaces.mozIStorageService );
+	    this.dbconnect = storageService.openDatabase( file );
 	    this.createVideoDB();
 	    this.createRequestCondDB();
 	    this.createGPStorageDB();
 	    this.createPnameDB();
 	    this.createFolderDB(); // 1.1.1+
-	} catch (x) {
+	}catch( x ){
 	    this._corrupt = true;
 	}
     },
 
-    init:function(){
-	debugprint('Database.init');
+    init: function(){
+	debugprint( 'Database.init' );
 	if( this._corrupt ){
 	    setTimeout( function(){
-			    AlertPrompt("DBファイルが破損しているようです。\n「" +
-					Database._filename + 
-					"」\nを修復するか、削除する必要があります。","DBファイルの破損");
-			}, 2000 );
+		AlertPrompt( "DBファイルが破損しているようです。\n「" +
+		    Database._filename +
+		    "」\nを修復するか、削除する必要があります。", "DBファイルの破損" );
+	    }, 2000 );
 	}
-	debugprint("DB file:"+this._filename);
+	debugprint( "DB file:" + this._filename );
 	this.pnamecache = new Object();
 	StarRateCache = new Object();
 
 	this.addSearchLine();
 	this.setRegisterdVideoNumber();
 
-	this.searchresult_node = $('db-search-result');
+	this.searchresult_node = $( 'db-search-result' );
     },
-    destroy:function(){
+    destroy: function(){
 	// This call will not be successful
 	// unless you call finalize() on all of your remaining mozIStorageStatement  objects.
 	//debugprint('db close');
@@ -1251,7 +1283,12 @@ var Database = {
     }
 };
 
-window.addEventListener("load", function(e){ Database.init(); }, false);
-window.addEventListener("unload", function(e){ Database.destroy(); }, false);
+window.addEventListener( "load", function( e ){
+    Database.init();
+}, false );
+window.addEventListener( "unload", function( e ){
+    Database.destroy();
+}, false );
 
 Database.init1st();
+Database.getFolderNames();
