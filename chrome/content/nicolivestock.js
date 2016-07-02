@@ -407,7 +407,7 @@ var NicoLiveStock = {
 	    debugprint("「"+path+"」にストックを保存します");
 	    let os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
 	    let flags = 0x02|0x08|0x20;// wronly|create|truncate
-	    os.init(file,flags,0664,0);
+	    os.init(file,flags,0o644,0);
 
 	    let cos = GetUTF8ConverterOutputStream(os);
 	    cos.writeString(ids.join('\r\n')+"\r\n");
@@ -516,7 +516,7 @@ var NicoLiveStock = {
     readFileToStock:function(file){
 	// file は nsIFile
 	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
-	istream.init(file, 0x01, 0444, 0);
+	istream.init(file, 0x01, 0o444, 0);
 	istream.QueryInterface(Components.interfaces.nsILineInputStream);
 
 	// 行を配列に読み込む
