@@ -3931,7 +3931,9 @@ var NicoLiveHelper = {
 		return;
 	    }
 	}
-	this._flg_displayprogresstime = !this._flg_displayprogresstime;
+	this._flg_displayprogresstime = this._flg_displayprogresstime || 0;
+	this._flg_displayprogresstime++;
+	this._flg_displayprogresstime %= 3;
 	this.updateStatusBar( GetCurrentTime() );
     },
 
@@ -4000,9 +4002,23 @@ var NicoLiveHelper = {
 	meter.value = p;
 
 	let videoremain = videolength - videoprogress;
-	if( videoremain<0 ) videoremain = 0;
-	let str = currentvideo.title
-	    + '('+ (this._flg_displayprogresstime?GetTimeString(videoprogress):'-'+GetTimeString(videoremain) ) + '/' + currentvideo.length+')';
+	if( videoremain < 0 ) videoremain = 0;
+	let str = currentvideo.title;
+	this._flg_displayprogresstime = this._flg_displayprogresstime || 0;
+	switch( this._flg_displayprogresstime ){
+	case 0:
+	    str += '(' + '-' + GetTimeString( videoremain ) + '/' + currentvideo.length + ')';
+	    break;
+	case 1:
+	    str += '(' + GetTimeString( videoprogress ) + '/' + currentvideo.length + ')';
+	    break;
+	case 2:
+	    let cur = this.getCurrentPlayStatus();
+	    let remain = this.liveinfo.end_time - cur.play_end; // 枠の残り時間.
+	    str += ' [枠残 ' + GetTimeString( remain ) + ']';
+	    break;
+	}
+
 	videoname.label = str;
 	//this.setProgressInfoIntoOriginalPage( str );
 
