@@ -5,7 +5,7 @@ locale nicolivehelperadvance ja-JP chrome/locale/ja-JP/
 
 style chrome://nicolivehelperadvance/content/mainwindow.xul chrome://nicolivehelperadvance/content/mainwindow-mac.css os=Darwin
 
-overlay chrome://browser/content/browser.xul chrome://nicolivehelperadvance/content/overlaymenu.xul
+overlay chrome://browser/content/browser.xul chrome://nicolivehelperadvance/content/overlay/overlaymenu.xul
 overlay chrome://nicolivehelperadvance/content/mainwindow.xul chrome://nlhadv_commenttalker/content/nicolivetalker.xul
 
 resource nicolivehelperadvancemodules modules/
