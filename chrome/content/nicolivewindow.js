@@ -55,7 +55,7 @@ var NicoLiveWindow = {
      */
     openInAppBrowser:function(url, hasfocus, param1, param2, param3, param4, param5){
 	let feature="chrome,resizable=yes";
-	let win = window.openDialog("chrome://nicolivehelperadvance/content/browser.xul",
+	let win = window.openDialog("chrome://nicolivehelperadvance/content/browser/browser.xul",
 				    "inappbrowser",
 				    feature, url, param1, param2, param3, param4 ,param5);
 	if( hasfocus ){

@@ -14,7 +14,7 @@
 	title="Browser for NicoLive Helper">
 
   <script type="application/javascript;version=1.7"
-	  src="chrome://nicolivehelperadvance/content/browser.js" />
+	  src="chrome://nicolivehelperadvance/content/browser/browser.js" />
 
   <keyset>
     <!-- CTRL+W: Close this window -->
