@@ -1229,7 +1229,7 @@ var Database = {
      * デフォルトのDBパスを返す
      */
     getDefaultPath: function(){
-	let file = Components.classes["@mozilla.org/file/directory_service;1"].getService( Components.interfaces.nsIProperties ).get( "ProfD", Components.interfaces.nsIFile );
+	let file = GetProfileDir();
 	file.append( "nicolivehelper_miku39jp.sqlite" );
 	return file;
     },
