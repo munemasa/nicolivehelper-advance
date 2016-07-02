@@ -6,7 +6,7 @@ function OpenAboutDialog(){
 
 function OpenSettingsDialog(){
     var f='chrome,toolbar,modal=no,resizable=yes,centerscreen';
-    var w = window.openDialog('chrome://nicolivehelperadvance/content/preferences.xul','NLHAdvPreference',f);
+    var w = window.openDialog('chrome://nicolivehelperadvance/content/preferences/preferences.xul','NLHAdvPreference',f);
     w.focus();
 }
 

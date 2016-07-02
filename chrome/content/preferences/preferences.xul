@@ -1,0 +1,1129 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://nicolivehelperadvance/content/preferences/preferences.css" type="text/css"?>
+<prefwindow id="nicolivehelper-advanced-settings"
+	    title="NicoLive Helper Advance Settings" windowtype="prefwindow"
+	    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	    xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <!-- 基本設定 -->
+  <prefpane id="nicolivehelper-prefpane-basic"
+	    label="標準設定" image="chrome://nicolivehelperadvance/content/data/basicsetting.png">
+    <preferences>
+      <!-- ジングル再生フラグ -->
+      <preference id="pref-jingle"
+		  name="extensions.nicolivehelperadvance.play.jingle" type="bool"/>
+      <!-- ジングル動画IDリスト -->
+      <preference id="pref-jingle-movie"
+		  name="extensions.nicolivehelperadvance.play.jingle-movie" type="string"/>
+      <!-- 再生インターバル -->
+      <preference id="pref-nextplay-interval"
+		  name="extensions.nicolivehelperadvance.play.interval" type="int"/>
+      <!-- 最大再生時間 -->
+      <preference id="pref-max-movieplay-time"
+		  name="extensions.nicolivehelperadvance.play.maxtime" type="int"/>
+      <!-- 再生動画を枠に収まるように決定 -->
+      <preference id="pref-limit30min"
+		  name="extensions.nicolivehelperadvance.play.in-time" type="bool"/>
+      <!-- 先読み -->
+      <preference id="pref-prepare"
+		  name="extensions.nicolivehelperadvance.play.prepare" type="bool"/>
+      <!-- 先読みタイミング -->
+      <preference id="pref-prepare-timing"
+		  name="extensions.nicolivehelperadvance.play.prepare-timing" type="int"/>
+
+      <!-- リクエストへの自動応答 -->
+      <preference id="pref-request-autoreply"
+		  name="extensions.nicolivehelperadvance.request.autoreply" type="bool"/>
+      <!-- 静画リクエスト -->
+      <preference id="pref-allow-seiga-request"
+		  name="extensions.nicolivehelperadvance.request.seiga" type="bool"/>
+      <!-- 重複リクエストの許可 -->
+      <preference id="pref-allow-duplicative"
+		  name="extensions.nicolivehelperadvance.request.allow-duplicative" type="bool"/>
+      <!-- 新着規制 -->
+      <preference id="pref-limitnewmovie"
+		  name="extensions.nicolivehelperadvance.request.limit-newmovie" type="bool"/>
+      <!-- 再生済み動画の受付 -->
+      <preference id="pref-accept-playedvideo"
+		  name="extensions.nicolivehelperadvance.request.accept-playedvideo" type="bool"/>
+      <!-- n分以上前の再生済みを受付 -->
+      <preference id="pref-allow-req-n-min-ago"
+		  name="extensions.nicolivehelperadvance.request.allow-req-n-min-ago" type="int"/>
+      <!-- 一人頭のリク受け付け数 -->
+      <preference id="pref-accept-nreq"
+		  name="extensions.nicolivehelperadvance.request.accept-nreq" type="int"/>
+      <!-- 枠に収まる範囲でリク受付 -->
+      <preference id="pref-accept-within-livespace"
+		  name="extensions.nicolivehelperadvance.request.accept-within-livespace" type="bool"/>
+
+      <!-- 投稿者名取得 -->
+      <preference id="pref-get-username" name="extensions.nicolivehelperadvance.getusername" type="bool"/>
+
+      <!-- 詳細表示 -->
+      <preference id="pref-show-details"
+		  name="extensions.nicolivehelperadvance.display.show_detail" type="bool"/>
+      <preference id="e.n.font"
+		  name="extensions.nicolivehelperadvance.display.font" type="unichar"/>
+      <preference id="e.n.font-color"
+		  name="extensions.nicolivehelperadvance.display.font-color" type="unichar"/>
+      <preference id="e.n.font-scale"
+		  name="extensions.nicolivehelperadvance.display.font-scale" type="int"/>
+      <!-- to obtain font group from browser settings -->
+      <preference id="font.language.group" name="font.language.group" type="wstring"/>
+      <preference id="pref-wallpaper"
+		  name="extensions.nicolivehelperadvance.display.wallpaper" type="unichar"/>
+
+      <!-- 184コメント -->
+      <preference id="pref-184comment"
+		  name="extensions.nicolivehelperadvance.comment.184comment" type="bool"/>
+      <!-- コメントの表示行数 -->
+      <preference id="pref-comment-view-num"
+		  name="extensions.nicolivehelperadvance.comment.viewlines" type="int"/>
+      <!-- バックログ取得行数 -->
+      <preference id="pref-comment-log-num"
+		  name="extensions.nicolivehelperadvance.comment.backlog" type="int"/>
+      <preference id="pref-save-comment"
+		  name="extensions.nicolivehelperadvance.comment.savefile" type="bool"/>
+      <!-- 連続コメントファイルのディレクトリ -->
+      <preference id="pref-continuousCommentDir"
+		  name="extensions.nicolivehelperadvance.comment.continuous-commentDir" type="file"/>
+      <!-- コメントログの保存先 -->
+      <preference id="pref-commentlogDir"
+		  name="extensions.nicolivehelperadvance.comment.commentlogDir" type="file"/>
+      <preference id="pref-preset-autocomplete"
+		  name="extensions.nicolivehelperadvance.comment.preset-autocomplete" type="unichar"/>
+      <preference id="pref-new-logfile"
+		  name="extensions.nicolivehelperadvance.comment.new-logfile" type="bool"/>
+    </preferences>
+
+    <tabbox persist="selectedIndex" id="prefwindow-basicsettings">
+      <tabs>
+	<tab label="進行"/>
+	<tab label="リクエスト"/>
+	<tab label="表示"/>
+	<tab label="コメント"/>
+      </tabs>
+      <tabpanels>
+	<!-- 進行 -->
+	<tabpanel orient="vertical">
+	  <hbox>
+	    <checkbox preference="pref-jingle" label="接続時にジングルを再生する"/>
+	    <textbox preference="pref-jingle-movie" placeholder="ジングルとなる動画IDを入力してください" flex="1"/>
+	    <button label="再生"
+		    oncommand="opener.NicoLiveHelper.playJingle();"
+		    tooltiptext="生放送を開始して3分以内で、何も動画が再生されていない時に、ボタンを押して5秒後にジングル動画を再生します。"/>
+	  </hbox>
+	  <hbox>
+	    <checkbox preference="pref-limit30min"
+		      label="次の動画を再生する時、放送枠内に収まるように再生する動画を選択する"
+		      tooltiptext="放送枠内(放送終了時刻)に収まるように動画を選択します。"/>
+	  </hbox>
+	  <hbox align="center">
+	    <checkbox preference="pref-prepare" label="動画の先読み(/prepare)を行う"
+		      tooltiptext="次の動画の先読みを行います"/>
+	    <scale id="prepare-timing-bar" persist="value" value="60" min="40" max="600"
+		   onchange="$('pref-prepare-timing').value = (this.value);"/>
+	    <textbox id="prepare-timing" preference="pref-prepare-timing"
+		     type="number" value="60" min="40" max="600" size="5"
+		     onchange="$('prepare-timing-bar').value=this.value;"/>
+	    <label value="秒前"/>
+	  </hbox>
+	  <grid>
+	    <columns>
+	      <column/>
+	      <column/>
+	      <column/>
+	    </columns>
+	    <rows>
+	      <row>
+		<hbox align="center">
+		  <label value="次の動画を再生するまでの待ち時間(0-99)" tooltiptext="動画の再生が終わり、次の動画を再生するまでの待ち時間を指定します。"/>
+		</hbox>
+		<textbox preference="pref-nextplay-interval" type="number" min="0" max="99" size="3"/>
+		<hbox align="center">
+		  <label value="秒"/>
+		</hbox>
+	      </row>
+	      <row>
+		<hbox align="center">
+		  <label value="1つの動画の最大再生時間(0-99)"
+			 tooltiptext="動画を再生する最大時間を指定します。0の場合は無制限になります。"/>
+		</hbox>
+		<textbox preference="pref-max-movieplay-time" type="number" min="0" max="99" size="3"/>
+		<hbox align="center">
+		  <label value="分"/>
+		</hbox>
+	      </row>
+	    </rows>
+	  </grid>
+	</tabpanel>
+	<!-- リクエスト -->
+	<tabpanel orient="vertical">
+	  <checkbox preference="pref-request-autoreply" label="リクエストに対して自動で運営コメントを返す"/>
+	  <checkbox preference="pref-allow-seiga-request" label="ニコニコ静画のリクエストを受け付ける"
+		    tooltiptext="チェックをすると、ニコニコ静画 imXXXXXX のリクエストを受け付けるようになります。"/>
+	  <checkbox preference="pref-accept-within-livespace" label="枠に収まる範囲でリクエストを受け付ける" tooltiptext="生放送の枠に収まる範囲でリクエストを受け付けます。この際、枠の残り時間としてはロスタイムの分は含まれません。"/>
+	  <checkbox preference="pref-allow-duplicative" label="リクエストの重複を許可する"/>
+	  <checkbox preference="pref-limitnewmovie" label="リクエストの新着(7日)規制を行う" tooltiptext="投稿して7日以内の動画のリクエストを受け付けなくなります。"/>
+	  <hbox align="center">
+	    <checkbox preference="pref-accept-playedvideo" label="再生済み動画のリクエストを受け付ける" tooltiptext="再生履歴にある動画のリクエストを受け付けるようになります。"/>
+	    <textbox preference="pref-allow-req-n-min-ago" type="number" min="0" size="3"/><label value="分以上前に再生された動画を受け付ける"/>
+	  </hbox>
+	  <hbox align="center">
+	    <label value="1枠1人あたりのリクエスト受付数(0-99件)" tooltiptext="1枠のうち、1人あたり最大いくつのリクエストを受け付けるかを指定します。0の場合は無制限です。"/>
+	    <textbox preference="pref-accept-nreq" type="number" min="0" max="99" size="3"/>
+	    <label value="件"/>
+	  </hbox>
+	  <hbox>
+	  <checkbox preference="pref-get-username" label="投稿者名を取得する"
+		    tooltiptext="放送中にリクエストのあった動画の投稿者名を取得します。"/>
+	  </hbox>
+
+	</tabpanel>
+
+	<!-- 表示 -->
+	<tabpanel orient="vertical">
+	  <checkbox preference="pref-show-details" label="動画説明を表示する"
+		    tooltiptext="チェックをすると、リクエスト、ストック等で動画説明を表示します。"/>
+	  <groupbox style="padding: 0.5em;">
+	    <caption>フォント</caption>
+	    <hbox align="center">
+	      <menulist id="select-font" preference="e.n.font"/>
+	      <colorpicker id="select-font-color" type="button" preference="e.n.font-color"/>
+	      <scale id="window-font-scale" value="9" min="5" max="36"
+		     onchange="NLHPreference.changeFontScale(this.value);"/>
+	      <label id="font-scale-label" value="9 pt."/>
+	    </hbox>
+	  </groupbox>
+
+	  <groupbox>
+	    <caption>壁紙</caption>
+	    <hbox>
+	      <textbox flex="1" preference="pref-wallpaper" id="wallpaper-path"/>
+	      <button label="参照..." oncommand="NLHPreference.refWallpaperPath();"/>
+	      <button label="リセット" oncommand="$('pref-wallpaper').value='';"/>
+	    </hbox>
+	  </groupbox>
+	</tabpanel>
+
+	<!-- コメント -->
+	<tabpanel orient="vertical">
+	  <hbox align="center">
+	    <label value="表示行数:"/><textbox preference="pref-comment-view-num" type="number" min="1" max="10000" size="5"/>
+	    <label value="接続時のログ取得行数:"/><textbox preference="pref-comment-log-num" type="number" min="1" max="500" size="3"/><label value="行"/>
+	  </hbox>
+
+	  <checkbox preference="pref-184comment" label="常に184コメント(匿名)にする"/>
+
+	  <hbox>
+	    <hbox align="center">
+	      <label control="continuouscomment" value="連続コメントテキスト保存先:"/>
+	    </hbox>
+	    <filefield id="continuouscomment" flex="1"/>
+	    <button label="参照..." oncommand="NLHPreference.selectContinuousCommentDirectory();"/>
+	  </hbox>
+
+	  <groupbox>
+	    <caption>
+	      <checkbox preference="pref-save-comment"
+			label="コメントログをファイルに保存する"
+			tooltiptext="コメントをファイルに保存します。保存先は必ず指定してください。最初に接続したコメントの部屋のログのみ保存されます。"/>
+	    </caption>
+	    <hbox>
+	      <hbox align="center">
+		<label control="commentlog" value="コメントログ保存先:"/>
+	      </hbox>
+	      <filefield id="commentlog" flex="1"/>
+	      <button label="参照..." oncommand="NLHPreference.selectCommentLogDirectory();"/>
+	    </hbox>
+	    <checkbox preference="pref-new-logfile" label="既に同名のファイルが存在した場合、別名で新規作成する" tooltiptext="新規作成するファイル名の末尾には2,3,4,...と数字を付加していきます。"/>
+	  </groupbox>
+	  <label value="コメント入力補完プリセット:"/>
+	  <vbox flex="1">
+	    <textbox preference="pref-preset-autocomplete" placeholder="1行に1つずつ、文字列(カンマ)コメント と入力します。例:/play sm7113282,初音ミクのライブOP1" tooltiptext="1行に1つずつ、文字列(カンマ)コメント と入力します。例:/play sm7113282,初音ミクのライブOP1" multiline="true" flex="1" rows="5"/>
+	  </vbox>
+	</tabpanel>
+      </tabpanels>
+    </tabbox>
+  </prefpane>
+
+  <prefpane id="nicolivehelper-perfpane-movieinfo" label="動画情報" image="chrome://nicolivehelperadvance/content/data/icon1.png" onpaneload="">
+    <preferences>
+      <!-- 動画情報 -->
+      <preference id="pref-videoinfo1"
+		  name="extensions.nicolivehelperadvance.videoinfo1" type="unichar"/>
+      <preference id="pref-videoinfo2"
+		  name="extensions.nicolivehelperadvance.videoinfo2" type="unichar"/>
+      <preference id="pref-videoinfo3"
+		  name="extensions.nicolivehelperadvance.videoinfo3" type="unichar"/>
+      <preference id="pref-videoinfo4"
+		  name="extensions.nicolivehelperadvance.videoinfo4" type="unichar"/>
+      <preference id="pref-videoinfo1-command"
+		  name="extensions.nicolivehelperadvance.videoinfo1-command" type="unichar"/>
+      <preference id="pref-videoinfo2-command"
+		  name="extensions.nicolivehelperadvance.videoinfo2-command" type="unichar"/>
+      <preference id="pref-videoinfo3-command"
+		  name="extensions.nicolivehelperadvance.videoinfo3-command" type="unichar"/>
+      <preference id="pref-videoinfo4-command"
+		  name="extensions.nicolivehelperadvance.videoinfo4-command" type="unichar"/>
+      <preference id="pref-videoinfo-interval"
+		  name="extensions.nicolivehelperadvance.videoinfo.interval" type="int"/>
+      <preference id="pref-typeofvideoinfo"
+		  name="extensions.nicolivehelperadvance.videoinfo.comment-type" type="int"/>
+      <preference id="pref-revert-videoinfo"
+		  name="extensions.nicolivehelperadvance.videoinfo.revert-line" type="int"/>
+      <preference id="pref-no-autopname"
+		  name="extensions.nicolivehelperadvance.no-auto-pname" type="bool"/>
+      <preference id="pref-userdefined-uri"
+		  name="extensions.nicolivehelperadvance.videoinfo.userdefined-data-uri" type="string"/>
+      <!-- 再生に失敗した時 -->
+      <preference id="pref-videoinfo-playfailed"
+		  name="extensions.nicolivehelperadvance.videoinfo.playfailed" type="unichar"/>
+    </preferences>
+
+    <tabbox persist="selectedIndex" id="prefwindow-videoinfo">
+      <tabs>
+	<tab label="動画情報"/>
+	<tab label="P名ホワイトリスト"/>
+      </tabs>
+      <tabpanels>
+	<tabpanel orient="vertical">
+	  <hbox>
+	    <menulist preference="pref-typeofvideoinfo">
+	      <menupopup>
+		<menuitem label="通常の運営コメント" value="0"/>
+		<menuitem label="/permで運営コメント" value="1"/>
+		<menuitem label="hiddenで運営コメント" value="2"/>
+		<menuitem label="/perm + hiddenで運営コメント" value="3"/>
+	      </menupopup>
+	    </menulist>
+	    <hbox align="center">
+	      <menulist preference="pref-revert-videoinfo">
+		<menupopup>
+		  <menuitem label="なし" value="0"></menuitem>
+		  <menuitem label="1" value="1"></menuitem>
+		  <menuitem label="2" value="2"></menuitem>
+		  <menuitem label="3" value="3"></menuitem>
+		  <menuitem label="4" value="4"></menuitem>
+		</menupopup>
+	      </menulist>
+	      <label value="行目の動画情報を再送信する"
+		     tooltiptext="動画情報以外の何かをコメントした場合、指定行数目の動画情報を再送信します。"/>
+	    </hbox>
+	  </hbox>
+	  <groupbox>
+	  <grid>
+	    <columns>
+	      <column/>
+	      <column flex="1" />
+	    </columns>
+	    <rows>
+	      <row>
+		<hbox align="center"><label control="videoinfo1" value="1行目"/></hbox>
+		<hbox>
+		  <textbox preference="pref-videoinfo1-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-videoinfo1" id="videoinfo1"
+			   flex="1" placeholder="動画情報1行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
+		</hbox>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="videoinfo2" value="2行目"/></hbox>
+		<hbox>
+		  <textbox preference="pref-videoinfo2-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-videoinfo2" id="videoinfo2"
+			   flex="1" placeholder="動画情報2行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
+		</hbox>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="videoinfo3" value="3行目"/></hbox>
+		<hbox>
+		  <textbox preference="pref-videoinfo3-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-videoinfo3" id="videoinfo3"
+			   flex="1" placeholder="動画情報3行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
+		</hbox>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="videoinfo4" value="4行目"/></hbox>
+		<hbox>
+		  <textbox preference="pref-videoinfo4-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-videoinfo4" id="videoinfo4"
+			   flex="1" placeholder="動画情報4行目"
+			   onkeypress="NLHPreference.previewVideoInfo(this.value);"/>
+		</hbox>
+	      </row>
+	      <hbox align="center">
+		<label control="vinfo-playfailed" value="再生に失敗した時:" tooltiptext="生放送引用許可がない等で再生コマンド(/play)が失敗した時に送信されます。"/>
+		<textbox preference="pref-videoinfo-playfailed" id="vinfo-playfailed" flex="1"/>
+		<label control="vinfo-interval" value="送信間隔:"/>
+		<textbox preference="pref-videoinfo-interval" id="vinfo-interval" type="number" min="3" max="60" size="3"/>
+		<label value="秒"/>
+	      </hbox>
+	    </rows>
+	  </grid>
+	  </groupbox>
+	  <!--
+	  <hbox><checkbox preference="pref-nocomment-for-directplay" label="動画IDをコメント欄に直接入力して再生した場合、その動画情報を運営コメントしない" tooltiptext="コメントタブの入力欄から動画IDを入力して動画を再生した場合、動画情報を送信しなくなります。"/></hbox>
+	  -->
+	  <hbox><checkbox preference="pref-no-autopname" label="P名D名を自動認識しない" tooltiptext="タグの末尾にP,DがあるものをP名として自動認識しなくなり、P名ホワイトリストのみを頼りにP名を付けます。"/></hbox>
+	  <hbox align="center">
+	    <label control="userdefined-uri" value="JSONファイルのあるURI(URL)"/>
+	    <textbox preference="pref-userdefined-uri" id="userdefined-uri" flex="1"/>
+	  </hbox>
+	  <hbox>
+	    <button label="デフォルトに戻す" oncommand="NLHPreference.resetMovieInfo();" tooltiptext="動画情報を初期値に戻します。"/>
+	    <spacer flex="1"/>
+	    <button label="エクスポート..." tooltiptext="動画情報をファイルにエクスポートします" oncommand="NLHPreference.exportMovieInfo();"/>
+	    <button label="インポート..." tooltiptext="ファイルから動画情報をインポートします" oncommand="NLHPreference.importMovieInfo();"/>
+	  </hbox>
+	  <vbox style="height:3em;">
+	    <html:div id="preview-videoinfo" style="font-family:Arial; font-weight: bold; font-size:11pt; background-color: black; color:white;">
+	    </html:div>
+	  </vbox>
+
+	</tabpanel>
+	<tabpanel orient="vertical">
+	  <textbox id="pname-whitelist" rows="10" multiline="true" placeholder="1行につき1人のP名、D名を入力してください" tooltiptext="1行につき1人のP名,D名を入力してください"/>
+	  <hbox>
+	    <button label="保存" oncommand="NLHPreference.savePNameWhitelist();"/>
+	  </hbox>
+	</tabpanel>
+      </tabpanels>
+    </tabbox>
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-castercomment" label="運営コメント"
+	    image="chrome://nicolivehelperadvance/content/data/icon2.png"
+	    onpaneload="NLHPreference.createPresetCommentMenu();">
+    <preferences>
+      <!-- リクエストの応答 -->
+      <preference id="pref-msg-deleted"
+		  name="extensions.nicolivehelperadvance.msg.deleted" type="unichar"/>
+      <preference id="pref-msg-notaccept"
+		  name="extensions.nicolivehelperadvance.msg.notaccept" type="unichar"/>
+      <preference id="pref-msg-newmovie"
+		  name="extensions.nicolivehelperadvance.msg.newmovie" type="unichar"/>
+      <preference id="pref-msg-played"
+		  name="extensions.nicolivehelperadvance.msg.played" type="unichar"/>
+      <preference id="pref-msg-requested"
+		  name="extensions.nicolivehelperadvance.msg.requested" type="unichar"/>
+      <preference id="pref-msg-accept"
+		  name="extensions.nicolivehelperadvance.msg.accept" type="unichar"/>
+      <preference id="pref-msg-no-live-play"
+		  name="extensions.nicolivehelperadvance.msg.no-live-play" type="unichar"/>
+      <preference id="pref-msg-within-livespace"
+		  name="extensions.nicolivehelperadvance.msg.within-livespace" type="unichar"/>
+      <preference id="pref-msg-limitnumberofrequests"
+		  name="extensions.nicolivehelperadvance.msg.limitnumberofrequests" type="unichar"/>
+
+      <!-- リクエスト可否切り替え -->
+      <preference id="pref-msg-requestok"
+		  name="extensions.nicolivehelperadvance.msg.requestok" type="unichar"/>
+      <preference id="pref-msg-requestng"
+		  name="extensions.nicolivehelperadvance.msg.requestng" type="unichar"/>
+      <preference id="pref-msg-requestok-command"
+		  name="extensions.nicolivehelperadvance.msg.requestok-command" type="unichar"/>
+      <preference id="pref-msg-requestng-command"
+		  name="extensions.nicolivehelperadvance.msg.requestng-command" type="unichar"/>
+
+      <!-- リクエスト制限時のメッセージ -->
+      <preference id="pref-msg-ng-video"
+		  name="extensions.nicolivehelperadvance.msg.ng-video-reply-message" type="unichar"/>
+      <preference id="pref-msg-lessmylists"
+		  name="extensions.nicolivehelperadvance.msg.lessmylists" type="unichar"/>
+      <preference id="pref-msg-greatermylists"
+		  name="extensions.nicolivehelperadvance.msg.greatermylists" type="unichar"/>
+      <preference id="pref-msg-lessviews"
+		  name="extensions.nicolivehelperadvance.msg.lessviews" type="unichar"/>
+      <preference id="pref-msg-greaterviews"
+		  name="extensions.nicolivehelperadvance.msg.greaterviews" type="unichar"/>
+      <preference id="pref-msg-longertime"
+		  name="extensions.nicolivehelperadvance.msg.longertime" type="unichar"/>
+      <preference id="pref-msg-shortertime"
+		  name="extensions.nicolivehelperadvance.msg.shortertime" type="unichar"/>
+      <preference id="pref-msg-outofdaterange"
+		  name="extensions.nicolivehelperadvance.msg.outofdaterange" type="unichar"/>
+      <preference id="pref-msg-requiredkeyword"
+		  name="extensions.nicolivehelperadvance.msg.requiredkeyword" type="unichar"/>
+      <preference id="pref-msg-forbiddenkeyword"
+		  name="extensions.nicolivehelperadvance.msg.forbiddenkeyword" type="unichar"/>
+      <preference id="pref-msg-requiredkeyword-title"
+		  name="extensions.nicolivehelperadvance.msg.requiredkeyword-title" type="unichar"/>
+      <preference id="pref-msg-forbiddenkeyword-title"
+		  name="extensions.nicolivehelperadvance.msg.forbiddenkeyword-title" type="unichar"/>
+      <preference id="pref-msg-high-bitrate"
+		  name="extensions.nicolivehelperadvance.msg.high-bitrate" type="unichar"/>
+      <!-- スタートアップ -->
+      <preference id="pref-startup-comment" name="extensions.nicolivehelperadvance.msg.startup-comment" type="unichar"/>
+
+    </preferences>
+
+    <tabbox persist="selectedIndex" id="prefwindow-autoreplies">
+      <tabs>
+	<tab label="リクエストの応答"></tab>
+	<tab label="リクエスト制限の応答"></tab>
+	<tab label="リクエスト可否"></tab>
+	<tab label="スタートアップ"></tab>
+      </tabs>
+      <tabpanels>
+	<tabpanel orient="vertical">
+	  <grid>
+	    <columns>
+	      <column/>
+	      <column flex="1" />
+	    </columns>
+	    <rows>
+	      <row>
+		<hbox align="center"><label control="msg-accept" value="リクエストを受け付けた時"/></hbox>
+		<textbox preference="pref-msg-accept" id="msg-accept" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-notaccept" value="リクエストを受け付けていない時"/></hbox>
+		<textbox preference="pref-msg-notaccept" id="msg-notaccept" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-deleted" value="削除、存在しない動画の時"/></hbox>
+		<textbox preference="pref-msg-deleted" id="msg-deleted" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-newmovie" value="新着の動画の時"/></hbox>
+		<textbox preference="pref-msg-newmovie" id="msg-newmovie" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-played" value="再生済みの動画の時"/></hbox>
+		<textbox preference="pref-msg-played" id="msg-played" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-requested" value="リクエスト受付済みの動画の時"/></hbox>
+		<textbox preference="pref-msg-requested" id="msg-requested" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-no-live-play" value="生放送での引用が許可されていない時"/></hbox>
+		<textbox preference="pref-msg-no-live-play" id="msg-no-live-play" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-within-livespace" value="放送枠内に収まらない時"/></hbox>
+		<textbox preference="pref-msg-within-livespace" id="msg-within-livespace" flex="1"/>
+	      </row>
+	    </rows>
+	  </grid>
+	</tabpanel>
+	<!-- リクエスト制限の応答 -->
+	<tabpanel orient="vertical">
+	  <grid style="overflow:auto; height: 20em;">
+	    <columns>
+	      <column/>
+	      <column flex="1" />
+	    </columns>
+	    <rows>
+	      <row>
+		<hbox align="center"><label control="msg-ng-video" value="NG動画の時"/></hbox>
+		<textbox preference="pref-msg-ng-video" id="msg-ng-video" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-limitnumberofrequests" value="リクエスト受付数上限を越えた時"/></hbox>
+		<textbox preference="pref-msg-limitnumberofrequests" id="msg-limitnumberofrequests" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-lessviews" value="再生数が少ない時"/></hbox>
+		<textbox preference="pref-msg-lessviews" id="msg-lessviews" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-greaterviews" value="再生数が多い時"/></hbox>
+		<textbox preference="pref-msg-greaterviews" id="msg-greaterviews" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-lessmylists" value="マイリスト数が少ない時"/></hbox>
+		<textbox preference="pref-msg-lessmylists" id="msg-lessmylists" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-greatermylists" value="マイリスト数が多い時"/></hbox>
+		<textbox preference="pref-msg-greatermylists" id="msg-greatermylists" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-longertime" value="再生時間が長い時"/></hbox>
+		<textbox preference="pref-msg-longertime" id="msg-longertime" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-longertime" value="再生時間が短い時"/></hbox>
+		<textbox preference="pref-msg-shortertime" id="msg-shortertime" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-outofdaterange" value="投稿日時が指定の範囲外の時"/></hbox>
+		<textbox preference="pref-msg-outofdaterange" id="msg-outofdaterange" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-requiredkeyword" value="タグが指定キーワードを含まない時"/></hbox>
+		<textbox preference="pref-msg-requiredkeyword" id="msg-requiredkeyword" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-forbiddenkeyword" value="タグが指定キーワードを含む時"/></hbox>
+		<textbox preference="pref-msg-forbiddenkeyword" id="msg-forbiddenkeyword" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-requiredkeyword-title" value="タイトルが指定キーワードを含まない時"/></hbox>
+		<textbox preference="pref-msg-requiredkeyword-title" id="msg-requiredkeyword-title" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-forbiddenkeyword-title" value="タイトルが指定キーワードを含む時"/></hbox>
+		<textbox preference="pref-msg-forbiddenkeyword-title" id="msg-forbiddenkeyword-title" flex="1"/>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-forbiddenkeyword-title" value="ビットレートが高い時"/></hbox>
+		<textbox preference="pref-msg-high-bitrate" id="msg-high-bitrate" flex="1"/>
+	      </row>
+	    </rows>
+	  </grid>
+	</tabpanel>
+	<tabpanel orient="vertical">
+	  <grid>
+	    <columns>
+	      <column/>
+	      <column flex="1" />
+	    </columns>
+	    <rows>
+	      <row>
+		<hbox align="center"><label control="msg-requestok" value="リクエスト許可に切り替えた時"/></hbox>
+		<hbox>
+		  <textbox preference="pref-msg-requestok-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-msg-requestok" id="msg-requestok" flex="1" placeholder="運営コメントを入力してください"/>
+		</hbox>
+	      </row>
+	      <row>
+		<hbox align="center"><label control="msg-requestng" value="リクエスト不可に切り替えた時"/></hbox>
+		<hbox>
+		  <textbox preference="pref-msg-requestng-command" size="5" placeholder="コマンド"/>
+		  <textbox preference="pref-msg-requestng" id="msg-requestng" flex="1" placeholder="運営コメントを入力してください"/>
+		</hbox>
+	      </row>
+	    </rows>
+	  </grid>
+	</tabpanel>
+	<tabpanel orient="vertical">
+	  <vbox>
+	    <label value="スタートアップ時に行うコメント:" control="startup-comment"/>
+	    <textbox preference="pref-startup-comment" id="startup-comment" rows="10" multiline="true" placeholder="5秒間隔で1行ずつ送信します"/>
+	  </vbox>
+	</tabpanel>
+      </tabpanels>
+    </tabbox>
+    <hbox align="center">
+      <button type="menu" label="プリセット読み込み">
+	<menupopup id="id-menu-comment-preset">
+	  <menuitem label="デフォルト" oncommand="NLHPreference.resetAutoReply();"/>
+	</menupopup>
+      </button>
+      <textbox id="id-comment-preset-name" placeholder="プリセット名を入力してください" flex="1"/>
+      <button label="登録" oncommand="NLHPreference.addPresetComment(document.getElementById('id-comment-preset-name').value);"/>
+      <button label="削除" oncommand="NLHPreference.deletePresetComment(document.getElementById('id-comment-preset-name').value);"/>
+    </hbox>
+
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-request" label="リクエスト制限"
+	    image="chrome://nicolivehelperadvance/content/data/icon3.png" onpaneload="NLHPreference.updateRestrictPane();">
+    <preferences>
+      <preference id="pref-restrict-request"
+		  name="extensions.nicolivehelperadvance.request.restrict.enabled" type="bool"/>
+      <preference id="pref-restrict-date-from"
+		  name="extensions.nicolivehelperadvance.request.restrict.date-from" type="string"/>
+      <preference id="pref-restrict-date-to"
+		  name="extensions.nicolivehelperadvance.request.restrict.date-to"   type="string"/>
+      <preference id="pref-restrict-view-from"
+		  name="extensions.nicolivehelperadvance.request.restrict.view-from" type="int"/>
+      <preference id="pref-restrict-view-to"
+		  name="extensions.nicolivehelperadvance.request.restrict.view-to" type="int"/>
+      <preference id="pref-restrict-mylist-from"
+		  name="extensions.nicolivehelperadvance.request.restrict.mylist-from" type="int"/>
+      <preference id="pref-restrict-mylist-to"
+		  name="extensions.nicolivehelperadvance.request.restrict.mylist-to" type="int"/>
+      <preference id="pref-restrict-videolength-from"
+		  name="extensions.nicolivehelperadvance.request.restrict.videolength-from" type="int"/>
+      <preference id="pref-restrict-videolength-to"
+		  name="extensions.nicolivehelperadvance.request.restrict.videolength-to" type="int"/>
+      <preference id="pref-restrict-tag-include"
+		  name="extensions.nicolivehelperadvance.request.restrict.tag-include" type="unichar"/>
+      <preference id="pref-restrict-tag-exclude"
+		  name="extensions.nicolivehelperadvance.request.restrict.tag-exclude" type="unichar"/>
+      <preference id="pref-restrict-title-include"
+		  name="extensions.nicolivehelperadvance.request.restrict.title-include" type="unichar"/>
+      <preference id="pref-restrict-title-exclude"
+		  name="extensions.nicolivehelperadvance.request.restrict.title-exclude" type="unichar"/>
+      <preference id="pref-restrict-ng-video"
+		  name="extensions.nicolivehelperadvance.request.restrict.ng-video" type="unichar"/>
+      <preference id="pref-restrict-bitrate"
+		  name="extensions.nicolivehelperadvance.request.restrict.bitrate" type="int"/>
+    </preferences>
+    <vbox>
+      <tabbox flex="1" persist="selectedIndex" id="prefwindow-restriction">
+	<tabs>
+	  <tab label="条件設定"/>
+	  <tab label="NG動画設定"/>
+	</tabs>
+
+	<tabpanels flex="1">
+	  <tabpanel orient="vertical">
+	    <hbox>
+	      <checkbox label="リクエスト制限を行う" preference="pref-restrict-request" tooltiptext="リクエストを受け付ける条件設定(リクエスト縛り)を行います。"/>
+	      <button type="menu" label="プリセット読み込み">
+		<menupopup id="id-menu-preset"/>
+	      </button>
+	      <hbox align="center"><label id="id-preset-name" value=""/></hbox>
+	    </hbox>
+	    <grid>
+	      <columns>
+		<column/>
+		<column flex="1"/>
+		<column/>
+		<column flex="1"/>
+		<column/>
+	      </columns>
+	      <rows>
+		<row>
+		  <hbox align="center"><label value="投稿日" tooltiptext="同一日と前後矛盾した日付設定は無視します"/></hbox>
+		  <datepicker id="pref-date-from" type="popup" preference="pref-restrict-date-from"/>
+		  <hbox align="center"><label value="から"/></hbox>
+		  <datepicker id="pref-date-to"   type="popup" preference="pref-restrict-date-to"/>
+		  <hbox align="center"><label value="まで"/></hbox>
+		</row>
+		<row>
+		  <hbox aling="center"><label value="再生数"/></hbox>
+		  <textbox id="restrict-view-from" type="number" min="0" size="6" preference="pref-restrict-view-from"/>
+		  <hbox align="center"><label value="以上"/></hbox>
+		  <textbox id="restrict-view-to" type="number" min="0" size="6" preference="pref-restrict-view-to"/>
+		  <hbox align="center"><label value="以下"/></hbox>
+		</row>
+		<row>
+		  <hbox aling="center"><label value="マイリスト数"/></hbox>
+		  <textbox id="restrict-mylist-from" type="number" min="0" size="6" preference="pref-restrict-mylist-from"/>
+		  <hbox align="center"><label value="以上"/></hbox>
+		  <textbox id="restrict-mylist-to" type="number" min="0" size="6" preference="pref-restrict-mylist-to"/>
+		  <hbox align="center"><label value="以下"/></hbox>
+		</row>
+		<row>
+		  <hbox aling="center"><label value="再生時間"/></hbox>
+		  <textbox id="restrict-length-from" type="number" min="0" size="6"
+			   preference="pref-restrict-videolength-from"/>
+		  <hbox align="center"><label value="秒以上"/></hbox>
+		  <textbox id="restrict-length-to" type="number" min="0" size="6"
+			   preference="pref-restrict-videolength-to"/>
+		  <hbox align="center"><label value="秒以下"/></hbox>
+		</row>
+		<row>
+		  <hbox align="center"><label value="タグ" tooltiptext=""/></hbox>
+		  <textbox id="restrict-tag-include" size="6" flex="1" preference="pref-restrict-tag-include"/>
+		  <hbox align="center"><label value="を含む"/></hbox>
+		  <textbox id="restrict-tag-exclude" size="6" flex="1" preference="pref-restrict-tag-exclude"/>
+		  <hbox align="center"><label value="を含まない"/></hbox>
+		</row>
+		<row>
+		  <hbox align="center"><label value="タイトル" tooltiptext=""/></hbox>
+		  <textbox id="restrict-title-include" size="6" flex="1" preference="pref-restrict-title-include"/>
+		  <hbox align="center"><label value="を含む"/></hbox>
+		  <textbox id="restrict-title-exclude" size="6" flex="1" preference="pref-restrict-title-exclude"/>
+		  <hbox align="center"><label value="を含まない"/></hbox>
+		</row>
+		<row>
+		  <hbox align="center"><label value="ビットレート"/></hbox>
+		  <textbox id="restrict-bitrate" type="number" min="0" size="6" preference="pref-restrict-bitrate"/>
+		  <hbox align="center"><label value="kbps以下"/></hbox>
+		</row>
+	      </rows>
+	    </grid>
+	    <hbox><button label="リセット" oncommand="NLHPreference.resetRequestRestriction();"/></hbox>
+	    <spacer flex="1"/>
+	    <hbox>
+	      <hbox align="center"><label value="プリセット名"/></hbox>
+	      <textbox id="id-edit-presetname" flex="1" placeholder="プリセット名を入力してください"/>
+	      <button label="登録" oncommand="NLHPreference.addPresetCond(document.getElementById('id-edit-presetname').value);"/>
+	      <button label="削除" oncommand="NLHPreference.delPresetCond(document.getElementById('id-edit-presetname').value);"/>
+	    </hbox>
+	  </tabpanel>
+	  
+	  <tabpanel orient="vertical">
+	    <vbox>
+	      <label value="リクエスト受け付けの際に拒否をしたい動画を、動画IDでリストアップしてください"/>
+	      <textbox preference="pref-restrict-ng-video" multiline="true" rows="10"/>
+	    </vbox>
+	  </tabpanel>
+	</tabpanels>
+      </tabbox>
+    </vbox>
+
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-twitter"
+	    label="Twitter" image="chrome://nicolivehelperadvance/content/data/twitter.png">
+
+    <preferences>
+      <preference id="twitter-authorized-username"
+		  name="extensions.nicolivehelperadvance.twitter.auth-user" type="string"/>
+      <preference id="twitter-use-api"
+		  name="extensions.nicolivehelperadvance.twitter.use-api" type="string"/>
+      <preference id="twitter-tweet-when-beginlive"
+		  name="extensions.nicolivehelperadvance.twitter.when-beginlive" type="bool"/>
+      <preference id="twitter-tweet-when-playmovie"
+		  name="extensions.nicolivehelperadvance.twitter.when-playmovie" type="bool"/>
+      <preference id="twitter-tweet-when-addmylist"
+		  name="extensions.nicolivehelperadvance.twitter.when-addmylist" type="bool"/>
+      <preference id="twitter-tweet-begin"
+		  name="extensions.nicolivehelperadvance.twitter.begin" type="unichar"/>
+      <preference id="twitter-tweet-play"
+		  name="extensions.nicolivehelperadvance.twitter.play" type="unichar"/>
+    </preferences>
+
+    <vbox flex="1">
+      <radiogroup id="twitter-select-api" preference="twitter-use-api">
+	<radio label="NicoLiveHelperから直接つぶやく(以下でアカウント認証を行う必要があります)" value="self"/>
+	<radio label="ニコニコ生放送を経由してつぶやく(事前にニコニコ生放送にて認証を行っておく必要があります)" value="nicolive"/>
+      </radiogroup>
+
+      <!--
+      <hbox align="center"><label value="ユーザー名"/><textbox id="twitter-user" /></hbox>
+      <hbox align="center"><label value="パスワード"/><textbox id="twitter-password" type="password"/></hbox>
+      -->
+
+      <hbox align="center">
+	<button id="twitter-get-pin" label="PINを取得" oncommand="NLHPreference.getTwitterPin();"/>
+	<label value="PIN"/><textbox id="twitter-pin" />
+	<button id="twitter-authorization-button" label="認証" oncommand="NLHPreference.authTwitterPin();"/>
+      </hbox>
+      <hbox align="center"><!-- <button id="twitter-authorization-button" label="認証" oncommand="NLHPreference.authorizeTwitterUser();"/> --><label value="認証済み:"/><textbox readonly="true" value="なし" id="twitter-authorization-result" preference="twitter-authorized-username"/></hbox>
+
+      <html:hr/>
+
+      <checkbox label="配信開始した時につぶやく" preference="twitter-tweet-when-beginlive"/>
+      <hbox>
+	<textbox id="tweet-begin" flex="1" preference="twitter-tweet-begin" onkeypress="NLHPreference.previewTweet(this);"/>
+	<button label="リセット" oncommand="$('twitter-tweet-begin').value = $('twitter-tweet-begin').defaultValue;"/>
+      </hbox>
+      <checkbox label="動画を再生した時につぶやく" preference="twitter-tweet-when-playmovie"/>
+      <hbox>
+	<textbox id="tweet-play" flex="1" preference="twitter-tweet-play" onkeypress="NLHPreference.previewTweet(this);"/>
+	<button label="リセット" oncommand="$('twitter-tweet-play').value = $('twitter-tweet-play').defaultValue;"/>
+      </hbox>
+      <checkbox label="マイリスト登録した時につぶやく" preference="twitter-tweet-when-addmylist"/>
+      <label value="プレビュー:"/>
+      <description id="tweet-preview" style="height: 2.5em;"/>
+    </vbox>
+  </prefpane>
+
+  <prefpane id="nicolivehelper-prefpane-advance"
+	    label="詳細設定" image="chrome://nicolivehelperadvance/content/data/advancedsettings.png">
+    <preferences>
+      <preference id="pref-singlewindowmode"
+		  name="extensions.nicolivehelperadvance.window.singlewindow" type="bool"/>
+      <preference id="pref-auto-open"
+		  name="extensions.nicolivehelperadvance.window.auto-open" type="bool"/>
+      <preference id="pref-auto-close"
+		  name="extensions.nicolivehelperadvance.window.auto-close" type="bool"/>
+      <preference id="pref-auto-open-listener"
+		  name="extensions.nicolivehelperadvance.window.auto-open-listener" type="bool"/>
+      <preference id="pref-auto-close-listener"
+		  name="extensions.nicolivehelperadvance.window.auto-close-listener" type="bool"/>
+      <preference id="pref-auto-close-tab"
+		  name="extensions.nicolivehelperadvance.window.auto-close-tab" type="bool"/>
+      <preference id="pref-autoscroll"
+		  name="extensions.nicolivehelperadvance.window.autoscroll" type="bool"/>
+
+      <preference id="pref-notice-time"
+		  name="extensions.nicolivehelperadvance.notice.time" type="int"/>
+      <preference id="pref-notice-area"
+		  name="extensions.nicolivehelperadvance.notice.area" type="bool"/>
+      <preference id="pref-notice-dialog"
+		  name="extensions.nicolivehelperadvance.notice.dialog" type="bool"/>
+      <preference id="pref-notice-comment"
+		  name="extensions.nicolivehelperadvance.notice.comment" type="bool"/>
+      <preference id="pref-notice-popup"
+		  name="extensions.nicolivehelperadvance.notice.popup" type="bool"/>
+      <preference id="pref-notice-sound"
+		  name="extensions.nicolivehelperadvance.notice.sound" type="bool"/>
+      <preference id="pref-notice-infobar"
+		  name="extensions.nicolivehelperadvance.notice.infobar" type="bool"/>
+      <preference id="pref-notice-message"
+		  name="extensions.nicolivehelperadvance.notice.message" type="unichar"/>
+      <preference id="pref-notice-extend"
+		  name="extensions.nicolivehelperadvance.notice.extend" type="unichar"/>
+      <preference id="pref-notice-soundfile"
+		  name="extensions.nicolivehelperadvance.notice.soundfile" type="unichar"/>
+
+      <preference id="pref-enable-listenercommand"
+		  name="extensions.nicolivehelperadvance.listenercommand.enable" type="bool"/>
+      <preference id="pref-cmd-s"
+		  name="extensions.nicolivehelperadvance.listenercommand.s" type="unichar"/>
+      <preference id="pref-cmd-del"
+		  name="extensions.nicolivehelperadvance.listenercommand.del" type="unichar"/>
+      <preference id="pref-cmd-custom"
+		  name="extensions.nicolivehelperadvance.listenercommand.custom" type="unichar"/>
+
+      <preference id="pref-do-custom-script"
+		  name="extensions.nicolivehelperadvance.custom-script" type="bool"/>
+
+      <preference id="pref-do-classify"
+		  name="extensions.nicolivehelperadvance.ml.do-classify" type="bool"/>
+      <preference id="pref-classes-value"
+		  name="extensions.nicolivehelperadvance.mlclasses-value" type="unichar"/>
+
+      <preference id="pref-japanese-standard-time"
+		  name="extensions.nicolivehelperadvance.japanese-standard-time" type="bool"/>
+      <preference id="pref-video-db-path"
+		  name="extensions.nicolivehelperadvance.db-path" type="unichar"/>
+      <preference id="pref-storage-path"
+		  name="extensions.nicolivehelperadvance.storage-path" type="unichar"/>
+      <preference id="pref-logfile-name"
+		  name="extensions.nicolivehelperadvance.comment.logfile-name" type="unichar"/>
+
+    </preferences>
+    <vbox>
+      <tabbox flex="1" persist="selectedIndex" id="prefwindow-others">
+	<tabs>
+	  <tab label="ウィンドウ"/>
+	  <tab label="通知"/>
+	  <tab label="視聴者コマンド"/>
+	  <tab label="動画分類"/>
+	  <tab label="スクリプト"/>
+	  <tab label="その他"/>
+	</tabs>
+
+	<tabpanels flex="1">
+	  <tabpanel orient="vertical">
+	    <!-- window -->
+	    <hbox>
+	      <checkbox preference="pref-singlewindowmode" label="シングルウィンドウモード"/>
+	    </hbox>
+	    <separator/>
+
+	    <label value="表示方法:"/>
+	    <vbox style="margin-left: 1em;">
+	      <label value="生放送のページを開いた時、放送終了した時、自動でNicoLive Helperを"/>
+	      <grid>
+		<columns>
+		  <column/>
+		  <column/>
+		  <column/>
+		</columns>
+		<rows>
+		  <row>
+		    <hbox align="center"><label value="放送者:"/></hbox>
+		    <checkbox preference="pref-auto-open" label="開く"/>
+		    <checkbox preference="pref-auto-close" label="閉じる"/>
+		  </row>
+		  <row>
+		    <hbox align="center"><label value="視聴者:"/></hbox>
+		    <checkbox preference="pref-auto-open-listener" label="開く"/>
+		    <checkbox preference="pref-auto-close-listener" label="閉じる"/>
+		  </row>
+		</rows>
+	      </grid>
+	      <hbox>
+		<checkbox preference="pref-auto-close-tab"
+			  label="生放送終了時に自動でNicoLive Helperを閉じる時、生放送のページも自動で閉じる"/>
+	      </hbox>
+	      <hbox>
+		<checkbox preference="pref-autoscroll"
+			  label="NicoLive Helperを開いたとき、自動で生放送プレイヤーの位置までスクロールする"/>
+	      </hbox>
+	    </vbox>
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- notification -->
+	    <vbox flex="1">
+	      <groupbox>
+		<caption>
+		  <hbox align="center">
+		    <label value="放送終了前の通知"/>
+		    <textbox preference="pref-notice-time" value="3" type="number" min="1" max="10" size="3"/>
+		    <label value="分前"/>
+		  </hbox>
+		</caption>
+		<vbox style="margin-left: 1em;">
+		  <hbox>
+		    <checkbox preference="pref-notice-area"
+			      label="通知領域" tooltiptext="ウインドウ下の通知領域を使用して警告します。" flex="0"/>
+		    <checkbox preference="pref-notice-dialog"
+			      label="ダイアログ" tooltiptext="ダイアログボックスを使用して警告します。"/>
+		    <checkbox preference="pref-notice-comment"
+			      label="運営コメント" tooltiptext="運営コメントを使用して警告します。"/>
+		    <checkbox preference="pref-notice-popup"
+			      label="ポップアップ" tooltiptext="ポップアップする通知ウィンドウを使用して警告します。"/>
+		    <checkbox preference="pref-notice-sound"
+			      label="サウンド" tooltiptext="サウンド再生を使用して警告します。"/>
+		    <checkbox preference="pref-notice-infobar"
+			      label="情報バー" tooltiptext="ニコニコ生放送の情報バーを使用して警告します。"/>
+		  </hbox>
+		  <grid>
+		    <columns>
+		      <column/>
+		      <column flex="1"/>
+		      <column/>
+		    </columns>
+		    <rows>
+		      <row>
+			<hbox align="center"><label value="通知メッセージ"/></hbox>
+			<textbox flex="1" preference="pref-notice-message"/>
+		      </row>
+		      <row>
+			<hbox align="center"><label value="サウンドファイル"/></hbox>
+			<textbox flex="1" preference="pref-notice-soundfile" id="notice-soundfile"/>
+			<button label="参照..." oncommand="NLHPreference.refSoundFileToNotice();"/>
+		      </row>
+		    </rows>
+		  </grid>
+		</vbox>
+	      </groupbox>
+
+	      <separator/>
+	      <hbox align="center">
+		<label value="延長時メッセージ:"/>
+		<textbox flex="1" preference="pref-notice-extend"/>
+	      </hbox>
+	      <!--
+	      <separator/>
+	      <hbox align="center">
+		<label value="動画DBファイル:"/>
+		<textbox flex="1" preference="pref-video-db-path" id="select-video-db"/>
+		<button label="参照..." oncommand="NLHPreference.refDatabase();"/>
+		<button label="リセット" oncommand="NLHPreference.resetDatabasePath();"/>
+	      </hbox>
+	      <description style="color:#ff0000;">
+		※動画DBファイルを変更した場合は、Firefoxを再起動してください。
+	      </description>
+	      -->
+
+	    </vbox>
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- listener command -->
+	    <hbox>
+	      <checkbox preference="pref-enable-listenercommand" label="視聴者コマンドを有効にする"/>
+	    </hbox>
+	    <grid>
+	      <columns>
+		<column/>
+		<column flex="1"/>
+	      </columns>
+	      <rows>
+		<row>
+		  <label control="cmd-s" value="リクエストの確認(/s)"/><textbox id="cmd-s" preference="pref-cmd-s" emptytext="応答コメントを入力してください" flex="1"/>
+		</row>
+		<row>
+		  <label control="cmd-del" value="リクエストの削除(/del)"/><textbox id="cmd-del" preference="pref-cmd-del" emptytext="応答コメントを入力してください" flex="1"/>
+		</row>
+	      </rows>
+	    </grid>
+	    <!--
+		<label value="カスタムコマンド:"/>
+		<textbox disabled="true" multiline="true" emptytext="好きな視聴者コマンドを作成してください(未実装)" flex="1"/>
+	    -->
+	    <hbox>
+	    <button label="デフォルトに戻す" oncommand="NLHPreference.resetListenerCommand();"/>
+	    </hbox>
+	    
+	  </tabpanel>
+	 
+	  <tabpanel orient="vertical">
+	    <!-- movie classifier -->
+	    <hbox><checkbox label="動画を分類し、ラベルの貼り付けを行う" preference="pref-do-classify"/></hbox>
+	    <listbox id="list-class" flex="1" context="popup-classifier">
+	      <listcols>
+		<listcol flex="1" />
+		<listcol flex="1" />
+	      </listcols>
+	      <listhead>
+		<listheader label="分類名" />
+		<listheader label="ラベル" />
+	      </listhead>
+	    </listbox>
+
+	    <hbox align="center" flex="1">
+	      <label value="分類名" control="class-name"/>
+	      <textbox id="class-name" flex="1" size="10"/>
+	      <label value="ラベル" control="class-label"/>
+	      <textbox id="class-label" flex="1" size="10"/>
+	      <colorpicker id="class-color" type="button"/>
+	      <button label="登録" oncommand="NLHPreference.addClass();"/>
+	    </hbox>
+
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- custom script -->
+	    <hbox>
+	      <menulist id="id-custom-script-menu" oncommand="NLHPreference.changeScriptMenu(this);">
+		<menupopup>
+		  <menuitem label="リクエストチェック" tooltiptext="リクエスト受付のチェックを行うJavascriptコードを記述します。" value="RequestChecker"/>
+		  <menuitem label="コメントフィルタ" tooltiptext="コメントを処理するJavascriptコードを記述します。" value="CommentFilter"/>
+		</menupopup>
+	      </menulist>
+	      <checkbox label="スクリプトを実行する" preference="pref-do-custom-script" tooltiptext=""/>
+	    </hbox>
+	    <textbox id="custom-script"
+		     placeholder="任意のJavascriptステートメントを入力してください"
+		     multiline="true" flex="1" disabled="true"/>
+	    <hbox>
+	      <button label="保存"
+		      oncommand="NLHPreference.saveScript();"
+		      tooltiptext="入力した内容を保存します"/>
+	      <checkbox label="編集する" oncommand="document.getElementById('custom-script').disabled=!this.checked;"/>
+	    </hbox>
+	    <label value="※保存した後、NicoLive Helperを開き直してください"/>
+
+	  </tabpanel>
+
+	  <tabpanel orient="vertical">
+	    <!-- other -->
+	    <checkbox preference="pref-japanese-standard-time"
+		      label="動画の投稿時刻を日本標準時で表示・処理する"
+		      tooltiptext="日本標準時でない環境下で、動画投稿日時を日本標準時として表示・処理するようにします。"/>
+
+	    <groupbox>
+	      <caption>動画DBファイル</caption>
+	      <hbox>
+		<textbox flex="1" preference="pref-video-db-path" id="select-video-db"/>
+		<button label="参照..." oncommand="NLHPreference.refDatabase();"/>
+		<button label="リセット" oncommand="NLHPreference.resetDatabasePath();"/>
+	      </hbox>
+	      <description style="color:#ff0000;">
+		※動画DBファイルを変更した場合は、Firefoxを再起動してください。
+	      </description>
+	    </groupbox>
+
+	    <groupbox>
+	      <caption>データ保存パス</caption>
+	      <hbox>
+		<textbox flex="1" preference="pref-storage-path" id="select-storage-path"/>
+		<button label="参照..." oncommand="NLHPreference.refStoragePath();"/>
+		<button label="リセット" oncommand="NLHPreference.resetStoragePath();"/>
+	      </hbox>
+	      <description style="color:#ff0000;">
+		※データ保存パスを変更した場合は、NicoLive Helperを開き直してください。
+	      </description>
+	    </groupbox>
+
+	    <hbox align="center">
+	      <label control="comment-log-filename" value="ログファイル名:"/>
+	      <textbox preference="pref-logfile-name" id="comment-log-filename" flex="1"/>
+	      <label value=".txt"/>
+	    </hbox>
+
+	  </tabpanel>
+
+	</tabpanels>
+
+      </tabbox>
+    </vbox>
+  </prefpane>
+
+  <script type="application/x-javascript" src="chrome://mozapps/content/preferences/fontbuilder.js"/>
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/libs.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/preferences/preferences.js" />
+  <script type="application/javascript;version=1.7" src="chrome://nicolivehelperadvance/content/utils/prefutils.js" />
+
+</prefwindow>
