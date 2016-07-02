@@ -282,7 +282,7 @@ function CreateLabel(label){
 function CreateFolder(path){
     let file = OpenFile(path);
     if( !file.exists() || !file.isDirectory() ) {   // if it doesn't exist, create
-	file.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
+	file.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0o755);
 	return true;
     }
     return false;
@@ -386,7 +386,7 @@ function SaveObjectToFile(obj,caption)
 	let path = fp.file.path;
 	let os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
 	let flags = 0x02|0x08|0x20;// wronly|create|truncate
-	os.init(file,flags,0664,0);
+	os.init(file,flags,0o644,0);
 	let cos = GetUTF8ConverterOutputStream(os);
 	cos.writeString( JSON.stringify(obj) );
 	cos.close();
@@ -408,7 +408,7 @@ function LoadObjectFromFile(caption)
 	let file = fp.file;
 	let path = fp.file.path;
 	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
-	istream.init(file, 0x01, 0444, 0);
+	istream.init(file, 0x01, 0o444, 0);
 	istream.QueryInterface(Components.interfaces.nsILineInputStream);
 	let cis = GetUTF8ConverterInputStream(istream);
 	// 行を配列に読み込む
