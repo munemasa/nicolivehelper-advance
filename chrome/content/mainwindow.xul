@@ -274,6 +274,7 @@
 
   <!-- Current Play Status -->
   <hbox id="player-current-status">
+    <!-- メイン画面 -->
     <groupbox flex="1" style="padding: 2px;">
       <caption class="cp-target-label" id="cp-mainscreen-label" label="&general.main_screen;"/>
       <hbox>
@@ -287,6 +288,7 @@
     <hbox align="center">
       <toolbarbutton image="data/swap2.png" tooltiptext="/swap" oncommand="NicoLiveHelper.postCasterComment('/swap');"/>
     </hbox>
+    <!-- サブ画面 -->
     <groupbox flex="1" style="padding: 2px;">
       <caption class="cp-target-label" id="cp-subscreen-label" label="&general.sub_screen;"/>
       <hbox>
@@ -372,6 +374,7 @@
 	  <html:table id="request-table" class="requestview">
 	  </html:table>
 	</vbox>
+	<!-- リクエスト登録処理中プログレスバー -->
 	<stack id="request-progress" style="display:none;">
 	  <progressmeter mode="undetermined" value="0" flex="1"/>
 	  <label id="request-progress-label" value="sm1340413" crop="end" flex="1"/>
@@ -434,6 +437,7 @@
 	  <html:table id="stock-table" class="requestview">
 	  </html:table>
 	</vbox>
+	<!-- ストック追加中プログレスバー -->
 	<stack id="stock-progress" style="display:none;">
 	  <progressmeter mode="undetermined" value="0" flex="1"/>
 	  <label id="stock-progress-label" value="sm1340413" crop="end" flex="1"/>
