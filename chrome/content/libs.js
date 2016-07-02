@@ -176,19 +176,26 @@ function GetProfileDir(){
     return file;
 }
 
-
-let _addon;
-AddonManager.getAddonByID( _addon_id,
-    function( addon ){
-	_addon = addon;
-    } );
-
-function GetAddonVersion(){
+function GetAddonVersion()
+{
+    let version;
     try{
-	return _addon.version;
-    }catch(e){
-	return "[version undetermined]";
+	let em = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+	let addon = em.getItemForID("nicolivehelperadvance@miku39.jp");
+	version = addon.version;
+    } catch (x) {
+	// Fx4
+	AddonManager.getAddonByID("nicolivehelperadvance@miku39.jp",
+				  function(addon) {
+				      version = addon.version;
+				  });
+	// Piroさん(http://piro.sakura.ne.jp/)が値が設定されるまで待つことをやっていたので真似してしまう.
+	let thread = Components.classes['@mozilla.org/thread-manager;1'].getService().mainThread;
+	while (version === void(0)) {
+	    thread.processNextEvent(true);
+	}
     }
+    return version;
 }
 
 function GetXmlText(xml,path){
