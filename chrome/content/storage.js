@@ -24,7 +24,7 @@ var Storage = {
 
 	let os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
 	let flags = 0x02|0x08|0x20;// wronly|create|truncate
-	os.init(f,flags,0664,0);
+	os.init(f,flags,0o644,0);
 	let cos = GetUTF8ConverterOutputStream(os);
 	cos.writeString( stringify );
 	cos.close();
@@ -49,7 +49,7 @@ var Storage = {
 
 	try{
 	    let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
-	    istream.init(f, 0x01, 0444, 0);
+	    istream.init(f, 0x01, 0o444, 0);
 	    istream.QueryInterface(Components.interfaces.nsILineInputStream);
 	    let cis = GetUTF8ConverterInputStream(istream);
 	    // 行を配列に読み込む
