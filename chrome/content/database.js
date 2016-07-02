@@ -1024,7 +1024,7 @@ var Database = {
     readFileToDatabase: function( file ){
 	// file は nsIFile
 	let istream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance( Components.interfaces.nsIFileInputStream );
-	istream.init( file, 0x01, 0444, 0 );
+	istream.init( file, 0x01, 0o444, 0 );
 	istream.QueryInterface( Components.interfaces.nsILineInputStream );
 
 	// 行を配列に読み込む
