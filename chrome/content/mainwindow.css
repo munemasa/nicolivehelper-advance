@@ -42,6 +42,11 @@ table.requestview tr, table.historyview tr {
     border-bottom: 1px solid black;
 }
 
+/* リクエスト、ストックなどの縦アライン指定 */
+table.requestview td, table.historyview td {
+    vertical-align: top;
+}
+
 /* テキスト範囲選択できるクラス */
 .selection {
     cursor: text ! important;
