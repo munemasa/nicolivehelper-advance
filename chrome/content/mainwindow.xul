@@ -633,7 +633,7 @@
 	      <spacer flex="1"/>
 	      <label id="db-label"/>
 	    </hbox>
-	    <hbox style="display:inline-block;">
+	    <hbox>
 	      <button popup="search-condition-panel" label="検索条件"/>
 	      <menulist id="db-search-max" value="100" oncommand="Database.search();">
 		<menupopup>
