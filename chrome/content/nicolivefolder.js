@@ -25,6 +25,8 @@ const TYPE_VIDEO = 1;
 
 
 var NicoLiveFolderDB = {
+    _shownitems: [],
+
     searchtarget: ["title","length","view_counter","comment_num","mylist_counter","tags","first_retrieve","video_id","description"],
     searchcond: ["include","exclude","gte","equal","lte"],
 
@@ -397,8 +399,10 @@ var NicoLiveFolderDB = {
 
 	let folder_listbox = $('folder-item-listbox');
 	RemoveChildren(folder_listbox);
+	this._shownitems = new Array();
 	while(st.executeStep()){
 	    let listitem = this.createListItemElement(st.row);
+	    this._shownitems.push(st.row.video_id);
 	    folder_listbox.appendChild(listitem);
 	}
 	st.finalize();
@@ -762,6 +766,13 @@ var NicoLiveFolderDB = {
 	    break;
 	}
 	return true;
+    },
+
+    updateData: function(){
+	let video_ids = this._shownitems.join(' ');
+	Database.addVideos(video_ids, function(){
+	    console.log('done.');
+	});
     },
 
     // フォルダリストの表示.

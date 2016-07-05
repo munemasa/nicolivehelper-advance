@@ -15,7 +15,9 @@ const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 const HTML_NS= "http://www.w3.org/1999/xhtml";
 
 const MAIN = 0;
+const MAINSCREEN = 0;
 const SUB = 1;
+const SUBSCREEN = 1;
 
 const ARENA = 0;
 const STAND_A = 1;
