@@ -44,7 +44,7 @@ table.requestview tr, table.historyview tr {
 
 /* リクエスト、ストックなどの縦アライン指定 */
 table.requestview td, table.historyview td {
-    vertical-align: top;
+    /* vertical-align: top; */
 }
 
 /* テキスト範囲選択できるクラス */
