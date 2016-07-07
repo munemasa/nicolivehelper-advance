@@ -2689,15 +2689,11 @@ var NicoLiveHelper = {
 	    let title = RegExp.$3;
 	    let b = is_soundonly ? true:false;
 	    if( target=='sub' ){
-		let subtitle = $('sub-video-title');
 		sub.checked = b;
-		subtitle.value = title;
-		subtitle.setAttribute('tooltiptext',title);
+		this.setSubVideoTitle(title);
 	    }else{
-		let maintitle = $('main-video-title');
 		main.checked = b;
-		maintitle.value = title;
-		maintitle.setAttribute('tooltiptext',title);
+		this.setMainVideoTitle(title);
 	    }
 	    return;
 	}
@@ -2711,11 +2707,8 @@ var NicoLiveHelper = {
 	    let maintitle = $('main-video-title');
 	    let subtitle = $('sub-video-title');
 	    tmp = maintitle.value;
-	    maintitle.value = subtitle.value;
-	    subtitle.value = tmp;
-
-	    maintitle.setAttribute('tooltiptext', maintitle.value );
-	    subtitle.setAttribute('tooltiptext', subtitle.value );
+	    this.setMainVideoTitle(subtitle.value);
+	    this.setSubVideoTitle(tmp);
 
 	    tmp = this.play_status[ MAIN ];
 	    this.play_status[ MAIN ] = this.play_status[ SUB ];
@@ -2726,17 +2719,13 @@ var NicoLiveHelper = {
 	    let target = RegExp.$1;
 	    clearInterval(this._revertcommenttimer);
 	    if( target=='sub' ){
-		let subtitle = $('sub-video-title');
-		subtitle.value = "";
-		subtitle.setAttribute('tooltiptext',"");
+		this.setSubVideoTitle("");
 		this.play_status[ SUB ].videoinfo = null;
 		clearTimeout( this.play_status[SUB]._playend );
 		clearTimeout( this.play_status[SUB]._playnext );
 		clearTimeout( this.play_status[SUB]._prepare );
 	    }else{
-		let maintitle = $('main-video-title');
-		maintitle.value = "";
-		maintitle.setAttribute('tooltiptext',"");
+		this.setMainVideoTitle("");
 		this.play_status[ MAIN ].videoinfo = null;
 		clearTimeout( this.play_status[MAIN]._playend );
 		clearTimeout( this.play_status[MAIN]._playnext );
@@ -2748,7 +2737,7 @@ var NicoLiveHelper = {
 	if( text.match(/^\/play rtmp/) ){
 	    // カメラ映像
 	    main.checked = false;
-	    $('main-video-title').value = "";
+	    this.setMainVideoTitle("");
 
 	    // カメラのときは動画情報は何もなしで
 	    this.play_status[MAIN] = new Object();
@@ -3637,6 +3626,18 @@ var NicoLiveHelper = {
 	req.send("");
     },
 
+    setMainVideoTitle: function( title ){
+	let main = $( 'main-video-title' );
+	main.value = title;
+	main.setAttribute( 'tooltiptext', title );
+    },
+
+    setSubVideoTitle: function( title ){
+	let sub = $( 'sub-video-title' );
+	sub.value = title;
+	sub.setAttribute( 'tooltiptext', title );
+    },
+
     /**
      * 生放送に接続する.
      * @param request_id 放送ID
@@ -3678,13 +3679,11 @@ var NicoLiveHelper = {
 		let b = currentplay.getAttribute('disableVideo')=='1'?true:false;
 		if( id=="main" ){
 		    $('main-state-soundonly').checked = b;
-		    $('main-video-title').value = title;
-		    $('main-video-title').setAttribute('tooltiptext', title);
+		    NicoLiveHelper.setMainVideoTitle( title );
 		}
 		if( id=="sub" ){
 		    $('sub-state-soundonly').checked = b;
-		    $('sub-video-title').value = title;
-		    $('sub-video-title').setAttribute('tooltiptext', title);
+		    NicoLiveHelper.setSubVideoTitle( title );
 		}
 		let target = id=="main"?MAIN:SUB;
 
