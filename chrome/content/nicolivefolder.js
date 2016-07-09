@@ -352,9 +352,11 @@ var NicoLiveFolderDB = {
 
 	let folder_listbox = $('folder-item-listbox');
 	RemoveChildren(folder_listbox);
+	this._shownitems = new Array();
 	while(st.executeStep()){
 	    let listitem = this.createListItemElement(st.row);
 	    folder_listbox.appendChild(listitem);
+	    this._shownitems.push(st.row.video_id);
 	}
 	st.finalize();
 
