@@ -40,12 +40,12 @@ var NicoLiveRequest = {
 	a.appendChild(img);
 
 	let bitrate = CreateHTMLElement( 'span' );
-	bitrate.setAttribute( 'style', 'padding-left:2px; padding-right:2px; display:block; position:absolute; bottom:0; right:0; background-color:#000; color:#fff; opacity:0.8;' );
-	let bitratestr = item.movie_type + '/' + item.highbitrate.substring( 0, item.highbitrate.length - 3 ) + 'k';
+	bitrate.setAttribute( 'style', 'font-size:9pt; padding-left:2px; padding-right:2px; display:block; position:absolute; bottom:0; right:0; background-color:#000; color:#fff; opacity:0.7;' );
+	let bitratestr = item.highbitrate.substring( 0, item.highbitrate.length - 3 ) + 'k/' + item.movie_type;
 	bitrate.appendChild( document.createTextNode( bitratestr ) );
 	a.appendChild( bitrate );
 
-	thumbnailContainer.appendChild(a);
+	thumbnailContainer.appendChild( a );
 
 	div.appendChild(thumbnailContainer); // thumbnail
 
