@@ -18,10 +18,14 @@ var NicoLiveRequest = {
 	let div = CreateHTMLElement('div');
 	// 横幅指定がないと表示文字数が少ない行がウィンドウ一杯に使わないことがあるので対策として指定
 	div.setAttribute('style','width:1920px;');
-
 	div.className ="selection";
+
+	let thumbnailContainer = CreateHTMLElement( 'div' );
+	thumbnailContainer.setAttribute( 'style', 'float:left; position:relative;' );
+
 	let a = CreateHTMLElement('a');
 	a.className = "";
+	a.setAttribute( 'style', 'display:block; position:relative; width: 65px; height: 50px;' );
 	a.setAttribute("onclick","NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/"+item.video_id+"');");
 
 	let img = CreateHTMLElement('img');
@@ -35,10 +39,18 @@ var NicoLiveRequest = {
 	a.setAttribute("onmouseout","NicoLiveWindow.hideThumbnail();");
 	a.appendChild(img);
 
+	let bitrate = CreateHTMLElement( 'span' );
+	bitrate.setAttribute( 'style', 'padding-left:2px; padding-right:2px; display:block; position:absolute; bottom:0; right:0; background-color:#000; color:#fff; opacity:0.8;' );
+	let bitratestr = item.movie_type + '/' + item.highbitrate.substring( 0, item.highbitrate.length - 3 ) + 'k';
+	bitrate.appendChild( document.createTextNode( bitratestr ) );
+	a.appendChild( bitrate );
+
+	thumbnailContainer.appendChild(a);
+
+	div.appendChild(thumbnailContainer); // thumbnail
+
 	let label;
 	// 動画ID+タイトル.
-	div.appendChild(a); // thumbnail
-
 	let text = document.createTextNode(item.video_id+' '+item.title);
 	div.appendChild(text);
 
@@ -69,7 +81,7 @@ var NicoLiveRequest = {
 		+ " マ:"+FormatCommas(item.mylist_counter)+" 時間:"+item.length
 		//+ (NicoLiveHelper.userdefinedvalue[item.video_id]?" 彡:"+NicoLiveHelper.userdefinedvalue[item.video_id]:'')
 		));
-	
+
 	let hr = CreateHTMLElement('hr');
 	hr.className = 'detail';
 	div.appendChild(hr);
@@ -400,7 +412,7 @@ var NicoLiveRequest = {
 
     swapRequest: function( n1, n2 ){
 	let rows = evaluateXPath( document, "//html:table[@id='request-table']//html:tr//*[@class='vinfo']");
-	
+
 	let parent1, parent2;
 	parent1 = rows[n1].parentNode;
 	parent2 = rows[n2].parentNode;
@@ -463,7 +475,7 @@ var NicoLiveRequest = {
      * リクエストの番号表記と背景色を1から付け直す。
      */
     resetRequestIndex:function(){
-	let tr = $('request-table').getElementsByTagName('html:tr');	
+	let tr = $('request-table').getElementsByTagName('html:tr');
 	let t = 0;
 	for(let i=0,row;row=tr[i];i++){
 	    let td = row.firstChild;
