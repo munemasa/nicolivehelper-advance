@@ -19,7 +19,9 @@ var NicoLiveRequest = {
 	// 横幅指定がないと表示文字数が少ない行がウィンドウ一杯に使わないことがあるので対策として指定
 	div.setAttribute('style','width:1920px;');
 	div.className ="selection";
-
+	if( item.errno == REASON_NO_LIVE_PLAY ){
+	    div.className = 'selection no_live_play';
+	}
 	let thumbnailContainer = CreateHTMLElement( 'div' );
 	thumbnailContainer.setAttribute( 'style', 'float:left; position:relative; margin-right:0.5em;' );
 
