@@ -21,7 +21,7 @@ var NicoLiveRequest = {
 	div.className ="selection";
 
 	let thumbnailContainer = CreateHTMLElement( 'div' );
-	thumbnailContainer.setAttribute( 'style', 'float:left; position:relative;' );
+	thumbnailContainer.setAttribute( 'style', 'float:left; position:relative; margin-right:0.5em;' );
 
 	let a = CreateHTMLElement('a');
 	a.className = "";
@@ -30,8 +30,6 @@ var NicoLiveRequest = {
 
 	let img = CreateHTMLElement('img');
 	img.src = item.thumbnail_url;
-	img.style.cssFloat = 'left';
-	img.style.marginRight = '0.5em';
 	img.className = "video-thumbnail";
 
 	// マウスオーバーのサムネ表示
