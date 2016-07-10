@@ -29,17 +29,24 @@ var NicoLiveTalker = {
      * @param text 読み上げるテキスト
      * @param type 読み上げ方法(指定無効)
      */
-    runProcess:function(exe, text, type){
-	type = $('nlhaddon-use-external').checked ? 1 : 0;
-	switch(type){
-	case 0:
-	    this.callBouyomichan( text );
-	    break;
-	case 1:
-	    this.runExternalProcess(exe,text,type);
-	    break;
+    runProcess: function( exe, text, type ){
+	if( $( 'use-webspeech-api' ).checked ){
+	    this.webspeech( text );
+	    return;
 	}
-	return;
+	if( $( 'nlhaddon-use-external' ).checked ){
+	    this.runExternalProcess( exe, text, type );
+	    return;
+	}
+	this.callBouyomichan( text );
+    },
+
+    webspeech: function( text ){
+	let n = $( 'webspeech-select-voice' ).value;
+
+	var synthes = new SpeechSynthesisUtterance( text );
+	synthes.voice = this._webvoices[n];
+	speechSynthesis.speak( synthes );
     },
 
     /**
@@ -194,8 +201,24 @@ var NicoLiveTalker = {
 	this.runProcess('',str);
     },
 
+    initWebSpeech: function(){
+	let n = $( 'webspeech-select-voice' ).value;
+	try{
+	    let menu = $('webspeech-select-menupopup');
+	    this._webvoices = speechSynthesis.getVoices();
+	    for( let i = 0; i < this._webvoices.length; i++ ){
+		let item = CreateMenuItem( this._webvoices[i].name, i );
+		menu.appendChild(item);
+	    }
+	    $( 'webspeech-select-voice' ).value = n;
+	}catch(e){
+	}
+    },
+
     init:function(){
 	debugprint('CommentTalker init.');
+	this.initWebSpeech();
+
 	let prefs = Config.getBranch();
 	try{ $('enable-comment-talker').checked = prefs.getBoolPref("ext.comment-talker.enable"); }catch(x){}
 	try{ $('nlhaddon-restrictlength').value = prefs.getIntPref("ext.comment-talker.length"); }catch (x){}
