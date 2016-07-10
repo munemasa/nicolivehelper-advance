@@ -46,6 +46,8 @@ var NicoLiveTalker = {
 
 	var synthes = new SpeechSynthesisUtterance( text );
 	synthes.voice = this._webvoices[n];
+	//synthes.rate = 1.0;	// 0.1-10
+	//synthes.volume = 1.0;	// 0-1
 	speechSynthesis.speak( synthes );
     },
 
