@@ -46,8 +46,8 @@ var NicoLiveTalker = {
 
 	var synthes = new SpeechSynthesisUtterance( text );
 	synthes.voice = this._webvoices[n];
-	//synthes.rate = 1.0;	// 0.1-10
-	//synthes.volume = 1.0;	// 0-1
+	synthes.rate = this._speed;
+	synthes.volume = this._volume;
 	speechSynthesis.speak( synthes );
     },
 
@@ -201,6 +201,23 @@ var NicoLiveTalker = {
 	str = $('nlhaddon-format').value.replace(/{(.*?)}/g,replacefunc);
 	//this.runProcess('',chat.text);
 	this.runProcess('',str);
+    },
+
+    changeVolume: function( v ){
+	this._volume = v;
+	console.log( 'volume:' + v );
+	$('webspeech-volume-text' ).value = v;
+    },
+
+    changeSpeed: function( v ){
+	this._speed = v;
+	console.log( 'speed:', +v );
+	$('webspeech-speed-text' ).value = v;
+    },
+
+    resetWebSpeechParameters: function(){
+	$('webspeech-volume' ).value = 1.0;
+	$('webspeech-speed' ).value = 1.0;
     },
 
     initWebSpeech: function(){
