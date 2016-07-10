@@ -724,7 +724,7 @@
       </vbox>
 
       <!-- コントロールパネル -->
-      <vbox id="tab-controlpanel">
+      <vbox id="tab-controlpanel" style="overflow:auto;">
 	<hbox style="display:inline-block; margin-top: 0.5em;">
 	  <button id="btn-connect-to-current-broadcast" label="放送中の番組に接続"
 		  tooltiptext="現在あなたが放送中の番組に接続します。"
