@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://nicolivehelperadvance/content/xbl/scale2-binding.css" type="text/css"?>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	 xmlns:html="http://www.w3.org/1999/xhtml">
@@ -42,11 +43,14 @@
 	    </menulist>
 	  </hbox>
 	</caption>
-	<hbox>
+	<hbox align="center">
 	  <label value="ボリューム"/>
-	  <scale id="webspeech-volume" value="1.0" min="0.0" max="1.0" onchange="hoge(this.value);"/>
+	  <scale2 id="webspeech-volume" persist="value" value="1.0" min="0.0" max="1.0" onchange="NicoLiveTalker.changeVolume(this.value);"/>
+	  <label id="webspeech-volume-text"/>
 	  <label value="速度"/>
-	  <scale id="webspeech-speed" value="1" min="0.1" max="10" onchange="hoge(this.value);"/>
+	  <scale2 id="webspeech-speed" persist="value" value="1" min="0.1" max="10" onchange="NicoLiveTalker.changeSpeed(this.value);"/>
+	  <label id="webspeech-speed-text"/>
+	  <button label="リセット" oncommand="NicoLiveTalker.resetWebSpeechParameters();"/>
 	</hbox>
       </groupbox>
       <groupbox>
