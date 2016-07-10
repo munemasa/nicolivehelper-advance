@@ -11,7 +11,7 @@ var NicoLiveRequest = {
 	let tooltip="";
 	let i;
 	tooltip = "レート:"+GetFavRateString(Database.getFavorite(item.video_id)) + "\n";
-	tooltip += item.movie_type+" "+item.highbitrate+"kbps/"+item.lowbitrate+"kbps";
+	//tooltip += item.movie_type+" "+item.highbitrate+"kbps/"+item.lowbitrate+"kbps";
 	vbox.setAttribute('tooltiptext',tooltip);
 	vbox.setAttribute('nicovideo_id',item.video_id);
 
