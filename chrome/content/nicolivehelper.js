@@ -1544,6 +1544,12 @@ var NicoLiveHelper = {
 	    info.pname = "";
 	}
 
+	try{
+	    info.mylistcomment = NicoLiveMylist.mylist_itemdata["_"+info.video_id].description;
+	}catch(x){
+	    info.mylistcomment = "";
+	}
+
 	if( Config.do_classify /* || NicoLivePreference.isMikuOnly() */ ){
 	    let str = new Array();
 	    // 半角小文字で正規化してトレーニングをしているので、分類するときもそのように.
