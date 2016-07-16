@@ -137,6 +137,8 @@ var NicoLiveStock = {
 	button.setAttribute('label','削除');
 	button.setAttribute('class','command-button');
 	button.setAttribute("oncommand","NicoLiveStock.removeStock(event);");
+	button.setAttribute( 'video_id', item.video_id );
+	button.setAttribute( 'context', 'popup-db-delete' );
 	hbox.appendChild(button);
 
 	vbox.appendChild(hbox);

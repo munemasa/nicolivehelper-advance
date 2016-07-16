@@ -325,6 +325,8 @@ var NicoLiveRequest = {
 	button.setAttribute('tooltiptext','一覧から削除します');
 	button.setAttribute("oncommand","NicoLiveRequest.removeRequest(event);");
 	button.setAttribute('class','command-button');
+	button.setAttribute( 'video_id', item.video_id );
+	button.setAttribute( 'context', 'popup-db-delete' );
 	hbox.appendChild(button);
 
 	vbox.appendChild(hbox);
