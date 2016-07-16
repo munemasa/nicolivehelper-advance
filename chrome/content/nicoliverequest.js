@@ -22,6 +22,9 @@ var NicoLiveRequest = {
 	if( item.errno == REASON_NO_LIVE_PLAY ){
 	    div.className = 'selection no_live_play';
 	}
+	if( item.is_self_request ){
+	    div.className = 'selection selfreq';
+	}
 	let thumbnailContainer = CreateHTMLElement( 'div' );
 	thumbnailContainer.setAttribute( 'style', 'float:left; position:relative; margin-right:0.5em;' );
 

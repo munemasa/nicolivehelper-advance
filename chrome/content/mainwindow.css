@@ -154,7 +154,7 @@ tr.table_selfreq {
     border-left: 10px solid rgb(0,200,0);
 }
 
-tr.table_selfreq div:first-child:before{
+tr.table_selfreq div.selfreq:first-child:before{
     content: "[自貼り]";
     color: red;
     font-weight: bold;
