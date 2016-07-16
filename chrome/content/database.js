@@ -1182,6 +1182,18 @@ var Database = {
     },
 
     /**
+     * リクエスト、ストックのポップアップメニューから削除
+     */
+    deleteByPopup: function( e ){
+	let video_id = $( 'popup-db-delete' ).triggerNode.getAttribute( 'video_id' );
+	if( video_id ){
+	    console.log( video_id );
+	    this.deleteMovieByVideoId( video_id );
+	    ShowNotice( video_id + 'を動画DBから削除しました' );
+	}
+    },
+
+    /**
      * フォルダ名リストを返す.
      */
     getFolderNames: function(){

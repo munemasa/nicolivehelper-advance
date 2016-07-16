@@ -1185,6 +1185,11 @@
 		oncommand="$('use-presscomment').setAttribute('bsp_color', this.value);"/>
     </menupopup>
 
+    <!-- リクエスト、ストックの削除ボタンのポップアップメニュー -->
+    <menupopup id="popup-db-delete">
+      <menuitem label="動画DBから削除" oncommand="Database.deleteByPopup(event);"/>
+    </menupopup>
+
     <!-- DB検索結果リスト用メニュー for database -->
     <menupopup id="popup-db-result">
       <menuitem label="ページを開く" oncommand="Database.openPage();"/>
