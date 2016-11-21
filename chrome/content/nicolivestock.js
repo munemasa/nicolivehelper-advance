@@ -438,76 +438,114 @@ var NicoLiveStock = {
      * ニコニコ動画で再生する.
      * @param n 0,1,2,...
      */
-    offlinePlay:function(n){
-	let nextmusic = NicoLiveHelper.stock_list[ n ];
-	this.opentab = this.newTabForOfflinePlay(nextmusic.video_id);
+    offlinePlay: function( n ){
+	this._playflg = false;
+
+	let nextmusic = NicoLiveHelper.stock_list[n];
+	this.opentab = this.newTabForOfflinePlay( nextmusic.video_id );
 
 	this.playlist_start = n; // ストック再生の開始位置
-	clearInterval(this._playlist_timer);
+	clearInterval( this._playlist_timer );
 	this.playlist_first = 1;
 
-	this._playlist_timer = setInterval("NicoLiveStock.playByNicovideo();",3000);
+	this._playlist_timer = setInterval( function(){
+	    NicoLiveStock.playByNicovideo();
+	}, 3000 );
+    },
+
+    /**
+     * ニコニコ動画（Flash）ページで動画を再生する
+     */
+    playByNicovideoFlash: function(){
+	try{
+	    let status, loadratio;
+	    let flv;
+	    try{
+		flv = this.opentab.contentDocument.getElementById( 'external_nicoplayer' ).wrappedJSObject.__proto__;
+	    }catch( x ){
+		flv = this.opentab.contentDocument.getElementById( 'flvplayer' ).wrappedJSObject.__proto__;
+	    }
+	    status = flv.ext_getStatus();
+	    loadratio = flv.ext_getLoadedRatio();
+
+	    if( (status == "stopped" || status == "paused") && loadratio > 0.2 &&
+		this.playlist_first && flv.ext_getPlayheadTime() == 0 ){
+		flv.ext_play( true );
+		if( this._screensize ){
+		    flv.ext_setVideoSize( NicoLiveRequest._screensize );
+		}
+		//flv.ext_setVideoSize("full");
+		this.playlist_first--;
+		let flvcontainer = this.opentab.contentDocument.getElementById( 'playerContainerWrapper' ).wrappedJSObject.__proto__;
+		this.opentab.contentWindow.scroll( 0, flvcontainer.offsetTop - 32 );
+
+		let vid = NicoLiveHelper.stock_list[this.playlist_start].video_id;
+		let t = NicoLiveHelper.stock_list[this.playlist_start].length;
+		debugprint( vid + "," + GetTimeString( flv.ext_getTotalTime() ) );
+	    }
+	    //debugprint(status);
+	    switch( status ){
+	    case "playing":
+		let playprogress = $( 'statusbar-music-progressmeter' );
+		let progress = parseInt( flv.ext_getPlayheadTime() / flv.ext_getTotalTime() * 100, 10 );
+		playprogress.value = progress;
+		$( 'statusbar-music-name' ).label = NicoLiveHelper.stock_list[this.playlist_start].title;
+		//debugprint(flv.ext_getVideoSize());
+		this._screensize = flv.ext_getVideoSize();
+		break;
+
+	    case "end":
+		this.playlist_start++;
+		if( this.playlist_start > NicoLiveHelper.stock_list.length ){
+		    // 最初に戻る.
+		    this.playlist_start = 0;
+		}
+
+		this.offlinePlay( this.playlist_start );
+		break;
+	    }
+	}catch( x ){
+//		debugprint(GetCurrentTime()+"/"+x);
+	}
+    },
+
+    playByNicovideoHTML5: function(){
+	let player = this.opentab.contentDocument.getElementById( 'MainVideoPlayer' );
+	let video = player.getElementsByTagName( 'video' )[0];
+	if( video.ended ){
+	    this.playlist_start++;
+	    if( this.playlist_start > NicoLiveHelper.stock_list.length ){
+		// 最初に戻る.
+		this.playlist_start = 0;
+	    }
+	    this.offlinePlay( this.playlist_start );
+	}else{
+	    if( !this._playflg ){
+		video.play();
+		this._playflg = true;
+		//this.opentab.contentWindow.scroll( 0, video.offsetTop - 32 );
+	    }
+	    //if( video.readyState==4 /*HAVE_ENOUGH_DATA*/ ){
+		//video.play();
+	    //}
+	}
     },
 
     /**
      * ニコニコ動画で再生する.
      * オフライン時専用
      */
-    playByNicovideo:function(){
+    playByNicovideo: function(){
 	// playing, paused, end
-	if(this.opentab.contentDocument){
-	    try{
-		let status,loadratio;
-		let flv;
-		try{
-		    flv = this.opentab.contentDocument.getElementById('external_nicoplayer').wrappedJSObject.__proto__;
-		} catch (x) {
-		    flv = this.opentab.contentDocument.getElementById('flvplayer').wrappedJSObject.__proto__;
-		}
-		status = flv.ext_getStatus();
-		loadratio = flv.ext_getLoadedRatio();
-
-		if((status=="stopped"||status=="paused") && loadratio>0.2 &&
-		   this.playlist_first && flv.ext_getPlayheadTime()==0){
-		    flv.ext_play(true);
-		    if( this._screensize ){
-			flv.ext_setVideoSize( NicoLiveRequest._screensize );
-		    }
-		    //flv.ext_setVideoSize("full");
-		    this.playlist_first--;
-		    let flvcontainer = this.opentab.contentDocument.getElementById('playerContainerWrapper').wrappedJSObject.__proto__;
-		    this.opentab.contentWindow.scroll(0,flvcontainer.offsetTop-32);
-
-		    let vid = NicoLiveHelper.stock_list[this.playlist_start].video_id;
-		    let t = NicoLiveHelper.stock_list[this.playlist_start].length;
-		    debugprint(vid+","+GetTimeString(flv.ext_getTotalTime()));
-		}
-		//debugprint(status);
-		switch(status){
-		case "playing":
-		    let playprogress = $('statusbar-music-progressmeter');
-		    let progress = parseInt(flv.ext_getPlayheadTime()/flv.ext_getTotalTime()*100,10);
-		    playprogress.value = progress;
-		    $('statusbar-music-name').label = NicoLiveHelper.stock_list[this.playlist_start].title;
-		    //debugprint(flv.ext_getVideoSize());
-		    this._screensize = flv.ext_getVideoSize();
-		    break;
-
-		case "end":
-		    this.playlist_start++;
-		    if(this.playlist_start>NicoLiveHelper.stock_list.length){
-			// 最初に戻る.
-			this.playlist_start = 0;
-		    }
-
-		    this.offlinePlay(this.playlist_start);
-		    break;
-		}
-	    } catch (x) {
-//		debugprint(GetCurrentTime()+"/"+x);
+	if( this.opentab.contentDocument ){
+	    let player = this.opentab.contentDocument.getElementById( 'MainVideoPlayer' );
+	    if( player ){
+		this.playByNicovideoHTML5();
+	    }else{
+		this.playByNicovideoFlash();
 	    }
 	}else{
-	    clearInterval(this._playlist_timer);
+	    clearInterval( this._playlist_timer );
 	}
     },
 
