@@ -33,7 +33,7 @@
   <browser id="page"
 	   flex="1"
 	   src="about:blank"
-	   type="content"
+	   type="content-primary"
 	   style="overflow:auto;"
 	   homepage="http://live.nicovideo.jp/my"/>
 
