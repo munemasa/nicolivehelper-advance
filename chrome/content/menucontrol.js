@@ -42,7 +42,7 @@ var MenuControl = {
      * リクエスト、ストック、再生履歴のメニューに動画IDをセットする
      */
     setVideoIdToMenu: function(elem, type){
-	let tr = FindParentElement(elem,'html:tr');
+	let tr = FindParentElement(elem,'tr');
 	let n = tr.sectionRowIndex;
 	switch( type ){
 	case 0:

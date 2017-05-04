@@ -230,13 +230,13 @@ var NicoLiveWindow = {
 
 	switch( tabindex ){
 	case 0:
-	    tr = $('request-table').getElementsByTagName('html:tr');
+	    tr = $('request-table').getElementsByTagName('tr');
 	    break;
 	case 1:
-	    tr = $('stock-table').getElementsByTagName('html:tr');
+	    tr = $('stock-table').getElementsByTagName('tr');
 	    break;
 	case 3:
-	    tr = $('playlist-table').getElementsByTagName('html:tr');
+	    tr = $('playlist-table').getElementsByTagName('tr');
 	    break;
 	default:
 	    return;
@@ -266,13 +266,13 @@ var NicoLiveWindow = {
 
 	switch( tabindex ){
 	case 0:
-	    tr = $('request-table').getElementsByTagName('html:tr');
+	    tr = $('request-table').getElementsByTagName('tr');
 	    break;
 	case 1:
-	    tr = $('stock-table').getElementsByTagName('html:tr');
+	    tr = $('stock-table').getElementsByTagName('tr');
 	    break;
 	case 3:
-	    tr = $('playlist-table').getElementsByTagName('html:tr');
+	    tr = $('playlist-table').getElementsByTagName('tr');
 	    break;
 	default:
 	    return;
@@ -303,7 +303,7 @@ var NicoLiveWindow = {
 	    return;
 
 	case 4:// comment
-	    tr = $('comment-table').getElementsByTagName('html:tr');
+	    tr = $('comment-table').getElementsByTagName('tr');
 	    break;
 	default:
 	    return;
@@ -336,7 +336,7 @@ var NicoLiveWindow = {
 	    return;
 
 	case 4:// comment
-	    tr = $('comment-table').getElementsByTagName('html:tr');
+	    tr = $('comment-table').getElementsByTagName('tr');
 	    break;
 	default:
 	    return;

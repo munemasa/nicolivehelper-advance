@@ -95,7 +95,7 @@ var NicoLiveRejectRequest = {
     },
 
     getIndex: function(event){
-	let tr = FindParentElement(event.target,'html:tr');
+	let tr = FindParentElement(event.target,'tr');
 	let n = tr.sectionRowIndex;
 	return n;
     },

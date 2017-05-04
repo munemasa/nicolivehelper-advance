@@ -18,7 +18,7 @@ var NicoLiveStock = {
      * @param q ストック
      */
     updatePlayedStatus: function( q ){
-	let rows = $('stock-table').getElementsByTagName('html:tr');
+	let rows = $('stock-table').getElementsByTagName('tr');
 	for(let i=0,item; item=q[i]; i++){
 	    let tr = rows[i];
 	    switch( item.errno ){
