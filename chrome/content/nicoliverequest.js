@@ -358,12 +358,12 @@ var NicoLiveRequest = {
     },
 
     getIndex: function(event){
-	let tr = FindParentElement(event.target,'html:tr');
+	let tr = FindParentElement(event.target,'tr');
 	let n = tr.sectionRowIndex;
 	return n;
     },
     getIndexFromNode: function(node){
-	let tr = FindParentElement(node,'html:tr');
+	let tr = FindParentElement(node,'tr');
 	let n = tr.sectionRowIndex;
 	return n;
     },
@@ -407,7 +407,7 @@ var NicoLiveRequest = {
 	debugprint("Remove Request: #"+n);
 	NicoLiveHelper.removeRequest(n);
 
-	let tr = FindParentElement(event.target,'html:tr');
+	let tr = FindParentElement(event.target,'tr');
 	RemoveElement( tr );
 	this.resetRequestIndex();
 
@@ -480,7 +480,7 @@ var NicoLiveRequest = {
      * リクエストの番号表記と背景色を1から付け直す。
      */
     resetRequestIndex:function(){
-	let tr = $('request-table').getElementsByTagName('html:tr');
+	let tr = $('request-table').getElementsByTagName('tr');
 	let t = 0;
 	for(let i=0,row;row=tr[i];i++){
 	    let td = row.firstChild;
@@ -519,7 +519,7 @@ var NicoLiveRequest = {
      */
     changeSelfRequestFlag: function(node){
 	let n = this.getIndexFromNode(node);
-	let tr = FindParentElement(node,'html:tr');
+	let tr = FindParentElement(node,'tr');
 	let item = NicoLiveHelper.request_list[n];
 	if( tr.className=="table_selfreq"){
 	    tr.className = n%2?"table_evenrow":"table_oddrow";

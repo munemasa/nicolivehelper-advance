@@ -180,7 +180,7 @@ var NicoLiveStock = {
     },
 
     getIndex: function(event){
-	let tr = FindParentElement(event.target,'html:tr');
+	let tr = FindParentElement(event.target,'tr');
 	let n = tr.sectionRowIndex;
 	return n;
     },
@@ -228,7 +228,7 @@ var NicoLiveStock = {
 	debugprint("Remove Stock: #"+n);
 	NicoLiveHelper.removeStock(n);
 
-	let tr = FindParentElement(event.target,'html:tr');
+	let tr = FindParentElement(event.target, 'tr');
 	RemoveElement( tr );
 	this.resetStockIndex();
 
@@ -323,7 +323,7 @@ var NicoLiveStock = {
      * リクエストの番号表記と背景色を1から付け直す。
      */
     resetStockIndex: function(){
-	let tr = $('stock-table').getElementsByTagName('html:tr');	
+	let tr = $('stock-table').getElementsByTagName('tr');
 	for(let i=0,row;row=tr[i];i++){
 	    let td = row.firstChild;
 	    let item = NicoLiveHelper.stock_list[i];
