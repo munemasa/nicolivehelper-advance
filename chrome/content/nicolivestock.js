@@ -633,8 +633,17 @@ var NicoLiveStock = {
 	    this.addStock(uri);
 	    return;
 	}
+
 	// ブラウザのタブをドロップしたとき.
-	if( event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
+        // typesにx-moz-tabbrowser-tabが含まれず items には含まれているので
+        // 検査にitemsの方を使う
+        let b = false;
+        for ( let i=0; i<event.dataTransfer.items.length; i++){
+            if( event.dataTransfer.items[i].type.indexOf("application/x-moz-tabbrowser-tab")>=0){
+                b = true;
+            }
+        }
+	if( b || event.dataTransfer.types.contains("application/x-moz-tabbrowser-tab") ){
 	    //this._debug = event;
 	    debugprint("tab dropped");
 	    let str = "";
