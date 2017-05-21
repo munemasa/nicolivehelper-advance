@@ -394,7 +394,7 @@ var NicoLiveStock = {
     saveStockToFile:function(){
 	let ids = new Array();
 	for(let i=0,item;item=NicoLiveHelper.stock_list[i];i++){
-	    ids.push(item.video_id + " " + item.title);
+	    ids.push(item.video_id + "\t" + item.title);
 	}
 	if(ids.length<=0) return;
 
