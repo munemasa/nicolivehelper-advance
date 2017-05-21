@@ -1960,7 +1960,7 @@ var NicoLiveHelper = {
 		    }
                 }
 	    } catch (x) {
-		debugprint( x.fileName+":"+x.lineNumber+" "+x );
+		console.log( x );
 		if( videoinfo ){
 		    debugprint("error code:"+x.errno);
 		    if( isstock ){
