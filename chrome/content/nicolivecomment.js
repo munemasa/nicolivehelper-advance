@@ -116,7 +116,17 @@ var NicoLiveComment = {
 	// コメントにname属性があればその名前を使用する.
 	str = comment.name || this.namemap[comment.user_id] && this.namemap[comment.user_id].name || comment.user_id;
 	str = htmlspecialchars(str);
-	td.innerHTML = "<hbox style=\"width:10em; overflow:hidden; margin-right:4px;\" comment_by=\""+comment.user_id+"\" class=\"selection\" tooltiptext=\""+(comment.user_id)+"\" context=\"popup-comment-user\" user_id=\""+comment.user_id+"\" comment_no=\""+comment.no+"\">"+str+"</hbox>";
+
+        let hboxtmp = CreateElement( 'hbox' );
+        hboxtmp.setAttribute( 'style', 'width:10em; overflow:hidden; margin-right:4px;' );
+        hboxtmp.setAttribute( 'comment_by', comment.user_id );
+        hboxtmp.setAttribute( 'class', 'selection' );
+        hboxtmp.setAttribute( 'tooltiptext', comment.user_id );
+        hboxtmp.setAttribute( 'context', 'popup-comment-user' );
+        hboxtmp.setAttribute( 'user_id', comment.user_id );
+        hboxtmp.setAttribute( 'comment_no', comment.no );
+        hboxtmp.appendChild( document.createTextNode( str ) );
+        td.appendChild( hboxtmp );
 
 	// コメントボディのセル
 	td = tr.insertCell(tr.cells.length);
@@ -135,7 +145,7 @@ var NicoLiveComment = {
 	str = str.replace(/(\r\n|\r|\n)/gm,"<html:br/>");
 
 	// sm,nmにリンクを貼り付け.
-	str = str.replace(/((sm|nm)\d+)/g,"<hbox class=\"selection\" todo_context=\"popup-comment-anchor\"><html:a onmouseover=\"NicoLiveWindow.showThumbnail(event,'$1');\" onmouseout=\"NicoLiveWindow.hideThumbnail();\" onclick=\"NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/$1');\">$1</html:a></hbox>");
+	str = str.replace(/((sm|nm)\d+)/g,"<html:a onmouseover=\"NicoLiveWindow.showThumbnail(event,'$1');\" onmouseout=\"NicoLiveWindow.hideThumbnail();\" onclick=\"NicoLiveWindow.openDefaultBrowser('http://www.nicovideo.jp/watch/$1');\">$1</html:a>");
 	if( comment.premium!=3 ){
 	    // 数字10桁にもリンク.
 	    if( !str.match(/(sm|nm)\d+/) ){
@@ -144,6 +154,15 @@ var NicoLiveComment = {
 	}
 	try{
 	    td.innerHTML = "<hbox flex=\"1\" class=\"selection\" context=\"popup-comment-body\">"+str+"</hbox>";
+	    td.firstChild.setAttribute('context', 'popup-comment-body');
+
+            let tmp = CreateElement( 'hbox' );
+            tmp.setAttribute( 'flex', '1' );
+            tmp.setAttribute( 'class', 'selection' );
+            tmp.setAttribute( 'context', 'popup-comment-body' );
+
+            tmp.appendChild( td.firstChild );
+            td.appendChild( tmp );
 	} catch (x) {
 	    debugprint(x);
 	    debugprint(str);
@@ -811,7 +830,7 @@ var NicoLiveComment = {
 
 	os = Components.classes['@mozilla.org/network/file-output-stream;1'].createInstance(Components.interfaces.nsIFileOutputStream);
 	let flags = 0x02|0x10|0x08;// wronly|append|create
-	os.init(file,flags,0664,0);
+	os.init(file,flags,0o664,0);
 
 	let cos = Components.classes["@mozilla.org/intl/converter-output-stream;1"].createInstance(Components.interfaces.nsIConverterOutputStream);
 	cos.init(os,"UTF-8",0,Components.interfaces.nsIConverterOutputStream.DEFAULT_REPLACEMENT_CHARACTER);
