@@ -593,10 +593,13 @@ var NLHPreference = {
     },
 
     buildFontList:function(){
-	FontBuilder.buildFontList($('font.language.group').value,null,$('select-font'));
-	let elem = evaluateXPath2(document,"//xul:menulist[@id='select-font']//xul:menuitem[@value='"+$('e.n.font').value+"']");
-	if(elem.length==1){
-	    $('select-font').selectedItem = elem[0];
+        try{
+	    FontBuilder.buildFontList($('font.language.group').value,null,$('select-font'));
+	    let elem = evaluateXPath2(document,"//xul:menulist[@id='select-font']//xul:menuitem[@value='"+$('e.n.font').value+"']");
+	    if(elem.length==1){
+		$('select-font').selectedItem = elem[0];
+	    }
+	}catch(e){
 	}
     },
 
@@ -652,7 +655,7 @@ var NLHPreference = {
 
     getSavedTwitterToken:function(){
 	let hostname = "chrome://nicolivehelperadvance";
-	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);  
+	let myLoginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
 	let logins = myLoginManager.findLogins({}, hostname, null, 'twitter token');
 	if( logins.length ){
 	    this.debugprint('# of tokens:'+logins.length);
@@ -664,7 +667,7 @@ var NLHPreference = {
 
     // Twitterトークンを全削除.
     removeAllTwitterToken:function(){
-	try { 
+	try {
 	    let host = "chrome://nicolivehelperadvance";
 	    let logins = this._login.findLogins({}, host, null, 'twitter token');
 	    for (let i = 0; i < logins.length; ++i){
