@@ -91,7 +91,7 @@ var AutoCreateLive = {
 			    },10*1000);
 		return;
 	    }
-	    
+
 	    // 1秒間隔で入場できるかチェック.
 	    if( doc.getElementById("que_end") ){
 		debugprint('waiting...');
@@ -126,6 +126,12 @@ var AutoCreateLive = {
 		}
 	    }
 
+	    // 通常配信を選択する
+	    var btn = doc.querySelector( '.item .quality-btn[for="high-quality-disabled"]' );
+	    if( btn ){
+		btn.click();
+	    }
+
 	    // 事前処理
 	    // 規約同意チェックボックスをチェック
 	    var NodeKiyakuAccept=doc.getElementById('kiyaku_accept');
@@ -138,7 +144,7 @@ var AutoCreateLive = {
 			       NodeKiyakuAccept.checked=true;
 			   }
 		       },300);
-	    
+
 	    // タイマーを設定
 	    setTimeout(function(){
 			   var NodeKiyakuAccept=doc.getElementById('kiyaku_accept');
@@ -169,7 +175,7 @@ var AutoCreateLive = {
 			       window.setTimeout(function (b) { doc.getElementById("esf").submit(); }, 100);
 			       return;
 			   }
-	
+
 			   // 送信ボタンがある場合は送信
 			   if(NodeSubmitOk){
 			       doc.getElementById("esf").submit();
