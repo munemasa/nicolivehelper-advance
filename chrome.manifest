@@ -1,5 +1,7 @@
 content	nicolivehelperadvance	chrome/content/
-content	nlhadv_commenttalker	chrome/content/nlh_commenttalker/ platform
+content	nlhadv_commenttalker	chrome/content/nlh_commenttalker/win/ os=WINNT
+content	nlhadv_commenttalker	chrome/content/nlh_commenttalker/mac/ os=Darwin
+content	nlhadv_commenttalker	chrome/content/nlh_commenttalker/unix/ os=Linux
 
 locale nicolivehelperadvance ja-JP chrome/locale/ja-JP/
 
