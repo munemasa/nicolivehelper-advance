@@ -1295,7 +1295,7 @@
     <!-- クッキー共有するブラウザ指定 -->
     <menupopup id="popup-select-browser" oncommand="NicoLiveWindow.changeBrowser();">
       <menuitem name="use-browser" id="use-firefox"
-		persist="checked" label="なし" type="radio" autocheck="true" tooltiptext=""/>
+		persist="checked" label="Firefox(Windowsデフォルトプロファイル)" type="radio" autocheck="true" tooltiptext=""/>
       <menuitem name="use-browser" id="use-google-chrome"
 		persist="checked" label="Google Chrome" type="radio" autocheck="true" tooltiptext="Win/Mac/LinuxのGoogle Chromeのクッキーを読み込みます。"/>
       <menuitem name="use-browser" id="use-protected-mode-ie"
