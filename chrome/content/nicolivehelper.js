@@ -4724,6 +4724,13 @@ var NicoLiveHelper = {
 	    // getCookieで取れなければサードパーティクッキーの保存にチェックが入ってないので.
 	    SetUserSessionCookie( NicoLiveCookie.getCookie2("http://www.nicovideo.jp/","user_session") );
 	}
+
+        if( $( 'use-firefox' ).hasAttribute( 'checked' ) ){
+            SetUserSessionCookie( NicoLiveCookie.getFirefoxDefaultCookie() );
+            debugprint("use Firefox default profile.");
+            this._use_other_browser = true;
+        }
+
 	if( $('use-standard-mode-ie').hasAttribute('checked') ){
 	    SetUserSessionCookie( NicoLiveCookie.getStdIECookie("http://www.nicovideo.jp/","user_session") );
 	    debugprint("use Standard mode IE");
