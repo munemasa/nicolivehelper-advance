@@ -114,6 +114,48 @@ var NicoLiveCookie = {
 	return null;
     },
 
+    /**
+     * Firefoxのデフォルトプロファイルのニコ動のクッキーを返す.
+     */
+    getFirefoxDefaultCookie: function(){
+        // C:\Users\amano\AppData\Roaming\Mozilla\Firefox\profiles.ini
+        // C:\Users\amano\AppData\Roaming\Mozilla\Firefox\Profiles\1gjyml3d.default
+        let file = Components.classes["@mozilla.org/file/directory_service;1"].getService( Components.interfaces.nsIProperties )
+            .get( "AppData", Components.interfaces.nsIFile );
+        file.append( 'Mozilla' );
+        file.append( 'Firefox' );
+        file.append( 'Profiles' );
+
+        // profiles.ini を読まずに .default のついたディレクトリで決め打ち
+        let direntry = file.directoryEntries.QueryInterface( Components.interfaces.nsIDirectoryEnumerator );
+        let dir;
+        let i = 0;
+        while( dir = direntry.nextFile ){
+            if( dir.leafName.match( /\.default$/ ) ){
+                file = dir;
+                break;
+            }
+        }
+        debugprint( 'Firefox default profile dir: ' + file.path );
+        file.append( 'cookies.sqlite' );
+        debugprint( 'cookie file: ' + file.path );
+
+        let storageService = Components.classes["@mozilla.org/storage/service;1"].getService( Components.interfaces.mozIStorageService );
+        let dbconnect = storageService.openDatabase( file );
+        let st = dbconnect.createStatement( "SELECT * FROM moz_cookies WHERE baseDomain=\"nicovideo.jp\" AND name=\"user_session\"" );
+        let latest = 0;
+        let return_value = "";
+        while( st.step() ){
+            let value = st.row.value;
+            return_value = value;
+        }
+        st.finalize();
+        dbconnect.close();
+
+        debugprint( 'Firefox default profile cookie: ' + return_value );
+        return return_value;
+    },
+
     getChromeCookie:function(){
 	// C:\Users\amano\AppData\Local\Google\Chrome\User Data\Default\Cookies
 	let file;
